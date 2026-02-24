@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="author" content="Yuki Hamada">
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="color-scheme" content="dark light">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ canonical_url }}">
+  <meta property="og:title" content="{{ title }}">
+  <meta property="og:description" content="{{ description }}">
+  <meta property="og:image" content="{{ og_image }}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Yuki Hamada">
+  <meta property="og:locale" content="{% if lang == "ja" %}ja_JP{% else %}en_US{% endif %}">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@yukihamada">
+  <meta name="twitter:creator" content="@yukihamada">
+  <meta name="twitter:title" content="{{ title }}">
+  <meta name="twitter:description" content="{{ description }}">
+  <meta name="twitter:image" content="{{ og_image }}">
+
+  <!-- Canonical & Hreflang -->
+  <link rel="canonical" href="{{ canonical_url }}">
+  <link rel="alternate" hreflang="ja" href="{{ base_url }}">
+  <link rel="alternate" hreflang="en" href="{{ base_url }}/en">
+  <link rel="alternate" hreflang="x-default" href="{{ base_url }}">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XWZTCMLK4M"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XWZTCMLK4M');
+  </script>
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Yuki Hamada",
+    "alternateName": "濱田優貴",
+    "url": "{{ base_url }}",
+    "image": "{{ og_image }}",
+    "description": "{{ description }}",
+    "sameAs": [
+      "https://x.com/yukihamada",
+      "https://github.com/yukihamada",
+      "https://linkedin.com/in/yukihamada",
+      "https://facebook.com/yukihamada",
+      "https://instagram.com/yukihamada"
+    ],
+    "jobTitle": "Founder & CEO",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "Enabler, Inc.",
+      "url": "https://enablerhq.com"
+    },
+    "knowsAbout": [
+      "Artificial Intelligence",
+      "Entrepreneurship",
+      "Brazilian Jiu-Jitsu",
+      "Product Management",
+      "Angel Investing"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Yuki Hamada",
+    "url": "{{ base_url }}"
+  }
+  </script>
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ---- Reset & Base ---- */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f;
+      --bg-card: #12121a;
+      --bg-card-hover: #1a1a28;
+      --border: #1e1e2e;
+      --text: #e4e4ed;
+      --text-muted: #8b8b9e;
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --accent: #06b6d4;
+      --gradient: linear-gradient(135deg, #6366f1, #06b6d4);
+      --radius: 16px;
+      --font: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    a { color: var(--primary-light); text-decoration: none; transition: color 0.2s; }
+    a:hover { color: var(--accent); }
+
+    /* ---- Utilities ---- */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 100px 0; }
+    .gradient-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .glass-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 20px 40px rgba(99,102,241,0.1);
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-brand { font-weight: 700; font-size: 1.1rem; }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a {
+      color: var(--text-muted); font-size: 0.9rem; font-weight: 500;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-lang {
+      padding: 6px 16px; border-radius: 20px;
+      border: 1px solid var(--border); font-size: 0.85rem;
+      color: var(--text-muted); transition: all 0.2s;
+    }
+    .nav-lang:hover { border-color: var(--primary); color: var(--primary-light); }
+
+    /* Mobile nav */
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); cursor: pointer; padding: 8px; }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      .nav-links {
+        display: none; position: absolute; top: 64px; left: 0; right: 0;
+        background: rgba(10,10,15,0.95); backdrop-filter: blur(20px);
+        flex-direction: column; gap: 0; padding: 16px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 12px 24px; display: block; }
+    }
+
+    /* ---- Hero ---- */
+    .hero {
+      min-height: 100vh; display: flex; align-items: center; justify-content: center;
+      text-align: center; padding-top: 64px; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 30%, rgba(99,102,241,0.08) 0%, transparent 60%);
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-avatar {
+      width: 140px; height: 140px; border-radius: 50%;
+      border: 3px solid rgba(99,102,241,0.3);
+      margin: 0 auto 32px; overflow: hidden;
+      background: var(--bg-card);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 0 60px rgba(99,102,241,0.15);
+    }
+    .hero h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 800; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .hero-sub-name { font-size: 1.1rem; color: var(--text-muted); margin-bottom: 24px; }
+    .hero-role {
+      font-size: clamp(1.2rem, 3vw, 1.8rem); color: var(--text-muted);
+      height: 2.2em; display: flex; align-items: center; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .hero-role span { border-right: 2px solid var(--primary); padding-right: 4px; }
+    .hero-subtitle { font-size: 1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.8; }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 32px; border-radius: 12px;
+      background: var(--gradient); color: #fff;
+      font-weight: 600; font-size: 1rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: none; cursor: pointer;
+    }
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+      color: #fff;
+    }
+    .hero-cta svg { width: 20px; height: 20px; }
+    .scroll-indicator {
+      position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+      animation: bounce 2s infinite;
+    }
+    @keyframes bounce { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(10px); } }
+
+    /* ---- Section Header ---- */
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-header h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 700; margin-bottom: 12px; }
+    .section-header p { color: var(--text-muted); font-size: 1rem; max-width: 600px; margin: 0 auto; }
+
+    /* ---- Projects Grid ---- */
+    .projects-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .project-card { padding: 32px; display: flex; flex-direction: column; }
+    .project-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 20px; color: #fff;
+    }
+    .project-icon svg { width: 24px; height: 24px; }
+    .project-badge {
+      display: inline-block; padding: 2px 10px; border-radius: 10px;
+      font-size: 0.7rem; font-weight: 600; margin-left: 8px;
+      background: rgba(99,102,241,0.15); color: var(--primary-light);
+    }
+    .project-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 8px; color: var(--text); }
+    .project-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; flex: 1; }
+    .project-features { list-style: none; margin-bottom: 20px; }
+    .project-features li {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.8rem; color: var(--text-muted); margin-bottom: 6px;
+    }
+    .project-features li::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary); flex-shrink: 0;
+    }
+    .project-link {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 0.9rem; font-weight: 500; color: var(--primary-light);
+    }
+    .project-link svg { width: 16px; height: 16px; transition: transform 0.2s; }
+    .glass-card:hover .project-link svg { transform: translateX(4px); }
+
+    /* ---- Timeline ---- */
+    .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+    .timeline::before {
+      content: ''; position: absolute;
+      left: 20px; top: 0; bottom: 0; width: 2px;
+      background: linear-gradient(to bottom, var(--primary), var(--accent), var(--primary));
+    }
+    @media (min-width: 769px) {
+      .timeline::before { left: 50%; transform: translateX(-50%); }
+    }
+    .timeline-item {
+      position: relative; padding: 0 0 48px 56px;
+    }
+    @media (min-width: 769px) {
+      .timeline-item { padding: 0 0 48px 0; }
+      .timeline-item:nth-child(odd) { padding-right: calc(50% + 40px); text-align: right; }
+      .timeline-item:nth-child(even) { padding-left: calc(50% + 40px); }
+    }
+    .timeline-dot {
+      position: absolute; left: 12px; top: 4px;
+      width: 18px; height: 18px; border-radius: 50%;
+      border: 3px solid var(--primary);
+      background: var(--bg);
+      z-index: 1;
+    }
+    .timeline-dot.highlight {
+      background: var(--primary);
+      box-shadow: 0 0 20px rgba(99,102,241,0.4);
+    }
+    @media (min-width: 769px) {
+      .timeline-dot { left: 50%; transform: translateX(-50%); }
+    }
+    .timeline-card { padding: 24px; }
+    .timeline-year { font-size: 0.85rem; color: var(--primary-light); font-weight: 600; margin-bottom: 4px; }
+    .timeline-title { font-size: 1.15rem; font-weight: 700; color: var(--text); margin-bottom: 2px; }
+    .timeline-title a { color: var(--text); }
+    .timeline-title a:hover { color: var(--primary-light); }
+    .timeline-role { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+    .timeline-desc { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ---- Footer ---- */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 64px 0 32px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr;
+      gap: 48px; margin-bottom: 48px;
+    }
+    @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; } }
+    .footer-brand h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+    .footer-brand .sub { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
+    .footer-brand p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; max-width: 400px; }
+    .social-links { display: flex; gap: 12px; flex-wrap: wrap; }
+    .social-link {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--bg-card); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); transition: all 0.2s;
+    }
+    .social-link:hover {
+      border-color: var(--primary); color: var(--primary-light);
+      transform: translateY(-2px);
+    }
+    .social-link svg { width: 18px; height: 18px; fill: currentColor; }
+    .footer-links h4 { font-weight: 600; margin-bottom: 16px; }
+    .footer-links ul { list-style: none; }
+    .footer-links li { margin-bottom: 10px; }
+    .footer-links a { color: var(--text-muted); font-size: 0.9rem; }
+    .footer-links a:hover { color: var(--primary-light); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom p { font-size: 0.85rem; color: var(--text-muted); }
+    .footer-bottom a { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* ---- Animations ---- */
+    .fade-in {
+      opacity: 0; transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .fade-in { opacity: 1; transform: none; transition: none; }
+      .scroll-indicator { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="container nav-inner">
+      <a href="{% if lang == "ja" %}/{% else %}/en{% endif %}" class="nav-brand">
+        <span class="gradient-text">YH</span>
+      </a>
+      <button class="nav-toggle" aria-label="Toggle menu" onclick="document.querySelector('.nav-links').classList.toggle('open')">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12h18M3 6h18M3 18h18"/>
+        </svg>
+      </button>
+      <div class="nav-links">
+        <a href="#projects">Projects</a>
+        <a href="#career">{% if lang == "ja" %}キャリア{% else %}Career{% endif %}</a>
+        <a href="https://enablerhq.com" target="_blank" rel="noopener">Enabler</a>
+        <a href="{{ alt_lang_url }}" class="nav-lang">{{ alt_lang_label }}</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="hero-content">
+      <div class="hero-avatar" aria-hidden="true">YH</div>
+      <h1>{{ name_display }}</h1>
+      <p class="hero-sub-name">{{ name_sub }}</p>
+      <div class="hero-role" aria-label="{% if lang == "ja" %}様々な役割{% else %}Multiple roles{% endif %}">
+        <span id="typed-role"></span>
+      </div>
+      <p class="hero-subtitle">{{ subtitle }}</p>
+      <a href="https://enablerhq.com" target="_blank" rel="noopener" class="hero-cta">
+        {{ cta_label }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/>
+        </svg>
+      </a>
+    </div>
+    <div class="scroll-indicator">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section class="section" id="projects">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2>{{ projects_title }}</h2>
+        <p>{{ projects_subtitle }}</p>
+      </div>
+      <div class="projects-grid">
+        {% for project in projects %}
+        <a href="{{ project.href }}" target="_blank" rel="noopener" class="glass-card project-card fade-in" style="text-decoration:none;">
+          <div class="project-icon" style="background: linear-gradient(135deg, var(--primary), var(--accent));">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">{{ project.icon_svg|safe }}</svg>
+          </div>
+          <div class="project-title">
+            {{ project.title }}
+            {% if let Some(badge) = project.badge %}
+            <span class="project-badge">{{ badge }}</span>
+            {% endif %}
+          </div>
+          <p class="project-desc">{{ project.description }}</p>
+          <ul class="project-features">
+            {% for f in project.features %}
+            <li>{{ f }}</li>
+            {% endfor %}
+          </ul>
+          <div class="project-link">
+            {{ view_service_label }}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Career Timeline -->
+  <section class="section" id="career" style="background: var(--bg-card);">
+    <div class="container">
+      <div class="section-header fade-in">
+        <h2>{{ timeline_title }}</h2>
+        <p>{{ timeline_subtitle }}</p>
+      </div>
+      <div class="timeline">
+        {% for item in timeline_items %}
+        <div class="timeline-item fade-in">
+          <div class="timeline-dot{% if item.highlight %} highlight{% endif %}"></div>
+          <div class="glass-card timeline-card">
+            <div class="timeline-year">{{ item.year }}</div>
+            <div class="timeline-title">
+              {% if let Some(link) = item.link %}
+              <a href="{{ link }}" target="_blank" rel="noopener">{{ item.title }} &#8599;</a>
+              {% else %}
+              {{ item.title }}
+              {% endif %}
+            </div>
+            <div class="timeline-role">{{ item.role }}</div>
+            <p class="timeline-desc">{{ item.description }}</p>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h3><span class="gradient-text">Yuki Hamada</span></h3>
+          <p class="sub">濱田優貴</p>
+          <p>{{ footer_description }}</p>
+          <div class="social-links">
+            {% for link in social_links %}
+            <a href="{{ link.href }}" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="{{ link.name }}">
+              <svg viewBox="0 0 24 24">{{ link.svg|safe }}</svg>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>Links</h4>
+          <ul>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#career">{% if lang == "ja" %}キャリア{% else %}Career{% endif %}</a></li>
+            <li><a href="https://enablerhq.com" target="_blank" rel="noopener">Enabler</a></li>
+            <li><a href="https://chatweb.ai" target="_blank" rel="noopener">chatweb.ai</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; {{ copyright_year }} Yuki Hamada. All rights reserved.</p>
+        <a href="https://enablerhq.com" target="_blank" rel="noopener">enablerhq.com &#8599;</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Typewriter Script -->
+  <script>
+  (function() {
+    var roles = [{% for r in roles %}"{{ r }}"{% if !loop.last %},{% endif %}{% endfor %}];
+    var el = document.getElementById('typed-role');
+    if (!el || roles.length === 0) return;
+    var ri = 0, ci = 0, deleting = false;
+    function tick() {
+      var role = roles[ri];
+      if (!deleting) {
+        ci++;
+        el.textContent = role.substring(0, ci);
+        if (ci >= role.length) {
+          setTimeout(function() { deleting = true; tick(); }, 1800);
+          return;
+        }
+        setTimeout(tick, 100);
+      } else {
+        ci--;
+        el.textContent = role.substring(0, ci);
+        if (ci <= 0) {
+          deleting = false;
+          ri = (ri + 1) % roles.length;
+          setTimeout(tick, 400);
+          return;
+        }
+        setTimeout(tick, 50);
+      }
+    }
+    tick();
+  })();
+  </script>
+
+  <!-- Scroll Animation -->
+  <script>
+  (function() {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    document.querySelectorAll('.fade-in').forEach(function(el) { observer.observe(el); });
+  })();
+  </script>
+
+</body>
+</html>
