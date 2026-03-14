@@ -1,0 +1,21 @@
+[package]
+name = "yukihamada-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+leptos = { workspace = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
+leptos_axum = "0.7"
+yukihamada-app = { path = "../app" }
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["fs", "compression-gzip"] }
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+
+[features]
+default = []
+ssr = ["leptos/ssr", "leptos_meta/ssr", "leptos_router/ssr", "yukihamada-app/ssr"]

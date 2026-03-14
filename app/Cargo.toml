@@ -1,0 +1,33 @@
+[package]
+name = "yukihamada-app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+leptos = { workspace = true }
+leptos_meta = { workspace = true }
+leptos_router = { workspace = true }
+serde = { workspace = true }
+serde_json = "1"
+pulldown-cmark = "0.12"
+web-sys = { version = "0.3", features = [
+    "Window", "Navigator", "Storage", "Document", "Element",
+    "HtmlAudioElement", "HtmlInputElement", "HtmlElement", "EventTarget",
+    "HtmlCanvasElement", "CanvasRenderingContext2d", "DomRect",
+    "IntersectionObserver", "IntersectionObserverInit", "IntersectionObserverEntry",
+    "MutationObserver", "MutationObserverInit", "MutationRecord",
+    "MediaQueryList", "MouseEvent", "AddEventListenerOptions",
+    "NodeList", "CssStyleDeclaration", "DomTokenList",
+    "KeyboardEvent", "HtmlDialogElement",
+    "WebGlRenderingContext", "WebGlShader", "WebGlProgram",
+    "WebGlBuffer", "WebGlUniformLocation",
+] }
+wasm-bindgen = "0.2"
+js-sys = "0.3"
+wasm-bindgen-futures = "0.4"
+gloo-net = { version = "0.6", features = ["http"], optional = true }
+
+[features]
+default = []
+hydrate = ["leptos/hydrate", "dep:gloo-net"]
+ssr = ["leptos/ssr", "leptos_meta/ssr"]

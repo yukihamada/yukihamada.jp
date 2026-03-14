@@ -1,26 +1,26 @@
-FROM rust:1.84-bookworm AS builder
+# Use stable Rust base; rust-toolchain.toml installs the pinned nightly automatically.
+FROM rust:bookworm AS builder
+
+RUN cargo install cargo-leptos@0.3.5
 
 WORKDIR /app
-COPY Cargo.toml Cargo.lock* ./
-# Create dummy main to cache deps
-RUN mkdir src && echo "fn main() {}" > src/main.rs
-RUN cargo build --release 2>/dev/null || true
-RUN rm -rf src
-
+# Copy toolchain file first so rustup installs it before the full build
+COPY rust-toolchain.toml .
+RUN rustup show
 COPY . .
-# Force recompile with real source
-RUN touch src/main.rs && cargo build --release
+RUN cargo leptos build --release
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /app
-COPY --from=builder /app/target/release/yukihamada-jp ./
-COPY --from=builder /app/templates ./templates
-COPY --from=builder /app/static ./static
+COPY --from=builder /app/target/release/yukihamada-server ./server
+COPY --from=builder /app/target/site ./site
 
-ENV PORT=8080
-ENV HOST=0.0.0.0
+ENV LEPTOS_OUTPUT_NAME="yukihamada-jp"
+ENV LEPTOS_SITE_ROOT="site"
+ENV LEPTOS_SITE_PKG_DIR="pkg"
+ENV LEPTOS_SITE_ADDR="0.0.0.0:8080"
+ENV LEPTOS_ENV="PROD"
+
 EXPOSE 8080
-
-CMD ["./yukihamada-jp"]
+CMD ["./server"]
