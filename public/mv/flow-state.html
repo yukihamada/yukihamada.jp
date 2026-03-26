@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Flow State — JiuFlow Music Video</title>
+<meta name="description" content="クローズドガード完全フローを音楽で学ぶ。237ノードのインタラクティブマップが曲に合わせて動く。JiuFlowシステム公式MV。">
+<meta property="og:title" content="Flow State — JiuFlow MV">
+<meta property="og:description" content="クローズドガード完全フローを音楽で学ぶインタラクティブMV。判断ノードが光って道が見える。">
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/flow-state.html">
+<meta property="og:image" content="https://yukihamada.jp/mv/mv-assets/og-flow-state.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="JiuFlow">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Flow State — JiuFlow MV">
+<meta name="twitter:description" content="クローズドガード完全フローを音楽で学ぶ。判断ノードが光って道が見える。">
+<meta name="twitter:image" content="https://yukihamada.jp/mv/mv-assets/og-flow-state.png">
+<style>
+:root{--red:#E94560;--red-d:#D63851;--red-deep:#8B1A2B;--gold:#D4A853;--gold-d:#B8860B;--grn:#4ade80;--bg:#0A0A0A;--surface:#1A1A1A;--surface2:#222222;--txt:#E8E8E8;--dim:#555;--dim2:#888}
+*{margin:0;padding:0;box-sizing:border-box}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap');
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--txt);font-family:'Inter','Hiragino Sans',sans-serif}
+
+/* Full-screen flow canvas */
+#cv-flow{position:fixed;inset:0;z-index:5}
+#cv-particles{position:fixed;inset:0;z-index:10;pointer-events:none}
+#cv-eq{position:fixed;bottom:0;left:0;width:100%;height:90px;z-index:3;pointer-events:none;opacity:.35}
+#beat-flash{position:fixed;inset:0;z-index:4;pointer-events:none;background:radial-gradient(ellipse at center,rgba(233,69,96,.12),transparent 65%);opacity:0;transition:opacity .06s}
+
+/* Ambient */
+#ambient{position:fixed;inset:0;z-index:1}
+#ambient-grad{position:absolute;inset:-80px;background:radial-gradient(ellipse at 30% 40%,rgba(233,69,96,.04),transparent 50%),radial-gradient(ellipse at 70% 60%,rgba(212,168,83,.03),transparent 50%);animation:amb 15s ease-in-out infinite alternate}
+@keyframes amb{0%{transform:scale(1)}100%{transform:scale(1.1) rotate(1deg)}}
+
+/* Transport */
+#transport{position:fixed;top:0;left:0;right:0;z-index:100;padding:10px 16px;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,rgba(0,0,0,.85),transparent);backdrop-filter:blur(6px)}
+.logo{font-size:13px;font-weight:900;letter-spacing:-2px;background:linear-gradient(180deg,var(--red),var(--red-d));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#btn-play{width:34px;height:34px;border:none;border-radius:50%;background:var(--red);color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .2s cubic-bezier(.16,1,.3,1)}
+#btn-play:hover{transform:scale(1.1)}
+#seek{flex:1;-webkit-appearance:none;height:3px;border-radius:2px;background:#222;outline:none;cursor:pointer}
+#seek::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--red)}
+#time-display{font-size:11px;color:var(--dim);font-variant-numeric:tabular-nums;min-width:72px;text-align:right}
+
+/* Node detail card */
+#node-detail{position:fixed;z-index:35;background:rgba(10,10,10,.92);backdrop-filter:blur(14px);border:1px solid var(--surface2);border-radius:16px;padding:18px 24px;opacity:0;transition:all .5s cubic-bezier(.16,1,.3,1);text-align:left;max-width:380px}
+#node-detail.show{opacity:1}
+@media(min-width:800px){#node-detail{top:60px;right:24px}}
+@media(max-width:799px){#node-detail{top:52px;left:12px;right:12px}}
+.nd-emoji{font-size:30px;float:left;margin-right:14px}
+.nd-label{font-size:17px;font-weight:800;color:#fff}
+.nd-type{font-size:10px;letter-spacing:2px;color:var(--gold);font-weight:700;margin-top:3px}
+.nd-desc{font-size:12px;color:#999;line-height:1.7;margin-top:10px;clear:both}
+.nd-children{margin-top:10px;display:flex;flex-wrap:wrap;gap:5px}
+.nd-child{font-size:10px;background:#1a0a0e;border:1px solid #2a1015;border-radius:12px;padding:3px 10px;color:var(--red);transition:all .3s}
+.nd-child.active{border-color:var(--red);background:#2a1520;color:#fff}
+.nd-video{display:inline-block;margin-top:10px;background:var(--red);color:#fff;text-decoration:none;padding:7px 16px;border-radius:12px;font-size:11px;font-weight:700;letter-spacing:1px;transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.nd-video:hover{transform:scale(1.05)}
+
+/* Karaoke */
+#karaoke{position:fixed;bottom:24px;left:0;right:0;z-index:30;text-align:center;padding:0 20px}
+#k-prev{font-size:13px;color:rgba(255,255,255,.18);margin-bottom:5px;min-height:18px}
+#k-main{font-size:clamp(18px,4vw,32px);font-weight:800;min-height:44px;text-shadow:0 0 30px rgba(233,69,96,.35),0 2px 6px rgba(0,0,0,.9);transition:transform .1s}
+#k-next{font-size:12px;color:rgba(255,255,255,.1);margin-top:5px;min-height:16px}
+.k-char{display:inline-block;opacity:0;transform:translateY(16px) scale(.85);animation:ci .3s forwards}
+@keyframes ci{to{opacity:1;transform:translateY(0) scale(1)}}
+.k-chorus{color:var(--gold)!important}
+
+/* Intro / End */
+#intro{position:fixed;inset:0;z-index:200;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .8s}
+#intro.hide{opacity:0;pointer-events:none}
+#intro h1{font-size:clamp(40px,10vw,80px);font-weight:900;background:linear-gradient(180deg,var(--red),var(--red-d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-4px}
+#intro .sub{color:var(--dim);font-size:13px;margin-top:16px;letter-spacing:3px;animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
+#end{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+#end.show{display:flex}
+#end h2{font-size:30px;font-weight:900;background:linear-gradient(180deg,var(--red),var(--red-d));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-2px}
+.end-btn{background:var(--red);color:#fff;border:none;padding:14px 32px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:transform .2s cubic-bezier(.16,1,.3,1)}
+.end-btn:hover{transform:scale(1.05)}
+.end-btn.sec{background:#222}
+</style>
+</head>
+<body>
+
+<div id="intro">
+  <h1>JiuFlow</h1>
+  <p class="sub">TAP TO PLAY — Flow State ♪</p>
+  <p style="color:#333;font-size:11px;margin-top:28px">クローズドガード完全フローを音楽で学ぶ</p>
+</div>
+
+<div id="transport" style="opacity:0">
+  <span class="logo">JIUFLOW</span>
+  <button id="btn-play">▶</button>
+  <input type="range" id="seek" min="0" max="1000" value="0">
+  <span id="time-display">0:00 / 0:00</span>
+</div>
+
+<div id="ambient"><div id="ambient-grad"></div></div>
+<canvas id="cv-flow"></canvas>
+<canvas id="cv-particles"></canvas>
+<canvas id="cv-eq"></canvas>
+<div id="beat-flash"></div>
+
+<div id="node-detail">
+  <span class="nd-emoji" id="nd-e"></span>
+  <div class="nd-label" id="nd-l"></div>
+  <div class="nd-type" id="nd-t"></div>
+  <div class="nd-desc" id="nd-d"></div>
+  <div class="nd-children" id="nd-c"></div>
+  <a class="nd-video" id="nd-v" href="#" target="_blank" style="display:none">🎬 動画を見る →</a>
+</div>
+
+<!-- Floating technique bubbles -->
+<div id="tech-bubbles" style="position:fixed;inset:0;z-index:6;pointer-events:none;overflow:hidden"></div>
+
+<div id="karaoke">
+  <div id="k-prev"></div>
+  <div id="k-main"></div>
+  <div id="k-next"></div>
+</div>
+
+<div id="end">
+  <h2>Roll Safe. 🤙</h2>
+  <p style="color:#666;font-size:13px">クローズドガード完全フロー — JiuFlow</p>
+  <button class="end-btn" onclick="location.href='https://v2.jiuflow.art'">v2.jiuflow.art →</button>
+  <button class="end-btn sec" onclick="replay()">もう一度 ↻</button>
+</div>
+
+<audio id="audio" preload="auto" src="mv-assets/flow-state.mp3"></audio>
+
+<script>
+const $=id=>document.getElementById(id);
+const audio=$('audio');
+
+// =============================================
+// Closed Guard Flow Tree (what the song walks through)
+// =============================================
+const TREE=[
+  // v=true means has video on v2.jiuflow.art
+  // Root
+  {id:"closed",e:"🔒",l:"クローズドガード",t:"位置",d:"両足でロック。BJJの基本。全てはここから始まる。",ch:["cg-down","cg-up","cg-stand"],x:0,y:0,v:1},
+
+  // === HEAD DOWN ===
+  {id:"cg-down",e:"⬇️",l:"頭が下がっている",t:"判断",d:"相手の姿勢が崩れた。攻めのチャンス！",ch:["choke","guillotine","comlock","kimura","sankaku"],x:-.35,y:.18,v:1},
+  {id:"choke",e:"✂️",l:"ベーシックチョーク",t:"技",d:"襟を深く取って絞める。基本にして最強。",ch:["choke-mount"],x:-.65,y:.35,v:1},
+  {id:"choke-mount",e:"🔄",l:"→マウント四角",t:"技",d:"チョークからマウント四角へ移行。",ch:[],x:-.75,y:.5,v:1},
+  {id:"guillotine",e:"⚔️",l:"ギロチン",t:"技",d:"頭が下がった瞬間、首を捕らえる。最強のサブミッション。",ch:[],x:-.5,y:.35,v:1},
+  {id:"comlock",e:"🔒",l:"コムロック",t:"技",d:"オーバーフックで腕を固定。肘決めかツッコミ締めへ。",ch:["elbow","tsukkomi"],x:-.35,y:.38,v:1},
+  {id:"elbow",e:"💪",l:"肘決め",t:"結果",d:"コムロックから肘関節を極める。",ch:[],x:-.45,y:.55,v:1},
+  {id:"tsukkomi",e:"🤜",l:"ツッコミ締め",t:"結果",d:"襟を使った突っ込み絞め。",ch:[],x:-.28,y:.55,v:1},
+  {id:"kimura",e:"🔑",l:"キムラ",t:"技",d:"最重要テクニック。防がれても4つの道が開く。",ch:["kim-comlock","kim-armbar","kim-back","kim-hip"],x:-.15,y:.38,v:1},
+  {id:"kim-comlock",e:"🔄",l:"防御→コムロック",t:"技",d:"キムラを防がれたらコムロックへ移行。",ch:[],x:-.28,y:.58,v:1},
+  {id:"kim-armbar",e:"💪",l:"→腕十字",t:"結果",d:"キムラから腕を伸ばしてフィニッシュ。",ch:[],x:-.12,y:.58,v:1},
+  {id:"kim-back",e:"🔙",l:"→テイクバック",t:"結果",d:"キムラグリップから背中に回る。",ch:[],x:.02,y:.58,v:1},
+  {id:"kim-hip",e:"🔄",l:"→ヒップスロー",t:"技",d:"起きてディフェンスされたら投げる。",ch:[],x:-.02,y:.48,v:1},
+  {id:"sankaku",e:"✖️",l:"四角",t:"技",d:"クロスポジションから三角・腕十字へ連携。",ch:["triangle","armbar-s"],x:.05,y:.35,v:1},
+  {id:"triangle",e:"△",l:"三角絞め",t:"結果",d:"脚で首と片腕を挟む。腕が流せなければアームロックへ。",ch:["inside-arm"],x:.12,y:.52,v:1},
+  {id:"inside-arm",e:"💪",l:"インサイドアームロック",t:"結果",d:"三角で腕が流せない時の奥の手。",ch:[],x:.22,y:.65,v:1},
+  {id:"armbar-s",e:"💪",l:"腕十字",t:"結果",d:"四角から腕十字に移行。",ch:[],x:-.02,y:.52,v:1},
+
+  // === HEAD UP ===
+  {id:"cg-up",e:"⬆️",l:"頭が上がっている",t:"判断",d:"まず崩す。袖引き・襟引き・足煽りの3パターン。",ch:["break-posture","cg-up-kimura","omoplata-chain","lapel","guard-break"],x:.1,y:.18,v:1},
+  {id:"break-posture",e:"💥",l:"ベースを崩す×3",t:"技",d:"袖引き・襟引き・足煽り。3パターンで崩す。",ch:[],x:.18,y:.35,v:1},
+  {id:"guard-break",e:"🛡️",l:"ブレーク対応",t:"技",d:"ガードを開かれたらヒップチェンジで正対。",ch:[],x:.28,y:.32,v:1},
+  {id:"cg-up-kimura",e:"🔑",l:"キムラ",t:"技",d:"姿勢が高くても手が着いていればチャンス。",ch:[],x:.35,y:.38,v:1},
+  {id:"omoplata-chain",e:"🌀",l:"オモプラータ",t:"技",d:"三角にも腕十字にもチェーン。",ch:["omo-tri","omo-inside"],x:.45,y:.35,v:1},
+  {id:"omo-tri",e:"△",l:"→三角",t:"結果",d:"オモプラータから三角へチェーン。",ch:[],x:.38,y:.52,v:1},
+  {id:"omo-inside",e:"💪",l:"→インサイドアームバー",t:"結果",d:"オモプラータからアームバーへ。",ch:[],x:.52,y:.52,v:1},
+  {id:"lapel",e:"👘",l:"ラペラ攻撃",t:"技",d:"襟を使ったチョーク・四角。道着限定。",ch:["lapel-choke","lapel-sankaku"],x:.58,y:.38,v:1},
+  {id:"lapel-choke",e:"✂️",l:"→チョーク",t:"結果",d:"ラペラを使った絞め。",ch:[],x:.55,y:.52,v:1},
+  {id:"lapel-sankaku",e:"✖️",l:"→四角",t:"技",d:"ラペラから四角へ。",ch:[],x:.65,y:.52,v:0},
+
+  // === STANDING ===
+  {id:"cg-stand",e:"🧍",l:"立たれた場合",t:"判断",d:"焦るな。テレフォンスイープかクロスグリップチェーン。",ch:["telephone","cross-grip","knee-bar"],x:.55,y:.18,v:1},
+  {id:"telephone",e:"📞",l:"テレフォンスイープ",t:"技",d:"足首を取ってスイープ。立たれた時の必殺技。",ch:[],x:.65,y:.32,v:1},
+  {id:"cross-grip",e:"✖️",l:"クロスグリップ",t:"技",d:"攻めのチェーン。多数の選択肢。",ch:["cg-omo","cg-sit"],x:.75,y:.35,v:1},
+  {id:"cg-omo",e:"🌀",l:"オモプラータスイープ",t:"技",d:"クロスグリップからオモプラータ→三角→後転スイープ。",ch:["cg-omo-tri"],x:.68,y:.5,v:1},
+  {id:"cg-omo-tri",e:"🔄",l:"→三角 or 後転",t:"技",d:"オモプラータが効かない時。",ch:[],x:.62,y:.65,v:1},
+  {id:"cg-sit",e:"🪑",l:"座ってきたら",t:"判断",d:"腕十字・三角・フラワースイープ・オモプラータ。全部狙える。",ch:["sit-armbar","sit-tri","sit-flower","sit-omo","sit-ryozo"],x:.82,y:.5,v:1},
+  {id:"sit-armbar",e:"💪",l:"腕十字",t:"結果",d:"座ってきた瞬間に腕十字。",ch:[],x:.72,y:.68,v:1},
+  {id:"sit-tri",e:"△",l:"三角",t:"結果",d:"座ってきた瞬間に三角絞め。",ch:[],x:.78,y:.68,v:1},
+  {id:"sit-flower",e:"🌸",l:"フラワースイープ",t:"技",d:"座り直してきた時のスイープ。",ch:[],x:.84,y:.68,v:1},
+  {id:"sit-omo",e:"🌀",l:"オモプラータ",t:"技",d:"座り直してきた時にオモプラータ。",ch:[],x:.9,y:.68,v:1},
+  {id:"sit-ryozo",e:"🌟",l:"RYOZOシステム",t:"技",d:"RYOZOシステムからマウントスイープ。",ch:[],x:.95,y:.58,v:1},
+  {id:"knee-bar",e:"🦵",l:"膝十字",t:"技",d:"茶帯以上。膝十字からゴブリーニャスイープ。",ch:[],x:.85,y:.28,v:0},
+];
+
+const nodeMap={};TREE.forEach(n=>nodeMap[n.id]=n);
+
+// === Lyrics (Whisper-aligned to v6) ===
+const L=[
+  [0,"",0,[]],
+  [30.2,"最初のクエスチョンは超シンプル",0,["closed"]],
+  [34.0,"「相手の頭は 下がってる？ 上がってる？」",0,["cg-down","cg-up"]],
+  [36.8,"それとも立ってる？",0,["cg-stand"]],
+  [38.4,"Flow Flow Flow State",1,["closed","cg-down","cg-up","cg-stand"]],
+  [40.2,"判断ノードが光って 道が見えた",1,["cg-down","cg-up","cg-stand"]],
+  [44.2,"タップして辿って",1,["kimura","triangle"]],
+  [46.0,"テクニックを繋ぐだけ",1,["kimura","kim-comlock","kim-armbar"]],
+  [48.0,"迷わず極める 魔法のマップ",1,["closed"]],
+  [50.5,"それがJiuFlow",1,["closed"]],
+  [53.8,"",0,[]],
+  [58.4,"頭が下がってれば チャンス到来",0,["cg-down"]],
+  [60.4,"ベーシックチョーク 襟深くGo",0,["choke","choke-mount"]],
+  [62.1,"そのまま効かない？ じゃあコムロック",0,["comlock"]],
+  [64.0,"肘を極めるか ツッコミ締め",0,["elbow","tsukkomi"]],
+  [65.5,"キムラ キムラ 無限ループ",0,["kimura"]],
+  [67.0,"キムラを防がれても キープする",0,["kimura"]],
+  [68.6,"まだ防がれても コムロック",0,["kim-comlock","comlock","elbow","tsukkomi"]],
+  [70.5,"肘 ツッコミ 止まらない アームバー",0,["elbow","tsukkomi","kim-armbar"]],
+  [72.7,"キムラの隙をついて テイクバック",0,["kim-back"]],
+  [74.7,"四角から三角 流せないなら",0,["sankaku","triangle"]],
+  [76.8,"インサイドアームロック",0,["inside-arm"]],
+  [79.4,"",0,[]],
+  [79.4,"相手の頭が上がれば ベースを崩れ",0,["cg-up","break-posture"]],
+  [83.0,"ブレークされても 焦るな",0,["guard-break"]],
+  [84.5,"ヒップチェンジで ピタッと正対",0,["guard-break"]],
+  [86.4,"崩しのパターンは 3つある",0,["break-posture"]],
+  [88.0,"キムラ オモプラータ",0,["cg-up-kimura","omoplata-chain"]],
+  [89.2,"そこから繋げ インサイドアームバー",0,["omo-inside"]],
+  [91.2,"三角 腕十字 JiuFlowシステム",0,["omo-tri","armbar-s"]],
+  [93.0,"ラペラを使って チョーク 襟攻撃",0,["lapel","lapel-choke","lapel-sankaku"]],
+  [94.7,"立たれたらどうする 慌てない",0,["cg-stand"]],
+  [97.0,"必殺テレフォンスイープ",0,["telephone"]],
+  [98.5,"投げ倒せ",0,["telephone"]],
+  [100.3,"",0,[]],
+  [100.8,"クロスグリップ オモプラータ",0,["cross-grip","cg-omo"]],
+  [102.8,"後転 三角",0,["cg-omo-tri"]],
+  [103.9,"思いのままに",0,["cross-grip"]],
+  [106.0,"座ってきたら",0,["cg-sit"]],
+  [107.4,"クロスグリップの罠 腕十字 三角",0,["cg-sit","sit-armbar","sit-tri"]],
+  [110.5,"フラワースイープ 後転 オモプラータ",0,["sit-flower","sit-omo"]],
+  [112.6,"極め尽くしは これでフィニッシュ",0,["sit-armbar","sit-tri","triangle"]],
+  [115.0,"RYOZOシステム マウントスイープ",0,["sit-ryozo"]],
+  [119.3,"",0,[]],
+  [119.7,"Flow Flow Flow State",1,["closed","cg-down","cg-up","cg-stand"]],
+  [122.4,"判断ノードの光が 道を照らす",1,["cg-down","cg-up","cg-stand"]],
+  [124.4,"全部繋がる",1,["closed"]],
+  [126.0,"防がれても次がある",1,["kimura","kim-comlock","kim-armbar","kim-back"]],
+  [128.3,"Flow State 柔術を変えていく",1,["closed"]],
+  [132.1,"",0,[]],
+  [134.8,"相手の頭は？",0,["cg-down","cg-up"]],
+  [136.6,"立ってるか",0,["cg-stand"]],
+  [137.6,"座ってるか",0,["cg-sit"]],
+  [138.8,"道場で開いて",0,["closed"]],
+  [140.7,"今日から強くなれ",0,["closed"]],
+  [143.5,"",0,[]],
+  [145.6,"Roll safe.",0,["closed"]],
+  [165,"",0,[]],
+];
+
+// === All 306 techniques (for floating bubbles) ===
+const ALL_TECHS=[
+  "🥋 スタート","🛡️ ガードゲーム","🔒 クローズドガード","⬇️ 頭が下がっている","✂️ ベーシックチョーク",
+  "⚔️ ギロチン","🔒 コムロック","💪 肘決め","🤜 ツッコミ締め","🔑 キムラ","🔄 ヒップスロー",
+  "🔄 コムロック移行","💪 腕十字","🔙 テイクバック","✖️ 四角","△ 三角絞め","💪 インサイドアームロック",
+  "⬆️ 頭が上がっている","💥 ベースを崩す","🛡️ ブレーク対応","🌀 オモプラータ","👘 ラペラ攻撃",
+  "🧍 立たれた場合","📞 テレフォンスイープ","✖️ クロスグリップ","🌀 オモプラータスイープ",
+  "🪑 座ってきたら","🌸 フラワースイープ","🔄 後転スイープ","🌟 RYOZOシステム",
+  "⚡ ハーフガード","🤝 アンダーフック","🐕 ドッグファイト","🔙 バックテイク",
+  "🍽️ ウェイタースイープ","⚡ エレクトリックチェア","🔒 ロックダウン","🌊 ディープハーフ",
+  "🛡️ Zガード","🦋 バタフライガード","↩️ バタフライスイープ","🎯 アームドラッグ",
+  "✖️ Xガード移行","🦵 SLX移行","🌀 デラヒーバ","🔄 ベリンボロ","🐉 キスオブドラゴン",
+  "↩️ DLRスイープ","🔙 DLRバックテイク","✖️ Xガード","🔄 リバースDLR",
+  "🕷️ スパイダーガード","△ スパイダー三角","🌀 スパイダーオモプラータ","🔄 トモエ投げ",
+  "🔄 ラッソー移行","🕷️🌀 スパイダー+DLR","↩️ スパイダースイープ",
+  "✖️ Xガード","↩️ Xスイープ","🔙 Xバックテイク","🦵 ニーバー",
+  "🦵 シングルレッグX","🦶 ヒールフック","🐴 サドル/411","⚖️ 50/50",
+  "👑 トップゲーム","🚪 ガードパス","🏃 トレアンドウパス","🦵 レッグドラッグ",
+  "🤝 オーバーアンダー","✂️ ニーカットパス","💥 スマッシュパス","📦 スタックパス",
+  "✖️ Xパス","👣 ロングステップ","👣 バックステップ","🏢 HQポジション",
+  "🦁 マウント","💪 マウント腕十字","✂️ エゼキエルチョーク","🔙 バックコントロール",
+  "✂️ RNC","📌 サイドコントロール","⬇️ テイクダウン","🤼 ダブルレッグ",
+  "🦵 シングルレッグ","↩️ 体落とし","🔄 内股","🚪 エスケープ",
+  "🔄 エビ","💥 ブリッジ","🔄 グランビー","🦵 カーフスライサー",
+  "🐴 サドルエントリー","🦶 トーホールド","🔑 キムラトラップ","🤝🤝 ダブルアンダー対応",
+  "🕰️ オールドスクール","🩸 ホーマーシンプソン","🦵 リバースシングルレッグ",
+  "🔁 ループチョーク","↩️ Zガードスイープ","🦶 アンクルピック",
+  "🔧 ニーシールド","📋 IBJJFルール","🔄 50/50バックロール",
+];
+
+// Bubble system
+const bubbleContainer=$('tech-bubbles');
+let bubbleTimer;
+function spawnBubble(){
+  const tech=ALL_TECHS[Math.random()*ALL_TECHS.length|0];
+  const div=document.createElement('div');
+  const fromLeft=Math.random()>.5;
+  const y=10+Math.random()*70;
+  div.textContent=tech;
+  div.style.cssText=`
+    position:absolute;
+    ${fromLeft?'left:-300px':'right:-300px'};
+    top:${y}%;
+    font-size:${11+Math.random()*5}px;
+    color:rgba(233,69,96,${.08+Math.random()*.12});
+    font-weight:600;
+    white-space:nowrap;
+    transition:none;
+    pointer-events:none;
+  `;
+  bubbleContainer.appendChild(div);
+  // Animate across screen
+  const duration=8000+Math.random()*6000;
+  const start=performance.now();
+  const screenW=innerWidth;
+  function animate(now){
+    const p=(now-start)/duration;
+    if(p>1){div.remove();return}
+    const x=fromLeft?(-300+p*(screenW+600)):(-300+p*(screenW+600));
+    div.style[fromLeft?'left':'right']=x+'px';
+    div.style.opacity=Math.sin(p*Math.PI)*(.08+Math.random()*.04);
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+}
+function startBubbles(){
+  bubbleTimer=setInterval(()=>{
+    if(playing)spawnBubble();
+  },800+Math.random()*1200);
+}
+
+// === Audio ===
+let actx,analyser,dataArr;
+function initAudio(){
+  if(actx)return;actx=new(AudioContext||webkitAudioContext)();
+  analyser=actx.createAnalyser();analyser.fftSize=512;
+  dataArr=new Uint8Array(analyser.frequencyBinCount);
+  const s=actx.createMediaElementSource(audio);s.connect(analyser);analyser.connect(actx.destination);
+}
+
+// === Canvas setup ===
+const cvF=$('cv-flow'),ctxF=cvF.getContext('2d');
+const cvP=$('cv-particles'),ctxP=cvP.getContext('2d');
+const cvEq=$('cv-eq'),ctxEq=cvEq.getContext('2d');
+function resize(){
+  const w=innerWidth,h=innerHeight;
+  cvF.width=w;cvF.height=h;cvP.width=w;cvP.height=h;cvEq.width=w;cvEq.height=90;
+}
+resize();onresize=resize;
+
+// === Flow Graph — full screen animated ===
+let activeNodes=new Set();
+let nodeAnimState={};// per node: {scale, glow, pulse}
+let camX=0,camY=-60,camZoom=2.2;// camera — start zoomed in on root
+let targetCamX=0,targetCamY=-60,targetCamZoom=2.2;
+
+function getNodePos(node, time){
+  const w=cvF.width,h=cvF.height;
+  const mx=100,my=80;
+  const nx=(node.x+0.8)/1.8;
+  const ny=node.y/0.75;
+  // Floating motion — each node drifts slightly
+  const t=(time||0)/1000;
+  const idx=TREE.indexOf(node);
+  const floatX=Math.sin(t*0.5+idx*1.7)*8+Math.cos(t*0.3+idx*2.3)*5;
+  const floatY=Math.cos(t*0.4+idx*1.3)*6+Math.sin(t*0.6+idx*0.9)*4;
+  return {
+    x: mx + nx * (w - mx*2) + floatX,
+    y: my + 40 + ny * (h - my*2 - 120) + floatY
+  };
+}
+
+function drawFlow(time){
+  const c=ctxF,w=cvF.width,h=cvF.height;
+  c.clearRect(0,0,w,h);
+  c.save();
+
+  // Smooth camera
+  camX+=(targetCamX-camX)*.06;
+  camY+=(targetCamY-camY)*.06;
+  camZoom+=(targetCamZoom-camZoom)*.05;
+  c.translate(w/2,h/2);
+  c.scale(camZoom,camZoom);
+  c.translate(-w/2+camX,-h/2+camY);
+
+  const now=time/1000;
+
+  // Update node animation states
+  TREE.forEach(node=>{
+    if(!nodeAnimState[node.id]) nodeAnimState[node.id]={scale:0,glow:0,targetScale:0};
+    const st=nodeAnimState[node.id];
+    const isActive=activeNodes.has(node.id);
+    st.targetScale=isActive?1:.5;
+    st.scale+=(st.targetScale-st.scale)*.06;
+    st.glow=isActive?(.7+Math.sin(now*3+TREE.indexOf(node))*.3):0;
+  });
+
+  // Draw edges with animated flow
+  TREE.forEach(node=>{
+    const p=getNodePos(node,time);
+    (node.ch||[]).forEach(chId=>{
+      const child=nodeMap[chId];if(!child)return;
+      const cp=getNodePos(child);
+      const stN=nodeAnimState[node.id],stC=nodeAnimState[chId];
+      const bothActive=activeNodes.has(node.id)&&activeNodes.has(chId);
+      const anyActive=activeNodes.has(node.id)||activeNodes.has(chId);
+
+      // Edge
+      c.globalAlpha=bothActive?.9:anyActive?.3:.06;
+      c.strokeStyle=bothActive?'var(--red)':anyActive?'#5a1a2a':'#1a0a0e';
+      c.lineWidth=bothActive?2.5:anyActive?1.2:.5;
+      c.beginPath();
+      // Curved line
+      const mx=(p.x+cp.x)/2,my=(p.y+cp.y)/2-20;
+      c.moveTo(p.x,p.y);
+      c.quadraticCurveTo(mx,my,cp.x,cp.y);
+      c.stroke();
+
+      // Animated dot traveling along edge
+      if(bothActive){
+        const t=(now*0.8+TREE.indexOf(node)*0.3)%1;
+        const dx=p.x+(cp.x-p.x)*t;
+        const dy=p.y+(cp.y-p.y)*t-20*Math.sin(t*Math.PI);
+        c.fillStyle='var(--gold)';
+        c.shadowBlur=12;c.shadowColor='var(--gold)';
+        c.beginPath();c.arc(dx,dy,3,0,Math.PI*2);c.fill();
+        c.shadowBlur=0;
+      }
+    });
+  });
+  c.globalAlpha=1;
+
+  // Draw nodes
+  TREE.forEach(node=>{
+    const p=getNodePos(node,time);
+    const st=nodeAnimState[node.id];
+    const isActive=activeNodes.has(node.id);
+    const isResult=node.t==='結果';
+    const baseR=isActive?18:8;
+    const r=baseR*st.scale;
+    if(r<1)return;
+
+    // Glow
+    if(st.glow>0){
+      c.shadowBlur=25*st.glow;
+      c.shadowColor=isResult?'#4ade80':'var(--red)';
+    }
+
+    // Outer ring pulse
+    if(isActive){
+      const pulseR=r+8+Math.sin(now*4+TREE.indexOf(node))*4;
+      c.globalAlpha=.15;
+      c.strokeStyle=isResult?'#4ade80':'var(--red)';
+      c.lineWidth=1;
+      c.beginPath();c.arc(p.x,p.y,pulseR,0,Math.PI*2);c.stroke();
+      c.globalAlpha=1;
+    }
+
+    // Circle
+    c.fillStyle=isResult?(isActive?'rgba(0,50,0,.9)':'rgba(0,15,0,.5)'):(isActive?'rgba(30,0,40,.9)':'rgba(12,0,16,.4)');
+    c.strokeStyle=isResult?'#4ade80':'var(--red)';
+    c.lineWidth=isActive?2.5:st.scale>.5?1:.4;
+    c.globalAlpha=Math.max(.15,st.scale);
+    c.beginPath();c.arc(p.x,p.y,r,0,Math.PI*2);c.fill();c.stroke();
+    c.shadowBlur=0;
+
+    // Emoji
+    if(st.scale>.35){
+      const fs=isActive?Math.min(20,r*.9):Math.min(12,r*1.2);
+      c.font=`${fs}px sans-serif`;
+      c.textAlign='center';c.textBaseline='middle';
+      c.globalAlpha=st.scale;
+      c.fillText(node.e,p.x,p.y-1);
+    }
+
+    // Label
+    if(isActive&&st.scale>.6){
+      c.font=`bold ${Math.min(13,11*st.scale)}px 'Hiragino Sans',sans-serif`;
+      c.fillStyle=isResult?'#4ade80':'var(--red)';
+      c.globalAlpha=st.scale;
+      c.fillText(node.l,p.x,p.y+r+16);
+    }
+    c.globalAlpha=1;
+  });
+
+  c.restore();
+}
+
+// Camera: zoom into active area
+function updateCamera(){
+  if(activeNodes.size===0){targetCamX=0;targetCamY=-60;targetCamZoom=2.2;return}
+  let mx=0,my=0,n=0;
+  const t=performance.now();
+  activeNodes.forEach(id=>{
+    const node=nodeMap[id];if(!node)return;
+    const p=getNodePos(node,t);mx+=p.x;my+=p.y;n++;
+  });
+  if(n===0)return;
+  mx/=n;my/=n;
+  const w=cvF.width/2,h=cvF.height/2;
+  targetCamX=(w-mx)*0.4;
+  targetCamY=(h-my)*0.35;
+  targetCamZoom=activeNodes.size>8?1.2:activeNodes.size>4?1.5:activeNodes.size>1?1.8:2.2;
+}
+
+// === Node Detail Card ===
+let ndTimer;
+function showNodeDetail(id){
+  const n=nodeMap[id];if(!n)return;
+  $('nd-e').textContent=n.e;
+  $('nd-l').textContent=n.l;
+  $('nd-t').textContent=n.t.toUpperCase();
+  $('nd-d').textContent=n.d;
+  const cc=$('nd-c');cc.innerHTML='';
+  (n.ch||[]).forEach(chId=>{
+    const ch=nodeMap[chId];if(!ch)return;
+    const s=document.createElement('span');
+    s.className='nd-child'+(activeNodes.has(chId)?' active':'');
+    s.textContent=ch.e+' '+ch.l;cc.appendChild(s);
+  });
+  // Video link
+  const vBtn=$('nd-v');
+  if(n.v){
+    vBtn.style.display='inline-block';
+    vBtn.href='https://v2.jiuflow.art/technique-flow?node='+encodeURIComponent(n.id);
+  }else{
+    vBtn.style.display='none';
+  }
+  $('node-detail').classList.add('show');
+  clearTimeout(ndTimer);
+  ndTimer=setTimeout(()=>$('node-detail').classList.remove('show'),4500);
+}
+
+// Click on canvas to open node
+cvF.addEventListener('click',function(ev){
+  const rect=cvF.getBoundingClientRect();
+  const cx=(ev.clientX-rect.left),cy=(ev.clientY-rect.top);
+  // Reverse camera transform
+  const w=cvF.width,h=cvF.height;
+  const rx=(cx-w/2)/camZoom+w/2-camX;
+  const ry=(cy-h/2)/camZoom+h/2-camY;
+  let closest=null,minD=Infinity;
+  TREE.forEach(node=>{
+    const p=getNodePos(node,performance.now());
+    const d=Math.hypot(p.x-rx,p.y-ry);
+    if(d<minD){minD=d;closest=node}
+  });
+  if(closest&&minD<40){
+    showNodeDetail(closest.id);
+    if(closest.v){
+      // Brief pause then open if user clicked deliberately
+    }
+  }
+});
+
+// === Particles ===
+let particles=[];
+class Pt{
+  constructor(x,y,c){this.x=x;this.y=y;this.c=c;this.vx=(Math.random()-.5)*4;this.vy=(Math.random()-.5)*4-1;this.life=1;this.d=.012+Math.random()*.018;this.r=2+Math.random()*3;this.ring=Math.random()>.9}
+  update(){this.x+=this.vx;this.y+=this.vy;this.vy+=.01;this.life-=this.d}
+  draw(c){if(this.life<=0)return;c.globalAlpha=this.life;c.shadowBlur=8;c.shadowColor=this.c;
+    if(this.ring){c.strokeStyle=this.c;c.lineWidth=1;c.beginPath();c.arc(this.x,this.y,this.r*(1-this.life)*16,0,Math.PI*2);c.stroke()}
+    else{c.fillStyle=this.c;c.beginPath();c.arc(this.x,this.y,this.r*this.life,0,Math.PI*2);c.fill()}
+    c.shadowBlur=0;c.globalAlpha=1}
+}
+function spawnAt(x,y){for(let i=0;i<8;i++)particles.push(new Pt(x,y,['var(--red)','var(--red-deep)','#4ade80','var(--gold)'][Math.random()*4|0]))}
+function spawnBeat(){spawnAt(cvP.width/2+(Math.random()-.5)*300,cvP.height/2+(Math.random()-.5)*400)}
+
+// === EQ ===
+function drawEQ(){
+  if(!analyser)return;analyser.getByteFrequencyData(dataArr);
+  const c=ctxEq,w=cvEq.width,h=cvEq.height;c.clearRect(0,0,w,h);
+  const bars=64,bw=w/bars,step=dataArr.length/bars|0;
+  for(let i=0;i<bars;i++){const v=dataArr[i*step|0]/255,bh=v*h*.85,x=i*bw;
+    const g=c.createLinearGradient(x,h,x,h-bh);g.addColorStop(0,'rgba(233,69,96,.4)');g.addColorStop(1,'rgba(139,28,43,.06)');
+    c.fillStyle=g;c.fillRect(x+1,h-bh,bw-2,bh)}
+}
+
+// === Beat ===
+let lastBeat=0;
+function detectBeat(now){
+  if(!analyser)return false;analyser.getByteFrequencyData(dataArr);
+  let b=0;for(let i=0;i<8;i++)b+=dataArr[i];b/=8;
+  if(b>155&&now-lastBeat>200){lastBeat=now;return true}return false;
+}
+function onBeat(){
+  $('beat-flash').style.opacity='1';setTimeout(()=>$('beat-flash').style.opacity='0',60);
+  $('k-main').style.transform='scale(1.04)';setTimeout(()=>$('k-main').style.transform='scale(1)',90);
+  spawnBeat();
+  // Spawn particles at active nodes
+  activeNodes.forEach(id=>{
+    const n=nodeMap[id];if(!n)return;
+    const p=getNodePos(n);
+    spawnAt(p.x*camZoom+cvP.width/2+camX*camZoom-cvP.width/2*camZoom,
+            p.y*camZoom+cvP.height/2+camY*camZoom-cvP.height/2*camZoom);
+  });
+}
+
+// === Lyrics ===
+let curLI=-1;
+const kM=$('k-main'),kP=$('k-prev'),kN=$('k-next');
+function updateLyrics(t){
+  let idx=0;for(let i=L.length-1;i>=0;i--){if(t>=L[i][0]){idx=i;break}}
+  if(idx===curLI)return;curLI=idx;
+  const[,text,isC,nodes]=L[idx];
+  if(text){let h='';[...text].forEach((ch,ci)=>{h+=`<span class="k-char${isC?' k-chorus':''}" style="animation-delay:${ci*.025}s">${ch}</span>`});kM.innerHTML=h}else kM.innerHTML='';
+  kP.textContent=idx>0?L[idx-1][1]:'';
+  kN.textContent=idx<L.length-1?L[idx+1][1]:'';
+
+  // Update active nodes
+  activeNodes=new Set(nodes||[]);
+  updateCamera();
+
+  // Show detail for primary node
+  if(nodes&&nodes.length>0){
+    showNodeDetail(nodes[nodes.length>2?1:0]);
+  }
+}
+
+// === Main Loop ===
+let playing=false,startTime=0;
+function loop(ts){
+  if(!playing)return;requestAnimationFrame(loop);
+  const now=performance.now(),t=audio.currentTime;
+  if(detectBeat(now))onBeat();
+  updateLyrics(t);
+  drawFlow(ts||0);
+  drawEQ();
+  ctxP.clearRect(0,0,cvP.width,cvP.height);
+  particles=particles.filter(p=>p.life>0);particles.forEach(p=>{p.update();p.draw(ctxP)});
+  if(audio.duration){$('seek').value=(t/audio.duration)*1000;
+    const cm=t/60|0,cs=t%60|0,dm=audio.duration/60|0,ds=audio.duration%60|0;
+    $('time-display').textContent=`${cm}:${String(cs).padStart(2,'0')} / ${dm}:${String(ds).padStart(2,'0')}`}
+}
+
+function play(){initAudio();audio.play();playing=true;$('btn-play').textContent='⏸';requestAnimationFrame(loop);startBubbles()}
+function pause(){audio.pause();playing=false;$('btn-play').textContent='▶'}
+function replay(){$('end').classList.remove('show');audio.currentTime=0;curLI=-1;activeNodes.clear();nodeAnimState={};camX=0;camY=0;camZoom=1;play()}
+
+$('intro').onclick=()=>{
+  $('intro').classList.add('hide');$('transport').style.opacity='1';
+  // Init all nodes visible
+  TREE.forEach(n=>{nodeAnimState[n.id]={scale:.6,glow:0,targetScale:.6}});
+  play();
+};
+$('btn-play').onclick=()=>playing?pause():play();
+$('seek').oninput=()=>{if(audio.duration)audio.currentTime=($('seek').value/1000)*audio.duration};
+audio.onended=()=>{playing=false;$('end').classList.add('show')};
+document.onkeydown=e=>{
+  if(e.code==='Space'){e.preventDefault();playing?pause():play()}
+  if(e.code==='ArrowRight')audio.currentTime=Math.min(audio.duration||0,audio.currentTime+5);
+  if(e.code==='ArrowLeft')audio.currentTime=Math.max(0,audio.currentTime-5);
+};
+</script>
+</body>
+</html>
