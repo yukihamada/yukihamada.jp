@@ -106,9 +106,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(
 </div>
 
 <div id="bg-layer">
-  <div class="bg-img active" id="bg-0" style="background-image:url(mv-assets/bg-closed-guard.png)"></div>
-  <div class="bg-img" id="bg-1" style="background-image:url(mv-assets/bg-standing.png)"></div>
+  <div class="bg-img active" id="bg-0" style="background-image:url(mv-assets/bg-flowchart.png)"></div>
+  <div class="bg-img" id="bg-1" style="background-image:url(mv-assets/bg-closed-guard.png)"></div>
   <div class="bg-img" id="bg-2" style="background-image:url(mv-assets/bg-kimura.png)"></div>
+  <div class="bg-img" id="bg-3" style="background-image:url(mv-assets/bg-triangle.png)"></div>
+  <div class="bg-img" id="bg-4" style="background-image:url(mv-assets/bg-standing.png)"></div>
+  <div class="bg-img" id="bg-5" style="background-image:url(mv-assets/bg-sweep.png)"></div>
+  <div class="bg-img" id="bg-6" style="background-image:url(mv-assets/bg-omoplata.png)"></div>
+  <div class="bg-img" id="bg-7" style="background-image:url(mv-assets/bg-backtake.png)"></div>
+  <div class="bg-img" id="bg-8" style="background-image:url(mv-assets/bg-app.png)"></div>
 </div>
 <div id="vignette"></div>
 <canvas id="cv-flow"></canvas>
@@ -632,15 +638,39 @@ function updateLyrics(t){
     showNodeDetail(nodes[nodes.length>2?1:0]);
   }
 
-  // Switch background image based on section
-  // 0: closed guard (default/intro/chorus)
-  // 1: standing (立たれた場合)
-  // 2: kimura (頭下がり attacks)
+  // Switch background: 9 images mapped to technique sections
+  // 0: flowchart (intro/JiuFlow system overview)
+  // 1: closed guard (default guard position)
+  // 2: kimura (kimura chain attacks)
+  // 3: triangle (triangle/sankaku/finish)
+  // 4: standing (立たれた場合)
+  // 5: sweep (half guard/butterfly sweep)
+  // 6: omoplata (omoplata chain)
+  // 7: backtake (テイクバック/バックコントロール)
+  // 8: app (JiuFlow app/chorus/outro)
   let bgIdx=0;
-  if(nodes&&nodes.some(n=>['cg-stand','telephone','cross-grip','cg-omo','cg-sit','sit-armbar','sit-tri','sit-flower','sit-omo','sit-ryozo','knee-bar','cg-omo-tri'].includes(n))){
-    bgIdx=1;
-  }else if(nodes&&nodes.some(n=>['cg-down','choke','guillotine','comlock','kimura','elbow','tsukkomi','kim-comlock','kim-armbar','kim-back','kim-hip','sankaku','triangle','armbar-s','inside-arm','choke-mount'].includes(n))){
-    bgIdx=2;
+  if(!nodes||!nodes.length){
+    bgIdx=0; // flowchart for intro
+  }else if(nodes.some(n=>['triangle','armbar-s','inside-arm','sankaku'].includes(n))){
+    bgIdx=3; // triangle finish
+  }else if(nodes.some(n=>['kim-back','kim-hip'].includes(n))){
+    bgIdx=7; // back take
+  }else if(nodes.some(n=>['kimura','kim-comlock','kim-armbar','choke','choke-mount','guillotine','comlock','elbow','tsukkomi'].includes(n))){
+    bgIdx=2; // kimura/head down attacks
+  }else if(nodes.some(n=>['omoplata-chain','omo-tri','omo-inside','cg-omo','cg-omo-tri','sit-omo','lapel','lapel-choke','lapel-sankaku'].includes(n))){
+    bgIdx=6; // omoplata
+  }else if(nodes.some(n=>['cg-stand','telephone','cross-grip','knee-bar'].includes(n))){
+    bgIdx=4; // standing
+  }else if(nodes.some(n=>['cg-sit','sit-armbar','sit-tri','sit-flower','sit-ryozo'].includes(n))){
+    bgIdx=5; // sweep/sit
+  }else if(nodes.some(n=>['cg-down'].includes(n))){
+    bgIdx=1; // closed guard head down
+  }else if(nodes.some(n=>['cg-up','break-posture','guard-break','cg-up-kimura'].includes(n))){
+    bgIdx=1; // closed guard head up
+  }else if(nodes.some(n=>['closed'].includes(n))&&isC){
+    bgIdx=8; // app for chorus
+  }else{
+    bgIdx=0; // flowchart default
   }
   document.querySelectorAll('.bg-img').forEach((el,i)=>el.classList.toggle('active',i===bgIdx));
 }
