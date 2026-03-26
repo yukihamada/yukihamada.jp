@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>MUSIC — 濱田優貴｜俺が使うものは、俺が作る</title>
+<meta name="description" content="濱田優貴の音楽作品。Tap, Tap, Tap / Hack, Hack, Hack — 全部自分で作ったプロダクトを歌にした。">
+<meta property="og:title" content="MUSIC — 濱田優貴｜俺が使うものは、俺が作る">
+<meta property="og:description" content="パシャ・ポン・KAGI・Koe・JiuFlow・Elio・SOLUNA——全部自分で作った。その物語を曲にした。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/ogp.png">
+<meta property="og:url" content="https://yukihamada.jp/mv/">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://yukihamada.jp/mv/">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--fg:#fff;--dim:rgba(255,255,255,.45);--gold:#D4A846;--cyan:#00ffff;--magenta:#ff00ff;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--fg);font-family:'Noto Sans JP',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+.hero{
+  text-align:center;padding:80px 24px 40px;
+  background:linear-gradient(180deg,rgba(10,10,10,0) 0%,rgba(10,10,10,1) 100%),
+    radial-gradient(ellipse at 50% 0%,rgba(212,168,70,.08) 0%,transparent 60%);
+}
+.hero-eyebrow{font-size:.7rem;letter-spacing:.4em;color:var(--dim);text-transform:uppercase;margin-bottom:12px;}
+.hero-title{font-size:clamp(2rem,6vw,3.5rem);font-weight:900;line-height:1.2;letter-spacing:-.01em;}
+.hero-sub{font-size:clamp(.85rem,2vw,1.05rem);color:var(--dim);margin-top:12px;line-height:1.8;font-weight:300;}
+
+.songs{max-width:720px;margin:0 auto;padding:0 20px 40px;display:flex;flex-direction:column;gap:20px;}
+
+.song-card{
+  display:flex;align-items:center;gap:20px;
+  padding:24px;border-radius:16px;
+  text-decoration:none;color:#fff;
+  transition:transform .15s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.song-card:hover{transform:translateY(-3px);}
+.song-card::before{
+  content:'';position:absolute;inset:0;
+  opacity:.08;transition:opacity .2s;
+}
+.song-card:hover::before{opacity:.15;}
+
+.song-1{background:rgba(212,168,70,.06);border:1px solid rgba(212,168,70,.2);}
+.song-1::before{background:linear-gradient(135deg,var(--gold),transparent);}
+.song-1:hover{box-shadow:0 8px 40px rgba(212,168,70,.15);}
+
+.song-2{background:rgba(0,255,255,.04);border:1px solid rgba(0,255,255,.2);}
+.song-2::before{background:linear-gradient(135deg,var(--cyan),var(--magenta));}
+.song-2:hover{box-shadow:0 8px 40px rgba(0,255,255,.12);}
+
+.song-3{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);opacity:.5;pointer-events:none;}
+
+.song-num{
+  width:48px;height:48px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;font-weight:900;flex-shrink:0;
+}
+.song-1 .song-num{background:rgba(212,168,70,.15);color:var(--gold);}
+.song-2 .song-num{background:rgba(0,255,255,.1);color:var(--cyan);}
+.song-3 .song-num{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);}
+
+.song-info{flex:1;min-width:0;}
+.song-title{font-size:clamp(1.1rem,3vw,1.4rem);font-weight:900;line-height:1.3;}
+.song-desc{font-size:.8rem;color:var(--dim);margin-top:4px;line-height:1.5;}
+.song-tag{display:inline-block;margin-top:6px;font-size:.6rem;letter-spacing:.15em;padding:3px 10px;border-radius:10px;}
+.song-1 .song-tag{background:rgba(212,168,70,.1);color:var(--gold);}
+.song-2 .song-tag{background:rgba(0,255,255,.08);color:var(--cyan);}
+.song-3 .song-tag{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);}
+
+.song-play{
+  font-size:1.5rem;flex-shrink:0;width:44px;height:44px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:50%;transition:transform .15s;
+}
+.song-card:hover .song-play{transform:scale(1.15);}
+.song-1 .song-play{background:rgba(212,168,70,.15);}
+.song-2 .song-play{background:rgba(0,255,255,.1);}
+
+/* Fan Club */
+.fanclub{
+  max-width:720px;margin:0 auto;padding:0 20px 40px;
+}
+.fc-card{
+  padding:32px 24px;text-align:center;
+  background:linear-gradient(135deg,rgba(212,168,70,.04),rgba(0,255,255,.03));
+  border:1px solid rgba(212,168,70,.2);border-radius:16px;
+  position:relative;overflow:hidden;
+}
+.fc-badge{
+  position:absolute;top:0;right:0;
+  background:linear-gradient(135deg,var(--gold),var(--cyan));
+  color:#000;font-size:.55rem;font-weight:700;
+  padding:4px 14px;border-radius:0 0 0 10px;letter-spacing:.12em;
+}
+.fc-title{font-size:clamp(1.3rem,4vw,1.8rem);font-weight:900;margin-top:8px;}
+.fc-sub{font-size:.85rem;color:var(--dim);margin-top:6px;}
+.fc-price{margin-top:16px;}
+.fc-price-num{font-size:clamp(2.5rem,8vw,3.5rem);font-weight:900;color:var(--gold);}
+.fc-price-unit{font-size:.9rem;color:var(--dim);}
+.fc-services{
+  margin-top:16px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;
+}
+.fc-svc{
+  background:rgba(212,168,70,.06);border:1px solid rgba(212,168,70,.12);
+  border-radius:5px;padding:5px 10px;font-size:.65rem;color:rgba(255,255,255,.6);
+}
+.fc-perks{margin-top:10px;font-size:.65rem;color:var(--gold);opacity:.7;}
+.fc-btn{
+  display:inline-block;margin-top:18px;padding:13px 40px;
+  background:var(--gold);color:#000;font-size:.85rem;font-weight:700;
+  letter-spacing:.05em;border-radius:24px;text-decoration:none;
+  box-shadow:0 4px 24px rgba(212,168,70,.3);transition:all .2s;
+}
+.fc-btn:hover{box-shadow:0 6px 32px rgba(212,168,70,.45);transform:translateY(-2px);}
+.fc-note{margin-top:8px;font-size:.65rem;color:rgba(255,255,255,.25);}
+
+/* Newsletter */
+.nl{max-width:720px;margin:0 auto;padding:0 20px 40px;}
+.nl-card{
+  padding:24px;background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.08);border-radius:12px;text-align:center;
+}
+.nl-title{font-size:.95rem;font-weight:700;}
+.nl-sub{font-size:.75rem;color:var(--dim);margin-top:4px;}
+.nl-form{margin-top:12px;display:flex;gap:8px;max-width:400px;margin-left:auto;margin-right:auto;}
+.nl-input{
+  flex:1;padding:10px 14px;background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.15);border-radius:8px;
+  color:#fff;font-size:.85rem;outline:none;
+}
+.nl-input:focus{border-color:var(--gold);}
+.nl-btn{
+  padding:10px 20px;background:var(--gold);border:none;border-radius:8px;
+  color:#000;font-size:.75rem;font-weight:700;cursor:pointer;white-space:nowrap;
+}
+.nl-msg{margin-top:8px;font-size:.75rem;color:var(--gold);display:none;}
+
+/* Footer */
+.footer{
+  max-width:720px;margin:0 auto;padding:0 20px 60px;text-align:center;
+}
+.footer-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.footer-links a{
+  font-size:.8rem;color:var(--dim);text-decoration:none;
+  padding:8px 14px;border:1px solid rgba(255,255,255,.08);border-radius:8px;
+  transition:border-color .2s;
+}
+.footer-links a:hover{border-color:rgba(255,255,255,.25);}
+.footer-copy{margin-top:24px;font-size:.65rem;color:rgba(255,255,255,.2);letter-spacing:.05em;}
+
+@media(max-width:500px){
+  .song-card{flex-wrap:wrap;gap:12px;padding:18px;}
+  .song-play{display:none;}
+  .nl-form{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-eyebrow">Yuki Hamada — Music</div>
+  <h1 class="hero-title">俺が使うものは、<br>俺が作る。</h1>
+  <p class="hero-sub">
+    確定申告・電子契約・スマートロック・音声デバイス・柔術・AI・フェス——<br>
+    全部自分で作った。その物語を曲にした。
+  </p>
+</div>
+
+<div class="songs">
+  <a class="song-card song-1" href="/mv/tap.html">
+    <div class="song-num">1</div>
+    <div class="song-info">
+      <div class="song-title">Tap, Tap, Tap</div>
+      <div class="song-desc">不便だと思ったら作ればいい。7つのプロダクトを紹介するMV。</div>
+      <span class="song-tag">ACOUSTIC / STORYTELLING</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-2" href="/mv/hack.html">
+    <div class="song-num">2</div>
+    <div class="song-info">
+      <div class="song-title">Hack, Hack, Hack</div>
+      <div class="song-desc">ソフトだけじゃ足りない。ハードもAIも、全部作ってる。</div>
+      <span class="song-tag">EDM / AGGRESSIVE</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <div class="song-card song-3">
+    <div class="song-num">3</div>
+    <div class="song-info">
+      <div class="song-title">Coming Soon</div>
+      <div class="song-desc">3曲目、準備中。</div>
+      <span class="song-tag">TBA</span>
+    </div>
+  </div>
+</div>
+
+<div class="fanclub">
+  <div class="fc-card">
+    <div class="fc-badge">第1期メンバー募集中</div>
+    <div style="font-size:1.8rem;">⚡</div>
+    <div class="fc-title">Enabler ファンクラブ</div>
+    <div class="fc-sub">一緒に作る側になろう。第1期は特別価格。</div>
+    <div class="fc-price">
+      <span class="fc-price-num">¥980</span>
+      <span class="fc-price-unit">/月</span>
+      <div style="font-size:.65rem;color:var(--dim);margin-top:2px;">※第1期限定価格</div>
+    </div>
+    <div class="fc-services">
+      <span class="fc-svc">📸 パシャ Pro</span>
+      <span class="fc-svc">📝 ポン 電子契約</span>
+      <span class="fc-svc">🔑 KAGI スマートホーム</span>
+      <span class="fc-svc">🎙 Koe 音声入力</span>
+      <span class="fc-svc">🥋 JiuFlow 全10フロー</span>
+      <span class="fc-svc">🤖 Elio ローカルAI</span>
+      <span class="fc-svc">🎵 Soluna フェス同期</span>
+      <span class="fc-svc">⚡ OpenClaw AI群</span>
+    </div>
+    <div class="fc-perks">✦ 新プロダクト先行アクセス ✦ 限定コミュニティ ✦ 開発の裏側</div>
+    <a class="fc-btn" href="https://buy.stripe.com/aFacN503FcQq4VGblmefC3z" target="_blank">第1期メンバーになる →</a>
+    <div class="fc-note">Stripe で安全に決済 · いつでもキャンセル可能</div>
+  </div>
+</div>
+
+<div class="nl">
+  <div class="nl-card">
+    <div class="nl-title">Newsletter</div>
+    <div class="nl-sub">新曲・新プロダクトのリリース情報をお届け</div>
+    <form class="nl-form" onsubmit="return nlSubmit(event)">
+      <input class="nl-input" id="nl-email" type="email" required placeholder="your@email.com">
+      <button class="nl-btn" type="submit">登録</button>
+    </form>
+    <div class="nl-msg" id="nl-msg"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-links">
+    <a href="/mv/apps.html">📱 全プロダクト一覧</a>
+    <a href="/">yukihamada.jp</a>
+    <a href="https://twitter.com/yukihamada" target="_blank">X / @yukihamada</a>
+    <a href="https://github.com/yukihamada" target="_blank">GitHub</a>
+  </div>
+  <div class="footer-copy">© 2026 Yuki Hamada — 俺が使うものは、俺が作る。</div>
+</div>
+
+<script>
+function nlSubmit(e){
+  e.preventDefault();
+  const email=document.getElementById('nl-email').value;
+  if(!email)return false;
+  fetch('/api/newsletter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).catch(()=>{});
+  const msg=document.getElementById('nl-msg');
+  msg.textContent='登録ありがとうございます！';
+  msg.style.display='block';
+  document.getElementById('nl-email').disabled=true;
+  e.target.querySelector('button').textContent='✓';
+  return false;
+}
+</script>
+</body>
+</html>

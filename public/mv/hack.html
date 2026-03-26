@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Primary -->
+<title>Hack, Hack, Hack｜ソフトもハードもAIも、全部作ってる — 濱田優貴</title>
+<meta name="description" content="ソフトだけじゃ足りない。Koe COIN・Soluna・OpenClaw——ハードもAIも全部自分で作った男のEDM MV。パシャ・ポン・KAGI・Koe・Soluna・OpenClaw">
+<meta name="author" content="濱田優貴 / Yuki Hamada">
+<meta name="keywords" content="Hack,パシャ,ポン,KAGI,Koe,Soluna,OpenClaw,濱田優貴,EDM,MV,ハードウェア,AI,インディーデベロッパー,Koe COIN">
+<link rel="canonical" href="https://yukihamada.jp/mv/hack.html">
+
+<!-- OGP (Facebook / LINE / Slack) -->
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/hack.html">
+<meta property="og:site_name" content="Hack, Hack, Hack — 濱田優貴">
+<meta property="og:title" content="Hack, Hack, Hack｜ソフトもハードもAIも、全部作ってる">
+<meta property="og:description" content="ソフトだけじゃ足りない。500円玉サイズのデバイス、10000台のフェススピーカー、24時間動くAI群——全部自分で作った。不便だと思ったら作ればいい🔥">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/ogp-hack.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="HACK — ソフトもハードもAIも、全部作ってる">
+<meta property="og:locale" content="ja_JP">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@yukihamada">
+<meta name="twitter:creator" content="@yukihamada">
+<meta name="twitter:title" content="Hack, Hack, Hack｜ソフトもハードもAIも全部作ってる">
+<meta name="twitter:description" content="Koe COIN・Soluna・OpenClaw——ハードもAIも全部自分で作った。不便だと思ったら作ればいい🔥 EDM MV by 濱田優貴">
+<meta name="twitter:image" content="https://yukihamada.jp/mv/assets/ogp-hack.png">
+<meta name="twitter:image:alt" content="HACK — ソフトもハードもAIも、全部作ってる">
+
+<!-- JSON-LD -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicVideoObject",
+  "name": "Hack, Hack, Hack",
+  "description": "ソフトだけじゃ足りない。ハードもAIも全部自分で作った男のEDM MV。パシャ・ポン・KAGI・Koe COIN・Soluna・OpenClaw",
+  "url": "https://yukihamada.jp/mv/hack.html",
+  "thumbnailUrl": "https://yukihamada.jp/mv/assets/ogp-hack.png",
+  "genre": "EDM",
+  "author": {
+    "@type": "Person",
+    "name": "濱田優貴",
+    "alternateName": "Yuki Hamada",
+    "url": "https://yukihamada.jp",
+    "sameAs": [
+      "https://twitter.com/yukihamada",
+      "https://github.com/yukihamada"
+    ]
+  },
+  "keywords": "EDM,ハードウェア,AI,インディーデベロッパー,Koe COIN,Soluna,OpenClaw"
+}
+</script>
+
+<!-- Apple -->
+<link rel="apple-touch-icon" href="https://yukihamada.jp/mv/assets/ogp-hack.png">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2300ffff'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='18'%3E⚡%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --cyan:#00ffff;
+  --magenta:#ff00ff;
+  --blue:#0066ff;
+  --white:#ffffff;
+  --red:#ff2200;
+  --bg:#04000a;
+  --bg2:#000;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{
+  width:100vw;height:100vh;overflow:hidden;
+  background:var(--bg);
+  font-family:'Noto Sans JP',sans-serif;
+  color:#fff;
+}
+
+/* ── PROGRESS ── */
+#prog{
+  position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--blue),var(--cyan),var(--magenta));
+  z-index:9999;box-shadow:0 0 12px var(--cyan);
+  transition:width .1s linear;
+}
+
+/* ── SCENES ── */
+.scene{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .08s linear;
+  overflow:hidden;
+}
+.scene.active{opacity:1;pointer-events:all;}
+.scene.exit{opacity:0;}
+
+.scene-bg{
+  position:absolute;inset:-5%;
+  background-size:cover;background-position:center;
+  filter:brightness(.3) saturate(2.2) contrast(1.4);
+  transform:scale(1);
+}
+.scene.active .scene-bg{animation:rawzoom 20s linear infinite alternate;}
+@keyframes rawzoom{
+  0%  {transform:scale(1) translateX(0);}
+  100%{transform:scale(1.06) translateX(-1%);}
+}
+
+.scene-color-overlay{
+  position:absolute;inset:0;
+  mix-blend-mode:screen;opacity:.18;
+}
+
+.scene-vignette{
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,.85) 100%);
+  pointer-events:none;
+}
+
+/* ── OVERLAYS ── */
+#glitch-overlay{
+  position:fixed;inset:0;z-index:8000;
+  pointer-events:none;display:none;
+  mix-blend-mode:screen;
+  background:transparent;
+}
+#strobe{
+  position:fixed;inset:0;z-index:7900;
+  pointer-events:none;
+  background:#fff;opacity:0;
+  transition:none;
+}
+#flash{
+  position:fixed;inset:0;z-index:7800;
+  pointer-events:none;
+  background:var(--cyan);opacity:0;
+  transition:opacity .04s linear;
+}
+#scanline{
+  position:fixed;left:0;right:0;height:2px;z-index:7700;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(0,255,255,.4),transparent);
+  animation:scanmove 3s linear infinite;
+  mix-blend-mode:screen;
+}
+@keyframes scanmove{
+  0%  {top:0%;}
+  100%{top:100%;}
+}
+
+/* ── PRE-EDM MODE (0-16s) — calm like Tap,Tap,Tap ── */
+body.pre-edm #scanline { display:none; }
+body.pre-edm #cv-scope,
+body.pre-edm #cv-eq,
+body.pre-edm #cv-particles { opacity:0 !important; }
+body.pre-edm #prog { display:none; }
+body.pre-edm .scene-bg { filter:brightness(.07) saturate(0) !important; }
+body.pre-edm .scene-color-overlay { opacity:0 !important; }
+body.pre-edm #s-intro .hack-title { display:none; }
+body.pre-edm #s-intro .hack-sub  { display:none; }
+body.pre-edm #s-intro .calm-intro { display:flex; }
+body.pre-edm .k-main {
+  font-size:clamp(1.6rem,5vw,3rem) !important;
+  text-shadow:0 0 20px rgba(255,255,255,.2) !important;
+  animation:none !important;
+}
+
+/* CALM INTRO text */
+.calm-intro {
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  gap:8px;
+}
+.calm-line {
+  font-family:'Noto Sans JP',sans-serif;
+  font-size:clamp(2rem,7vw,4.5rem);
+  font-weight:900;
+  color:#fff;
+  letter-spacing:.04em;
+  line-height:1.4;
+  opacity:0;
+  animation:calmFadeIn 1.2s ease forwards;
+}
+.calm-line:nth-child(2){ animation-delay:.4s; }
+@keyframes calmFadeIn{
+  from{opacity:0;transform:translateY(16px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* ── CANVAS LAYERS ── */
+#cv-particles{
+  position:fixed;inset:0;z-index:100;
+  pointer-events:none;
+}
+#cv-scope{
+  position:fixed;bottom:200px;left:0;right:0;
+  height:160px;z-index:200;
+  pointer-events:none;opacity:.7;
+}
+#cv-eq{
+  position:fixed;bottom:0;left:0;right:0;
+  height:60px;z-index:210;
+  pointer-events:none;opacity:.85;
+}
+
+/* ── KARAOKE ── */
+#karaoke{
+  position:fixed;bottom:80px;left:0;right:0;
+  z-index:6000;
+  text-align:center;
+  padding:0 24px;
+  pointer-events:none;
+}
+.k-main{
+  font-size:clamp(1.8rem,5vw,3.2rem);
+  font-weight:900;
+  color:#fff;
+  text-shadow:0 0 20px var(--cyan),0 0 40px var(--cyan),0 0 80px rgba(0,255,255,.4);
+  line-height:1.3;
+  letter-spacing:.02em;
+  opacity:0;
+  transform:translateY(8px) skewX(-2deg);
+  transition:opacity .06s, transform .06s;
+  font-family:'Noto Sans JP',sans-serif;
+}
+.k-main.show{opacity:1;transform:translateY(0) skewX(0deg);}
+.k-main.glitching{
+  animation:glitch-text .15s steps(2) 2;
+}
+@keyframes glitch-text{
+  0%  {text-shadow:2px 0 var(--red),0 0 20px var(--cyan);transform:skewX(-3deg);}
+  25% {text-shadow:-2px 0 var(--blue),0 0 20px var(--cyan);transform:skewX(3deg);}
+  50% {text-shadow:2px 2px var(--magenta),0 0 20px var(--cyan);transform:skewX(-1deg);}
+  75% {text-shadow:-2px -2px var(--cyan),0 0 20px var(--magenta);transform:skewX(2deg);}
+  100%{text-shadow:0 0 20px var(--cyan),0 0 40px var(--cyan);transform:skewX(0);}
+}
+
+/* ── TRANSPORT ── */
+#transport{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  z-index:9000;
+  display:flex;align-items:center;gap:16px;
+  background:rgba(0,0,0,.7);
+  border:1px solid rgba(0,255,255,.3);
+  border-radius:40px;
+  padding:8px 20px;
+  backdrop-filter:blur(10px);
+  box-shadow:0 0 20px rgba(0,255,255,.2);
+}
+#btn-play{
+  width:40px;height:40px;border-radius:50%;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));
+  border:none;cursor:pointer;color:#000;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 15px var(--cyan);
+  transition:box-shadow .2s;
+}
+#btn-play:hover{box-shadow:0 0 30px var(--cyan);}
+#time-display{
+  font-family:'Orbitron',monospace;font-size:12px;
+  color:var(--cyan);letter-spacing:.1em;min-width:80px;text-align:center;
+}
+#seek-bar{
+  width:120px;height:3px;
+  background:rgba(255,255,255,.2);
+  border-radius:2px;cursor:pointer;
+  -webkit-appearance:none;appearance:none;
+}
+#seek-bar::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:12px;height:12px;border-radius:50%;
+  background:var(--cyan);cursor:pointer;
+  box-shadow:0 0 8px var(--cyan);
+}
+
+/* ── SCENE CONTENT ── */
+.scene-content{
+  position:relative;z-index:500;
+  text-align:center;
+  padding:60px 40px 240px;
+  width:100%;max-width:960px;
+}
+
+/* INTRO */
+#s-intro .hack-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(4rem,18vw,12rem);
+  font-weight:900;
+  color:var(--cyan);
+  text-shadow:0 0 30px var(--cyan),0 0 80px var(--cyan),0 0 160px rgba(0,255,255,.4);
+  line-height:1;
+  letter-spacing:-.02em;
+  animation:pulse-glow 1.2s ease-in-out infinite alternate;
+}
+@keyframes pulse-glow{
+  0%  {text-shadow:0 0 30px var(--cyan),0 0 80px var(--cyan);}
+  100%{text-shadow:0 0 60px var(--cyan),0 0 150px var(--cyan),0 0 250px rgba(0,255,255,.3);}
+}
+#s-intro .hack-sub{
+  font-size:clamp(1rem,3vw,1.6rem);
+  color:rgba(255,255,255,.7);
+  letter-spacing:.15em;
+  margin-top:16px;
+  text-shadow:0 0 10px var(--cyan);
+}
+
+/* APPS */
+#s-apps .apps-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+  max-width:700px;margin:0 auto;
+}
+@media(max-width:600px){#s-apps .apps-grid{grid-template-columns:repeat(2,1fr);}}
+.app-card{
+  background:rgba(0,255,255,.06);
+  border:1px solid rgba(0,255,255,.3);
+  border-radius:12px;
+  padding:24px 12px;
+  cursor:default;
+  transition:border-color .2s,box-shadow .2s,transform .15s;
+  animation:card-flicker 4s ease-in-out infinite;
+}
+.app-card:hover{
+  border-color:var(--cyan);
+  box-shadow:0 0 30px rgba(0,255,255,.4),inset 0 0 20px rgba(0,255,255,.1);
+  transform:translateY(-4px) scale(1.04);
+}
+.app-card:nth-child(2){animation-delay:.5s;}
+.app-card:nth-child(3){animation-delay:1s;}
+.app-card:nth-child(4){animation-delay:1.5s;}
+@keyframes card-flicker{
+  0%,100%{box-shadow:0 0 10px rgba(0,255,255,.2);}
+  50%{box-shadow:0 0 25px rgba(0,255,255,.5),0 0 50px rgba(0,255,255,.2);}
+}
+.app-icon{font-size:2.4rem;margin-bottom:10px;}
+.app-name{
+  font-family:'Orbitron',monospace;
+  font-size:.9rem;font-weight:700;
+  color:var(--cyan);letter-spacing:.1em;
+  text-shadow:0 0 10px var(--cyan);
+}
+.app-desc{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:6px;line-height:1.4;}
+#s-apps .apps-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.2rem,4vw,2.2rem);
+  color:var(--magenta);
+  text-shadow:0 0 20px var(--magenta);
+  letter-spacing:.15em;
+  margin-bottom:32px;
+}
+
+/* KAGI-HW */
+#s-kagi-hw .stat-giant{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(4rem,18vw,11rem);
+  font-weight:900;
+  color:var(--blue);
+  text-shadow:0 0 40px var(--blue),0 0 100px rgba(0,102,255,.5);
+  line-height:1;
+  animation:pulse-blue 1.5s ease-in-out infinite alternate;
+}
+@keyframes pulse-blue{
+  0%  {text-shadow:0 0 40px var(--blue),0 0 100px rgba(0,102,255,.5);}
+  100%{text-shadow:0 0 70px var(--blue),0 0 200px rgba(0,102,255,.4),0 0 300px rgba(0,102,255,.2);}
+}
+#s-kagi-hw .stat-unit{
+  font-size:clamp(1.5rem,5vw,3rem);color:rgba(0,102,255,.8);
+}
+#s-kagi-hw .stat-label{
+  font-size:clamp(.9rem,2.5vw,1.4rem);
+  color:rgba(255,255,255,.6);
+  margin-top:12px;letter-spacing:.08em;
+}
+#s-kagi-hw .kagi-desc{
+  margin-top:24px;
+  font-size:clamp(.8rem,2vw,1rem);
+  color:rgba(0,255,255,.7);
+  letter-spacing:.1em;
+  border:1px solid rgba(0,255,255,.2);
+  border-radius:8px;
+  padding:12px 24px;
+  display:inline-block;
+}
+
+/* KOE */
+#s-koe .radar-wrap{
+  position:relative;
+  width:280px;height:280px;
+  margin:0 auto 24px;
+}
+#s-koe .coin-center{
+  position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  width:60px;height:60px;border-radius:50%;
+  background:radial-gradient(circle,#fff 20%,var(--cyan) 60%,transparent 100%);
+  box-shadow:0 0 30px var(--cyan),0 0 60px rgba(0,255,255,.5);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.8rem;
+  animation:coinpulse 1s ease-in-out infinite alternate;
+}
+@keyframes coinpulse{
+  0%{box-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,255,255,.4);}
+  100%{box-shadow:0 0 50px var(--cyan),0 0 100px rgba(0,255,255,.6);}
+}
+.radar-ring{
+  position:absolute;top:50%;left:50%;
+  border-radius:50%;
+  border:1px solid rgba(0,255,255,.5);
+  transform:translate(-50%,-50%) scale(0);
+  animation:radarexpand 2s ease-out infinite;
+}
+.radar-ring:nth-child(2){animation-delay:.5s;}
+.radar-ring:nth-child(3){animation-delay:1s;}
+.radar-ring:nth-child(4){animation-delay:1.5s;}
+@keyframes radarexpand{
+  0%  {transform:translate(-50%,-50%) scale(0);opacity:.8;width:60px;height:60px;}
+  100%{transform:translate(-50%,-50%) scale(1);opacity:0;width:280px;height:280px;}
+}
+#s-koe .koe-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.5rem,5vw,3rem);
+  font-weight:900;color:var(--cyan);
+  text-shadow:0 0 25px var(--cyan);
+  letter-spacing:.2em;
+  margin-bottom:8px;
+}
+#s-koe .koe-specs{
+  display:flex;justify-content:center;gap:24px;flex-wrap:wrap;
+  margin-top:16px;
+}
+.koe-spec-item{
+  font-size:.85rem;color:rgba(0,255,255,.7);
+  border:1px solid rgba(0,255,255,.25);
+  border-radius:4px;padding:6px 14px;
+  letter-spacing:.08em;
+}
+
+/* SOLUNA */
+#s-soluna .dot-grid{
+  display:grid;
+  grid-template-columns:repeat(25,1fr);
+  gap:4px;
+  max-width:600px;margin:0 auto 24px;
+  padding:0 16px;
+}
+@media(max-width:600px){
+  #s-soluna .dot-grid{grid-template-columns:repeat(15,1fr);gap:3px;}
+}
+.sol-dot{
+  aspect-ratio:1;border-radius:50%;
+  background:var(--magenta);
+  box-shadow:0 0 4px var(--magenta);
+  animation:dotpulse 1.5s ease-in-out infinite;
+}
+@keyframes dotpulse{
+  0%,100%{opacity:.3;transform:scale(.6);}
+  50%{opacity:1;transform:scale(1);}
+}
+#s-soluna .soluna-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1.4rem,4vw,2.5rem);
+  color:var(--magenta);
+  text-shadow:0 0 25px var(--magenta);
+  letter-spacing:.15em;
+  margin-bottom:16px;
+}
+#s-soluna .soluna-stat{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(2rem,8vw,5rem);
+  font-weight:900;color:#fff;
+  text-shadow:0 0 30px var(--magenta),0 0 70px rgba(255,0,255,.5);
+  margin-bottom:8px;
+}
+#s-soluna .soluna-sub{
+  font-size:.9rem;color:rgba(255,0,255,.7);letter-spacing:.12em;
+}
+
+/* OPENCLAW */
+#s-openclaw .agents-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;max-width:700px;margin:0 auto;
+}
+@media(max-width:600px){#s-openclaw .agents-grid{grid-template-columns:repeat(2,1fr);}}
+.agent-card{
+  background:rgba(255,34,0,.08);
+  border:1px solid rgba(255,34,0,.4);
+  border-radius:10px;padding:20px 10px;
+  transition:all .2s;
+}
+.agent-card:hover{
+  border-color:var(--red);
+  box-shadow:0 0 25px rgba(255,34,0,.5);
+}
+.agent-status{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--red);margin:0 auto 10px;
+  box-shadow:0 0 10px var(--red);
+  animation:blink-status .8s ease-in-out infinite;
+}
+@keyframes blink-status{
+  0%,100%{opacity:1;}50%{opacity:.3;}
+}
+.agent-name{
+  font-family:'Orbitron',monospace;
+  font-size:.85rem;font-weight:700;
+  color:var(--red);letter-spacing:.1em;
+  text-shadow:0 0 8px var(--red);
+}
+.agent-emoji{font-size:1.6rem;margin-bottom:8px;}
+.agent-role{font-size:.65rem;color:rgba(255,34,0,.6);margin-top:6px;letter-spacing:.05em;}
+#s-openclaw .openclaw-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1rem,3.5vw,2rem);
+  color:var(--red);text-shadow:0 0 20px var(--red);
+  letter-spacing:.15em;margin-bottom:28px;
+}
+
+/* CHORUS */
+#s-chorus .hack-massive{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(5rem,22vw,16rem);
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-.04em;
+  animation:chorus-glitch 3s steps(1) infinite;
+}
+@keyframes chorus-glitch{
+  0%,90%,100%{
+    color:var(--white);
+    text-shadow:0 0 40px #fff,0 0 100px rgba(255,255,255,.5);
+  }
+  91%{
+    color:var(--red);
+    text-shadow:4px 0 var(--cyan),-4px 0 var(--red),0 0 40px var(--red);
+    transform:skewX(-4deg);
+  }
+  93%{
+    color:var(--cyan);
+    text-shadow:-4px 0 var(--magenta),4px 0 var(--blue),0 0 40px var(--cyan);
+    transform:skewX(2deg);
+  }
+  95%{
+    color:#fff;
+    text-shadow:0 0 40px #fff;
+    transform:skewX(0);
+  }
+}
+#s-chorus .chorus-sub{
+  font-size:clamp(1rem,3.5vw,2rem);
+  color:rgba(255,255,255,.5);
+  letter-spacing:.3em;margin-top:8px;
+  font-family:'Orbitron',monospace;
+}
+
+/* BRIDGE */
+#s-bridge .bridge-lines{
+  max-width:600px;margin:0 auto;
+  text-align:left;
+}
+.bridge-line{
+  font-size:clamp(1.1rem,3vw,1.8rem);
+  color:rgba(255,255,255,.85);
+  margin-bottom:12px;
+  padding-left:16px;
+  border-left:3px solid var(--cyan);
+  letter-spacing:.04em;
+}
+#s-bridge .bridge-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1rem,3vw,1.6rem);
+  color:var(--cyan);text-shadow:0 0 15px var(--cyan);
+  letter-spacing:.2em;margin-bottom:28px;
+}
+
+/* OUTRO */
+#s-outro .outro-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;max-width:600px;margin:0 auto;
+}
+@media(max-width:500px){#s-outro .outro-grid{grid-template-columns:repeat(2,1fr);}}
+.outro-item{
+  text-align:center;
+  padding:16px 8px;
+  border:1px solid rgba(255,0,255,.3);
+  border-radius:8px;
+  background:rgba(255,0,255,.05);
+  transition:all .2s;
+}
+.outro-item:hover{
+  border-color:var(--magenta);
+  box-shadow:0 0 20px rgba(255,0,255,.4);
+}
+.outro-emoji{font-size:2rem;margin-bottom:8px;}
+.outro-name{
+  font-family:'Orbitron',monospace;
+  font-size:.7rem;color:var(--magenta);
+  text-shadow:0 0 8px var(--magenta);
+  letter-spacing:.08em;
+}
+#s-outro .outro-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(1rem,3vw,1.8rem);
+  color:var(--magenta);text-shadow:0 0 20px var(--magenta);
+  letter-spacing:.15em;margin-bottom:28px;
+}
+
+/* ── START OVERLAY ── */
+#start-overlay{
+  position:fixed;inset:0;z-index:99999;
+  background:radial-gradient(ellipse at center,#04000a 0%,#000 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+#start-overlay .so-title{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(3rem,12vw,8rem);
+  font-weight:900;
+  color:var(--cyan);
+  text-shadow:0 0 40px var(--cyan),0 0 100px rgba(0,255,255,.4);
+  animation:so-flicker 2s steps(1) infinite;
+  letter-spacing:.1em;
+}
+@keyframes so-flicker{
+  0%,94%,100%{opacity:1;}
+  95%{opacity:.3;}
+  97%{opacity:1;}
+  98%{opacity:.5;}
+}
+#start-overlay .so-sub{
+  font-size:clamp(.9rem,2.5vw,1.2rem);
+  color:rgba(255,255,255,.5);
+  letter-spacing:.3em;
+  margin-top:16px;
+  animation:so-blink 1.2s ease-in-out infinite;
+}
+@keyframes so-blink{
+  0%,100%{opacity:.5;}50%{opacity:1;}
+}
+#start-overlay .so-line{
+  width:200px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  margin:24px auto;
+  animation:linepulse 1.5s ease-in-out infinite;
+}
+@keyframes linepulse{
+  0%,100%{opacity:.4;width:150px;}
+  50%{opacity:1;width:250px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── START OVERLAY ── -->
+<div id="start-overlay" onclick="startExperience()">
+  <div class="so-title">HACK</div>
+  <div class="so-line"></div>
+  <div class="so-sub">▶ TAP TO START</div>
+</div>
+
+<!-- ── UI LAYERS ── -->
+<div id="prog"></div>
+<div id="glitch-overlay"></div>
+<div id="strobe"></div>
+<div id="flash"></div>
+<div id="scanline"></div>
+<canvas id="cv-particles"></canvas>
+<canvas id="cv-scope"></canvas>
+<canvas id="cv-eq"></canvas>
+
+<!-- ── SCENES ── -->
+
+<!-- INTRO -->
+<div class="scene active" id="s-intro">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/intro_v2_1.jpg')"></div>
+  <div class="scene-color-overlay" style="background:var(--cyan)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div class="hack-title">HACK</div>
+    <div class="hack-sub">俺が使うものは、俺が作る</div>
+    <!-- shown only in pre-EDM mode -->
+    <div class="calm-intro">
+      <div class="calm-line">俺が使うものは、</div>
+      <div class="calm-line">俺が作る。</div>
+    </div>
+  </div>
+</div>
+
+<!-- APPS -->
+<div class="scene" id="s-apps">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/chorus_v2_1.jpg')"></div>
+  <div class="scene-color-overlay" style="background:var(--magenta)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div class="apps-title">// PRODUCTS //</div>
+    <div class="apps-grid">
+      <div class="app-card">
+        <div class="app-icon">📸</div>
+        <div class="app-name">パシャ</div>
+        <div class="app-desc">確定申告3秒</div>
+      </div>
+      <div class="app-card">
+        <div class="app-icon">📝</div>
+        <div class="app-name">ポン</div>
+        <div class="app-desc">電子契約即刻</div>
+      </div>
+      <div class="app-card">
+        <div class="app-icon">🔑</div>
+        <div class="app-name">KAGI</div>
+        <div class="app-desc">命を見守る</div>
+      </div>
+      <div class="app-card">
+        <div class="app-icon">🎙</div>
+        <div class="app-name">Koe</div>
+        <div class="app-desc">声が最速UI</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HARDWARE BRIDGE — "スマホ出せない時" -->
+<div class="scene" id="s-kagi-hw">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/kagi_v2_2.jpg')"></div>
+  <div class="scene-color-overlay" style="background:var(--blue)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div style="font-family:'Orbitron',monospace;font-size:clamp(1rem,3vw,1.6rem);color:rgba(0,102,255,.7);letter-spacing:.25em;margin-bottom:24px;">// LIMITATION //</div>
+    <div style="font-size:clamp(1.4rem,4vw,2.4rem);color:#fff;line-height:1.8;font-weight:300;">
+      スマホを出せない時——<br>
+      <span style="color:var(--blue);font-weight:700;font-size:clamp(2rem,6vw,4rem);">アプリは使えない。</span>
+    </div>
+    <div style="margin-top:32px;font-size:clamp(1rem,2.5vw,1.3rem);color:rgba(255,255,255,.5);line-height:2;">
+      走りながら。荷物持ちながら。<br>
+      手が塞がってる時——声しか使えない。
+    </div>
+    <div style="margin-top:28px;font-family:'Orbitron',monospace;font-size:clamp(1.2rem,3.5vw,2rem);color:var(--blue);text-shadow:0 0 20px var(--blue);letter-spacing:.1em;">
+      だから次は、形にする。
+    </div>
+  </div>
+</div>
+
+<!-- KOE COIN -->
+<div class="scene" id="s-koe">
+  <div class="scene-bg" style="background:linear-gradient(135deg,#0a0015,#050020)"></div>
+  <div class="scene-color-overlay" style="background:var(--cyan)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="koe-title">KOE COIN</div>
+    <div style="margin:16px auto;max-width:500px;width:90%;border-radius:16px;overflow:hidden;border:1px solid rgba(0,255,255,.25);box-shadow:0 0 40px rgba(0,255,255,.15);">
+      <img src="https://koe.live/images/G-lineup-all.png" alt="Koe Lineup" style="width:100%;display:block;" loading="lazy">
+    </div>
+    <div class="koe-specs">
+      <div class="koe-spec-item">500円玉サイズ</div>
+      <div class="koe-spec-item">Wi-Fiなし</div>
+      <div class="koe-spec-item">オフライン音声認識</div>
+    </div>
+    <a href="https://koe.live/app" target="_blank" style="margin-top:16px;display:inline-block;padding:10px 28px;border:1px solid var(--cyan);border-radius:24px;color:var(--cyan);font-family:'Orbitron',monospace;font-size:.8rem;letter-spacing:.15em;text-decoration:none;transition:all .2s;box-shadow:0 0 10px rgba(0,255,255,.2);">
+      koe.live/app →
+    </a>
+  </div>
+</div>
+
+<!-- SOLUNA -->
+<div class="scene" id="s-soluna">
+  <div class="scene-bg" style="background:linear-gradient(135deg,#0a0020,#150030)"></div>
+  <div class="scene-color-overlay" style="background:var(--magenta)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content" style="display:flex;flex-direction:column;align-items:center;">
+    <div class="soluna-title">SOLUNA</div>
+    <div style="margin:12px auto;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;max-width:700px;">
+      <div style="flex:1;min-width:140px;max-width:220px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,0,255,.2);box-shadow:0 0 20px rgba(255,0,255,.1);">
+        <img src="https://koe.live/images/G10-lifestyle.png" alt="Festival" style="width:100%;display:block;" loading="lazy">
+      </div>
+      <div style="flex:1;min-width:140px;max-width:220px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,0,255,.2);box-shadow:0 0 20px rgba(255,0,255,.1);">
+        <img src="https://koe.live/images/H1-guitar-to-devices.png" alt="Guitar to Devices" style="width:100%;display:block;" loading="lazy">
+      </div>
+      <div style="flex:1;min-width:140px;max-width:220px;border-radius:12px;overflow:hidden;border:1px solid rgba(255,0,255,.2);box-shadow:0 0 20px rgba(255,0,255,.1);">
+        <img src="https://koe.live/images/H6-signal-flow.png" alt="Signal Flow" style="width:100%;display:block;" loading="lazy">
+      </div>
+    </div>
+    <div class="soluna-stat">10,000</div>
+    <div class="soluna-sub">個のスピーカーが楽器になる</div>
+    <div style="margin-top:12px;display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+      <div style="background:rgba(255,0,255,.08);border:1px solid rgba(255,0,255,.25);border-radius:8px;padding:8px 16px;font-size:.75rem;color:rgba(255,255,255,.7);">NTP同期 · 誤差1ms</div>
+      <div style="background:rgba(255,0,255,.08);border:1px solid rgba(255,0,255,.25);border-radius:8px;padding:8px 16px;font-size:.75rem;color:rgba(255,255,255,.7);">$65 COIN × 1000台</div>
+      <div style="background:rgba(255,0,255,.08);border:1px solid rgba(255,0,255,.25);border-radius:8px;padding:8px 16px;font-size:.75rem;color:rgba(255,255,255,.7);">コスト 1/18</div>
+    </div>
+    <a href="https://koe.live/soluna-edition.html" target="_blank" style="margin-top:14px;display:inline-block;padding:10px 28px;border:1px solid var(--magenta);border-radius:24px;color:var(--magenta);font-family:'Orbitron',monospace;font-size:.8rem;letter-spacing:.15em;text-decoration:none;transition:all .2s;box-shadow:0 0 10px rgba(255,0,255,.2);">
+      Soluna Edition →
+    </a>
+    <div class="dot-grid" id="soluna-dots"></div>
+  </div>
+</div>
+
+<!-- OPENCLAW -->
+<div class="scene" id="s-openclaw">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/bridge_v2_1.jpg')"></div>
+  <div class="scene-color-overlay" style="background:var(--red)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div class="openclaw-title">// AI FLEET //</div>
+    <div class="agents-grid">
+      <div class="agent-card">
+        <div class="agent-emoji">🐝</div>
+        <div class="agent-status"></div>
+        <div class="agent-name">HACHI</div>
+        <div class="agent-role">総合エージェント</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-emoji">⚡</div>
+        <div class="agent-status"></div>
+        <div class="agent-name">KURO</div>
+        <div class="agent-role">デプロイ担当</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-emoji">1️⃣</div>
+        <div class="agent-status"></div>
+        <div class="agent-name">ICHI</div>
+        <div class="agent-role">作業担当</div>
+      </div>
+      <div class="agent-card">
+        <div class="agent-emoji">2️⃣</div>
+        <div class="agent-status"></div>
+        <div class="agent-name">NI</div>
+        <div class="agent-role">監視担当</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHORUS -->
+<div class="scene" id="s-chorus">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/chorus_v2_2.jpg')"></div>
+  <div class="scene-color-overlay" style="background:#fff"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div class="hack-massive">HACK</div>
+    <div class="chorus-sub">// CODE // BUILD // SHIP //</div>
+  </div>
+</div>
+
+<!-- CHORUS DROP — "Hack, hack, hack" -->
+<div class="scene" id="s-bridge">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/chorus_v2_1.jpg')"></div>
+  <div class="scene-color-overlay" style="background:var(--cyan)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div style="font-family:'Orbitron',monospace;font-size:clamp(5rem,20vw,14rem);font-weight:900;color:#fff;text-shadow:0 0 60px var(--cyan),0 0 120px var(--magenta),0 0 200px rgba(255,255,255,.3);line-height:1;letter-spacing:-.02em;animation:pulse-glow 0.8s ease-in-out infinite alternate;">HACK</div>
+    <div style="font-size:clamp(1.2rem,3.5vw,2rem);color:rgba(255,255,255,.9);margin-top:20px;line-height:1.8;font-weight:300;">
+      不便だと思ったら<span style="color:var(--cyan);font-weight:900;">作ればいい</span><br>
+      ソフトもハードもAIも、作った<br>
+      みんなに渡せばいい
+    </div>
+    <div style="margin-top:24px;font-family:'Orbitron',monospace;font-size:clamp(1rem,3vw,1.6rem);color:var(--magenta);text-shadow:0 0 15px var(--magenta);letter-spacing:.2em;">
+      // BUILD // SHIP // SHARE //
+    </div>
+  </div>
+</div>
+
+<!-- OUTRO — "一緒にやろうぜ" -->
+<div class="scene" id="s-outro">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/outro_v2_1.jpg')"></div>
+  <div class="scene-color-overlay" style="background:var(--magenta)"></div>
+  <div class="scene-vignette"></div>
+  <div class="scene-content">
+    <div style="font-family:'Orbitron',monospace;font-size:clamp(2.5rem,10vw,7rem);font-weight:900;color:#fff;text-shadow:0 0 40px var(--magenta),0 0 80px rgba(255,0,255,.4);line-height:1.2;">
+      一緒に<br>やろうぜ
+    </div>
+    <div style="margin-top:32px;display:flex;flex-wrap:wrap;justify-content:center;gap:16px;">
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 20px;font-size:.85rem;color:rgba(255,255,255,.7);">📸 パシャ</div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 20px;font-size:.85rem;color:rgba(255,255,255,.7);">📝 ポン</div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 20px;font-size:.85rem;color:rgba(255,255,255,.7);">🔑 KAGI</div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 20px;font-size:.85rem;color:rgba(255,255,255,.7);">🎙 Koe</div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 20px;font-size:.85rem;color:rgba(255,255,255,.7);">🎵 Soluna</div>
+      <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:12px 20px;font-size:.85rem;color:rgba(255,255,255,.7);">🤖 OpenClaw</div>
+    </div>
+    <div style="margin-top:24px;font-size:.9rem;color:rgba(255,255,255,.4);letter-spacing:.1em;">
+      俺が使うものは、俺が作る。
+    </div>
+  </div>
+</div>
+
+<!-- ── KARAOKE ── -->
+<div id="karaoke">
+  <div class="k-main" id="k-main"></div>
+</div>
+
+<!-- ── TRANSPORT ── -->
+<!-- ── END SCREEN ── -->
+<div id="end-screen" style="display:none;position:fixed;inset:0;z-index:9500;background:linear-gradient(180deg,#04000a 0%,#0a0020 40%,#04000a 100%);overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div id="next-song-timer" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(0,255,255,.12);border:1px solid rgba(0,255,255,.4);color:#0ff;padding:12px 28px;border-radius:30px;font-size:.85rem;font-weight:700;letter-spacing:.05em;cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(0,255,255,.2);white-space:nowrap;font-family:'Orbitron',monospace;"></div>
+  <div style="max-width:680px;margin:0 auto;padding:60px 24px 120px;text-align:center;">
+
+    <!-- Closing message -->
+    <div style="font-family:'Orbitron',monospace;font-size:clamp(2rem,7vw,4rem);font-weight:900;color:#fff;text-shadow:0 0 30px var(--cyan);line-height:1.2;">
+      一緒に、作ろう。
+    </div>
+    <div style="margin-top:16px;font-size:clamp(.95rem,2.5vw,1.15rem);color:rgba(255,255,255,.6);line-height:2;font-weight:300;">
+      不便を見つけたら、それがチャンス。<br>
+      ソフトもハードもAIも——全部、自分で作れる時代。<br>
+      俺は作り続ける。君も始めてみないか。
+    </div>
+
+    <!-- Song navigation -->
+    <div style="margin-top:40px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <a href="/mv/tap.html" style="flex:1;min-width:140px;max-width:200px;padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;text-decoration:none;transition:all .2s;">
+        <div style="font-size:.7rem;color:rgba(255,255,255,.4);letter-spacing:.15em;margin-bottom:6px;">1st SONG</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--cyan);">Tap, Tap, Tap</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.5);margin-top:4px;">▶ 聴く</div>
+      </a>
+      <div style="flex:1;min-width:140px;max-width:200px;padding:16px;background:rgba(0,255,255,.04);border:1px solid rgba(0,255,255,.25);border-radius:12px;">
+        <div style="font-size:.7rem;color:rgba(0,255,255,.5);letter-spacing:.15em;margin-bottom:6px;">2nd SONG</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1rem;color:#fff;">Hack, Hack, Hack</div>
+        <div style="font-size:.75rem;color:rgba(0,255,255,.6);margin-top:4px;">NOW PLAYING</div>
+      </div>
+      <a href="#" id="song3-link" style="flex:1;min-width:140px;max-width:200px;padding:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.15);border-radius:12px;text-decoration:none;transition:all .2s;opacity:.5;">
+        <div style="font-size:.7rem;color:rgba(255,255,255,.4);letter-spacing:.15em;margin-bottom:6px;">3rd SONG</div>
+        <div style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--magenta);">Coming Soon</div>
+        <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:4px;">準備中...</div>
+      </a>
+    </div>
+
+    <!-- Fan Club / 第1期 -->
+    <div style="margin-top:48px;padding:32px 24px;background:linear-gradient(135deg,rgba(0,255,255,.06),rgba(255,0,255,.06));border:1px solid rgba(0,255,255,.3);border-radius:16px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;right:0;background:linear-gradient(135deg,var(--cyan),var(--magenta));color:#000;font-family:'Orbitron',monospace;font-size:.6rem;font-weight:700;padding:5px 16px;border-radius:0 0 0 12px;letter-spacing:.12em;">第1期メンバー募集中</div>
+      <div style="font-size:2rem;margin-bottom:4px;">⚡</div>
+      <div style="font-family:'Orbitron',monospace;font-size:clamp(1.2rem,4vw,1.8rem);font-weight:900;color:#fff;letter-spacing:.05em;">Enabler ファンクラブ</div>
+      <div style="margin-top:6px;font-size:.85rem;color:rgba(255,255,255,.55);">一緒に作る側になろう。第1期は特別価格。</div>
+      <div style="margin-top:16px;">
+        <span style="font-family:'Orbitron',monospace;font-size:clamp(2.5rem,8vw,4rem);font-weight:900;color:var(--cyan);text-shadow:0 0 20px rgba(0,255,255,.3);">¥980</span>
+        <span style="font-size:1rem;color:rgba(255,255,255,.5);">/月</span>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.35);margin-top:2px;">※第1期限定価格</div>
+      </div>
+      <div style="margin-top:20px;text-align:left;max-width:380px;margin-left:auto;margin-right:auto;">
+        <div style="font-size:.75rem;color:rgba(0,255,255,.7);letter-spacing:.1em;margin-bottom:10px;text-align:center;">全サービス使い放題 +</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">📸 パシャ Pro</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">📝 ポン 電子契約</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">🔑 KAGI スマートホーム</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">🎙 Koe 音声入力</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">🥋 JiuFlow 全10フロー</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">🤖 Elio ローカルAI</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">🎵 Soluna フェス同期</span>
+          <span style="background:rgba(0,255,255,.08);border:1px solid rgba(0,255,255,.15);border-radius:6px;padding:6px 10px;font-size:.7rem;color:rgba(255,255,255,.7);">⚡ OpenClaw AI群</span>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;padding:0 4px;">
+          <div style="font-size:.7rem;color:rgba(255,0,255,.7);">✦ 新プロダクト先行アクセス</div>
+          <div style="font-size:.7rem;color:rgba(255,0,255,.7);">✦ 限定コミュニティ参加権</div>
+          <div style="font-size:.7rem;color:rgba(255,0,255,.7);">✦ 開発の裏側を共有</div>
+        </div>
+      </div>
+      <a id="founder-btn" href="https://buy.stripe.com/aFacN503FcQq4VGblmefC3z" target="_blank" style="display:inline-block;margin-top:20px;padding:14px 44px;background:linear-gradient(135deg,var(--cyan),var(--magenta));color:#000;font-family:'Orbitron',monospace;font-size:.85rem;font-weight:700;letter-spacing:.08em;border-radius:30px;text-decoration:none;box-shadow:0 0 25px rgba(0,255,255,.35),0 0 50px rgba(255,0,255,.15);transition:all .2s;">
+        第1期メンバーになる →
+      </a>
+      <div style="margin-top:10px;font-size:.7rem;color:rgba(255,255,255,.3);">Stripe で安全に決済 · いつでもキャンセル可能</div>
+    </div>
+
+    <!-- Newsletter -->
+    <div style="margin-top:36px;padding:28px 24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;">
+      <div style="font-family:'Orbitron',monospace;font-size:1rem;color:#fff;letter-spacing:.1em;">Newsletter</div>
+      <div style="margin-top:6px;font-size:.85rem;color:rgba(255,255,255,.5);">新プロダクト・3曲目のリリース情報をお届け</div>
+      <form id="newsletter-form" onsubmit="return submitNewsletter(event)" style="margin-top:16px;display:flex;gap:8px;max-width:420px;margin-left:auto;margin-right:auto;">
+        <input id="nl-email" type="email" required placeholder="your@email.com" style="flex:1;padding:12px 16px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.2);border-radius:8px;color:#fff;font-size:.9rem;outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--cyan)'" onblur="this.style.borderColor='rgba(255,255,255,.2)'">
+        <button type="submit" style="padding:12px 24px;background:var(--magenta);border:none;border-radius:8px;color:#fff;font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;letter-spacing:.1em;cursor:pointer;white-space:nowrap;box-shadow:0 0 15px rgba(255,0,255,.3);transition:all .2s;">登録</button>
+      </form>
+      <div id="nl-msg" style="margin-top:10px;font-size:.8rem;color:var(--cyan);display:none;"></div>
+    </div>
+
+    <!-- All apps link -->
+    <div style="margin-top:32px;">
+      <a href="/mv/apps.html" style="font-size:.85rem;color:rgba(255,255,255,.4);text-decoration:none;letter-spacing:.1em;transition:color .2s;">📱 全プロダクト一覧 →</a>
+    </div>
+
+    <!-- Credit -->
+    <div style="margin-top:40px;font-size:.7rem;color:rgba(255,255,255,.2);letter-spacing:.1em;">
+      © 2026 Yuki Hamada — 俺が使うものは、俺が作る。
+    </div>
+  </div>
+</div>
+
+<!-- LANG TOGGLE -->
+<div id="lang-toggle" onclick="toggleLang()" style="position:fixed;top:16px;right:16px;z-index:9100;background:rgba(0,0,0,.7);border:1px solid rgba(0,255,255,.3);border-radius:20px;padding:6px 14px;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;gap:6px;font-size:.7rem;letter-spacing:.1em;color:var(--cyan);font-family:'Orbitron',monospace;user-select:none;transition:all .2s;">
+  <span id="lang-label">🇯🇵 JA</span>
+</div>
+
+<div id="transport">
+  <button id="btn-play" onclick="togglePlay()">▶</button>
+  <input type="range" id="seek-bar" min="0" max="172" step="0.5" value="0" oninput="seekTo(this.value)">
+  <div id="time-display">0:00 / 2:52</div>
+</div>
+
+<script>
+// ── SCENE & LYRICS DATA ──────────────────────────────
+const SCENES = [
+  { id:'intro',    start:0,     el:'s-intro',    color:'#ffffff' },
+  { id:'apps',     start:19.6,  el:'s-apps',     color:'#ff00ff' },
+  { id:'kagi-hw',  start:33.6,  el:'s-kagi-hw',  color:'#0066ff' },
+  { id:'koe',      start:56.7,  el:'s-koe',      color:'#00ffff' },
+  { id:'soluna',   start:72.7,  el:'s-soluna',   color:'#ff00ff' },
+  { id:'openclaw', start:103.1, el:'s-openclaw', color:'#ff2200' },
+  { id:'chorus',   start:124.4, el:'s-chorus',   color:'#ffffff' },
+  { id:'bridge',   start:140.5, el:'s-bridge',   color:'#00ffff' },
+  { id:'outro',    start:157.8, el:'s-outro',    color:'#ff00ff' },
+];
+
+const L = [
+  // ─ Pre-EDM Intro 0-17s (calm) ─
+  {t:2.7,  s:'intro',    x:'俺が使うものは、俺が作る'},
+  {t:6.9,  s:'intro',    x:'ソフトだけじゃ、足りなかった'},
+  {t:11.7, s:'intro',    x:'次は、手で触れるものを作る'},
+  // ─ [EDM DROP @ 16s] ─
+  // ─ Apps 19.6-33s ─
+  {t:19.6, s:'apps',     x:'パシャ・ポン・KAGI・Koe'},
+  {t:23.4, s:'apps',     x:'鍵・声・情報で記録'},
+  {t:25.7, s:'apps',     x:'全部タップひとつ。全部、俺が作った。'},
+  {t:28.1, s:'apps',     x:'ハード、やる。'},
+  // ─ Hardware bridge 33.6-56s ─
+  {t:33.6, s:'kagi-hw',  x:'でもある日、気づいた。スマホを出せない時——'},
+  {t:37.5, s:'kagi-hw',  x:'アプリは使えない。'},
+  {t:41.0, s:'kagi-hw',  x:'走りながら。荷物持ちながら。手が塞がってる時——'},
+  {t:45.1, s:'kagi-hw',  x:'声しか使えない。'},
+  {t:47.4, s:'kagi-hw',  x:'だから次は、形にする。🔑'},
+  // ─ Koe COIN 56.7-72s ─
+  {t:56.7, s:'koe',      x:'500円玉サイズのデバイスを作ってる。🪙'},
+  {t:60.2, s:'koe',      x:'耳に刺さる。首から下げる。腕に巻く。'},
+  {t:63.2, s:'koe',      x:'喋るだけでテキストになる。'},
+  {t:64.9, s:'koe',      x:'Wi-Fiなし。スマホなし。'},
+  {t:66.8, s:'koe',      x:'ポケットの中で動く。'},
+  {t:68.6, s:'koe',      x:'声が、一番速いインターフェースだ。'},
+  // ─ SOLUNA 72.7-96s ─
+  {t:72.7, s:'soluna',   x:'同じチップに、別のファームを焼いたら🎵'},
+  {t:76.3, s:'soluna',   x:'フェスのスピーカーになった。'},
+  {t:79.6, s:'soluna',   x:'10,000個が同時に鳴る。誤差1ミリ秒。'},
+  {t:82.8, s:'soluna',   x:'GPSいらない。NTPで全部合わせる。'},
+  {t:84.9, s:'soluna',   x:'L-Acousticsが1億円かけてやること——'},
+  {t:87.9, s:'soluna',   x:'65ドルのCOINが、13台でやる。'},
+  {t:91.4, s:'soluna',   x:'群衆が楽器になる夜を、作ってる。'},
+  // ─ OpenClaw 103.1-124s ─
+  {t:103.1,s:'openclaw', x:'眠ってる間も、4台のAIが動いてる。🤖'},
+  {t:107.1,s:'openclaw', x:'Hachi、Kuro、Ichi、Ni。'},
+  {t:109.3,s:'openclaw', x:'コードを書いて、テストして、デプロイして。'},
+  {t:112.1,s:'openclaw', x:'朝起きたら、昨日の機能が完成してた。'},
+  {t:116.5,s:'openclaw', x:'俺の分身が、24時間止まらない。'},
+  // ─ Pre-chorus build 124.4-140s ─
+  {t:124.4,s:'chorus',   x:'ソフトだけじゃ届かない人がいる。'},
+  {t:128.9,s:'chorus',   x:'ハードだけじゃ動かないものがある。'},
+  {t:132.8,s:'chorus',   x:'AIだけじゃ解決しない問題がある。'},
+  {t:137.3,s:'chorus',   x:'だから、全部作ってる。'},
+  // ─ Chorus DROP 140.5-157s ─
+  {t:140.5,s:'bridge',   x:'Hack, hack, hack'},
+  {t:142.0,s:'bridge',   x:'不便だと思ったら 作ればいい'},
+  {t:145.4,s:'bridge',   x:'Hack, hack, hack'},
+  {t:147.0,s:'bridge',   x:'ソフトもハードもAIも、作った'},
+  {t:149.6,s:'bridge',   x:'みんなに渡せばいい'},
+  {t:153.8,s:'bridge',   x:'俺もやってる——'},
+  // ─ Outro 157.8s ─
+  {t:157.8,s:'outro',    x:'一緒にやろうぜ 🔥'},
+];
+
+const L_EN = [
+  {t:2.7,  s:'intro',    x:'What I use, I build myself.'},
+  {t:6.9,  s:'intro',    x:'Software alone wasn\'t enough.'},
+  {t:11.7, s:'intro',    x:'Next — I build things you can touch.'},
+  {t:19.6, s:'apps',     x:'Pasha. Pon. KAGI. Koe.'},
+  {t:23.4, s:'apps',     x:'Keys, voice, data — all recorded.'},
+  {t:25.7, s:'apps',     x:'All one tap. All built by me.'},
+  {t:28.1, s:'apps',     x:'Hardware? Let\'s go.'},
+  {t:33.6, s:'kagi-hw',  x:'But some days you can\'t pull out your phone—'},
+  {t:37.5, s:'kagi-hw',  x:'Apps are useless.'},
+  {t:41.0, s:'kagi-hw',  x:'Running. Carrying bags. Hands full—'},
+  {t:45.1, s:'kagi-hw',  x:'Only your voice works.'},
+  {t:47.4, s:'kagi-hw',  x:'So next, I give it shape. 🔑'},
+  {t:56.7, s:'koe',      x:'Building a coin-sized device. 🪙'},
+  {t:60.2, s:'koe',      x:'In your ear. Around your neck. On your wrist.'},
+  {t:63.2, s:'koe',      x:'Speak — it becomes text.'},
+  {t:64.9, s:'koe',      x:'No WiFi. No phone.'},
+  {t:66.8, s:'koe',      x:'Runs in your pocket.'},
+  {t:68.6, s:'koe',      x:'Voice is the fastest interface.'},
+  {t:72.7, s:'soluna',   x:'Same chip. Different firmware. 🎵'},
+  {t:76.3, s:'soluna',   x:'Became a festival speaker.'},
+  {t:79.6, s:'soluna',   x:'10,000 playing at once. 1ms precision.'},
+  {t:82.8, s:'soluna',   x:'No GPS. NTP syncs everything.'},
+  {t:84.9, s:'soluna',   x:'What L-Acoustics does for $1M—'},
+  {t:87.9, s:'soluna',   x:'A $65 COIN does with 13 units.'},
+  {t:91.4, s:'soluna',   x:'Building a night where the crowd becomes the instrument.'},
+  {t:103.1,s:'openclaw', x:'While I sleep, 4 AIs keep working. 🤖'},
+  {t:107.1,s:'openclaw', x:'Hachi. Kuro. Ichi. Ni.'},
+  {t:109.3,s:'openclaw', x:'Writing code. Testing. Deploying.'},
+  {t:112.1,s:'openclaw', x:'Wake up — yesterday\'s feature is done.'},
+  {t:116.5,s:'openclaw', x:'My clones never stop. 24/7.'},
+  {t:124.4,s:'chorus',   x:'Software can\'t reach everyone.'},
+  {t:128.9,s:'chorus',   x:'Hardware can\'t run everything.'},
+  {t:132.8,s:'chorus',   x:'AI can\'t solve every problem.'},
+  {t:137.3,s:'chorus',   x:'So I build it all.'},
+  {t:140.5,s:'bridge',   x:'Hack, hack, hack'},
+  {t:142.0,s:'bridge',   x:'If it bugs you — build it.'},
+  {t:145.4,s:'bridge',   x:'Hack, hack, hack'},
+  {t:147.0,s:'bridge',   x:'Software. Hardware. AI. Built them all.'},
+  {t:149.6,s:'bridge',   x:'Share with everyone.'},
+  {t:153.8,s:'bridge',   x:'I\'m doing it—'},
+  {t:157.8,s:'outro',    x:'Let\'s go together. 🔥'},
+];
+
+let currentLang = 'ja';
+function getLyrics() { return currentLang === 'en' ? L_EN : L; }
+
+function toggleLang() {
+  currentLang = currentLang === 'ja' ? 'en' : 'ja';
+  document.getElementById('lang-label').textContent = currentLang === 'ja' ? '🇯🇵 JA' : '🇺🇸 EN';
+  // Force lyric refresh
+  currentLyric = -1;
+  // TODO: swap audio source when EN vocal track is ready
+  // For now, same instrumental plays, only lyrics change
+}
+
+// ── STATE ─────────────────────────────────────────────
+let audioCtx, analyser, source, audioBuffer;
+let isPlaying = false, startOffset = 0, startTime = 0;
+let currentScene = 0, currentLyric = -1;
+let lastBeat = 0, beatThreshold = 120;
+let strobeInterval = null, strobeActive = false;
+const particles = [];
+const TOTAL = 172;
+
+// canvas refs
+let cvP, ctxP, cvS, ctxS, cvE, ctxE;
+
+// ── INIT ──────────────────────────────────────────────
+function initCanvases() {
+  cvP = document.getElementById('cv-particles');
+  ctxP = cvP.getContext('2d');
+  cvS = document.getElementById('cv-scope');
+  ctxS = cvS.getContext('2d');
+  cvE = document.getElementById('cv-eq');
+  ctxE = cvE.getContext('2d');
+  resizeCanvases();
+  window.addEventListener('resize', resizeCanvases);
+}
+
+function resizeCanvases() {
+  const W = window.innerWidth, H = window.innerHeight;
+  cvP.width = W; cvP.height = H;
+  cvS.width = W; cvS.height = 160;
+  cvE.width = W; cvE.height = 60;
+}
+
+function buildSolunaDots() {
+  const grid = document.getElementById('soluna-dots');
+  if (!grid) return;
+  const cols = window.innerWidth < 600 ? 15 : 25;
+  const count = cols * Math.floor(120 / cols);
+  grid.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  for (let i = 0; i < count; i++) {
+    const d = document.createElement('div');
+    d.className = 'sol-dot';
+    d.style.animationDelay = (Math.random() * 1.5) + 's';
+    d.style.animationDuration = (0.8 + Math.random() * 1.2) + 's';
+    grid.appendChild(d);
+  }
+}
+
+// ── AUDIO SETUP ───────────────────────────────────────
+async function loadAudio() {
+  try {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 1024;
+    analyser.smoothingTimeConstant = 0.75;
+    analyser.connect(audioCtx.destination);
+
+    const res = await fetch('assets/hack.wav');
+    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    const buf = await res.arrayBuffer();
+    audioBuffer = await audioCtx.decodeAudioData(buf);
+  } catch(e) {
+    console.error('Audio load error:', e);
+    // Fallback: show error on overlay
+    const overlay = document.getElementById('start-overlay');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      overlay.style.opacity = '1';
+      overlay.querySelector('.so-sub').textContent = '音声読込エラー。タップしてリトライ';
+      overlay.onclick = () => { overlay.onclick = null; startExperience(); };
+    }
+    throw e;
+  }
+}
+
+function playFrom(offset) {
+  if (source) { try { source.stop(); } catch(e){} }
+  source = audioCtx.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(analyser);
+  source.start(0, offset);
+  startTime = audioCtx.currentTime - offset;
+  startOffset = offset;
+  isPlaying = true;
+  document.getElementById('btn-play').textContent = '⏸';
+  source.onended = () => {
+    if (isPlaying) {
+      isPlaying = false;
+      document.getElementById('btn-play').textContent = '▶';
+      // Show end screen after brief pause
+      setTimeout(showEndScreen, 1500);
+    }
+  };
+}
+
+function togglePlay() {
+  if (!audioCtx) return;
+  if (isPlaying) {
+    startOffset = audioCtx.currentTime - startTime;
+    source.stop();
+    isPlaying = false;
+    document.getElementById('btn-play').textContent = '▶';
+    stopStrobe();
+  } else {
+    playFrom(startOffset);
+  }
+}
+
+function seekTo(val) {
+  startOffset = parseFloat(val);
+  if (isPlaying) playFrom(startOffset);
+}
+
+// ── EDM DROP ──────────────────────────────────────────
+const EDM_DROP_TIME = 16;
+let edmMode = false;
+
+function checkEDMDrop(ct) {
+  if (ct >= EDM_DROP_TIME && !edmMode) {
+    edmMode = true;
+    triggerEDMDrop();
+  } else if (ct < EDM_DROP_TIME && edmMode) {
+    // seek backward — restore calm
+    edmMode = false;
+    document.body.classList.add('pre-edm');
+  }
+}
+
+function triggerEDMDrop() {
+  document.body.classList.remove('pre-edm');
+  document.getElementById('prog').style.display = 'block';
+  // Massive white flash
+  const fl = document.getElementById('flash');
+  fl.style.background = '#fff';
+  fl.style.opacity = '1';
+  setTimeout(() => { fl.style.opacity = '0'; }, 350);
+  // Glitch burst
+  triggerGlitch(800);
+  // Particle explosion
+  const W = window.innerWidth, H = window.innerHeight;
+  burstParticles(W/2, H/2, 80, '#00ffff');
+  burstParticles(W/2, H/2, 50, '#ff00ff');
+  burstParticles(W/2, H/2, 30, '#fff');
+  shakeScreen(1.0);
+}
+
+// ── BEAT DETECTION ────────────────────────────────────
+function detectBeat(dataArr) {
+  const bassEnd = Math.floor(dataArr.length * 0.08);
+  let bassSum = 0;
+  for (let i = 0; i < bassEnd; i++) bassSum += dataArr[i];
+  const bassAvg = bassSum / bassEnd;
+  if (bassAvg > beatThreshold && Date.now() - lastBeat > 150) {
+    lastBeat = Date.now();
+    onBeat(bassAvg);
+  }
+  beatThreshold = beatThreshold * 0.95 + bassAvg * 0.05 * 1.5;
+}
+
+function onBeat(intensity) {
+  if (!edmMode) return; // calm before drop
+  const t = intensity / 255;
+  flashEffect(t);
+  shakeScreen(t);
+  const W = window.innerWidth, H = window.innerHeight;
+  const color = ['#00ffff','#ff00ff','#ffffff'][Math.floor(Math.random()*3)];
+  burstParticles(W/2 + (Math.random()-0.5)*200, H/2 + (Math.random()-0.5)*100, Math.floor(15+t*25), color);
+}
+
+// ── FLASH ─────────────────────────────────────────────
+function flashEffect(intensity) {
+  const flash = document.getElementById('flash');
+  const colors = ['var(--cyan)','#fff','var(--magenta)'];
+  flash.style.background = colors[Math.floor(Math.random()*colors.length)];
+  flash.style.opacity = (intensity * 0.35).toFixed(2);
+  setTimeout(() => { flash.style.opacity = '0'; }, 80);
+}
+
+// ── SHAKE ─────────────────────────────────────────────
+let shakeTO = null;
+function shakeScreen(intensity) {
+  document.body.style.transform = `translate(${(Math.random()-0.5)*intensity*6}px,${(Math.random()-0.5)*intensity*4}px)`;
+  clearTimeout(shakeTO);
+  shakeTO = setTimeout(() => { document.body.style.transform = ''; }, 80);
+}
+
+// ── GLITCH ────────────────────────────────────────────
+function triggerGlitch(duration=280) {
+  const el = document.getElementById('glitch-overlay');
+  el.style.display = 'block';
+  let frames = 0;
+  const max = Math.floor(duration / 16);
+  const anim = setInterval(() => {
+    const dx = (Math.random()-0.5)*10;
+    const dy = (Math.random()-0.5)*5;
+    el.style.transform = `translate(${dx}px,${dy}px)`;
+    el.style.opacity = (Math.random()*0.5).toFixed(2);
+    const r = Math.floor(Math.random()*255), g = 0, b = Math.floor(Math.random()*255);
+    el.style.background = `rgba(${r},${g},${b},0.08)`;
+    if (++frames >= max) {
+      clearInterval(anim);
+      el.style.display = 'none';
+    }
+  }, 16);
+}
+
+// ── RGB SPLIT ─────────────────────────────────────────
+let rgbTO = null;
+function triggerRGBSplit(duration=200) {
+  document.documentElement.style.setProperty('--rgb-active','1');
+  const scenes = document.querySelectorAll('.scene.active .scene-bg');
+  scenes.forEach(s => {
+    s.style.filter = `brightness(.3) saturate(2.2) contrast(1.4) hue-rotate(${Math.random()*30-15}deg)`;
+  });
+  clearTimeout(rgbTO);
+  rgbTO = setTimeout(() => {
+    scenes.forEach(s => {
+      s.style.filter = 'brightness(.3) saturate(2.2) contrast(1.4)';
+    });
+  }, duration);
+}
+
+// ── STROBE ────────────────────────────────────────────
+function startStrobe() {
+  if (strobeActive) return;
+  strobeActive = true;
+  const strobe = document.getElementById('strobe');
+  let on = false;
+  strobeInterval = setInterval(() => {
+    on = !on;
+    strobe.style.opacity = on ? '0.55' : '0';
+  }, 62); // ~8Hz
+}
+function stopStrobe() {
+  strobeActive = false;
+  clearInterval(strobeInterval);
+  document.getElementById('strobe').style.opacity = '0';
+}
+
+// ── PARTICLES ─────────────────────────────────────────
+function burstParticles(x, y, count=20, color='#00ffff') {
+  for (let i = 0; i < count; i++) {
+    const angle = Math.random()*Math.PI*2;
+    const speed = 2 + Math.random()*7;
+    particles.push({
+      x, y,
+      vx: Math.cos(angle)*speed,
+      vy: Math.sin(angle)*speed,
+      life: 1.0,
+      color,
+      size: 2+Math.random()*4
+    });
+  }
+}
+
+function drawParticles(W, H) {
+  ctxP.clearRect(0,0,W,H);
+  for (let i = particles.length-1; i >= 0; i--) {
+    const p = particles[i];
+    p.x += p.vx; p.y += p.vy;
+    p.vy += 0.12;
+    p.vx *= 0.98;
+    p.life -= 0.022;
+    if (p.life <= 0) { particles.splice(i,1); continue; }
+    ctxP.globalAlpha = p.life;
+    ctxP.fillStyle = p.color;
+    ctxP.shadowColor = p.color;
+    ctxP.shadowBlur = 6;
+    ctxP.beginPath();
+    ctxP.arc(p.x, p.y, p.size*p.life, 0, Math.PI*2);
+    ctxP.fill();
+  }
+  ctxP.globalAlpha = 1;
+  ctxP.shadowBlur = 0;
+}
+
+// ── WAVEFORM ──────────────────────────────────────────
+function drawScope(dataArr, W) {
+  ctxS.clearRect(0,0,W,160);
+  ctxS.lineWidth = 1.5;
+  ctxS.strokeStyle = '#00ffff';
+  ctxS.shadowColor = '#00ffff';
+  ctxS.shadowBlur = 8;
+  ctxS.beginPath();
+  const step = W / dataArr.length;
+  for (let i = 0; i < dataArr.length; i++) {
+    const v = dataArr[i] / 255;
+    const y = (1-v)*160;
+    if (i===0) ctxS.moveTo(0,y); else ctxS.lineTo(i*step,y);
+  }
+  ctxS.stroke();
+  ctxS.shadowBlur = 0;
+}
+
+// ── EQ BARS ───────────────────────────────────────────
+function drawEQ(dataArr, W) {
+  const barCount = 48;
+  const barW = W/barCount;
+  ctxE.clearRect(0,0,W,60);
+  for (let i = 0; i < barCount; i++) {
+    const idx = Math.floor(i * dataArr.length/barCount);
+    const v = dataArr[idx]/255;
+    const h = v*60;
+    const hue = 280 + i*2; // magenta range
+    ctxE.fillStyle = `hsl(${hue},100%,55%)`;
+    ctxE.shadowColor = `hsl(${hue},100%,55%)`;
+    ctxE.shadowBlur = 6;
+    ctxE.fillRect(i*barW+1, 60-h, barW-2, h);
+  }
+  ctxE.shadowBlur = 0;
+}
+
+// ── SCENE SWITCHING ───────────────────────────────────
+function switchToScene(idx, t) {
+  const prev = document.querySelector('.scene.active');
+  const next = document.getElementById(SCENES[idx].el);
+  if (prev === next) return;
+  triggerGlitch(200);
+  triggerRGBSplit(150);
+  burstParticles(window.innerWidth/2, window.innerHeight/2, 30, SCENES[idx].color);
+  if (prev) { prev.classList.remove('active'); prev.classList.add('exit'); setTimeout(()=>prev.classList.remove('exit'),150); }
+  next.classList.add('active');
+  currentScene = idx;
+  // chorus strobe
+  if (SCENES[idx].id === 'chorus') startStrobe();
+  else stopStrobe();
+}
+
+// ── LYRICS ────────────────────────────────────────────
+let lyricHideTO = null;
+function showLyric(text) {
+  const el = document.getElementById('k-main');
+  el.classList.remove('show','glitching');
+  void el.offsetWidth; // reflow
+  el.textContent = text;
+  el.classList.add('show','glitching');
+  clearTimeout(lyricHideTO);
+  lyricHideTO = setTimeout(()=>{ el.classList.remove('show'); }, 3800);
+}
+
+// ── PROGRESS & TIME ───────────────────────────────────
+function formatTime(s) {
+  const m = Math.floor(s/60);
+  return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+}
+
+// ── MAIN LOOP ─────────────────────────────────────────
+function loop() {
+  requestAnimationFrame(loop);
+  const W = window.innerWidth, H = window.innerHeight;
+
+  if (!analyser || !isPlaying) {
+    drawParticles(W,H);
+    if(ctxS) ctxS.clearRect(0,0,W,160);
+    if(ctxE) ctxE.clearRect(0,0,W,60);
+    return;
+  }
+
+  const freq = new Uint8Array(analyser.frequencyBinCount);
+  const wave = new Uint8Array(analyser.fftSize);
+  analyser.getByteFrequencyData(freq);
+  analyser.getByteTimeDomainData(wave);
+
+  // current time
+  const ct = audioCtx.currentTime - startTime;
+  const pct = Math.min(ct/TOTAL,1);
+  document.getElementById('prog').style.width = (pct*100)+'%';
+  document.getElementById('seek-bar').value = ct;
+  document.getElementById('time-display').textContent = formatTime(ct)+' / '+formatTime(TOTAL);
+
+  // scene switch
+  let si = 0;
+  for (let i = SCENES.length-1; i >= 0; i--) {
+    if (ct >= SCENES[i].start) { si = i; break; }
+  }
+  if (si !== currentScene) switchToScene(si, ct);
+
+  // lyrics (language-aware)
+  const lyrics = getLyrics();
+  let li = -1;
+  for (let i = lyrics.length-1; i >= 0; i--) {
+    if (ct >= lyrics[i].t && ct < lyrics[i].t + 4) { li = i; break; }
+  }
+  if (li !== currentLyric) {
+    currentLyric = li;
+    if (li >= 0) showLyric(lyrics[li].x);
+  }
+
+  checkEDMDrop(ct);
+  detectBeat(freq);
+  drawParticles(W,H);
+  if (edmMode) {
+    drawScope(wave, W);
+    drawEQ(freq, W);
+  } else {
+    ctxS.clearRect(0,0,W,160);
+    ctxE.clearRect(0,0,W,60);
+  }
+}
+
+// ── END SCREEN ───────────────────────────────────────
+function showEndScreen() {
+  const es = document.getElementById('end-screen');
+  es.style.display = 'block';
+  es.style.opacity = '0';
+  requestAnimationFrame(() => {
+    es.style.transition = 'opacity 1.2s ease';
+    es.style.opacity = '1';
+  });
+  document.querySelectorAll('.scene').forEach(s => s.classList.remove('active'));
+  stopStrobe();
+  // Auto-navigate to MV top after 10 seconds
+  let countdown = 10;
+  const timerEl = document.getElementById('next-song-timer');
+  if(timerEl){
+    timerEl.style.display='block';
+    timerEl.textContent='MV一覧に戻る — '+countdown+'秒';
+    const iv=setInterval(()=>{
+      countdown--;
+      if(countdown<=0){clearInterval(iv);window.location.href='/mv/';}
+      else timerEl.textContent='MV一覧に戻る — '+countdown+'秒';
+    },1000);
+    timerEl.onclick=()=>{clearInterval(iv);window.location.href='/mv/';};
+  }
+}
+
+function submitNewsletter(e) {
+  e.preventDefault();
+  const email = document.getElementById('nl-email').value;
+  if (!email) return false;
+  // Send to API
+  fetch('/api/newsletter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).catch(()=>{});
+  // Show confirmation
+  const msg = document.getElementById('nl-msg');
+  msg.textContent = '登録ありがとうございます！新プロダクト情報をお届けします。';
+  msg.style.display = 'block';
+  document.getElementById('nl-email').value = '';
+  document.getElementById('nl-email').disabled = true;
+  document.querySelector('#newsletter-form button').disabled = true;
+  document.querySelector('#newsletter-form button').textContent = '✓';
+  return false;
+}
+
+// Check if returned from Stripe checkout
+if (new URLSearchParams(window.location.search).get('subscribed')) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const banner = document.createElement('div');
+    banner.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:99999;background:linear-gradient(135deg,var(--cyan),var(--blue));color:#000;padding:14px 28px;border-radius:12px;font-family:Orbitron,monospace;font-weight:700;font-size:.9rem;box-shadow:0 0 30px rgba(0,255,255,.5);';
+    banner.textContent = 'ファンクラブ第1期メンバーへようこそ！🎉';
+    document.body.appendChild(banner);
+    setTimeout(() => { banner.style.transition='opacity 1s'; banner.style.opacity='0'; setTimeout(()=>banner.remove(),1000); }, 5000);
+  });
+}
+
+// ── START ─────────────────────────────────────────────
+async function startExperience() {
+  const overlay = document.getElementById('start-overlay');
+  overlay.style.transition = 'opacity .3s';
+  overlay.style.opacity = '0';
+  setTimeout(()=>{overlay.style.display='none';},300);
+
+  document.body.classList.add('pre-edm');
+  edmMode = false;
+  initCanvases();
+  buildSolunaDots();
+  try {
+    await loadAudio();
+    playFrom(0);
+    loop();
+  } catch(e) {
+    console.error('Start failed:', e);
+  }
+}
+</script>
+</body>
+</html>

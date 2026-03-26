@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ── Primary ── -->
+<title>Tap, Tap, Tap｜不便だと思ったら作ればいい — 濱田優貴</title>
+<meta name="description" content="確定申告・電子契約・スマートロック・音声メモ・BJJ分析・ローカルAI・フェスデバイス——全部自分で作った男のMV。パシャ・ポン・KAGI・Koe・JiuFlow・Elio・SOLUNA">
+<meta name="author" content="濱田優貴 / Yuki Hamada">
+<meta name="keywords" content="パシャ,ポン,KAGI,Koe,JiuFlow,Elio,SOLUNA,濱田優貴,確定申告アプリ,電子契約,スマートホーム,ローカルAI,BJJ,フェス,インディーデベロッパー">
+<link rel="canonical" href="https://yukihamada.jp/mv/tap.html">
+
+<!-- ── OGP (Facebook / LINE / Slack) ── -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yukihamada.jp/mv/tap.html">
+<meta property="og:site_name" content="Tap, Tap, Tap">
+<meta property="og:title" content="不便だと思ったら作ればいい｜Tap, Tap, Tap MV">
+<meta property="og:description" content="確定申告3秒・電子契約・スマートロック・音声メモ・BJJ分析・ローカルAI・フェスデバイス——全部自分で作った。俺もやってる、君もやろう🔥">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Tap, Tap, Tap — 俺が使うものは、俺が作る">
+<meta property="og:locale" content="ja_JP">
+
+<!-- ── Twitter Card ── -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@yukihamada">
+<meta name="twitter:creator" content="@yukihamada">
+<meta name="twitter:title" content="不便だと思ったら作ればいい｜Tap, Tap, Tap MV">
+<meta name="twitter:description" content="確定申告3秒・電子契約・スマートロック・音声メモ・BJJ分析・ローカルAI・フェスデバイス——全部自分で作った。俺もやってる、君もやろう🔥">
+<meta name="twitter:image" content="https://yukihamada.jp/mv/assets/ogp.png">
+<meta name="twitter:image:alt" content="Tap, Tap, Tap — 俺が使うものは、俺が作る">
+
+<!-- ── JSON-LD ── -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicVideoObject",
+  "name": "Tap, Tap, Tap",
+  "description": "不便だと思ったら作ればいい。パシャ・ポン・KAGI・Koe・JiuFlow・Elio・SOLUNAを紹介するミュージックビデオ",
+  "url": "https://yukihamada.jp/mv/tap.html",
+  "thumbnailUrl": "https://yukihamada.jp/mv/assets/ogp.png",
+  "author": {
+    "@type": "Person",
+    "name": "濱田優貴",
+    "alternateName": "Yuki Hamada",
+    "url": "https://enablerdao.com",
+    "sameAs": [
+      "https://twitter.com/yukihamada",
+      "https://github.com/yukihamada"
+    ]
+  },
+  "keywords": "インディーデベロッパー,自作アプリ,確定申告,電子契約,スマートホーム,BJJ,ローカルAI,フェス"
+}
+</script>
+
+<!-- ── Favicon ── -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23000'/%3E%3Ctext x='16' y='23' text-anchor='middle' font-size='20'%3E🔥%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="https://yukihamada.jp/mv/assets/ogp.png">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --gold:#D4A846; --gold-l:#F0D78C; --gold-d:#8B6914;
+  --bg:#000; --text:#E8E8E8; --dim:#555;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--text);font-family:'Noto Sans JP',sans-serif;}
+
+/* ── PROGRESS ─────────────────────── */
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--gold-d),var(--gold),var(--gold-l));
+  z-index:999;box-shadow:0 0 8px var(--gold);transition:width .1s linear;}
+
+/* ── SCENES (full-screen, stacked) ── */
+.scene{
+  position:fixed;inset:0;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .8s ease;
+  overflow:hidden;
+}
+.scene.active{opacity:1;pointer-events:all;}
+.scene.exit{opacity:0;}
+
+/* background image with Ken Burns */
+.scene-bg{
+  position:absolute;inset:-5%;
+  background-size:cover;background-position:center;
+  filter:brightness(.45) sepia(15%) contrast(1.1);
+  animation:none;
+}
+.scene.active .scene-bg{animation:kenburns 20s ease-in-out infinite alternate;}
+@keyframes kenburns{
+  0%  {transform:scale(1)    translateX(0)    translateY(0);}
+  100%{transform:scale(1.08) translateX(-1%)  translateY(-1%);}
+}
+.scene-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.55) 0%,rgba(0,0,0,.15) 40%,rgba(0,0,0,.7) 100%);
+}
+
+/* scene content */
+.scene-content{
+  position:relative;z-index:60;
+  text-align:center;
+  padding:64px 40px 150px;
+  max-width:900px;width:100%;
+}
+.s-eyebrow{
+  font-size:11px;letter-spacing:.5em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:16px;
+  opacity:0;
+  transition:opacity .6s .2s;
+}
+.scene.active .s-eyebrow{opacity:.8;}
+.s-headline{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.5rem,7vw,5rem);
+  font-weight:900;color:#fff;line-height:1.15;
+  text-shadow:0 0 60px rgba(212,168,70,.3);
+  margin-bottom:20px;
+  transform:translateY(20px);opacity:0;
+  transition:transform .7s .3s, opacity .7s .3s;
+}
+.scene.active .s-headline{transform:translateY(0);opacity:1;}
+.s-body{
+  font-size:16px;line-height:2;color:rgba(232,220,200,.65);
+  font-weight:300;max-width:640px;margin:0 auto;
+  transform:translateY(15px);opacity:0;
+  transition:transform .6s .5s, opacity .6s .5s;
+}
+.scene.active .s-body{transform:translateY(0);opacity:1;}
+
+/* stats row */
+.stats{
+  display:flex;justify-content:center;gap:48px;margin:24px 0;
+  flex-wrap:wrap;
+  opacity:0;transition:opacity .6s .6s;
+}
+.scene.active .stats{opacity:1;}
+.stat-val{font-family:'Playfair Display',serif;font-size:3rem;font-weight:900;color:var(--gold-l);}
+.stat-lbl{font-size:10px;letter-spacing:.25em;color:var(--dim);margin-top:4px;}
+
+/* ── APP SCENE LAYOUT ──────────────── */
+.app-layout{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:32px;align-items:center;
+  max-width:900px;width:100%;
+  padding:68px 40px 160px;  /* top:lb-top+margin, bottom:karaoke+margin */
+  position:relative;z-index:60;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .7s .3s, transform .7s .3s;
+}
+.scene.active .app-layout{opacity:1;transform:translateY(0);}
+@media(max-width:600px){
+  .app-layout{grid-template-columns:1fr;padding:68px 24px 160px;}
+  .phone-wrap{display:none;}
+}
+
+/* ── APP SHOWCASE LAYOUT ──────────── */
+.showcase{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:980px;
+  padding:56px 32px 180px;
+  position:relative;z-index:60;
+  opacity:0;
+  transition:opacity .5s .1s;
+}
+.scene.active .showcase{opacity:1;}
+
+.sc-header{text-align:center;margin-bottom:20px;width:100%;}
+.sc-eyebrow-tag{
+  font-size:10px;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;
+  opacity:.7;margin-bottom:10px;
+}
+.sc-title-row{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:8px;}
+.sc-app-icon{font-size:2.8rem;line-height:1;
+  filter:drop-shadow(0 0 20px currentColor);
+  transform:scale(.7);opacity:0;
+  transition:transform .5s .3s, opacity .5s .3s;
+}
+.scene.active .sc-app-icon{transform:scale(1);opacity:1;}
+.sc-app-name{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2.4rem,7vw,4.5rem);font-weight:900;
+  color:var(--gold-l);line-height:1;
+  transform:translateX(-20px);opacity:0;
+  transition:transform .5s .4s, opacity .5s .4s;
+}
+.scene.active .sc-app-name{transform:translateX(0);opacity:1;}
+.sc-tagline{
+  font-size:15px;color:rgba(232,220,200,.7);letter-spacing:.04em;
+  transform:translateY(10px);opacity:0;
+  transition:transform .5s .55s, opacity .5s .55s;
+}
+.scene.active .sc-tagline{transform:translateY(0);opacity:1;}
+
+.sc-body{
+  display:grid;
+  grid-template-columns:200px 1fr 160px;
+  gap:20px;align-items:center;
+  width:100%;
+}
+@media(max-width:700px){
+  .sc-body{grid-template-columns:1fr;gap:16px;}
+  .sc-cta-col{display:none;}
+}
+
+/* Feature cards */
+.sc-feats{display:flex;flex-direction:column;gap:10px;}
+.sc-feat{
+  background:rgba(0,0,0,.55);
+  border:1px solid rgba(212,168,70,.25);
+  border-radius:10px;
+  padding:10px 14px;
+  display:flex;align-items:center;gap:10px;
+  backdrop-filter:blur(6px);
+  transform:translateX(-30px);opacity:0;
+  transition:transform .5s, opacity .5s, border-color .3s;
+}
+.sc-feat:hover{border-color:rgba(212,168,70,.6);}
+.scene.active .sc-feat:nth-child(1){transform:translateX(0);opacity:1;transition-delay:.5s;}
+.scene.active .sc-feat:nth-child(2){transform:translateX(0);opacity:1;transition-delay:.7s;}
+.scene.active .sc-feat:nth-child(3){transform:translateX(0);opacity:1;transition-delay:.9s;}
+.sc-feat-icon{font-size:1.4rem;flex-shrink:0;}
+.sc-feat-body{}
+.sc-feat-val{font-size:1.1rem;font-weight:700;color:var(--gold-l);display:block;line-height:1.2;}
+.sc-feat-lbl{font-size:10px;color:rgba(232,220,200,.5);letter-spacing:.05em;}
+
+/* Phone carousel */
+.sc-phone-wrap{
+  display:flex;justify-content:center;
+  transform:translateY(20px);opacity:0;
+  transition:transform .6s .35s, opacity .6s .35s;
+}
+.scene.active .sc-phone-wrap{transform:translateY(0);opacity:1;}
+.sc-phone{
+  width:165px;height:330px;
+  border-radius:28px;
+  border:2px solid rgba(255,255,255,.18);
+  overflow:hidden;
+  box-shadow:0 20px 80px rgba(0,0,0,.6), 0 0 40px rgba(212,168,70,.15);
+  position:relative;background:#111;
+}
+.sc-slide{
+  position:absolute;inset:0;
+  width:100%;height:100%;
+  object-fit:cover;
+  opacity:0;transition:opacity .9s ease;
+}
+.sc-slide.active{opacity:1;}
+
+/* CTA column */
+.sc-cta-col{
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  transform:translateX(30px);opacity:0;
+  transition:transform .5s .6s, opacity .5s .6s;
+}
+.scene.active .sc-cta-col{transform:translateX(0);opacity:1;}
+.sc-qr-wrap{width:80px;height:80px;background:#fff;border-radius:8px;padding:4px;display:flex;align-items:center;justify-content:center;}
+.sc-qr-wrap canvas,.sc-qr-wrap img{width:72px!important;height:72px!important;}
+.sc-url{font-size:11px;letter-spacing:.1em;color:var(--gold);opacity:.8;}
+.sc-dl-btn{
+  display:block;width:140px;
+  background:linear-gradient(135deg,rgba(212,168,70,.25),rgba(212,168,70,.1));
+  border:1px solid var(--gold);
+  color:var(--gold-l);
+  font-size:11px;font-weight:700;
+  padding:10px 12px;border-radius:6px;
+  text-decoration:none;text-align:center;
+  letter-spacing:.1em;
+  transition:all .2s;
+  box-shadow:0 0 16px rgba(212,168,70,.15);
+}
+.sc-dl-btn:hover{background:rgba(212,168,70,.35);box-shadow:0 0 30px rgba(212,168,70,.3);}
+
+/* ── END SCREEN ─────────────────────── */
+#end-screen{
+  position:fixed;inset:0;z-index:850;
+  background:rgba(0,0,0,.97);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity 1.5s ease;
+  overflow-y:auto;
+}
+#end-screen.show{opacity:1;pointer-events:all;}
+.end-inner{
+  max-width:680px;width:100%;
+  padding:48px 32px 80px;
+  text-align:center;
+}
+.end-year{
+  font-size:11px;letter-spacing:.6em;color:rgba(212,168,70,.5);
+  margin-bottom:32px;
+}
+.end-headline{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,6vw,3.5rem);
+  font-weight:900;color:#fff;
+  line-height:1.25;margin-bottom:28px;
+}
+.end-headline span{color:var(--gold-l);}
+.end-message{
+  font-size:16px;line-height:2.2;
+  color:rgba(232,220,200,.75);
+  font-weight:300;margin-bottom:40px;
+}
+.end-apps-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:40px;
+}
+@media(max-width:500px){.end-apps-grid{grid-template-columns:repeat(3,1fr);}}
+.end-app-card{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  padding:16px 8px;
+  background:rgba(212,168,70,.05);
+  border:1px solid rgba(212,168,70,.15);
+  border-radius:12px;
+  text-decoration:none;
+  transition:all .25s;
+}
+.end-app-card:hover{background:rgba(212,168,70,.12);border-color:rgba(212,168,70,.4);transform:translateY(-3px);}
+.end-app-card .icon{font-size:1.8rem;}
+.end-app-card .name{font-size:11px;font-weight:700;color:var(--gold-l);letter-spacing:.05em;}
+.end-app-card .url{font-size:9px;color:rgba(212,168,70,.45);letter-spacing:.05em;}
+.end-divider{
+  width:60px;height:1px;background:rgba(212,168,70,.3);
+  margin:0 auto 32px;
+}
+.end-closing{
+  font-size:13px;color:rgba(232,220,200,.5);
+  line-height:2;letter-spacing:.05em;
+}
+.end-social{
+  margin-top:28px;
+  display:flex;gap:12px;justify-content:center;flex-wrap:wrap;
+}
+.end-social a{
+  font-size:11px;letter-spacing:.1em;color:rgba(212,168,70,.6);
+  text-decoration:none;padding:6px 14px;
+  border:1px solid rgba(212,168,70,.2);border-radius:20px;
+  transition:all .2s;
+}
+.end-social a:hover{color:var(--gold-l);border-color:rgba(212,168,70,.5);}
+.end-close-btn{
+  position:fixed;top:20px;right:20px;
+  font-size:20px;color:rgba(212,168,70,.4);
+  cursor:pointer;z-index:900;
+  background:none;border:none;
+  transition:color .2s;
+}
+.end-close-btn:hover{color:var(--gold-l);}
+
+.app-left{text-align:left;}
+.app-eyebrow{font-size:10px;letter-spacing:.5em;color:var(--gold);text-transform:uppercase;margin-bottom:12px;opacity:.8;}
+.app-name{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,6vw,4rem);font-weight:900;color:var(--gold-l);line-height:1.1;margin-bottom:16px;}
+.app-why{
+  font-size:15px;line-height:1.9;color:rgba(232,220,200,.75);
+  font-weight:300;border-left:2px solid rgba(212,168,70,.3);
+  padding-left:16px;margin-bottom:20px;
+}
+.app-bullets{list-style:none;margin-bottom:20px;}
+.app-bullets li{
+  font-size:12px;line-height:2;color:rgba(232,220,200,.6);
+  padding-left:18px;position:relative;
+}
+.app-bullets li::before{content:'▸';position:absolute;left:0;color:var(--gold);opacity:.7;}
+.app-cta{
+  display:flex;align-items:center;gap:16px;
+  opacity:0;transition:opacity .5s .8s;
+}
+.scene.active .app-cta{opacity:1;}
+.app-qr{background:#fff;border-radius:4px;padding:4px;flex-shrink:0;}
+.app-qr canvas,.app-qr img{display:block;}
+.app-dl{
+  display:flex;flex-direction:column;gap:6px;
+}
+.app-dl-url{font-size:10px;letter-spacing:.1em;color:rgba(212,168,70,.5);}
+.app-dl-btn{
+  display:inline-block;
+  background:linear-gradient(135deg,rgba(212,168,70,.2),rgba(212,168,70,.08));
+  border:1px solid rgba(212,168,70,.8);
+  color:var(--gold-l);font-size:11px;font-weight:900;
+  padding:9px 20px;border-radius:3px;
+  text-decoration:none;letter-spacing:.2em;
+  box-shadow:0 0 20px rgba(212,168,70,.2);
+  white-space:nowrap;
+  transition:all .2s;
+}
+.app-dl-btn:hover{background:rgba(212,168,70,.3);box-shadow:0 0 30px rgba(212,168,70,.4);}
+.app-dl-hint{font-size:8px;color:rgba(212,168,70,.3);letter-spacing:.2em;}
+
+/* ── PHONE MOCKUP ──────────────────── */
+.phone-wrap{
+  flex-shrink:0;
+  opacity:0;transform:translateX(20px);
+  transition:opacity .8s .5s, transform .8s .5s;
+}
+.scene.active .phone-wrap{opacity:1;transform:translateX(0);}
+.phone-mock{
+  width:140px;height:280px;
+  background:#0a0a0a;
+  border-radius:22px;
+  border:2px solid rgba(212,168,70,.25);
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(0,0,0,.8),0 0 15px rgba(212,168,70,.1);
+  position:relative;
+}
+.phone-mock::before{
+  content:'';position:absolute;
+  top:10px;left:50%;transform:translateX(-50%);
+  width:36px;height:3px;
+  background:rgba(212,168,70,.2);border-radius:2px;z-index:3;
+}
+.phone-mock img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.phone-mock-ph{
+  width:100%;height:100%;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;color:rgba(212,168,70,.3);
+}
+.phone-mock-ph .ph-icon{font-size:28px;opacity:.4;}
+.phone-mock-ph .ph-lbl{font-size:8px;letter-spacing:.2em;}
+
+/* ── DOG SCENE ─────────────────────── */
+#sc-dog .s-headline{font-size:clamp(2rem,5vw,3.5rem);}
+.dog-frame{
+  width:200px;height:200px;border-radius:50%;
+  overflow:hidden;border:2px solid rgba(212,168,70,.3);
+  box-shadow:0 0 40px rgba(212,168,70,.15);
+  margin:20px auto;
+  opacity:0;transform:scale(.9);
+  transition:opacity .8s .4s, transform .8s .4s;
+}
+.scene.active .dog-frame{opacity:1;transform:scale(1);}
+.dog-frame img{width:100%;height:100%;object-fit:cover;}
+
+/* ── OUTRO QR GRID ─────────────────── */
+.outro-grid{
+  display:flex;justify-content:center;gap:20px;margin-top:32px;
+  flex-wrap:wrap;
+  opacity:0;transition:opacity .6s .7s;
+}
+.scene.active .outro-grid{opacity:1;}
+.outro-qr-cell{text-align:center;}
+.outro-qr-cell .qr-box{display:inline-block;background:#fff;padding:5px;border-radius:5px;margin-bottom:6px;}
+.outro-qr-cell .qr-name{font-size:9px;letter-spacing:.25em;color:var(--dim);}
+.outro-qr-cell .qr-url{font-size:8px;color:rgba(212,168,70,.4);margin-top:2px;}
+
+/* ── VIDEO BG (jiuflow) ──────────────── */
+.scene-video-bg{
+  position:absolute;inset:0;
+  z-index:1;
+  object-fit:cover;width:100%;height:100%;
+  opacity:.35;
+  filter:sepia(20%) contrast(1.1);
+}
+
+/* ── CHORUS SCENE ──────────────────── */
+#scene-chorus .s-headline{
+  font-size:clamp(3rem,9vw,7rem);
+  color:var(--gold-l);
+  text-shadow:0 0 100px rgba(212,168,70,.6),0 0 200px rgba(212,168,70,.3);
+}
+
+/* ── APP SPOTLIGHT CARD ────────────── */
+#spotlight{
+  position:fixed;
+  bottom:130px;right:24px;
+  width:300px;z-index:80;
+  transform:translateX(340px);
+  transition:transform .6s cubic-bezier(.34,1.4,.64,1);
+}
+#spotlight.show{transform:translateX(0);}
+.sp-card{
+  background:rgba(0,0,0,.88);
+  border:1px solid rgba(212,168,70,.25);
+  border-radius:6px;padding:14px;
+  backdrop-filter:blur(20px);
+  position:relative;overflow:hidden;
+}
+.sp-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+.sp-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sp-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.sp-name{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--gold-l);}
+.sp-sub{font-size:9px;letter-spacing:.2em;color:var(--dim);}
+.sp-tags{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;}
+.sp-tag{font-size:9px;padding:2px 7px;border:1px solid rgba(212,168,70,.2);border-radius:2px;color:rgba(212,168,70,.6);letter-spacing:.05em;}
+.sp-tag-live{border-color:rgba(212,168,70,.6);color:var(--gold);}
+.sp-desc{font-size:10px;line-height:1.75;color:rgba(232,220,200,.55);margin-bottom:10px;white-space:pre-line;}
+.sp-video{width:100%;aspect-ratio:16/9;border-radius:4px;overflow:hidden;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);cursor:pointer;display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.sp-video video{width:100%;height:100%;object-fit:cover;}
+.sp-vph{color:rgba(255,255,255,.2);font-size:9px;text-align:center;letter-spacing:.15em;}
+.sp-vph-icon{font-size:24px;opacity:.3;display:block;margin-bottom:4px;}
+.sp-foot{display:flex;align-items:center;gap:8px;}
+.sp-qr{background:#fff;border-radius:3px;padding:3px;flex-shrink:0;}
+.sp-qr canvas,.sp-qr img{display:block;}
+.sp-links{flex:1;}
+.sp-url{display:block;font-size:10px;color:rgba(212,168,70,.5);text-decoration:none;letter-spacing:.05em;margin-bottom:6px;}
+.sp-btn{
+  display:block;
+  background:linear-gradient(135deg,rgba(212,168,70,.18),rgba(212,168,70,.08));
+  border:1px solid rgba(212,168,70,.7);color:var(--gold);
+  font-size:9px;font-weight:900;padding:7px 8px;border-radius:2px;
+  text-decoration:none;text-align:center;letter-spacing:.2em;
+  transition:all .2s;
+  box-shadow:0 0 12px rgba(212,168,70,.15);
+}
+.sp-btn:hover{background:rgba(212,168,70,.25);box-shadow:0 0 20px rgba(212,168,70,.3);}
+.sp-scan-hint{font-size:8px;color:rgba(212,168,70,.3);letter-spacing:.15em;text-align:center;margin-top:4px;}
+
+/* ── KARAOKE PANEL ─────────────────── */
+#karaoke{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  z-index:100;
+  padding:0 40px 28px;
+  background:linear-gradient(0deg,
+    rgba(0,0,0,.97) 0%,
+    rgba(0,0,0,.85) 50%,
+    rgba(0,0,0,.3) 85%,
+    transparent 100%);
+  text-align:center;
+  pointer-events:none;
+}
+.k-prev{
+  font-size:clamp(.75rem,2vw,1rem);
+  color:rgba(232,220,200,.3);
+  min-height:22px;line-height:1.8;letter-spacing:.06em;
+  transition:all .4s;
+  display:block;padding-top:10px;
+}
+.k-next{
+  font-size:clamp(.75rem,2vw,1rem);
+  color:rgba(232,220,200,.25);
+  min-height:26px;line-height:2;letter-spacing:.06em;
+  transition:all .4s;
+  display:block;
+}
+.k-main{
+  font-size:clamp(1.6rem,4.5vw,3rem);
+  font-weight:900;
+  min-height:56px;line-height:1.4;
+  margin:2px 0 6px;
+  letter-spacing:.04em;
+  color:#fff;
+  text-shadow:0 2px 30px rgba(0,0,0,.9), 0 0 60px rgba(0,0,0,.6);
+  transition:color .3s;
+}
+/* chorus karaoke */
+#karaoke.chorus .k-main{
+  font-size:clamp(2rem,6vw,4rem);
+  color:var(--gold-l);
+  text-shadow:0 0 40px rgba(212,168,70,.5), 0 2px 20px rgba(0,0,0,.9);
+  animation:kpulse .5s ease-in-out infinite alternate;
+}
+@keyframes kpulse{0%{transform:scale(1);}100%{transform:scale(1.03);}}
+#karaoke.jiuflow .k-main{color:#a0e060;}
+#karaoke.bridge  .k-main{color:#e0c090;}
+#karaoke.elio    .k-main{color:#c0a0f0;}
+#karaoke.teai    .k-main{color:#80e0b0;}
+#karaoke.soluna  .k-main{color:#c890f0;}
+
+/* char-by-char animation */
+.k-char{
+  display:inline-block;
+  opacity:0;transform:translateY(8px) scale(.9);
+  animation:char-in .18s forwards;
+}
+@keyframes char-in{to{opacity:1;transform:translateY(0) scale(1);}}
+.k-char.gold{color:var(--gold-l);}
+.k-char.white{color:#fff;}
+
+/* beat pulse on k-main */
+.beat-pulse{animation:beat-hit .15s ease !important;}
+@keyframes beat-hit{0%{transform:scale(1.06);}100%{transform:scale(1);}}
+
+/* ── CANVAS LAYERS ─────────────────── */
+#cv-particles{position:fixed;inset:0;z-index:50;pointer-events:none;}
+#cv-eq{position:fixed;bottom:86px;left:0;right:0;height:90px;z-index:56;pointer-events:none;}
+#cv-scope{position:fixed;left:0;right:0;bottom:0;height:30vh;z-index:48;pointer-events:none;opacity:.4;}
+
+/* ── FLASH ─────────────────────────── */
+#flash{position:fixed;inset:0;z-index:400;pointer-events:none;opacity:0;background:var(--gold);}
+.flash-go{animation:flash-anim .35s ease!important;}
+@keyframes flash-anim{0%{opacity:.5}100%{opacity:0}}
+
+/* ── SCREEN SHAKE ──────────────────── */
+.shake{animation:shake .2s ease!important;}
+@keyframes shake{0%,100%{transform:translate(0)}25%{transform:translate(-6px,3px)}75%{transform:translate(6px,-3px)}}
+
+/* ── SCENE BEAT FLASH ──────────────── */
+.scene.active .scene-bg{transition:filter .05s;}
+.scene.active.beat-hit .scene-bg{filter:brightness(.65) sepia(15%) contrast(1.2);}
+
+/* ── GRAIN ─────────────────────────── */
+#grain{position:fixed;inset:0;z-index:500;pointer-events:none;opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:256px;animation:grain .1s steps(1) infinite;}
+@keyframes grain{0%{background-position:0 0}25%{background-position:-30px -10px}50%{background-position:10px -20px}75%{background-position:-10px 30px}100%{background-position:20px -5px}}
+
+/* ── EQ LABEL ──────────────────────── */
+#eq-label{
+  position:fixed;bottom:132px;right:16px;z-index:57;
+  font-size:7px;letter-spacing:.35em;color:rgba(212,168,70,.3);
+  pointer-events:none;text-transform:uppercase;
+}
+
+/* ── LETTERBOX ─────────────────────── */
+.lb{position:fixed;left:0;right:0;background:#000;z-index:200;}
+.lb-top{top:0;height:52px;}
+.lb-bot{bottom:0;height:3px;}
+
+/* ── TRANSPORT BAR ─────────────────── */
+#transport{
+  position:fixed;top:0;left:0;right:0;height:52px;z-index:210;
+  display:flex;align-items:center;gap:12px;padding:0 16px;
+  background:rgba(0,0,0,.85);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(212,168,70,.12);
+}
+#btn-prev,#btn-play,#btn-next{
+  background:none;border:1px solid rgba(212,168,70,.3);
+  color:rgba(212,168,70,.7);font-size:11px;cursor:pointer;
+  width:28px;height:28px;border-radius:3px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:all .15s;
+}
+#btn-prev:hover,#btn-play:hover,#btn-next:hover{
+  border-color:var(--gold);color:var(--gold);
+}
+#seek-wrap{flex:1;display:flex;align-items:center;gap:8px;}
+#seek{
+  flex:1;-webkit-appearance:none;appearance:none;
+  height:3px;background:rgba(212,168,70,.2);border-radius:2px;cursor:pointer;
+  outline:none;
+}
+#seek::-webkit-slider-thumb{
+  -webkit-appearance:none;width:12px;height:12px;
+  border-radius:50%;background:var(--gold);cursor:pointer;
+}
+#time-disp{font-size:9px;color:rgba(212,168,70,.5);letter-spacing:.05em;flex-shrink:0;width:48px;text-align:right;}
+#btn-karaoke{
+  background:none;border:1px solid rgba(212,168,70,.3);
+  color:rgba(212,168,70,.6);font-size:8px;letter-spacing:.2em;
+  padding:0 8px;height:28px;border-radius:3px;cursor:pointer;
+  flex-shrink:0;transition:all .15s;
+}
+#btn-karaoke.active,#btn-karaoke:hover{
+  border-color:var(--gold);color:var(--gold);background:rgba(212,168,70,.08);
+}
+
+/* ── KARAOKE SING MODE ─────────────── */
+#karaoke-mode{
+  position:fixed;inset:0;z-index:700;background:rgba(0,0,0,.97);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+  padding:20px;
+}
+#karaoke-mode.show{opacity:1;pointer-events:all;}
+#km-title{font-family:'Playfair Display',serif;font-size:clamp(1.4rem,4vw,2.2rem);
+  color:var(--gold-l);margin-bottom:6px;text-align:center;}
+#km-artist{font-size:10px;letter-spacing:.4em;color:var(--dim);margin-bottom:32px;}
+#km-lyric{
+  font-size:clamp(1.6rem,5vw,2.8rem);font-weight:900;
+  color:#fff;text-align:center;min-height:80px;line-height:1.5;
+  text-shadow:0 2px 20px rgba(0,0,0,.9);margin-bottom:12px;
+  transition:color .2s;
+}
+#km-lyric.singing{color:var(--gold-l);}
+#km-next-lyric{font-size:clamp(.9rem,2.5vw,1.1rem);color:rgba(232,220,200,.3);
+  text-align:center;min-height:36px;margin-bottom:24px;}
+#km-pitch{
+  width:min(320px,80vw);height:8px;background:rgba(255,255,255,.06);
+  border-radius:4px;overflow:hidden;margin-bottom:8px;
+}
+#km-pitch-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-d),var(--gold-l));
+  border-radius:4px;transition:width .05s;}
+#km-score-wrap{text-align:center;margin-bottom:24px;}
+#km-score{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,8vw,5rem);
+  font-weight:900;color:var(--gold-l);line-height:1;}
+#km-score-lbl{font-size:9px;letter-spacing:.4em;color:var(--dim);margin-top:4px;}
+#km-grade{font-size:clamp(1rem,3vw,1.6rem);color:var(--gold);font-weight:900;
+  min-height:30px;transition:all .3s;}
+#km-controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center;}
+#km-start,#km-close{
+  padding:10px 24px;border-radius:3px;font-size:11px;letter-spacing:.3em;
+  cursor:pointer;font-weight:700;transition:all .2s;
+}
+#km-start{background:rgba(212,168,70,.15);border:1px solid var(--gold);color:var(--gold);}
+#km-start:hover{background:rgba(212,168,70,.25);}
+#km-close{background:none;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.4);}
+#km-close:hover{border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.7);}
+#km-vol-meter{display:flex;gap:2px;align-items:flex-end;height:32px;}
+#km-vol-meter span{width:4px;border-radius:2px;background:rgba(212,168,70,.3);
+  transition:height .05s;min-height:3px;}
+#km-tip{font-size:10px;color:rgba(212,168,70,.4);letter-spacing:.1em;margin-top:8px;text-align:center;}
+
+/* ── NEXT SCENE PEEK ───────────────── */
+#peek{
+  position:fixed;bottom:86px;left:0;right:0;
+  height:58px;z-index:55;pointer-events:none;
+  overflow:hidden;
+}
+#peek-bg{
+  position:absolute;inset:-20%;
+  background-size:cover;background-position:center bottom;
+  filter:brightness(.22) blur(3px) sepia(20%);
+  transform:translateY(0);
+  transition:background-image .4s;
+}
+#peek-bar{
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,70,.25),transparent);
+}
+#peek-label{
+  position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+  font-size:8px;letter-spacing:.45em;color:rgba(212,168,70,.35);
+  white-space:nowrap;text-transform:uppercase;
+}
+#peek-arrow{
+  position:absolute;bottom:6px;right:24px;
+  font-size:10px;color:rgba(212,168,70,.3);
+  animation:peek-bob 1.2s ease-in-out infinite;
+}
+@keyframes peek-bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+
+/* ── PLAY SCREEN ───────────────────── */
+#play-screen{
+  position:fixed;inset:0;z-index:900;
+  background:radial-gradient(ellipse at 40% 40%,#1a1205,#000);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity 1.2s;
+}
+#play-screen.out{opacity:0;pointer-events:none;}
+.ps-artist{font-size:11px;letter-spacing:.5em;color:var(--gold);margin-bottom:14px;}
+.ps-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,8vw,5rem);font-weight:900;color:#fff;text-align:center;margin-bottom:8px;}
+.ps-sub{font-size:11px;letter-spacing:.25em;color:var(--dim);margin-bottom:60px;}
+#play-btn{
+  width:88px;height:88px;border-radius:50%;
+  border:1.5px solid var(--gold);background:transparent;
+  color:var(--gold);font-size:30px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  animation:playpulse 2s ease-in-out infinite;
+  transition:all .3s;
+}
+#play-btn:hover{background:rgba(212,168,70,.12);transform:scale(1.08);}
+@keyframes playpulse{0%,100%{box-shadow:0 0 0 0 rgba(212,168,70,.4)}50%{box-shadow:0 0 0 22px rgba(212,168,70,0)}}
+.ps-note{margin-top:22px;font-size:11px;color:var(--dim);letter-spacing:.1em;}
+
+/* ── PAUSE OVERLAY ─────────────────── */
+#pause-ov{
+  position:fixed;inset:0;z-index:800;
+  background:rgba(0,0,0,.55);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+#pause-ov.show{opacity:1;pointer-events:all;}
+.pause-icon{font-family:'Playfair Display',serif;font-size:80px;color:rgba(212,168,70,.5);}
+
+/* beat-bars removed — replaced by canvas EQ */
+
+/* ── LYRICS OVERLAY ────────────────── */
+#lyrics-btn{
+  position:fixed;bottom:24px;left:24px;z-index:150;
+  background:transparent;border:1px solid rgba(212,168,70,.35);
+  color:rgba(212,168,70,.6);font-size:9px;letter-spacing:.3em;
+  padding:7px 14px;border-radius:2px;cursor:pointer;
+  transition:all .2s;
+  pointer-events:all;
+}
+#lyrics-btn:hover{background:rgba(212,168,70,.1);color:var(--gold);}
+
+#lyrics-overlay{
+  position:fixed;inset:0;z-index:600;
+  background:rgba(0,0,0,.96);
+  display:flex;align-items:flex-start;justify-content:center;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+  overflow-y:auto;
+  padding:60px 24px 80px;
+}
+#lyrics-overlay.show{opacity:1;pointer-events:all;}
+.lyrics-inner{max-width:640px;width:100%;}
+.lyrics-inner h2{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(1.6rem,4vw,2.5rem);font-weight:900;
+  color:var(--gold-l);margin-bottom:6px;
+}
+.lyrics-inner .l-artist{font-size:11px;letter-spacing:.3em;color:var(--dim);margin-bottom:48px;}
+.lyrics-section{margin-bottom:36px;}
+.lyrics-section-label{
+  font-size:9px;letter-spacing:.4em;color:rgba(212,168,70,.4);
+  text-transform:uppercase;margin-bottom:12px;
+}
+.lyrics-section p{
+  font-size:clamp(.95rem,2.5vw,1.15rem);line-height:2.1;
+  color:rgba(232,220,200,.85);letter-spacing:.04em;
+  margin:0;
+}
+.lyrics-section p.highlight{color:var(--gold-l);font-weight:700;}
+.lyrics-close{
+  position:fixed;top:20px;right:20px;z-index:601;
+  background:transparent;border:none;color:rgba(212,168,70,.5);
+  font-size:22px;cursor:pointer;padding:8px;
+  transition:color .2s;
+}
+.lyrics-close:hover{color:var(--gold);}
+
+/* ── HIDDEN ────────────────────────── */
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<!-- LANG TOGGLE -->
+<div id="lang-toggle" onclick="toggleLang()" style="position:fixed;top:12px;right:16px;z-index:220;background:rgba(0,0,0,.7);border:1px solid rgba(212,168,70,.3);border-radius:16px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(8px);display:flex;align-items:center;gap:5px;font-size:.65rem;letter-spacing:.08em;color:var(--gold);user-select:none;">
+  <span id="lang-label">🇯🇵 JA</span>
+</div>
+
+<!-- TRANSPORT BAR -->
+<div id="transport">
+  <button id="btn-prev" onclick="seekSection(-1)" title="前のシーン">◀◀</button>
+  <button id="btn-play" onclick="togglePause()">▶</button>
+  <button id="btn-next" onclick="seekSection(1)" title="次のシーン">▶▶</button>
+  <div id="seek-wrap">
+    <input id="seek" type="range" min="0" max="100" step="0.1" value="0">
+    <span id="time-disp">0:00</span>
+  </div>
+  <button id="btn-karaoke" onclick="openKaraokeMode()">🎤 歌う</button>
+</div>
+
+<div class="lb lb-top"></div>
+<div class="lb lb-bot"></div>
+<div id="grain"></div>
+<div id="flash"></div>
+<canvas id="cv-particles"></canvas>
+<div id="prog"></div>
+<div id="eq-label">SPECTRUM</div>
+<canvas id="cv-eq"></canvas>
+<canvas id="cv-scope"></canvas>
+
+<!-- SCENES ─────────────────────────────────────────── -->
+
+<div class="scene active" id="sc-intro">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/guitar_1.jpg'),url('assets/images/generated/intro_1.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-content">
+    <div class="s-eyebrow">濱田優貴 presents</div>
+    <div class="s-headline"><span style="color:var(--gold-l)">Tap, Tap, Tap</span></div>
+    <div class="s-body">俺が使うものは 俺が作る<br><span style="font-size:.75em;letter-spacing:.2em;color:rgba(212,168,70,.7)">濱田 優貴 / Yuki Hamada</span></div>
+  </div>
+</div>
+
+<!-- ── パシャ ── -->
+<div class="scene" id="sc-pasha">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/pasha_v2_1.jpg'),url('assets/images/generated/pasha_1.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="app-layout">
+    <div class="app-left">
+      <div class="app-eyebrow">App 01 — 確定申告 AI</div>
+      <div class="app-name">パシャ 📸</div>
+      <div class="app-why">レシート300枚が引き出しから出てきた夜、3日で作り始めた。<br>撮るだけ3秒。もう終わり。</div>
+      <ul class="app-bullets">
+        <li>AI OCR — 日付・金額・店名を自動読み取り</li>
+        <li>電子帳簿保存法 全8要件対応</li>
+        <li>freee / MF 互換CSV · 月30件まで無料</li>
+      </ul>
+      <div class="app-cta">
+        <div class="app-qr" id="qr-pasha"></div>
+        <div class="app-dl">
+          <span class="app-dl-url">pasha.run</span>
+          <a class="app-dl-btn" href="https://pasha.run" target="_blank">▼ 無料でDL</a>
+          <span class="app-dl-hint">QRをスキャン or タップ</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone-mock">
+        <video src="assets/videos/pasha.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ポン ── -->
+<div class="scene" id="sc-pon">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/pon_v2_1.jpg'),url('assets/images/generated/pon_3.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="app-layout">
+    <div class="app-left">
+      <div class="app-eyebrow">App 02 — 電子契約</div>
+      <div class="app-name">ポン 📝</div>
+      <div class="app-why">ハンコのためだけに新幹線に乗った日がある。<br>その車内で「もうやめよう」と決めた。</div>
+      <ul class="app-bullets">
+        <li>送る → タップ → 完了 — 以上</li>
+        <li>ハンコ · 印刷 · 郵送 すべて不要</li>
+        <li>今日から使える · 今なら無料</li>
+      </ul>
+      <div class="app-cta">
+        <div class="app-qr" id="qr-pon"></div>
+        <div class="app-dl">
+          <span class="app-dl-url">banto.work</span>
+          <a class="app-dl-btn" href="https://banto.work" target="_blank">▼ 今すぐ試す</a>
+          <span class="app-dl-hint">QRをスキャン or タップ</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone-mock">
+        <video src="assets/videos/pon.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── KAGI ── -->
+<div class="scene" id="sc-kagi">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/kagi_v2_2.jpg'),url('assets/images/generated/kagi_1.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="app-layout">
+    <div class="app-left">
+      <div class="app-eyebrow">App 03 — スマートホーム</div>
+      <div class="app-name">KAGI 🔑</div>
+      <div class="app-why">深夜2時「鍵が開きません」で飛び起きて走った夜がある。<br>それが最後になるように作った。</div>
+      <ul class="app-bullets">
+        <li>鍵 · 照明 · 空調 — スマホひとつで全部</li>
+        <li>Airbnb対応 · 布団から1秒でリモート解錠</li>
+        <li>24時間 どこからでも</li>
+      </ul>
+      <div class="app-cta">
+        <div class="app-qr" id="qr-kagi"></div>
+        <div class="app-dl">
+          <span class="app-dl-url">kagi.app</span>
+          <a class="app-dl-btn" href="#" target="_blank">▼ 詳細を見る</a>
+          <span class="app-dl-hint">QRをスキャン or タップ</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone-mock">
+        <video src="assets/videos/kagi.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Koe ── -->
+<div class="scene" id="sc-pre">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/koe_v2_1.jpg'),url('assets/images/generated/pre_3.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="app-layout">
+    <div class="app-left">
+      <div class="app-eyebrow">App 04 — 声でメモ</div>
+      <div class="app-name">Koe 🎙</div>
+      <div class="app-why">この歌の歌詞は全部、自転車の上で生まれた。<br>Koeがなかったら、この歌は存在しない。</div>
+      <ul class="app-bullets">
+        <li>走りながら · 自転車中でも — 声でリアルタイム変換</li>
+        <li>日本語 · 英語対応 · Mac / iOS</li>
+        <li>完全無料</li>
+      </ul>
+      <div class="app-cta">
+        <div class="app-qr" id="qr-koe"></div>
+        <div class="app-dl">
+          <span class="app-dl-url">koe.live/app</span>
+          <a class="app-dl-btn" href="https://koe.live/app" target="_blank">▼ 無料でDL</a>
+          <span class="app-dl-hint">QRをスキャン or タップ</span>
+        </div>
+      </div>
+    </div>
+    <div class="phone-wrap">
+      <div class="phone-mock" style="width:200px;height:140px;border-radius:12px;">
+        <video src="assets/videos/koe.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CHORUS ── -->
+<div class="scene" id="sc-chorus">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/chorus_v2_1.jpg'),url('assets/images/generated/chorus_2.jpg')"></div>
+  <div class="scene-overlay" style="background:linear-gradient(180deg,rgba(0,0,0,.6) 0%,rgba(20,15,0,.3) 50%,rgba(0,0,0,.8) 100%)"></div>
+  <div class="scene-content">
+    <div class="s-headline" style="font-size:clamp(3rem,10vw,7rem);color:var(--gold-l);text-shadow:0 0 100px rgba(212,168,70,.7)">Tap, Tap, Tap</div>
+    <div class="s-body" style="font-size:18px;color:rgba(255,255,255,.6);">不便だと思ったら 作ればいい<br>俺もやってる — 一緒にやろうぜ 🔥</div>
+  </div>
+</div>
+
+<!-- ── JiuFlow ── -->
+<div class="scene" id="sc-jiuflow">
+  <video class="scene-video-bg" src="assets/videos/jiuflow.mp4" autoplay loop muted playsinline></video>
+  <div class="scene-bg" style="background-image:url('assets/images/generated/jiuflow_v2_2.jpg'),url('assets/images/generated/jiuflow_3.jpg');opacity:.55"></div>
+  <div class="scene-overlay"></div>
+  <div class="showcase">
+    <div class="sc-header">
+      <div class="sc-eyebrow-tag">App 05 — BJJ × フロー分析</div>
+      <div class="sc-title-row">
+        <span class="sc-app-icon">🥋</span>
+        <span class="sc-app-name">JiuFlow</span>
+      </div>
+      <div class="sc-tagline">負けるパターン、全部フローチャートにした</div>
+    </div>
+    <div class="sc-body">
+      <div class="sc-feats">
+        <div class="sc-feat"><span class="sc-feat-icon">🏆</span><div class="sc-feat-body"><span class="sc-feat-val">世界3位</span><span class="sc-feat-lbl">作者の実績</span></div></div>
+        <div class="sc-feat"><span class="sc-feat-icon">🗺</span><div class="sc-feat-body"><span class="sc-feat-val">10+ フロー</span><span class="sc-feat-lbl">最短勝利ルート</span></div></div>
+        <div class="sc-feat"><span class="sc-feat-icon">⚡</span><div class="sc-feat-body"><span class="sc-feat-val">無料</span><span class="sc-feat-lbl">今すぐ使える</span></div></div>
+      </div>
+      <div class="sc-phone-wrap">
+        <div class="sc-phone" id="sc-jiuflow-phone">
+          <img class="sc-slide active" src="assets/images/screenshots/jiuflow.jpg" alt="">
+          <img class="sc-slide" src="assets/images/generated/jiuflow_v2_1.jpg" alt="">
+          <img class="sc-slide" src="assets/images/generated/jiuflow_1.jpg" alt="">
+        </div>
+      </div>
+      <div class="sc-cta-col">
+        <div class="sc-qr-wrap" id="qr-jiuflow"></div>
+        <span class="sc-url">jiuflow.art</span>
+        <a class="sc-dl-btn" href="https://jiuflow.art" target="_blank">▼ フローを見る</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Elio ── -->
+<div class="scene" id="sc-elio">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/elio_v2_1.jpg'),url('assets/images/generated/elio_1.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="showcase">
+    <div class="sc-header">
+      <div class="sc-eyebrow-tag">App 06 — ローカルAI · 完全無料</div>
+      <div class="sc-title-row">
+        <span class="sc-app-icon">🤖</span>
+        <span class="sc-app-name">Elio</span>
+      </div>
+      <div class="sc-tagline">機内でも。無人島でも。ネット不要。</div>
+    </div>
+    <div class="sc-body">
+      <div class="sc-feats">
+        <div class="sc-feat"><span class="sc-feat-icon">📴</span><div class="sc-feat-body"><span class="sc-feat-val">オフライン</span><span class="sc-feat-lbl">ネット不要で動作</span></div></div>
+        <div class="sc-feat"><span class="sc-feat-icon">🔒</span><div class="sc-feat-body"><span class="sc-feat-val">完全無料</span><span class="sc-feat-lbl">ローカル処理・秘密保護</span></div></div>
+        <div class="sc-feat"><span class="sc-feat-icon">🚀</span><div class="sc-feat-body"><span class="sc-feat-val">年内強化</span><span class="sc-feat-lbl">大幅アップデート予定</span></div></div>
+      </div>
+      <div class="sc-phone-wrap">
+        <div class="sc-phone" id="sc-elio-phone">
+          <img class="sc-slide active" src="assets/images/screenshots/elio.jpg" alt="">
+          <img class="sc-slide" src="assets/images/generated/elio_v2_1.jpg" alt="">
+          <img class="sc-slide" src="assets/images/generated/elio_2.jpg" alt="">
+        </div>
+      </div>
+      <div class="sc-cta-col">
+        <div class="sc-qr-wrap" id="qr-elio"></div>
+        <span class="sc-url">elio.love</span>
+        <a class="sc-dl-btn" href="https://elio.love" target="_blank">▼ 今すぐ試す</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SOLUNA / Koe Device ── -->
+<div class="scene" id="sc-soluna">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/soluna_v2_1.jpg'),url('assets/images/generated/soluna_1.jpg')"></div>
+  <div class="scene-overlay" style="background:linear-gradient(180deg,rgba(0,0,0,.5) 0%,rgba(10,5,20,.2) 50%,rgba(0,0,0,.75) 100%)"></div>
+  <div class="showcase">
+    <div class="sc-header">
+      <div class="sc-eyebrow-tag">Hardware — フェス同期スピーカー</div>
+      <div class="sc-title-row">
+        <span class="sc-app-icon">🎵</span>
+        <span class="sc-app-name" style="color:#c890f0">SOLUNA</span>
+      </div>
+      <div class="sc-tagline">10,000台が同時に鳴る夜。群衆が楽器になる。</div>
+    </div>
+    <div class="sc-body">
+      <div class="sc-feats">
+        <div class="sc-feat"><span class="sc-feat-icon">🔊</span><div class="sc-feat-body"><span class="sc-feat-val">10,000台</span><span class="sc-feat-lbl">完全同期</span></div></div>
+        <div class="sc-feat"><span class="sc-feat-icon">💰</span><div class="sc-feat-body"><span class="sc-feat-val">$65 / COIN</span><span class="sc-feat-lbl">L-Acousticsの1/3コスト</span></div></div>
+        <div class="sc-feat"><span class="sc-feat-icon">🌐</span><div class="sc-feat-body"><span class="sc-feat-val">開発中</span><span class="sc-feat-lbl">一緒に作ろう</span></div></div>
+      </div>
+      <div class="sc-phone-wrap">
+        <div class="sc-phone" style="border-radius:50%;width:200px;height:200px;border-color:rgba(200,144,240,.3);box-shadow:0 0 60px rgba(200,144,240,.25);" id="sc-soluna-phone">
+          <img class="sc-slide active" src="assets/images/generated/soluna_v2_1.jpg" alt="">
+          <img class="sc-slide" src="assets/images/generated/soluna_2.jpg" alt="">
+          <img class="sc-slide" src="assets/images/generated/soluna_v2_2.jpg" alt="">
+        </div>
+      </div>
+      <div class="sc-cta-col">
+        <div class="sc-qr-wrap" id="qr-soluna"></div>
+        <span class="sc-url">solun.art</span>
+        <a class="sc-dl-btn" href="https://solun.art" target="_blank">▼ プロジェクトへ</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── BRIDGE ── -->
+<div class="scene" id="sc-bridge">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/bridge_v2_1.jpg'),url('assets/images/generated/bridge_2.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-content">
+    <div class="s-eyebrow">From 濱田優貴 — 正直に言う</div>
+    <div class="s-headline" style="font-size:clamp(1.8rem,5vw,3.5rem)">バグはある。<br><span style="color:var(--gold-l)">でも毎日直してる。</span></div>
+    <div class="s-body" style="max-width:540px;margin:20px auto;">
+      格安で使わせてるのは、まず使ってほしいから。<br>
+      うまくいったら、使ってくれた人に還元したい。<br>
+      <span style="color:var(--gold);opacity:.8;">夢くらい言っていい。</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── OUTRO ── -->
+<div class="scene" id="sc-outro">
+  <div class="scene-bg" style="background-image:url('assets/images/generated/outro_v2_1.jpg'),url('assets/images/generated/outro_1.jpg')"></div>
+  <div class="scene-overlay"></div>
+  <div class="scene-content">
+    <div class="s-eyebrow">— さあ 一緒にやろうぜ —</div>
+    <div class="s-headline" style="font-size:clamp(2rem,6vw,4rem)">Tap, Tap, Tap<br><span style="font-size:.55em;color:var(--gold-l)">全部、ここにある</span></div>
+    <div class="outro-grid" id="outro-qrs"></div>
+  </div>
+</div>
+
+<!-- NEXT SCENE PEEK ─────────────────────────────────── -->
+<div id="peek">
+  <div id="peek-bg"></div>
+  <div id="peek-bar"></div>
+  <div id="peek-label">next</div>
+  <div id="peek-arrow">▼</div>
+</div>
+
+<!-- END SCREEN -->
+<div id="end-screen">
+  <div id="next-song-timer" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10;background:rgba(0,255,255,.12);border:1px solid rgba(0,255,255,.4);color:var(--cyan,#0ff);padding:12px 28px;border-radius:30px;font-size:.85rem;font-weight:700;letter-spacing:.05em;cursor:pointer;backdrop-filter:blur(10px);box-shadow:0 0 20px rgba(0,255,255,.2);transition:all .2s;white-space:nowrap;"></div>
+  <button class="end-close-btn" onclick="document.getElementById('end-screen').classList.remove('show')">✕</button>
+  <div class="end-inner">
+    <div class="end-year">濱田優貴 — 2026</div>
+    <h1 class="end-headline">作ることは、<br><span>生きることだった</span></h1>
+    <div class="end-divider"></div>
+    <p class="end-message">
+      不便を感じるたびに、作った。<br>
+      使ってくれる人がいるから、また作った。<br>
+      バグが出る。直す。また出る。また直す。<br>
+      それでいい。途中でいい。<br>
+      <strong style="color:var(--gold-l)">一緒に育てよう。</strong>
+    </p>
+    <div class="end-apps-grid">
+      <a class="end-app-card" href="https://pasha.run" target="_blank"><span class="icon">📸</span><span class="name">パシャ</span><span class="url">pasha.run</span></a>
+      <a class="end-app-card" href="https://banto.work" target="_blank"><span class="icon">📝</span><span class="name">ポン</span><span class="url">banto.work</span></a>
+      <a class="end-app-card" href="https://kagi.app" target="_blank"><span class="icon">🔑</span><span class="name">KAGI</span><span class="url">kagi.app</span></a>
+      <a class="end-app-card" href="https://koe.live/app" target="_blank"><span class="icon">🎙</span><span class="name">Koe</span><span class="url">koe.live/app</span></a>
+      <a class="end-app-card" href="https://jiuflow.art" target="_blank"><span class="icon">🥋</span><span class="name">JiuFlow</span><span class="url">jiuflow.art</span></a>
+      <a class="end-app-card" href="https://elio.love" target="_blank"><span class="icon">🤖</span><span class="name">Elio</span><span class="url">elio.love</span></a>
+      <a class="end-app-card" href="https://solun.art" target="_blank"><span class="icon">🎵</span><span class="name">SOLUNA</span><span class="url">solun.art</span></a>
+      <a class="end-app-card" href="https://teai.io" target="_blank"><span class="icon">🧠</span><span class="name">teai.io</span><span class="url">teai.io</span></a>
+    </div>
+    <div class="end-divider"></div>
+    <div class="end-closing">
+      全部タップひとつで始められる。<br>
+      使い続けてくれる限り、作り続ける。
+    </div>
+    <!-- Song navigation -->
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px;">
+      <div style="flex:1;min-width:120px;max-width:180px;padding:14px 12px;background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.3);border-radius:10px;">
+        <div style="font-size:.65rem;color:var(--gold);letter-spacing:.15em;">1st SONG</div>
+        <div style="font-size:.9rem;color:#fff;font-weight:700;margin-top:4px;">Tap, Tap, Tap</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px;">NOW PLAYING</div>
+      </div>
+      <a href="/mv/hack.html" style="flex:1;min-width:120px;max-width:180px;padding:14px 12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.12);border-radius:10px;text-decoration:none;">
+        <div style="font-size:.65rem;color:rgba(255,255,255,.4);letter-spacing:.15em;">2nd SONG</div>
+        <div style="font-size:.9rem;color:rgba(0,255,255,.8);font-weight:700;margin-top:4px;">Hack, Hack, Hack</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.4);margin-top:2px;">▶ 聴く</div>
+      </a>
+      <div style="flex:1;min-width:120px;max-width:180px;padding:14px 12px;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);border-radius:10px;opacity:.5;">
+        <div style="font-size:.65rem;color:rgba(255,255,255,.3);letter-spacing:.15em;">3rd SONG</div>
+        <div style="font-size:.9rem;color:rgba(255,255,255,.4);font-weight:700;margin-top:4px;">Coming Soon</div>
+        <div style="font-size:.7rem;color:rgba(255,255,255,.3);margin-top:2px;">準備中...</div>
+      </div>
+    </div>
+
+    <!-- Fan Club -->
+    <div style="margin-top:28px;padding:24px 20px;background:linear-gradient(135deg,rgba(212,168,70,.06),rgba(180,140,50,.04));border:1px solid rgba(212,168,70,.3);border-radius:14px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;right:0;background:var(--gold);color:#000;font-size:.6rem;font-weight:700;padding:4px 12px;border-radius:0 0 0 10px;letter-spacing:.1em;">第1期メンバー募集中</div>
+      <div style="font-size:1.5rem;margin-bottom:4px;">⚡</div>
+      <div style="font-size:clamp(1.1rem,3.5vw,1.6rem);font-weight:900;color:#fff;">Enabler ファンクラブ</div>
+      <div style="margin-top:4px;font-size:.8rem;color:rgba(255,255,255,.5);">一緒に作る側になろう。第1期は特別価格。</div>
+      <div style="margin-top:12px;">
+        <span style="font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.2rem);font-weight:900;color:var(--gold-l);">¥980</span>
+        <span style="font-size:.9rem;color:rgba(255,255,255,.45);">/月</span>
+      </div>
+      <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;">
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">📸 パシャ Pro</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">📝 ポン</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">🔑 KAGI</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">🎙 Koe</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">🥋 JiuFlow 全10フロー</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">🤖 Elio</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">🎵 Soluna</span>
+        <span style="background:rgba(212,168,70,.08);border:1px solid rgba(212,168,70,.15);border-radius:5px;padding:4px 8px;font-size:.65rem;color:rgba(255,255,255,.6);">⚡ OpenClaw</span>
+      </div>
+      <div style="margin-top:8px;font-size:.65rem;color:rgba(212,168,70,.6);">✦ 新プロダクト先行アクセス ✦ 限定コミュニティ ✦ 開発の裏側</div>
+      <a href="https://buy.stripe.com/aFacN503FcQq4VGblmefC3z" target="_blank" style="display:inline-block;margin-top:14px;padding:12px 36px;background:var(--gold);color:#000;font-size:.85rem;font-weight:700;letter-spacing:.05em;border-radius:24px;text-decoration:none;box-shadow:0 2px 20px rgba(212,168,70,.35);transition:all .2s;">
+        第1期メンバーになる →
+      </a>
+      <div style="margin-top:8px;font-size:.65rem;color:rgba(255,255,255,.25);">Stripe で安全に決済 · いつでもキャンセル可能</div>
+    </div>
+
+    <!-- Newsletter -->
+    <div style="margin-top:20px;padding:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;">
+      <div style="font-size:.9rem;color:#fff;font-weight:700;">Newsletter</div>
+      <div style="font-size:.75rem;color:rgba(255,255,255,.4);margin-top:4px;">新プロダクト・3曲目のリリース情報をお届け</div>
+      <form onsubmit="return tapNL(event)" style="margin-top:10px;display:flex;gap:8px;max-width:380px;margin-left:auto;margin-right:auto;">
+        <input id="tap-nl-email" type="email" required placeholder="your@email.com" style="flex:1;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;font-size:.85rem;outline:none;">
+        <button type="submit" style="padding:10px 20px;background:var(--gold);border:none;border-radius:6px;color:#000;font-size:.75rem;font-weight:700;cursor:pointer;">登録</button>
+      </form>
+      <div id="tap-nl-msg" style="margin-top:8px;font-size:.75rem;color:var(--gold);display:none;"></div>
+    </div>
+
+    <div class="end-social">
+      <a href="/mv/apps.html" style="border-color:rgba(212,168,70,.4);color:var(--gold-l);">📱 全アプリ一覧</a>
+      <a href="https://twitter.com/yukihamada" target="_blank">X / @yukihamada</a>
+      <a href="https://github.com/yukihamada" target="_blank">GitHub</a>
+      <a href="https://enablerdao.com" target="_blank">enablerdao.com</a>
+    </div>
+  </div>
+</div>
+
+<!-- APP SPOTLIGHT ───────────────────────────────────── -->
+<div id="spotlight">
+  <div class="sp-card" id="sp-card">
+    <div class="sp-head">
+      <div class="sp-icon" id="sp-icon"></div>
+      <div><div class="sp-name" id="sp-name"></div><div class="sp-sub" id="sp-sub"></div></div>
+    </div>
+    <div class="sp-tags" id="sp-tags"></div>
+    <div class="sp-desc" id="sp-desc"></div>
+    <div class="sp-video" id="sp-video" onclick="pickSpotlightVideo(event)">
+      <div class="sp-vph"><span class="sp-vph-icon">▶</span>tap to load video</div>
+    </div>
+    <div class="sp-foot">
+      <div>
+        <div class="sp-qr" id="sp-qr"></div>
+        <div class="sp-scan-hint">QRスキャン</div>
+      </div>
+      <div class="sp-links">
+        <a class="sp-url" id="sp-url" href="#" target="_blank"></a>
+        <a class="sp-btn" id="sp-btn" href="#" target="_blank">DOWNLOAD →</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- KARAOKE ─────────────────────────────────────────── -->
+<div id="karaoke">
+  <div class="k-prev" id="k-prev"></div>
+  <div class="k-main" id="k-main">♪</div>
+  <div class="k-next" id="k-next"></div>
+</div>
+
+<!-- PAUSE ───────────────────────────────────────────── -->
+<div id="pause-ov" onclick="togglePause()"><div class="pause-icon">II</div></div>
+
+<!-- PLAY SCREEN ─────────────────────────────────────── -->
+<div id="play-screen">
+  <div style="position:absolute;inset:0;background-image:url('assets/images/generated/guitar_1.jpg');background-size:cover;background-position:center top;filter:brightness(.25) sepia(20%);"></div>
+  <div style="position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;">
+    <div class="ps-artist">濱田優貴 / Yuki Hamada</div>
+    <div class="ps-title">Tap, Tap, Tap</div>
+    <div class="ps-sub">俺が使うものは 俺が作る</div>
+    <button id="play-btn" onclick="startPlay()">▶</button>
+    <p class="ps-note">🎧 タップして再生</p>
+  </div>
+</div>
+
+<audio id="audio" src="assets/anthem.wav" preload="auto"></audio>
+<input id="photo-in" type="file" accept="image/*" class="hidden">
+
+<script>
+// ════════════════════════════════════════════════
+// LYRICS  —  Whisper-synced timestamps
+// ════════════════════════════════════════════════
+// ════ LYRICS (Whisper-synced to existing audio + extended apps) ════
+// ※ Elio/teai/SOLUNA sections reuse the bridge audio window (225-296s)
+//   → 新しい音源生成時に正確なタイムスタンプに更新予定
+// ── Whisper解析済み — 正確なタイムスタンプ ──
+const L=[
+  {t:0,    s:'intro',   x:'♪'},
+  {t:0.8,  s:'intro',   x:'俺が使うものは、俺が作る'},
+
+  // ─ パシャ ─
+  {t:10.7, s:'pasha',   x:'2月、また来た。また胃が痛い。'},
+  {t:13.8, s:'pasha',   x:'でも今年は撮るだけ。パシャ。📸'},
+  {t:16.5, s:'pasha',   x:'もう終わり。'},
+
+  // ─ ポン ─
+  {t:19.6, s:'pon',     x:'ハンコ? 郵送? 2025年ですよ。'},
+  {t:22.9, s:'pon',     x:'ポン。それだけ。終わり。📝'},
+
+  // ─ KAGI ─
+  {t:25.2, s:'kagi',    x:'深夜2時、「鍵が開きません」'},
+  {t:27.8, s:'kagi',    x:'布団から1秒、タップ。🔑'},
+  {t:30.0, s:'kagi',    x:'「開きました」また寝る。💤'},
+
+  // ─ Koe ─
+  {t:34.9, s:'pre',     x:'この歌、自転車の上で書いた。'},
+  {t:39.5, s:'pre',     x:'声でメモ、信号待ちで続きを足した。'},
+  {t:41.3, s:'pre',     x:'アイデアって 手が空いてるときに来ない。'},
+  {t:43.3, s:'pre',     x:'だから声で捕まえる。🎙'},
+
+  // ─ Chorus ─
+  {t:46.3, s:'chorus',  x:'Tap, tap, tap'},
+  {t:47.6, s:'chorus',  x:'不便だと思ったら 作ればいい'},
+  {t:51.4, s:'chorus',  x:'Tap, tap, tap'},
+  {t:52.8, s:'chorus',  x:'作ったら みんなに渡せばいい'},
+  {t:56.6, s:'chorus',  x:'俺もやってる、君もやろう'},
+  {t:59.3, s:'chorus',  x:'面倒くさいの数だけ チャンスがある'},
+  {t:61.3, s:'chorus',  x:'一緒にやろうぜ 🔥'},
+
+  // ─ JiuFlow ─
+  {t:68.0, s:'jiuflow', x:'1年、絞められ続けた。'},
+  {t:70.4, s:'jiuflow', x:'負けるパターン、全部同じだった。'},
+  {t:73.3, s:'jiuflow', x:'フローチャートにして、アプリに入れた。🥋'},
+  {t:77.1, s:'jiuflow', x:'青帯。世界3位。🏆'},
+
+  // ─ Elio ─
+  {t:79.0, s:'elio',    x:'機内でも、無人島でも動く。🤖'},
+  {t:81.5, s:'elio',    x:'ネットなし、完全タダ、完全プライベート。'},
+  {t:85.1, s:'elio',    x:'今は遅いけど、年内には超賢くなる。'},
+
+  // ─ SOLUNA ─
+  {t:89.4, s:'soluna',  x:'10000台が同時に鳴る夜。🎵'},
+  {t:91.8, s:'soluna',  x:'群衆が楽器になる。'},
+  {t:95.0, s:'soluna',  x:'1台は記憶、10000台はオーケストラ。'},
+
+  // ─ Bridge ─
+  {t:100.6,s:'bridge',  x:'バグ、あります。すぐ直します。'},
+  {t:102.8,s:'bridge',  x:'高くしたくない。使ってほしいから。'},
+  {t:104.6,s:'bridge',  x:'うまくいったら 一緒に得しよう。'},
+
+  // ─ Outro ─
+  {t:110.7,s:'outro',   x:'パシャで確定申告、終わらせて'},
+  {t:112.5,s:'outro',   x:'ポンで契約書、一秒で済ませて'},
+  {t:114.8,s:'outro',   x:'KAGIで家を、スマホで動かして'},
+  {t:117.1,s:'outro',   x:'Koeでアイデア、逃さないで'},
+  {t:122.8,s:'outro',   x:'JiuFlowで今日も、一段強くなる'},
+  {t:128.1,s:'outro',   x:'Elioに今日も、話しかけた'},
+  {t:132.7,s:'outro',   x:'Solunaで今夜も、フェスは続く ✨'},
+  {t:141.0,s:'outro',   x:'♪'},
+];
+
+const L_EN=[
+  {t:0,    s:'intro',   x:'♪'},
+  {t:0.8,  s:'intro',   x:'What I use, I build myself.'},
+  {t:10.7, s:'pasha',   x:'February again. Stomach hurts again.'},
+  {t:13.8, s:'pasha',   x:'This year, just snap a photo. Pasha. 📸'},
+  {t:16.5, s:'pasha',   x:'Done.'},
+  {t:19.6, s:'pon',     x:'Stamps? Mail? It\'s 2025.'},
+  {t:22.9, s:'pon',     x:'Pon. That\'s it. Done. 📝'},
+  {t:25.2, s:'kagi',    x:'2 AM — "The lock won\'t open."'},
+  {t:27.8, s:'kagi',    x:'One tap from bed. 🔑'},
+  {t:30.0, s:'kagi',    x:'"It opened." Back to sleep. 💤'},
+  {t:34.9, s:'pre',     x:'This song was written on a bicycle.'},
+  {t:39.5, s:'pre',     x:'Voice memo at the red light.'},
+  {t:41.3, s:'pre',     x:'Ideas don\'t come when your hands are free.'},
+  {t:43.3, s:'pre',     x:'So I catch them with my voice. 🎙'},
+  {t:46.3, s:'chorus',  x:'Tap, tap, tap'},
+  {t:47.6, s:'chorus',  x:'If it bugs you — build it.'},
+  {t:51.4, s:'chorus',  x:'Tap, tap, tap'},
+  {t:52.8, s:'chorus',  x:'Build it, share it with everyone.'},
+  {t:56.6, s:'chorus',  x:'I\'m doing it — you should too.'},
+  {t:59.3, s:'chorus',  x:'Every annoyance is a chance.'},
+  {t:61.3, s:'chorus',  x:'Let\'s do this together. 🔥'},
+  {t:68.0, s:'jiuflow', x:'One year — getting choked.'},
+  {t:70.4, s:'jiuflow', x:'Same losing pattern every time.'},
+  {t:73.3, s:'jiuflow', x:'Made a flowchart. Put it in an app. 🥋'},
+  {t:77.1, s:'jiuflow', x:'Blue belt. World #3. 🏆'},
+  {t:79.0, s:'elio',    x:'Works on a plane. On a desert island. 🤖'},
+  {t:81.5, s:'elio',    x:'No internet. Free. Private.'},
+  {t:85.1, s:'elio',    x:'Slow now, but brilliant by year end.'},
+  {t:89.4, s:'soluna',  x:'10,000 speakers playing at once. 🎵'},
+  {t:91.8, s:'soluna',  x:'The crowd becomes the instrument.'},
+  {t:95.0, s:'soluna',  x:'One is memory. 10,000 is an orchestra.'},
+  {t:100.6,s:'bridge',  x:'Bugs? Yes. I\'ll fix them fast.'},
+  {t:102.8,s:'bridge',  x:'Wanna keep it free. Want you to use it.'},
+  {t:104.6,s:'bridge',  x:'If it works out — let\'s win together.'},
+  {t:110.7,s:'outro',   x:'Finish taxes with Pasha.'},
+  {t:112.5,s:'outro',   x:'Sign contracts with Pon.'},
+  {t:114.8,s:'outro',   x:'Control your home with KAGI.'},
+  {t:117.1,s:'outro',   x:'Catch ideas with Koe.'},
+  {t:122.8,s:'outro',   x:'Get stronger today with JiuFlow.'},
+  {t:128.1,s:'outro',   x:'Talk to Elio again today.'},
+  {t:132.7,s:'outro',   x:'Tonight, the festival continues with Soluna. ✨'},
+  {t:141.0,s:'outro',   x:'♪'},
+];
+
+let currentLang = 'ja';
+function getLyrics() { return currentLang === 'en' ? L_EN : L; }
+function toggleLang() {
+  currentLang = currentLang === 'ja' ? 'en' : 'ja';
+  document.getElementById('lang-label').textContent = currentLang === 'ja' ? '🇯🇵 JA' : '🇺🇸 EN';
+}
+
+// scene id per section
+const SCENE={intro:'sc-intro',pasha:'sc-pasha',pon:'sc-pon',kagi:'sc-kagi',pre:'sc-pre',chorus:'sc-chorus',jiuflow:'sc-jiuflow',elio:'sc-elio',teai:'sc-teai',soluna:'sc-soluna',bridge:'sc-bridge',outro:'sc-outro'};
+
+// app data per section
+const APPS={
+  pasha:  {icon:'📸',iconBg:'linear-gradient(135deg,#3a1a05,#6a3010)',name:'パシャ',sub:'RECEIPT AI · 確定申告',tags:[['無料',true],['AI OCR'],['iOS']],desc:'撮るだけ3秒。AIが日付・金額・店名を読み取り。確定申告が怖くなくなる。',url:'https://pasha.run',btn:'▼ 無料でDL'},
+  pon:    {icon:'📝',iconBg:'linear-gradient(135deg,#051a0d,#0a3020)',name:'ポン',sub:'DIGITAL CONTRACT · 電子署名',tags:[['無料',true],['ハンコ不要'],['iOS/Web']],desc:'契約書を送ってタップで署名。これだけ。ハンコも郵送もいらない。',url:'https://banto.work',btn:'▼ 今すぐ試す'},
+  kagi:   {icon:'🔑',iconBg:'linear-gradient(135deg,#050d1a,#0a1530)',name:'KAGI',sub:'SMART HOME · Airbnb',tags:[['毎日使用中',true],['スマートロック'],['24/7']],desc:'鍵・照明・空調・Airbnb対応をスマホ一台に。深夜も布団から1秒。',url:'#',btn:'▼ 詳細を見る'},
+  pre:    {icon:'🎙',iconBg:'linear-gradient(135deg,#0d051a,#1a0a30)',name:'Koe',sub:'VOICE INPUT · Mac/iOS',tags:[['無料',true],['音声入力'],['Mac/iOS']],desc:'自転車でも走りながらでも声でテキスト化。この曲もKoeで生まれた。',url:'https://koe.live/app',btn:'▼ 無料でDL'},
+  jiuflow:{icon:'🥋',iconBg:'linear-gradient(135deg,#1a1000,#302000)',name:'JiuFlow',sub:'BJJ · 世界3位',tags:[['世界3位',true],['10フロー'],['試合分析']],desc:'10のフローチャートで最短勝利。1.5年で青帯・ワールドマスター3位。',url:'https://jiuflow.art',btn:'▼ フローを見る',video:'assets/videos/jiuflow.mp4'},
+  elio:   {icon:'🤖',iconBg:'linear-gradient(135deg,#0a0a1f,#151530)',name:'Elio',sub:'LOCAL AI · 完全無料',tags:[['完全無料',true],['オフライン動作'],['iOS'],['年内に超賢くなる']],desc:'機内でも無人島でも使える。ローカル動作で通信不要・完全プライベート。今は少し遅いけど年内には超賢くなる。',url:'https://elio.love',btn:'▼ 無料でDL'},
+  teai:   {icon:'🧠',iconBg:'linear-gradient(135deg,#001a0d,#002a15)',name:'teai.io',sub:'ALL AI IN ONE',tags:[['無料で試せる',true],['Claude/Gemini/GPT'],['ブラウザで動く']],desc:'Claude・Gemini・GPTを全部ひとつで。AIを道具にする人間でいたい。',url:'https://teai.io',btn:'▼ 今すぐ使う'},
+  soluna: {icon:'🎵',iconBg:'linear-gradient(135deg,#150a25,#251040)',name:'SOLUNA',sub:'FESTIVAL SPEAKER · Hardware',tags:[['COIN $65',true],['完全同期'],['フェス対応']],desc:'1台は記憶、100台はオーケストラ。群衆を楽器にするデバイス。',url:'https://solun.art',btn:'▼ プロジェクトを見る'},
+};
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let curIdx=0, curSection='', isPlaying=false, isPaused=false;
+let audioCtx=null, analyser=null, dataArr=null;
+let spotlightTimer=null;
+const audio=document.getElementById('audio');
+
+// ════════════════════════════════════════════════
+// Newsletter signup
+function tapNL(e){
+  e.preventDefault();
+  const email = document.getElementById('tap-nl-email').value;
+  if(!email) return false;
+  fetch('/api/newsletter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})}).catch(()=>{});
+  const msg = document.getElementById('tap-nl-msg');
+  msg.textContent = '登録ありがとうございます！';
+  msg.style.display = 'block';
+  document.getElementById('tap-nl-email').disabled = true;
+  e.target.querySelector('button').textContent = '✓';
+  return false;
+}
+
+// INIT
+// ════════════════════════════════════════════════
+function init(){
+  buildSceneQRs();
+  buildSpotlightQRs();
+  buildOutroQRs();
+  showLyric(0);
+  drawEQ();
+}
+
+// ════════════════════════════════════════════════
+// START
+// ════════════════════════════════════════════════
+function startPlay(){
+  document.getElementById('play-screen').classList.add('out');
+
+  // Web Audio setup
+  try{
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.8;
+    dataArr = new Uint8Array(analyser.frequencyBinCount);
+    waveArr = new Uint8Array(analyser.fftSize);
+    const src = audioCtx.createMediaElementSource(audio);
+    src.connect(analyser);
+    analyser.connect(audioCtx.destination);
+  }catch(e){console.warn('WebAudio unavailable',e);}
+
+  audio.play().then(()=>{
+    isPlaying=true;
+    requestAnimationFrame(audioLoop);
+  });
+}
+
+// ════════════════════════════════════════════════
+// AUDIO LOOP  (beat detection + sync)
+// ════════════════════════════════════════════════
+let lastBeat=0;
+function audioLoop(){
+  if(!isPlaying) return;
+
+  const t = audio.currentTime;
+  // progress bar
+  document.getElementById('prog').style.width = audio.duration ? (t/audio.duration*100)+'%' : '0%';
+
+  // lyric sync
+  let idx=0;
+  const _LL=getLyrics(); for(let i=0;i<_LL.length;i++){if(_LL[i].t<=t)idx=i; else break;}
+  if(idx!==curIdx) showLyric(idx);
+
+  // transport UI
+  updateTransport();
+
+  // beat detection + visualizers
+  if(analyser){
+    analyser.getByteFrequencyData(dataArr);
+
+    // EQ and scope draw
+    drawEQ();
+    drawScope();
+
+    const bass = avgRange(dataArr,0,8);
+    const mid  = avgRange(dataArr,8,32);
+    const now  = performance.now();
+    // bass beat
+    if(bass > 185 && now-lastBeat > 160){
+      lastBeat=now;
+      onBeat(bass);
+    }
+  }
+
+  requestAnimationFrame(audioLoop);
+}
+
+function avgRange(arr,a,b){
+  let s=0; for(let i=a;i<b;i++) s+=arr[i]; return s/(b-a);
+}
+
+// ════════════════════════════════════════════════
+// BEAT REACTION
+// ════════════════════════════════════════════════
+let beatEnergy=0;  // smoothed beat energy for scope
+function onBeat(energy){
+  beatEnergy=energy;
+
+  // karaoke pulse
+  const km = document.getElementById('k-main');
+  km.classList.remove('beat-pulse');
+  void km.offsetWidth;
+  km.classList.add('beat-pulse');
+
+  // bg brightness flash on active scene
+  const activeSc=document.querySelector('.scene.active');
+  if(activeSc){
+    activeSc.classList.add('beat-hit');
+    setTimeout(()=>activeSc.classList.remove('beat-hit'),120);
+  }
+
+  // section-specific reactions
+  switch(curSection){
+    case 'chorus':
+      spawnGoldParticles(energy);
+      if(energy>220) doFlash(0.18);
+      break;
+    case 'jiuflow':
+      if(energy>200){
+        document.body.classList.remove('shake');
+        void document.body.offsetWidth;
+        document.body.classList.add('shake');
+        spawnImpactRings(energy);
+      }
+      break;
+    case 'pasha':
+      if(energy>210) spawnCameraFlash();
+      break;
+    case 'pre':
+      if(energy>205) spawnVoiceWave(energy);
+      break;
+    case 'bridge':
+      // nothing extra
+      break;
+  }
+}
+
+function doFlash(alpha=0.3){
+  const f=document.getElementById('flash');
+  f.style.opacity=alpha;
+  f.classList.remove('flash-go');
+  void f.offsetWidth;
+  f.classList.add('flash-go');
+}
+
+function spawnCameraFlash(){
+  doFlash(0.7);
+  setTimeout(()=>doFlash(0),50);
+}
+
+function spawnImpactRings(energy){
+  const cx=window.innerWidth/2, cy=window.innerHeight/2;
+  for(let i=0;i<3;i++){
+    particles.push({
+      x:cx,y:cy,vx:0,vy:0,
+      life:1,decay:.025,r:10+i*20,
+      ring:true,ringGrow:3+i*2,
+      col:'rgba(160,224,96,'
+    });
+  }
+}
+
+function spawnVoiceWave(energy){
+  const cx=window.innerWidth/2, cy=window.innerHeight*0.6;
+  const n=Math.floor(energy/12);
+  for(let i=0;i<n;i++){
+    const a=(Math.random()-0.5)*Math.PI*0.5;
+    const spd=3+Math.random()*6;
+    particles.push({
+      x:cx,y:cy,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-3,
+      life:1,decay:.02,r:2+Math.random()*3,
+      col:'#c890f0'
+    });
+  }
+}
+
+// ════════════════════════════════════════════════
+// EQ SPECTRUM VISUALIZER  (canvas #cv-eq)
+// ════════════════════════════════════════════════
+const eqCv=document.getElementById('cv-eq');
+const eqCtx=eqCv.getContext('2d');
+const EQ_BANDS=80;
+let eqPeaks=new Float32Array(EQ_BANDS); // peak hold
+let eqSmooth=new Float32Array(EQ_BANDS); // smoothed values
+
+function resizeEqCv(){
+  eqCv.width=window.innerWidth;
+  eqCv.height=90;
+}
+resizeEqCv();
+window.addEventListener('resize',resizeEqCv);
+
+function drawEQ(){
+  const W=eqCv.width, H=eqCv.height;
+  eqCtx.clearRect(0,0,W,H);
+  if(!dataArr) return;
+
+  const barW=Math.floor(W/EQ_BANDS)-1;
+  const step=Math.floor(dataArr.length/EQ_BANDS);
+
+  // gradient for bars
+  const grad=eqCtx.createLinearGradient(0,H,0,0);
+  grad.addColorStop(0,'rgba(139,105,20,.9)');
+  grad.addColorStop(0.5,'rgba(212,168,70,.85)');
+  grad.addColorStop(0.8,'rgba(240,215,140,.9)');
+  grad.addColorStop(1,'rgba(255,240,180,1)');
+
+  for(let i=0;i<EQ_BANDS;i++){
+    const v=dataArr[i*step]||0;
+
+    // smooth
+    eqSmooth[i]=eqSmooth[i]*0.72 + (v/255)*0.28;
+    const h=eqSmooth[i]*H*0.92;
+
+    // peak hold
+    if(eqSmooth[i]>eqPeaks[i]) eqPeaks[i]=eqSmooth[i];
+    else eqPeaks[i]=Math.max(0,eqPeaks[i]-0.008);
+
+    const x=i*(barW+1);
+
+    // bar
+    eqCtx.fillStyle=grad;
+    eqCtx.globalAlpha=0.35;
+    eqCtx.fillRect(x, H-h, barW, h);
+
+    // peak dot
+    const peakH=eqPeaks[i]*H*0.92;
+    eqCtx.globalAlpha=0.55;
+    eqCtx.fillStyle='#F0D78C';
+    eqCtx.fillRect(x, H-peakH-2, barW, 2);
+  }
+  eqCtx.globalAlpha=1;
+
+  // top fade (so bars fade into scene)
+  const fadeGrad=eqCtx.createLinearGradient(0,0,0,H*0.4);
+  fadeGrad.addColorStop(0,'rgba(0,0,0,.55)');
+  fadeGrad.addColorStop(1,'rgba(0,0,0,0)');
+  eqCtx.fillStyle=fadeGrad;
+  eqCtx.fillRect(0,0,W,H*0.4);
+
+  // freq labels
+  const freqLabels=[['20','L'],['100',''],['500',''],['1k',''],['5k',''],['20k','H']];
+  eqCtx.fillStyle='rgba(212,168,70,.3)';
+  eqCtx.font='7px monospace';
+  eqCtx.letterSpacing='0.05em';
+  const labelPos=[0,0.12,0.3,0.45,0.7,0.97];
+  labelPos.forEach((p,i)=>{
+    const x=p*W;
+    eqCtx.fillText(freqLabels[i][0], x+2, H-4);
+  });
+}
+
+// ════════════════════════════════════════════════
+// OSCILLOSCOPE / WAVEFORM  (canvas #cv-scope)
+// ════════════════════════════════════════════════
+const scCv=document.getElementById('cv-scope');
+const scCtx=scCv.getContext('2d');
+let waveArr=null;
+
+function resizeScCv(){scCv.width=window.innerWidth;scCv.height=Math.round(window.innerHeight*0.30);}
+resizeScCv(); window.addEventListener('resize',resizeScCv);
+
+function drawScope(){
+  const W=scCv.width, H=scCv.height;
+  scCtx.clearRect(0,0,W,H);
+  if(!waveArr||!analyser) return;
+
+  analyser.getByteTimeDomainData(waveArr);
+
+  // only draw if there's real signal
+  const rms=waveArr.reduce((s,v)=>s+Math.abs(v-128),0)/waveArr.length;
+  if(rms<2) return;
+
+  const alpha=Math.min(0.35, rms/60);
+
+  // waveform — bottom strip only
+  scCtx.beginPath();
+  scCtx.strokeStyle=`rgba(212,168,70,${alpha*1.2})`;
+  scCtx.lineWidth=1.5;
+  scCtx.shadowColor='rgba(212,168,70,.4)';
+  scCtx.shadowBlur=6;
+
+  const sliceW=W/waveArr.length;
+  let x=0;
+  for(let i=0;i<waveArr.length;i++){
+    const y=((waveArr[i]-128)/128)*(H*0.25) + H*0.45;
+    i===0 ? scCtx.moveTo(x,y) : scCtx.lineTo(x,y);
+    x+=sliceW;
+  }
+  scCtx.stroke();
+  scCtx.shadowBlur=0;
+}
+
+function buildBeatBars(){/* replaced by canvas EQ */}
+function updateBeatBars(){/* replaced */}
+
+// ════════════════════════════════════════════════
+// LYRIC DISPLAY  —  char by char
+// ════════════════════════════════════════════════
+function showLyric(idx){
+  if(idx<0||idx>=L.length) return;
+  curIdx=idx;
+  const _L=getLyrics(); const cur=_L[idx], prev=_L[idx-1], nxt=_L[idx+1];
+
+  document.getElementById('k-prev').textContent=prev?prev.x:'';
+  document.getElementById('k-next').textContent=nxt?nxt.x:'';
+
+  animateKaraoke(cur.x);
+
+  if(cur.s!==curSection) switchSection(cur.s);
+}
+
+function animateKaraoke(text){
+  const el=document.getElementById('k-main');
+  el.innerHTML='';
+  const isTap=/tap,?\s*tap,?\s*tap/i.test(text);
+  const isSpecial=['♪','Yuki Hamada'].includes(text.trim());
+
+  if(isSpecial){
+    el.textContent=text;
+    el.style.color='rgba(232,220,200,.4)';
+    el.style.fontSize='';
+    return;
+  }
+  el.style.color='';
+  el.style.fontSize='';
+
+  // char-by-char
+  const chars=[...text];
+  chars.forEach((ch,i)=>{
+    const sp=document.createElement('span');
+    sp.className='k-char'+(isTap?' gold':'');
+    sp.textContent=ch===''?'\u00A0':ch;
+    sp.style.animationDelay=(i*0.04)+'s';
+    el.appendChild(sp);
+  });
+}
+
+// ════════════════════════════════════════════════
+// SECTION SWITCH
+// ════════════════════════════════════════════════
+// scene background images for peek
+const SCENE_BG={
+  intro:'assets/images/generated/guitar_1.jpg,assets/images/generated/intro_1.jpg',
+  pasha:'assets/images/generated/pasha_1.jpg',
+  pon:'assets/images/generated/pon_3.jpg',
+  kagi:'assets/images/generated/kagi_1.jpg',
+  pre:'assets/images/generated/pre_3.jpg',
+  chorus:'assets/images/generated/chorus_2.jpg',
+  jiuflow:'assets/images/generated/jiuflow_3.jpg',
+  elio:'assets/images/generated/elio_1.jpg',
+  teai:'assets/images/generated/teai_2.jpg',
+  soluna:'assets/images/generated/soluna_1.jpg',
+  bridge:'assets/images/generated/bridge_2.jpg',
+  outro:'assets/images/generated/outro_1.jpg',
+};
+const SCENE_NAMES={
+  intro:'INTRO',pasha:'パシャ — 確定申告',pon:'ポン — 電子契約',
+  kagi:'KAGI — スマートホーム',pre:'Koe — 声で入力',
+  chorus:'CHORUS',jiuflow:'JiuFlow — 柔術',
+  elio:'Elio — AI相棒',teai:'teai.io — AI全部',soluna:'SOLUNA — フェス',
+  bridge:'BRIDGE',outro:'OUTRO',
+};
+const SCENE_ORDER=['intro','pasha','pon','kagi','pre','chorus','jiuflow','elio','soluna','bridge','outro'];
+
+function switchSection(s){
+  const prev=curSection;
+  curSection=s;
+
+  // stop all carousels before switching
+  carouselIds.forEach(stopCarousel);
+
+  // switch visible scene
+  document.querySelectorAll('.scene').forEach(el=>{
+    el.classList.remove('active','exit');
+  });
+  const next=document.getElementById(SCENE[s]);
+  if(next) next.classList.add('active');
+
+  // start carousel for new active scene if applicable
+  if(next){
+    const phone = next.querySelector('[id$="-phone"]');
+    if(phone) startCarousel(phone.id);
+  }
+
+  // karaoke class
+  const k=document.getElementById('karaoke');
+  k.className='';
+  if(s==='chorus') k.classList.add('chorus');
+  else if(s==='jiuflow') k.classList.add('jiuflow');
+  else if(s==='bridge') k.classList.add('bridge');
+  else if(s==='elio') k.classList.add('elio');
+  else if(s==='teai') k.classList.add('teai');
+  else if(s==='soluna') k.classList.add('soluna');
+
+  // chorus effects
+  if(s==='chorus'){
+    doFlash(0.4);
+    spawnGoldParticles(255);
+  }
+
+  // showcase scenes: hide ALL overlays (spotlight, grain, EQ, scope, particles, peek)
+  const showcaseScenes = ['jiuflow','elio','soluna','bridge','outro'];
+  const isShowcase = showcaseScenes.includes(s);
+
+  // update peek to show NEXT scene
+  const idx=SCENE_ORDER.indexOf(s);
+  const nextScene=idx>=0&&idx<SCENE_ORDER.length-1?SCENE_ORDER[idx+1]:null;
+  if(nextScene && !isShowcase && s!=='chorus'){
+    const bg=SCENE_BG[nextScene];
+    const urls=bg.split(',').map(u=>`url('${u.trim()}')`).join(',');
+    document.getElementById('peek-bg').style.backgroundImage=urls;
+    document.getElementById('peek-label').textContent=SCENE_NAMES[nextScene]||nextScene;
+    document.getElementById('peek').style.opacity='1';
+  } else {
+    document.getElementById('peek').style.opacity='0';
+  }
+  document.getElementById('grain').style.display = isShowcase ? 'none' : '';
+  document.getElementById('cv-eq').style.opacity = isShowcase ? '0' : '';
+  document.getElementById('cv-scope').style.opacity = isShowcase ? '0' : '0.4';
+  document.getElementById('cv-particles').style.opacity = isShowcase ? '0' : '';
+  document.getElementById('eq-label').style.display = isShowcase ? 'none' : '';
+  document.getElementById('peek').style.opacity = isShowcase ? '0' : '';
+
+  // spotlight card
+  if(isShowcase || s==='chorus'){
+    document.getElementById('spotlight').classList.remove('show');
+    clearTimeout(spotlightTimer);
+  } else {
+    showSpotlight(s);
+  }
+}
+
+// ════════════════════════════════════════════════
+// SPOTLIGHT CARD
+// ════════════════════════════════════════════════
+let spQRBuilt={};
+function showSpotlight(s){
+  const sp=document.getElementById('spotlight');
+  clearTimeout(spotlightTimer);
+  sp.classList.remove('show');
+
+  const app=APPS[s];
+  if(!app) return;
+
+  // populate
+  document.getElementById('sp-icon').textContent=app.icon;
+  document.getElementById('sp-icon').style.background=app.iconBg;
+  document.getElementById('sp-name').textContent=app.name;
+  document.getElementById('sp-sub').textContent=app.sub;
+  document.getElementById('sp-desc').textContent=app.desc;
+  document.getElementById('sp-url').textContent=app.btn;
+  document.getElementById('sp-url').href=app.url;
+  document.getElementById('sp-btn').href=app.url;
+
+  const tags=document.getElementById('sp-tags');
+  tags.innerHTML=app.tags.map(([t,live])=>`<span class="sp-tag${live?' sp-tag-live':''}">${t}</span>`).join('');
+
+  // video
+  const sv=document.getElementById('sp-video');
+  if(app.video){
+    sv.innerHTML=`<video src="${app.video}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;" onclick="event.stopPropagation()"></video>`;
+    sv.style.cursor='default';
+  } else {
+    sv.innerHTML=`<div class="sp-vph"><span class="sp-vph-icon">▶</span>tap to load</div>`;
+    sv.style.cursor='pointer';
+    sv.onclick=(e)=>pickSpotlightVideo(e);
+  }
+
+  // QR (build once)
+  const qrEl=document.getElementById('sp-qr');
+  if(!spQRBuilt[s]){
+    qrEl.innerHTML='';
+    try{ new QRCode(qrEl,{text:app.url,width:52,height:52,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M}); }catch(e){}
+    spQRBuilt[s]=true;
+  }
+
+  // slide in, auto-hide after 6s
+  setTimeout(()=>sp.classList.add('show'),100);
+  spotlightTimer=setTimeout(()=>sp.classList.remove('show'),7000);
+}
+
+function pickSpotlightVideo(e){
+  e&&e.stopPropagation();
+  const inp=document.createElement('input');
+  inp.type='file'; inp.accept='video/*';
+  inp.onchange=ev=>{
+    const f=ev.target.files[0]; if(!f) return;
+    const sv=document.getElementById('sp-video');
+    const v=document.createElement('video');
+    v.src=URL.createObjectURL(f);
+    v.autoplay=v.loop=v.muted=v.playsinline=true;
+    v.style.cssText='width:100%;height:100%;object-fit:cover;';
+    sv.innerHTML=''; sv.appendChild(v);
+  };
+  inp.click();
+}
+
+// ════════════════════════════════════════════════
+// PARTICLES
+// ════════════════════════════════════════════════
+const pCv=document.getElementById('cv-particles');
+const pCtx=pCv.getContext('2d');
+let particles=[];
+function resizeCv(){pCv.width=window.innerWidth;pCv.height=window.innerHeight;}
+resizeCv(); window.addEventListener('resize',resizeCv);
+
+function spawnGoldParticles(energy=200){
+  const cx=window.innerWidth/2, cy=window.innerHeight*0.72;
+  const n=Math.floor(energy/5);
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2, spd=2+Math.random()*9;
+    particles.push({x:cx,y:cy,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd-5,
+      life:1,decay:.012+Math.random()*.02,
+      r:2+Math.random()*5,
+      col:Math.random()>.4?'#D4A846':'#fff'});
+  }
+}
+
+function drawParticles(){
+  pCtx.clearRect(0,0,pCv.width,pCv.height);
+  particles=particles.filter(p=>p.life>0);
+  particles.forEach(p=>{
+    p.life-=p.decay;
+    pCtx.save();
+    pCtx.globalAlpha=Math.max(0,p.life);
+
+    if(p.ring){
+      // expanding ring
+      p.r+=p.ringGrow;
+      pCtx.strokeStyle=p.col+Math.max(0,p.life)+')';
+      pCtx.lineWidth=2;
+      pCtx.shadowColor=p.col+'0.6)';
+      pCtx.shadowBlur=10;
+      pCtx.beginPath();
+      pCtx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      pCtx.stroke();
+    } else {
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.25;
+      pCtx.shadowColor=p.col; pCtx.shadowBlur=8;
+      pCtx.fillStyle=p.col;
+      pCtx.beginPath(); pCtx.arc(p.x,p.y,p.r,0,Math.PI*2); pCtx.fill();
+    }
+    pCtx.restore();
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// ════════════════════════════════════════════════
+// QR CODES
+// ════════════════════════════════════════════════
+const QR_DATA={
+  pasha:   {url:'https://pasha.run',    label:'パシャ',  sub:'pasha.run'},
+  pon:     {url:'https://banto.work',   label:'ポン',    sub:'banto.work'},
+  kagi:    {url:'https://kagi.app',     label:'KAGI',    sub:'kagi.app'},
+  koe:     {url:'https://koe.live/app', label:'Koe',     sub:'koe.live/app'},
+  jiuflow: {url:'https://jiuflow.art',  label:'JiuFlow', sub:'jiuflow.art'},
+  elio:    {url:'https://elio.love',    label:'Elio',    sub:'elio.love'},
+  teai:    {url:'https://teai.io',      label:'teai.io', sub:'teai.io'},
+  soluna:  {url:'https://solun.art',    label:'SOLUNA',  sub:'solun.art'},
+};
+
+function buildSceneQRs(){
+  Object.entries(QR_DATA).forEach(([key,{url}])=>{
+    const el=document.getElementById(`qr-${key}`);
+    if(!el) return;
+    try{ new QRCode(el,{text:url,width:60,height:60,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M}); }
+    catch(e){}
+  });
+}
+
+function buildSpotlightQRs(){}  // built on demand
+
+function buildOutroQRs(){
+  const wrap=document.getElementById('outro-qrs');
+  if(!wrap) return;
+  Object.values(QR_DATA).forEach(({url,label,sub})=>{
+    const cell=document.createElement('div');
+    cell.className='outro-qr-cell';
+    const qrBox=document.createElement('div');
+    qrBox.className='qr-box';
+    try{new QRCode(qrBox,{text:url,width:64,height:64,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});}catch(e){}
+    const nm=document.createElement('div'); nm.className='qr-name'; nm.textContent=label;
+    const ur=document.createElement('div'); ur.className='qr-url';  ur.textContent=sub;
+    cell.appendChild(qrBox); cell.appendChild(nm); cell.appendChild(ur);
+    wrap.appendChild(cell);
+  });
+}
+
+// ════════════════════════════════════════════════
+// PAUSE
+// ════════════════════════════════════════════════
+function togglePause(){
+  if(!isPlaying) return;
+  isPaused=!isPaused;
+  isPaused ? audio.pause() : audio.play().then(()=>requestAnimationFrame(audioLoop));
+  document.getElementById('pause-ov').classList.toggle('show',isPaused);
+  document.getElementById('btn-play').textContent=isPaused?'▶':'⏸';
+}
+
+// ── CAROUSEL ──────────────────────────────────────
+const carouselIds = ['sc-jiuflow-phone','sc-elio-phone','sc-soluna-phone'];
+const carouselTimers = {};
+
+function startCarousel(phoneId){
+  const el = document.getElementById(phoneId);
+  if(!el) return;
+  const slides = el.querySelectorAll('.sc-slide');
+  if(slides.length < 2) return;
+  let idx = 0;
+  carouselTimers[phoneId] = setInterval(()=>{
+    slides[idx].classList.remove('active');
+    idx = (idx+1) % slides.length;
+    slides[idx].classList.add('active');
+  }, 2500);
+}
+
+function stopCarousel(phoneId){
+  clearInterval(carouselTimers[phoneId]);
+  const el = document.getElementById(phoneId);
+  if(!el) return;
+  el.querySelectorAll('.sc-slide').forEach((s,i)=>{
+    s.classList.toggle('active', i===0);
+  });
+}
+
+// audio ended → show end screen, then auto-navigate to next song
+audio.addEventListener('ended',()=>{
+  isPlaying=false;
+  setTimeout(()=>{
+    document.getElementById('end-screen').classList.add('show');
+    // Auto-navigate to Hack,Hack,Hack after 8 seconds
+    let countdown = 8;
+    const nextEl = document.getElementById('next-song-timer');
+    if(nextEl){
+      nextEl.style.display='block';
+      nextEl.textContent='次の曲: Hack, Hack, Hack — '+countdown+'秒後に再生';
+      const iv = setInterval(()=>{
+        countdown--;
+        if(countdown<=0){
+          clearInterval(iv);
+          window.location.href='/mv/hack.html';
+        } else {
+          nextEl.textContent='次の曲: Hack, Hack, Hack — '+countdown+'秒後に再生';
+        }
+      },1000);
+      nextEl.onclick=()=>{clearInterval(iv);window.location.href='/mv/hack.html';};
+    }
+  }, 1500);
+});
+
+// ════════════════════════════════════════════════
+// TRANSPORT CONTROLS
+// ════════════════════════════════════════════════
+const seekEl=document.getElementById('seek');
+const timeDisp=document.getElementById('time-disp');
+const btnPlay=document.getElementById('btn-play');
+
+function fmtTime(s){const m=Math.floor(s/60);return`${m}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+// update seek bar + time display in audio loop
+function updateTransport(){
+  if(!audio.duration) return;
+  const pct=(audio.currentTime/audio.duration)*100;
+  seekEl.value=pct;
+  timeDisp.textContent=fmtTime(audio.currentTime);
+  btnPlay.textContent=audio.paused?'▶':'⏸';
+}
+
+seekEl.addEventListener('input',()=>{
+  if(!audio.duration) return;
+  audio.currentTime=(seekEl.value/100)*audio.duration;
+});
+
+function seekSection(dir){
+  const idx=SCENE_ORDER.indexOf(curSection);
+  const ni=Math.max(0,Math.min(SCENE_ORDER.length-1,idx+dir));
+  const target=SCENE_ORDER[ni];
+  // find first lyric of target section
+  const entry=L.find(l=>l.s===target);
+  if(entry && audio.duration){
+    audio.currentTime=Math.max(0,entry.t-0.3);
+    if(audio.paused && isPlaying){ audio.play(); }
+  }
+}
+
+// ════════════════════════════════════════════════
+// KARAOKE MODE
+// ════════════════════════════════════════════════
+let kmActive=false, kmMic=null, kmAnalyser=null, kmScore=0, kmSamples=0, kmRaf=null;
+
+function openKaraokeMode(){
+  document.getElementById('karaoke-mode').classList.add('show');
+  document.getElementById('km-score').textContent='—';
+  document.getElementById('km-grade').textContent='';
+  document.getElementById('km-lyric').textContent='マイクをオンにして歌ってね';
+  document.getElementById('km-next-lyric').textContent='';
+}
+function closeKaraokeMode(){
+  document.getElementById('karaoke-mode').classList.remove('show');
+  stopKaraokeMic();
+}
+
+async function startKaraoke(){
+  if(kmActive){ stopKaraokeMic(); return; }
+  try{
+    const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const actx=new(window.AudioContext||window.webkitAudioContext)();
+    const src=actx.createMediaStreamSource(stream);
+    kmAnalyser=actx.createAnalyser();
+    kmAnalyser.fftSize=1024;
+    src.connect(kmAnalyser);
+    kmMic=stream;
+    kmActive=true;
+    kmScore=0; kmSamples=0;
+    document.getElementById('km-start').textContent='⏹ 停止';
+    // restart audio from beginning
+    audio.currentTime=0;
+    if(audio.paused) audio.play().then(()=>requestAnimationFrame(audioLoop));
+    kmRaf=requestAnimationFrame(kmLoop);
+  }catch(e){
+    document.getElementById('km-tip').textContent='マイクのアクセスを許可してください';
+  }
+}
+
+function stopKaraokeMic(){
+  kmActive=false;
+  if(kmMic) kmMic.getTracks().forEach(t=>t.stop()); kmMic=null;
+  if(kmRaf) cancelAnimationFrame(kmRaf); kmRaf=null;
+  document.getElementById('km-start').textContent='▶ スタート';
+  showKmFinalScore();
+}
+
+const kmVolBars=[1,2,3,4,5,6,7,8].map(i=>document.getElementById(`km-v${i}`));
+
+function kmLoop(){
+  if(!kmActive || !kmAnalyser){ return; }
+  const buf=new Uint8Array(kmAnalyser.frequencyBinCount);
+  kmAnalyser.getByteFrequencyData(buf);
+
+  // volume from voice freq range (80Hz–1kHz)
+  const voiceStart=Math.floor(80/(22050/512));
+  const voiceEnd=Math.floor(1000/(22050/512));
+  let sum=0;
+  for(let i=voiceStart;i<voiceEnd;i++) sum+=buf[i];
+  const vol=sum/(voiceEnd-voiceStart);
+
+  // update vol meter bars
+  kmVolBars.forEach((b,i)=>{
+    const h=Math.min(32,Math.max(3,(vol/255)*32*(0.5+i*0.07)));
+    b.style.height=h+'px';
+    b.style.background=vol>60?`rgba(212,168,70,${0.4+i*0.08})`:'rgba(212,168,70,.2)';
+  });
+
+  // pitch bar
+  document.getElementById('km-pitch-bar').style.width=Math.min(100,(vol/255)*130)+'%';
+
+  // scoring: if user is singing (vol > threshold) during lyric time, give points
+  const t=audio.currentTime;
+  const curLyric=L.slice().reverse().find(l=>l.t<=t);
+  if(curLyric){
+    const el=document.getElementById('km-lyric');
+    el.textContent=curLyric.x;
+    el.classList.toggle('singing', vol>50);
+    const nxt=L[L.indexOf(curLyric)+1];
+    document.getElementById('km-next-lyric').textContent=nxt?nxt.x:'';
+  }
+
+  if(vol>45){
+    kmScore+=vol/255 * 1.2;
+    kmSamples++;
+  } else {
+    kmSamples++;
+  }
+
+  const pct=kmSamples>0?(kmScore/kmSamples)*100:0;
+  const disp=Math.min(100,Math.round(pct*12));
+  document.getElementById('km-score').textContent=disp||'—';
+  if(disp>80) document.getElementById('km-grade').textContent='🏆 パーフェクト！';
+  else if(disp>60) document.getElementById('km-grade').textContent='🎤 上手い！';
+  else if(disp>40) document.getElementById('km-grade').textContent='👍 いい感じ！';
+  else if(disp>20) document.getElementById('km-grade').textContent='💪 もっと声出して！';
+  else document.getElementById('km-grade').textContent='🎵 歌ってみよう！';
+
+  kmRaf=requestAnimationFrame(kmLoop);
+}
+
+function showKmFinalScore(){
+  const pct=kmSamples>0?(kmScore/kmSamples)*100:0;
+  const disp=Math.min(100,Math.round(pct*12));
+  let grade='';
+  if(disp>=90) grade='🏆 パーフェクト！神！';
+  else if(disp>=75) grade='⭐⭐⭐ 上手い！';
+  else if(disp>=55) grade='⭐⭐ いい感じ！';
+  else if(disp>=35) grade='⭐ 惜しい！';
+  else grade='🎵 練習あるのみ！';
+  document.getElementById('km-score').textContent=disp||0;
+  document.getElementById('km-grade').textContent=grade;
+  document.getElementById('km-tip').textContent='もう一度やるにはスタートを押してね';
+}
+
+// lyrics overlay
+function showLyrics(){document.getElementById('lyrics-overlay').classList.add('show');}
+function hideLyrics(){document.getElementById('lyrics-overlay').classList.remove('show');}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){hideLyrics();closeKaraokeMode();}});
+
+// space = pause
+window.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();togglePause();}
+});
+
+// click on scene = pause
+document.querySelectorAll('.scene').forEach(sc=>{
+  sc.addEventListener('click',()=>togglePause());
+});
+
+init();
+</script>
+
+<!-- KARAOKE MODE OVERLAY -->
+<div id="karaoke-mode">
+  <div id="km-title">Tap, Tap, Tap</div>
+  <div id="km-artist">濱田優貴 / Yuki Hamada</div>
+  <div id="km-lyric">マイクをオンにして歌ってね</div>
+  <div id="km-next-lyric"></div>
+  <div id="km-vol-meter">
+    <span id="km-v1" style="height:3px"></span>
+    <span id="km-v2" style="height:3px"></span>
+    <span id="km-v3" style="height:3px"></span>
+    <span id="km-v4" style="height:3px"></span>
+    <span id="km-v5" style="height:3px"></span>
+    <span id="km-v6" style="height:3px"></span>
+    <span id="km-v7" style="height:3px"></span>
+    <span id="km-v8" style="height:3px"></span>
+  </div>
+  <div id="km-pitch"><div id="km-pitch-bar"></div></div>
+  <div id="km-score-wrap">
+    <div id="km-score">—</div>
+    <div id="km-score-lbl">SCORE</div>
+    <div id="km-grade"></div>
+  </div>
+  <div id="km-controls">
+    <button id="km-start" onclick="startKaraoke()">▶ スタート</button>
+    <button id="km-close" onclick="closeKaraokeMode()">✕ 閉じる</button>
+  </div>
+  <div id="km-tip">マイクの音量でピッチを測定、歌声に採点します</div>
+</div>
+
+<!-- ── LYRICS BUTTON ── -->
+<button id="lyrics-btn" onclick="showLyrics()">歌詞</button>
+
+<!-- ── LYRICS OVERLAY ── -->
+<div id="lyrics-overlay">
+  <button class="lyrics-close" onclick="hideLyrics()">✕</button>
+  <div class="lyrics-inner">
+    <h2>Tap, Tap, Tap</h2>
+    <div class="l-artist">濱田優貴 / Yuki Hamada</div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">Intro</div>
+      <p>俺が使うものは、俺が作る</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">パシャ — 確定申告 AI</div>
+      <p>2月、また来た。また胃が痛い。<br>
+      でも今年は撮るだけ。パシャ。📸<br>
+      もう終わり。</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">ポン — 電子契約</div>
+      <p>ハンコ? 郵送? 2025年ですよ。<br>
+      ポン。それだけ。終わり。📝</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">KAGI — スマートホーム</div>
+      <p>深夜2時、「鍵が開きません」<br>
+      布団から1秒、タップ。🔑<br>
+      「開きました」また寝る。💤</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">Koe — 声でメモ</div>
+      <p>この歌、自転車の上で書いた。<br>
+      声でメモ、信号待ちで続きを足した。<br>
+      アイデアって 手が空いてるときに来ない。<br>
+      だから声で捕まえる。🎙</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">Chorus</div>
+      <p class="highlight">Tap, tap, tap<br>
+      不便だと思ったら 作ればいい<br>
+      Tap, tap, tap<br>
+      作ったら みんなに渡せばいい<br>
+      俺もやってる、君もやろう<br>
+      面倒くさいの数だけ チャンスがある<br>
+      一緒にやろうぜ 🔥</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">JiuFlow — 柔術フロー</div>
+      <p>1年、絞められ続けた。<br>
+      負けるパターン、全部同じだった。<br>
+      フローチャートにして、アプリに入れた。🥋<br>
+      青帯。世界3位。🏆</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">Elio — ローカルAI</div>
+      <p>機内でも、無人島でも動く。🤖<br>
+      ネットなし、完全タダ、完全プライベート。<br>
+      今は遅いけど、年内には超賢くなる。</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">SOLUNA — フェスの夜</div>
+      <p>10000台が同時に鳴る夜。🎵<br>
+      群衆が楽器になる。<br>
+      1台は記憶、10000台はオーケストラ。</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">Bridge</div>
+      <p>バグ、あります。すぐ直します。<br>
+      高くしたくない。使ってほしいから。<br>
+      うまくいったら 一緒に得しよう。</p>
+    </div>
+
+    <div class="lyrics-section">
+      <div class="lyrics-section-label">Outro</div>
+      <p class="highlight">パシャで確定申告、終わらせて<br>
+      ポンで契約書、一秒で済ませて<br>
+      KAGIで家を、スマホで動かして<br>
+      Koeでアイデア、逃さないで<br>
+      JiuFlowで今日も、一段強くなる<br>
+      Elioに今日も、話しかけた<br>
+      Solunaで今夜も、フェスは続く ✨</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

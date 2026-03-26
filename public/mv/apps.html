@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apps by 濱田優貴</title>
+<meta name="description" content="濱田優貴が作ったもの — 全部、自分が使いたかったから">
+<meta property="og:title" content="Apps by 濱田優貴">
+<meta property="og:description" content="パシャ・ポン・KAGI・Koe・JiuFlow・Elio・SOLUNA・teai.io">
+<meta property="og:image" content="https://tap-mv.fly.dev/assets/images/generated/intro_v2_1.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#D4A846;--gold-l:#F0D78C;--gold-d:#8B6914;
+  --bg:#0a0a0a;--surface:#111;--surface2:#1a1a1a;
+  --text:#E8DCC8;--dim:rgba(232,220,200,.45);
+  --border:rgba(212,168,70,.15);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:'Inter',sans-serif;
+  font-weight:300;line-height:1.7;
+  min-height:100vh;
+}
+
+/* ── HEADER ── */
+header{
+  text-align:center;
+  padding:64px 24px 48px;
+  border-bottom:1px solid var(--border);
+  position:relative;
+}
+.header-kicker{
+  font-size:10px;letter-spacing:.6em;color:var(--gold);
+  text-transform:uppercase;margin-bottom:16px;opacity:.7;
+}
+.header-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,6vw,3.5rem);
+  font-weight:900;color:#fff;
+  letter-spacing:-.01em;
+  margin-bottom:12px;
+}
+.header-sub{
+  font-size:15px;color:var(--dim);
+  max-width:480px;margin:0 auto 24px;
+}
+.header-back{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;letter-spacing:.1em;color:var(--gold);
+  text-decoration:none;opacity:.6;
+  transition:opacity .2s;
+}
+.header-back:hover{opacity:1;}
+
+/* ── FILTER BAR ── */
+.filter-bar{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  padding:24px 16px 8px;
+  max-width:900px;margin:0 auto;
+}
+.filter-btn{
+  font-size:11px;letter-spacing:.1em;
+  padding:6px 16px;border-radius:20px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--dim);cursor:pointer;
+  transition:all .2s;
+  font-family:inherit;
+}
+.filter-btn.active,.filter-btn:hover{
+  background:rgba(212,168,70,.1);
+  border-color:rgba(212,168,70,.4);
+  color:var(--gold-l);
+}
+
+/* ── APP GRID ── */
+.app-grid{
+  max-width:900px;margin:0 auto;
+  padding:8px 16px 80px;
+}
+
+/* ── APP CARD ── */
+.app-card{
+  border:1px solid var(--border);
+  border-radius:14px;
+  margin-bottom:8px;
+  overflow:hidden;
+  transition:border-color .25s;
+  background:var(--surface);
+}
+.app-card:hover{border-color:rgba(212,168,70,.3);}
+.app-card.open{border-color:rgba(212,168,70,.4);}
+
+.card-summary{
+  display:grid;
+  grid-template-columns:52px 1fr auto auto;
+  align-items:center;
+  gap:12px;
+  padding:18px 20px;
+  cursor:pointer;
+  user-select:none;
+}
+.card-icon{
+  font-size:1.8rem;text-align:center;line-height:1;
+  width:48px;height:48px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:12px;
+  background:rgba(255,255,255,.04);
+  flex-shrink:0;
+}
+.card-info{display:flex;flex-direction:column;gap:3px;min-width:0;}
+.card-name{
+  font-family:'Playfair Display',serif;
+  font-size:1.15rem;font-weight:700;
+  color:#fff;line-height:1.1;
+}
+.card-tagline{
+  font-size:13px;color:var(--dim);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.card-status{
+  font-size:9px;letter-spacing:.1em;font-weight:600;
+  padding:4px 10px;border-radius:20px;
+  flex-shrink:0;white-space:nowrap;
+}
+.status-live{background:rgba(76,175,80,.15);color:#81c784;border:1px solid rgba(76,175,80,.25);}
+.status-beta{background:rgba(255,152,0,.12);color:#ffb74d;border:1px solid rgba(255,152,0,.2);}
+.status-dev{background:rgba(100,181,246,.1);color:#90caf9;border:1px solid rgba(100,181,246,.2);}
+.card-chevron{
+  color:var(--gold);font-size:12px;opacity:.5;
+  transition:transform .3s,opacity .3s;
+  flex-shrink:0;
+}
+.app-card.open .card-chevron{transform:rotate(180deg);opacity:1;}
+
+/* ── CARD DETAIL ── */
+.card-detail{
+  max-height:0;overflow:hidden;
+  transition:max-height .45s cubic-bezier(0.4,0,0.2,1);
+}
+.app-card.open .card-detail{max-height:1200px;}
+
+.detail-inner{
+  border-top:1px solid var(--border);
+  padding:28px 20px 24px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:28px;
+}
+@media(max-width:620px){
+  .detail-inner{grid-template-columns:1fr;gap:20px;}
+  .card-summary{grid-template-columns:44px 1fr auto;}
+  .card-status{display:none;}
+}
+
+.detail-left{}
+.detail-section{margin-bottom:20px;}
+.detail-section:last-child{margin-bottom:0;}
+.detail-label{
+  font-size:9px;letter-spacing:.5em;color:var(--gold);
+  text-transform:uppercase;opacity:.6;
+  margin-bottom:6px;
+}
+.detail-text{
+  font-size:14px;line-height:1.85;color:rgba(232,220,200,.8);
+}
+.detail-vision{
+  font-size:16px;font-weight:500;
+  color:#fff;line-height:1.6;
+  border-left:2px solid var(--gold);
+  padding-left:14px;
+}
+
+/* Feature list */
+.feat-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+.feat-list li{
+  font-size:13px;color:rgba(232,220,200,.7);
+  display:flex;align-items:flex-start;gap:8px;
+}
+.feat-list li::before{
+  content:'—';color:var(--gold);opacity:.5;flex-shrink:0;
+}
+
+/* Release info */
+.release-badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+.badge{
+  font-size:10px;letter-spacing:.05em;
+  padding:4px 10px;border-radius:4px;
+  background:rgba(212,168,70,.08);
+  border:1px solid var(--border);
+  color:var(--dim);
+}
+.badge.highlight{
+  background:rgba(212,168,70,.15);
+  border-color:rgba(212,168,70,.3);
+  color:var(--gold-l);
+}
+
+/* Detail right */
+.detail-right{}
+.screenshot-wrap{
+  border-radius:16px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.08);
+  margin-bottom:16px;
+  background:#111;
+  aspect-ratio:9/16;
+  max-height:280px;
+  position:relative;
+}
+.screenshot-wrap img{
+  width:100%;height:100%;object-fit:cover;object-position:top;
+  display:block;
+}
+.screenshot-placeholder{
+  width:100%;height:100%;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:8px;
+  color:var(--dim);
+}
+.screenshot-placeholder span{font-size:2rem;}
+
+/* Links */
+.link-row{display:flex;flex-direction:column;gap:8px;}
+.app-link{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 14px;border-radius:8px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  text-decoration:none;color:var(--text);
+  font-size:13px;
+  transition:all .2s;
+}
+.app-link:hover{
+  background:rgba(212,168,70,.08);
+  border-color:rgba(212,168,70,.3);
+  color:var(--gold-l);
+}
+.app-link .link-label{display:flex;align-items:center;gap:8px;}
+.app-link .link-icon{font-size:1rem;opacity:.7;}
+.app-link .link-arrow{color:var(--gold);opacity:.5;font-size:12px;}
+.app-link:hover .link-arrow{opacity:1;}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:48px 24px;
+  border-top:1px solid var(--border);
+}
+.footer-msg{font-size:13px;color:var(--dim);line-height:2;}
+.footer-author{
+  margin-top:16px;
+  font-family:'Playfair Display',serif;
+  font-size:1.1rem;color:var(--gold);opacity:.7;
+}
+
+/* ── HIDDEN ── */
+.hidden{display:none!important;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-kicker">濱田優貴 — プロダクト一覧</div>
+  <h1 class="header-title">Tap, Tap, Tap</h1>
+  <p class="header-sub">全部、自分が使いたかったから作った。<br>不便が全部、アイデアだった。</p>
+  <a class="header-back" href="/">← MVを見る</a>
+</header>
+
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">全て</button>
+  <button class="filter-btn" data-filter="live">リリース済み</button>
+  <button class="filter-btn" data-filter="beta">ベータ</button>
+  <button class="filter-btn" data-filter="dev">開発中</button>
+  <button class="filter-btn" data-filter="ios">iOS</button>
+  <button class="filter-btn" data-filter="web">Web</button>
+  <button class="filter-btn" data-filter="hardware">ハードウェア</button>
+</div>
+
+<div class="app-grid">
+
+  <!-- パシャ -->
+  <div class="app-card" data-tags="live ios">
+    <div class="card-summary">
+      <div class="card-icon">📸</div>
+      <div class="card-info">
+        <span class="card-name">パシャ</span>
+        <span class="card-tagline">レシートを撮るだけ。確定申告、終わり。</span>
+      </div>
+      <span class="card-status status-live">App Store</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">確定申告を、3秒の作業にする。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              毎年2月になると胃が痛くなる。領収書の山、Excelへの転記、freeeとの格闘——なんでこんなに時間がかかるんだと思ってた。
+              撮るだけでOCRが全部読んで、電子帳簿保存法も全要件クリア。自分が一番使ってる。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>AI OCR — 日付・金額・店名を自動入力</li>
+              <li>電子帳簿保存法 全8要件対応</li>
+              <li>チェーンハッシュ + Solanaアンカリング</li>
+              <li>freee / マネーフォワード互換CSV出力</li>
+              <li>7通貨対応・GPS記録・月次レポート</li>
+              <li>連続撮影モード・重複検知・予算アラート</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">リリース情報</div>
+            <div class="release-badges">
+              <span class="badge highlight">App Store 公開中</span>
+              <span class="badge">iOS 17+</span>
+              <span class="badge">Free / Pro ¥980/月</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/screenshots/pasha.jpg" alt="パシャ" loading="lazy">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://pasha.run" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>pasha.run</span>
+              <span class="link-arrow">→</span>
+            </a>
+            <a class="app-link" href="https://apps.apple.com/app/id6760736346" target="_blank">
+              <span class="link-label"><span class="link-icon">📱</span>App Store</span>
+              <span class="link-arrow">→</span>
+            </a>
+            <a class="app-link" href="https://testflight.apple.com/join/CTmyqV6H" target="_blank">
+              <span class="link-label"><span class="link-icon">🧪</span>TestFlight (Beta)</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ポン -->
+  <div class="app-card" data-tags="live ios web">
+    <div class="card-summary">
+      <div class="card-icon">📝</div>
+      <div class="card-info">
+        <span class="card-name">ポン</span>
+        <span class="card-tagline">ハンコも郵送も、もういらない。</span>
+      </div>
+      <span class="card-status status-live">リリース済み</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">契約書の署名を、タップ一つにする。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              2025年にもなって、なんでハンコを押して郵送するんだと思ってた。
+              フリーランスで契約書が来るたびに印刷・押印・郵送。時間もお金も無駄。
+              ポンと押せばいい、それだけのことを実現した。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>電子署名 — 法的効力あり</li>
+              <li>PDF直接アップロード・署名・送付</li>
+              <li>署名履歴・タイムスタンプ保存</li>
+              <li>複数署名者対応</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">リリース情報</div>
+            <div class="release-badges">
+              <span class="badge highlight">本番稼働中</span>
+              <span class="badge">Web + iOS</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/screenshots/pon.jpg" alt="ポン" loading="lazy">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://banto.work" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>banto.work</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KAGI -->
+  <div class="app-card" data-tags="live ios web">
+    <div class="card-summary">
+      <div class="card-icon">🔑</div>
+      <div class="card-info">
+        <span class="card-name">KAGI</span>
+        <span class="card-tagline">深夜2時、布団から1秒で開錠。</span>
+      </div>
+      <span class="card-status status-live">リリース済み</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">スマートホームを、本当にスマートにする。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              深夜2時に「鍵が開きません」と連絡が来る。寝ぼけながら起き上がって、別のアプリを探して……そんな生活が嫌になった。
+              タップ一つで操作できるシンプルな管理UIを自分で作った。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>スマートロック遠隔操作</li>
+              <li>入退室ログ・通知</li>
+              <li>複数デバイス・複数ユーザー管理</li>
+              <li>オートロックスケジュール</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">リリース情報</div>
+            <div class="release-badges">
+              <span class="badge highlight">本番稼働中</span>
+              <span class="badge">iOS + Web</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/screenshots/kagi.jpg" alt="KAGI" loading="lazy">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://kagi.app" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>kagi.app</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Koe -->
+  <div class="app-card" data-tags="live ios hardware">
+    <div class="card-summary">
+      <div class="card-icon">🎙</div>
+      <div class="card-info">
+        <span class="card-name">Koe</span>
+        <span class="card-tagline">アイデアは、手が空いてるときに来ない。</span>
+      </div>
+      <span class="card-status status-live">リリース済み</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">思考を、声のまま保存する。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              この曲も、自転車の上でできた。信号待ちで声でメモ、続きをまた足した。
+              手が塞がっているとき、目が使えないとき、アイデアは来る。
+              声で入力して、後でテキストになってればいい——それだけのものが欲しかった。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>リアルタイム音声認識 (日本語特化)</li>
+              <li>macOS / iOS / ESP32 デバイス対応</li>
+              <li>ウェアラブルデバイス「Koe COIN」開発中</li>
+              <li>オフライン音声処理</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">リリース情報</div>
+            <div class="release-badges">
+              <span class="badge highlight">macOS / iOS 公開中</span>
+              <span class="badge">ESP32 ファームウェア公開</span>
+              <span class="badge">COIN デバイス開発中</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/screenshots/koe.jpg" alt="Koe" loading="lazy">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://koe.live/app" target="_blank">
+              <span class="link-label"><span class="link-icon">📱</span>アプリ (koe.live/app)</span>
+              <span class="link-arrow">→</span>
+            </a>
+            <a class="app-link" href="https://koe.live" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>koe.live (サイト)</span>
+              <span class="link-arrow">→</span>
+            </a>
+            <a class="app-link" href="https://github.com/yukihamada/koe-device" target="_blank">
+              <span class="link-label"><span class="link-icon">💻</span>GitHub (ファームウェア)</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JiuFlow -->
+  <div class="app-card" data-tags="live ios web">
+    <div class="card-summary">
+      <div class="card-icon">🥋</div>
+      <div class="card-info">
+        <span class="card-name">JiuFlow</span>
+        <span class="card-tagline">負けるパターン、全部フローチャートにした。</span>
+      </div>
+      <span class="card-status status-live">リリース済み</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">柔術の勝ち筋を、データと直感で可視化する。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              1年間、絞められ続けた。負けるパターンが全部同じだと気づいたのに、試合中には思い出せない。
+              フローチャートにしてアプリに入れたら、試合中に頭が整理されるようになった。
+              青帯でワールドマスター世界3位になれた理由の一つだと思ってる。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>10+のポジション別フローチャート</li>
+              <li>試合分析 · 弱点特定ツール</li>
+              <li>動画付きテクニックデータベース</li>
+              <li>大会管理 · 成績記録</li>
+              <li>多言語対応 (日英)</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">実績</div>
+            <div class="release-badges">
+              <span class="badge highlight">作者: 世界3位 🏆</span>
+              <span class="badge">1.5年で青帯</span>
+              <span class="badge">App Store 公開中</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/screenshots/jiuflow.jpg" alt="JiuFlow" loading="lazy">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://jiuflow.art" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>jiuflow.art</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Elio -->
+  <div class="app-card" data-tags="live ios">
+    <div class="card-summary">
+      <div class="card-icon">🤖</div>
+      <div class="card-info">
+        <span class="card-name">Elio</span>
+        <span class="card-tagline">機内でも。無人島でも。ネット不要。</span>
+      </div>
+      <span class="card-status status-live">App Store</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">AIを、完全にプライベートで・完全に無料で・オフラインで使えるようにする。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              AIに話しかけるたびに、「この会話はどこかのサーバーに残ってるのか」と思ってた。
+              機密の話をしたい。お金を払いたくない。ネットがない場所でも使いたい。
+              全部端末の中で完結すれば、全部解決する。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>完全ローカル処理 — データが端末から出ない</li>
+              <li>オフライン動作 (Wi-Fi不要)</li>
+              <li>完全無料 — 課金なし</li>
+              <li>Qwen3-VL 2B モデル内蔵</li>
+              <li>P2P分散推論 (開発中)</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">リリース情報</div>
+            <div class="release-badges">
+              <span class="badge highlight">App Store 公開中</span>
+              <span class="badge">iOS 17+</span>
+              <span class="badge">完全無料</span>
+              <span class="badge">年内大幅強化予定</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/screenshots/elio.jpg" alt="Elio" loading="lazy">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://elio.love" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>elio.love</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOLUNA -->
+  <div class="app-card" data-tags="dev hardware">
+    <div class="card-summary">
+      <div class="card-icon">🎵</div>
+      <div class="card-info">
+        <span class="card-name">SOLUNA</span>
+        <span class="card-tagline">10,000台が同時に鳴る夜。群衆が楽器になる。</span>
+      </div>
+      <span class="card-status status-dev">開発中</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">群衆を楽器に変える。1台は記憶、10,000台はオーケストラ。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作っているか</div>
+            <div class="detail-text">
+              フェスで全員が同じ音を同時に出したら、どうなるか。
+              L-Acousticsのシステムは1億円かかる。でもスマホ以下のコストのデバイスが10,000台あれば、同じことができる。
+              COIN — 26mm丸基板、$65、GPS不要、NTP同期。これで世界中のフェスを変えたい。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">プロダクトライン</div>
+            <ul class="feat-list">
+              <li>COIN $65 — 26mm 小型デバイス (最初に作る)</li>
+              <li>FILL $1,500 — 8"+1" ホーン、Pi5+WiFi7</li>
+              <li>SUB $1,200 — 15"/1000W</li>
+              <li>STAGE $800 — Pi5 ステージコントローラー</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">開発状況</div>
+            <div class="release-badges">
+              <span class="badge highlight">COIN 基板設計中</span>
+              <span class="badge">ESP32-S3 技適認証済</span>
+              <span class="badge">10Kフェス目標 $304K</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/generated/soluna_v2_1.jpg" alt="SOLUNA" loading="lazy" style="object-position:center;">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://solun.art" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>solun.art</span>
+              <span class="link-arrow">→</span>
+            </a>
+            <a class="app-link" href="https://koe.live" target="_blank">
+              <span class="link-label"><span class="link-icon">📡</span>koe.live (デバイスサイト)</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- teai.io -->
+  <div class="app-card" data-tags="live web">
+    <div class="card-summary">
+      <div class="card-icon">🧠</div>
+      <div class="card-info">
+        <span class="card-name">teai.io</span>
+        <span class="card-tagline">世界中のAIを、ひとつの場所で。</span>
+      </div>
+      <span class="card-status status-live">リリース済み</span>
+      <span class="card-chevron">▼</span>
+    </div>
+    <div class="card-detail">
+      <div class="detail-inner">
+        <div class="detail-left">
+          <div class="detail-section">
+            <div class="detail-label">ビジョン</div>
+            <div class="detail-vision">全てのAIモデルを、一つのUIで使い比べる。</div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">なぜ作ったか</div>
+            <div class="detail-text">
+              Claude・Gemini・GPT・それぞれにアカウントを作って、それぞれで課金して、全部別々のUIで使う——意味がわからなかった。
+              全部まとめた。登録不要で試せる。ブラウザだけで動く。
+            </div>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">主な機能</div>
+            <ul class="feat-list">
+              <li>Claude · Gemini · GPT · Nemotron 全対応</li>
+              <li>モデル横断比較</li>
+              <li>ウェブ検索 · 画像生成</li>
+              <li>登録不要・ブラウザのみ</li>
+            </ul>
+          </div>
+          <div class="detail-section">
+            <div class="detail-label">リリース情報</div>
+            <div class="release-badges">
+              <span class="badge highlight">本番稼働中</span>
+              <span class="badge">Fly.io + Rust</span>
+            </div>
+          </div>
+        </div>
+        <div class="detail-right">
+          <div class="screenshot-wrap">
+            <img src="assets/images/generated/teai_2.jpg" alt="teai.io" loading="lazy" style="object-position:center;aspect-ratio:16/9;max-height:200px;">
+          </div>
+          <div class="link-row">
+            <a class="app-link" href="https://teai.io" target="_blank">
+              <span class="link-label"><span class="link-icon">🌐</span>teai.io</span>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end app-grid -->
+
+<footer>
+  <div class="footer-msg">
+    全部、自分が必要だったから作った。<br>
+    バグがある。直してる。使い続けてくれる限り、作り続ける。
+  </div>
+  <div class="footer-author">— 濱田優貴</div>
+</footer>
+
+<script>
+// ── ACCORDION ──
+document.querySelectorAll('.card-summary').forEach(summary=>{
+  summary.addEventListener('click',()=>{
+    const card = summary.closest('.app-card');
+    const isOpen = card.classList.contains('open');
+    // close all
+    document.querySelectorAll('.app-card.open').forEach(c=>c.classList.remove('open'));
+    // open clicked (if was closed)
+    if(!isOpen) card.classList.add('open');
+  });
+});
+
+// ── FILTER ──
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('.app-card').forEach(card=>{
+      if(filter==='all'){
+        card.classList.remove('hidden');
+      } else {
+        const tags = (card.dataset.tags||'').split(' ');
+        card.classList.toggle('hidden', !tags.includes(filter));
+        // close hidden cards
+        if(!tags.includes(filter)) card.classList.remove('open');
+      }
+    });
+  });
+});
+
+// ── OPEN FIRST CARD BY DEFAULT ──
+// (disabled — let user choose)
+</script>
+</body>
+</html>
