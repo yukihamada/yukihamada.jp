@@ -370,12 +370,11 @@ resize();onresize=resize;
 
 // === Flow Graph — full screen animated ===
 let activeNodes=new Set();
-let nodeAnimState={};// per node: {scale, glow, pulse}
+let nodeAnimState={};
+const isMobile=()=>innerWidth<800;
 const initZoom=()=>isMobile()?2.8:2.2;
 let camX=0,camY=-60,camZoom=initZoom();
 let targetCamX=0,targetCamY=-60,targetCamZoom=initZoom();
-
-const isMobile=()=>innerWidth<800;
 function getNodePos(node, time){
   const w=cvF.width,h=cvF.height;
   const mob=isMobile();
