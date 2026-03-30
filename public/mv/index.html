@@ -2,6 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>MUSIC — 濱田優貴｜俺が使うものは、俺が作る</title>
 <meta name="description" content="濱田優貴の音楽作品。Tap, Tap, Tap / Hack, Hack, Hack — 全部自分で作ったプロダクトを歌にした。">
@@ -49,6 +50,18 @@ body{background:var(--bg);color:var(--fg);font-family:'Noto Sans JP',sans-serif;
 .song-2{background:rgba(0,255,255,.04);border:1px solid rgba(0,255,255,.2);}
 .song-2::before{background:linear-gradient(135deg,var(--cyan),var(--magenta));}
 .song-2:hover{box-shadow:0 8px 40px rgba(0,255,255,.12);}
+
+.song-kagi{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.25);}
+.song-kagi::before{background:linear-gradient(135deg,#7c3aed,#a78bfa);}
+.song-kagi:hover{box-shadow:0 8px 40px rgba(167,139,250,.15);}
+.song-kagi .song-num{background:rgba(167,139,250,.15);color:#a78bfa;}
+.song-kagi .song-tag{background:rgba(167,139,250,.1);color:#a78bfa;}
+
+.song-koe{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.25);}
+.song-koe::before{background:linear-gradient(135deg,#0ea5e9,#38bdf8);}
+.song-koe:hover{box-shadow:0 8px 40px rgba(56,189,248,.15);}
+.song-koe .song-num{background:rgba(56,189,248,.15);color:#38bdf8;}
+.song-koe .song-tag{background:rgba(56,189,248,.1);color:#38bdf8;}
 
 .song-3{background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.08);opacity:.5;pointer-events:none;}
 
@@ -169,6 +182,17 @@ body{background:var(--bg);color:var(--fg);font-family:'Noto Sans JP',sans-serif;
 </div>
 
 <div class="songs">
+  <!-- Anime Banner -->
+  <a class="song-card song-1" href="/anime/ep1.html" style="background:linear-gradient(135deg,rgba(232,182,74,.08),rgba(232,182,74,.02));border-color:rgba(232,182,74,.4);">
+    <div class="song-num" style="background:rgba(232,182,74,.2);color:var(--gold);font-size:.8rem;">NEW</div>
+    <div class="song-info">
+      <div class="song-title">Anime「第1話」公開中</div>
+      <div class="song-desc">失恋した金曜の夜。友達に連れられた場所で、人生が変わった。——恋だと思ったら……</div>
+      <span class="song-tag">ANIME / 3 EPISODES</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
   <a class="song-card song-1" href="/mv/tap.html">
     <div class="song-num">1</div>
     <div class="song-info">
@@ -189,14 +213,76 @@ body{background:var(--bg);color:var(--fg);font-family:'Noto Sans JP',sans-serif;
     <div class="song-play">▶</div>
   </a>
 
-  <div class="song-card song-3">
+  <a class="song-card song-2" href="/mv/attention.html">
     <div class="song-num">3</div>
     <div class="song-info">
-      <div class="song-title">Coming Soon</div>
-      <div class="song-desc">3曲目、準備中。</div>
-      <span class="song-tag">TBA</span>
+      <div class="song-title">アテンションください</div>
+      <div class="song-desc">I Need Your Attention — 日英切替対応ポップMV。</div>
+      <span class="song-tag">POP / BILINGUAL</span>
     </div>
-  </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-1" href="/mv/musubinaosu.html">
+    <div class="song-num">5</div>
+    <div class="song-info">
+      <div class="song-title">結び直す朝</div>
+      <div class="song-desc">大丈夫、そのままでいい。何度でも始められる。</div>
+      <span class="song-tag">GHIBLI / HOPE</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-1" href="/mv/jiujitsu.html">
+    <div class="song-num">4</div>
+    <div class="song-info">
+      <div class="song-title">それ恋じゃなく柔術でした</div>
+      <div class="song-desc">世界マスター3位。恋だと思ったら柔術でした。</div>
+      <span class="song-tag">BJJ / LOVE STORY</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-2" href="/mv/claude-code.html">
+    <div class="song-num">NEW</div>
+    <div class="song-info">
+      <div class="song-title">claude code</div>
+      <div class="song-desc">Claude Codeの実践ガイドを歌にした。CLAUDE.md、サブエージェント、デプロイ、デバッグの全Tips。</div>
+      <span class="song-tag">TECH / TUTORIAL</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-kagi" href="/mv/kagi.html">
+    <div class="song-num">🔑</div>
+    <div class="song-info">
+      <div class="song-title">KAGI</div>
+      <div class="song-desc">カチャッと開けば暮らしが変わる。鍵・照明・エアコン——全部てのひらに。スマートホームアプリKAGIの説明MV。</div>
+      <span class="song-tag">SMART HOME / APP</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-koe" href="/mv/koe.html">
+    <div class="song-num">🎙</div>
+    <div class="song-info">
+      <div class="song-title">Koe</div>
+      <div class="song-desc">声で入力、声で伝える。macOS・Windows・ESP32——すべてのデバイスで動く音声入力アプリKoeのMV。</div>
+      <span class="song-tag">VOICE / INPUT</span>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
+
+  <a class="song-card song-2" href="/mv/local-ai.html" style="background:linear-gradient(135deg,rgba(88,166,255,.08),rgba(59,185,80,.02));border-color:rgba(88,166,255,.3);">
+    <div class="song-num" style="color:#58a6ff;">NEW</div>
+    <div class="song-info">
+      <div class="song-title">LOCAL AI — The Revolution</div>
+      <div class="song-desc">Claude CodeをMac上で完全ローカル実行。API代ゼロ。bash setup.sh 1コマンドで始まるAI革命のMV。</div>
+      <span class="song-tag">AI / LOCAL / OPEN SOURCE</span>
+      <a href="/mv/local-ai-ja.html" style="font-size:.6rem;color:rgba(255,255,255,.3);margin-left:8px;">🇯🇵 日本語版</a>
+    </div>
+    <div class="song-play">▶</div>
+  </a>
 </div>
 
 <div class="fanclub">
@@ -218,11 +304,10 @@ body{background:var(--bg);color:var(--fg);font-family:'Noto Sans JP',sans-serif;
       <span class="fc-svc">🥋 JiuFlow 全10フロー</span>
       <span class="fc-svc">🤖 Elio ローカルAI</span>
       <span class="fc-svc">🎵 Soluna フェス同期</span>
-      <span class="fc-svc">⚡ OpenClaw AI群</span>
     </div>
     <div class="fc-perks">✦ 新プロダクト先行アクセス ✦ 限定コミュニティ ✦ 開発の裏側</div>
-    <a class="fc-btn" href="https://buy.stripe.com/aFacN503FcQq4VGblmefC3z" target="_blank">第1期メンバーになる →</a>
-    <div class="fc-note">Stripe で安全に決済 · いつでもキャンセル可能</div>
+    <a class="fc-btn" href="https://enablerdao.com/fanclub" target="_blank">第1期メンバーになる →</a>
+    <div class="fc-note">メールアドレスだけで登録完了 · 全プロダクトのProプランが無料</div>
   </div>
 </div>
 
@@ -262,5 +347,10 @@ function nlSubmit(e){
   return false;
 }
 </script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
 </body>
 </html>
