@@ -187,6 +187,13 @@ struct AppState {
     pending_admin_replies: Mutex<HashMap<String, String>>,
     // Video gallery metadata
     videos: Mutex<Vec<VideoMeta>>,
+    // Gmail OAuth
+    gmail_client_id: Option<String>,
+    gmail_client_secret: Option<String>,
+    gmail_refresh_token: Option<String>,
+    gmail_email: Option<String>,
+    // Cached Gmail access token: (token, expires_at_secs)
+    gmail_access_token: Mutex<Option<(String, u64)>>,
 }
 
 const SESSIONS_FILE: &str = "/data/sessions.json";
@@ -5083,6 +5090,164 @@ async fn video_delete(
     (cors_headers(), Json(serde_json::json!({"ok":true}))).into_response()
 }
 
+// ── Gmail API ───────────────────────────────────────────────────────────────
+
+async fn gmail_get_access_token(state: &Arc<AppState>) -> Option<String> {
+    let (ci, cs, rt) = match (&state.gmail_client_id, &state.gmail_client_secret, &state.gmail_refresh_token) {
+        (Some(a), Some(b), Some(c)) => (a.clone(), b.clone(), c.clone()),
+        _ => return None,
+    };
+    // Return cached token if still valid (5-min buffer)
+    {
+        let cached = state.gmail_access_token.lock().unwrap();
+        if let Some((tok, exp)) = cached.as_ref() {
+            if *exp > now_secs() + 300 { return Some(tok.clone()); }
+        }
+    }
+    // Refresh
+    let client = reqwest::Client::new();
+    let resp = client.post("https://oauth2.googleapis.com/token")
+        .form(&[("client_id",ci.as_str()),("client_secret",cs.as_str()),("refresh_token",rt.as_str()),("grant_type","refresh_token")])
+        .send().await.ok()?;
+    let json: serde_json::Value = resp.json().await.ok()?;
+    let token = json["access_token"].as_str()?.to_string();
+    let expires_in = json["expires_in"].as_u64().unwrap_or(3600);
+    let mut cached = state.gmail_access_token.lock().unwrap();
+    *cached = Some((token.clone(), now_secs() + expires_in));
+    Some(token)
+}
+
+async fn mail_list(
+    State(state): State<Arc<AppState>>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Response {
+    if !validate_admin_token(&state, params.get("token").cloned().unwrap_or_default().as_str()) {
+        return (StatusCode::FORBIDDEN, Json(serde_json::json!({"ok":false}))).into_response();
+    }
+    let access_token = match gmail_get_access_token(&state).await {
+        Some(t) => t,
+        None => return (StatusCode::SERVICE_UNAVAILABLE, Json(serde_json::json!({"ok":false,"error":"Gmail not configured"}))).into_response(),
+    };
+    let folder = params.get("folder").map(|s| s.as_str()).unwrap_or("inbox");
+    let q = match folder {
+        "sent"      => "in:sent",
+        "important" => "is:important",
+        "unread"    => "is:unread",
+        _           => "in:inbox",
+    };
+    let max = params.get("max").and_then(|s| s.parse::<u32>().ok()).unwrap_or(30).min(50);
+    let client = reqwest::Client::new();
+    let q_encoded: String = q.chars().map(|c| if c.is_alphanumeric() || c == ':' || c == '.' { c.to_string() } else { format!("%{:02X}", c as u32) }).collect();
+    let list_url = format!(
+        "https://gmail.googleapis.com/gmail/v1/users/me/messages?q={}&maxResults={}&fields=messages(id,threadId)",
+        q_encoded, max
+    );
+    let list_resp = client.get(&list_url)
+        .bearer_auth(&access_token).send().await;
+    let list_json: serde_json::Value = match list_resp {
+        Ok(r) => r.json().await.unwrap_or_default(),
+        Err(_) => return (StatusCode::BAD_GATEWAY, Json(serde_json::json!({"ok":false}))).into_response(),
+    };
+    let msg_ids: Vec<&str> = list_json["messages"].as_array()
+        .map(|arr| arr.iter().filter_map(|m| m["id"].as_str()).collect())
+        .unwrap_or_default();
+
+    // Fetch each message header in parallel (up to 20)
+    let mut tasks = Vec::new();
+    for id in msg_ids.iter().take(20) {
+        let id = id.to_string();
+        let tok = access_token.clone();
+        let c = client.clone();
+        tasks.push(tokio::spawn(async move {
+            let url = format!(
+                "https://gmail.googleapis.com/gmail/v1/users/me/messages/{}?format=metadata&metadataHeaders=Subject&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Date",
+                id
+            );
+            let r: serde_json::Value = c.get(&url).bearer_auth(&tok).send().await.ok()?.json().await.ok()?;
+            let hdrs: HashMap<String, String> = r["payload"]["headers"].as_array()
+                .map(|a| a.iter().filter_map(|h| {
+                    Some((h["name"].as_str()?.to_lowercase(), h["value"].as_str()?.to_string()))
+                }).collect()).unwrap_or_default();
+            let labels: Vec<&str> = r["labelIds"].as_array()
+                .map(|a| a.iter().filter_map(|l| l.as_str()).collect()).unwrap_or_default();
+            Some(serde_json::json!({
+                "id": id,
+                "thread_id": r["threadId"].as_str().unwrap_or(""),
+                "subject": hdrs.get("subject").cloned().unwrap_or_default(),
+                "from": hdrs.get("from").cloned().unwrap_or_default(),
+                "to": hdrs.get("to").cloned().unwrap_or_default(),
+                "date": hdrs.get("date").cloned().unwrap_or_default(),
+                "snippet": r["snippet"].as_str().unwrap_or(""),
+                "unread": labels.contains(&"UNREAD"),
+                "important": labels.contains(&"IMPORTANT"),
+            }))
+        }));
+    }
+    let mut messages = Vec::new();
+    for t in tasks { if let Ok(Some(m)) = t.await { messages.push(m); } }
+    (cors_headers(), Json(serde_json::json!({"ok":true,"messages":messages}))).into_response()
+}
+
+async fn mail_message(
+    State(state): State<Arc<AppState>>,
+    Path(id): Path<String>,
+    Query(params): Query<HashMap<String, String>>,
+) -> Response {
+    if !validate_admin_token(&state, params.get("token").cloned().unwrap_or_default().as_str()) {
+        return (StatusCode::FORBIDDEN, Json(serde_json::json!({"ok":false}))).into_response();
+    }
+    let access_token = match gmail_get_access_token(&state).await {
+        Some(t) => t,
+        None => return (StatusCode::SERVICE_UNAVAILABLE, Json(serde_json::json!({"ok":false}))).into_response(),
+    };
+    let client = reqwest::Client::new();
+    let url = format!("https://gmail.googleapis.com/gmail/v1/users/me/messages/{}?format=full", id);
+    let msg: serde_json::Value = match client.get(&url).bearer_auth(&access_token).send().await {
+        Ok(r) => r.json().await.unwrap_or_default(),
+        Err(_) => serde_json::Value::Null,
+    };
+    // Mark as read
+    let _ = client.post(format!("https://gmail.googleapis.com/gmail/v1/users/me/messages/{}/modify", id))
+        .bearer_auth(&access_token)
+        .json(&serde_json::json!({"removeLabelIds":["UNREAD"]}))
+        .send().await;
+    // Extract body
+    fn extract_body(part: &serde_json::Value) -> String {
+        if let Some(data) = part["body"]["data"].as_str() {
+            let bytes = data.replace('-', "+").replace('_', "/");
+            if let Ok(decoded) = base64::decode(&bytes) {
+                if let Ok(s) = String::from_utf8(decoded) { return s; }
+            }
+        }
+        if let Some(parts) = part["parts"].as_array() {
+            for p in parts {
+                let mime = p["mimeType"].as_str().unwrap_or("");
+                if mime == "text/html" || mime == "text/plain" {
+                    let body = extract_body(p);
+                    if !body.is_empty() { return body; }
+                }
+                let nested = extract_body(p);
+                if !nested.is_empty() { return nested; }
+            }
+        }
+        String::new()
+    }
+    let body = extract_body(&msg["payload"]);
+    let hdrs: HashMap<String, String> = msg["payload"]["headers"].as_array()
+        .map(|a| a.iter().filter_map(|h| Some((h["name"].as_str()?.to_lowercase(), h["value"].as_str()?.to_string()))).collect())
+        .unwrap_or_default();
+    (cors_headers(), Json(serde_json::json!({
+        "ok": true,
+        "id": id,
+        "subject": hdrs.get("subject").cloned().unwrap_or_default(),
+        "from": hdrs.get("from").cloned().unwrap_or_default(),
+        "to": hdrs.get("to").cloned().unwrap_or_default(),
+        "date": hdrs.get("date").cloned().unwrap_or_default(),
+        "body": body,
+    }))).into_response()
+}
+// ── End Gmail ────────────────────────────────────────────────────────────────
+
 #[tokio::main]
 async fn main() {
     let posts = blog::load_posts(std::path::Path::new("content/blog"));
@@ -5099,6 +5264,11 @@ async fn main() {
     let m5_initial_url = std::env::var("M5_HITL_URL").ok().filter(|s| !s.is_empty());
     let telegram_token = std::env::var("TELEGRAM_BOT_TOKEN").ok().filter(|s| !s.is_empty());
     let groq_api_key = std::env::var("GROQ_API_KEY").ok().filter(|s| !s.is_empty());
+    let gmail_client_id = std::env::var("GMAIL_CLIENT_ID").ok().filter(|s| !s.is_empty());
+    let gmail_client_secret = std::env::var("GMAIL_CLIENT_SECRET").ok().filter(|s| !s.is_empty());
+    let gmail_refresh_token = std::env::var("GMAIL_REFRESH_TOKEN").ok().filter(|s| !s.is_empty());
+    let gmail_email = std::env::var("GMAIL_EMAIL").ok().filter(|s| !s.is_empty());
+    if gmail_client_id.is_some() { println!("Gmail API configured"); }
     if telegram_token.is_some() { println!("Telegram notifications configured"); }
     if groq_api_key.is_some() { println!("Groq transcription configured"); }
     let (chat_notify_tx, _) = broadcast::channel::<String>(128);
@@ -5138,6 +5308,11 @@ async fn main() {
         chat_notify_tx,
         pending_admin_replies: Mutex::new(HashMap::new()),
         videos: Mutex::new(load_video_meta()),
+        gmail_client_id,
+        gmail_client_secret,
+        gmail_refresh_token,
+        gmail_email,
+        gmail_access_token: Mutex::new(None),
     });
     std::fs::create_dir_all(VIDEO_DIR).ok();
 
@@ -5221,6 +5396,8 @@ async fn main() {
         .route("/api/videos", get(video_list))
         .route("/api/video/{id}", get(video_stream))
         .route("/api/video/{id}", axum::routing::delete(video_delete))
+        .route("/api/mail/list", get(mail_list))
+        .route("/api/mail/message/{id}", get(mail_message))
         .route("/manifest.webmanifest", get(|| async {
             let body = r##"{"name":"濱田優貴 / Yuki Hamada","short_name":"YukiHamada","start_url":"/","display":"standalone","background_color":"#080810","theme_color":"#080810","description":"Enabler CEO - ex-Mercari CPO - Builder","icons":[{"src":"/favicon-192.png","sizes":"192x192","type":"image/png"},{"src":"/favicon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}],"categories":["business","personal"],"lang":"ja"}"##;
             ([("content-type", "application/manifest+json"), ("cache-control", "public, max-age=3600")], body)

@@ -468,7 +468,57 @@
   .ai-settings  { background: linear-gradient(145deg,#94a3b8 0%,#64748b 50%,#1e293b 100%); }
   .ai-analytics { background: linear-gradient(145deg,#6ee7b7 0%,#059669 50%,#064e3b 100%); }
   .ai-m5dash    { background: linear-gradient(145deg,#fcd34d 0%,#d97706 50%,#78350f 100%); }
+  .ai-mail      { background: linear-gradient(145deg,#67e8f9 0%,#0284c7 50%,#0c4a6e 100%); }
   .ai-camera    { background: linear-gradient(145deg,#f1f5f9 0%,#94a3b8 50%,#0f172a 100%); }
+  .mail-folder-btn { display:flex;align-items:center;gap:8px;background:none;border:none;color:rgba(255,255,255,0.55);cursor:pointer;padding:7px 14px;border-radius:6px;margin:0 6px;font-size:12.5px;text-align:left;transition:background 0.12s,color 0.12s; }
+  .mail-folder-btn:hover { background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85); }
+  .mail-folder-btn.active { background:rgba(2,132,199,0.25);color:#7dd3fc; }
+  .mail-row { display:flex;flex-direction:column;gap:2px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.1s; }
+  .mail-row:hover { background:rgba(255,255,255,0.05); }
+  .mail-row.selected { background:rgba(2,132,199,0.15); }
+  .mail-row-from { font-size:12px;font-weight:600;color:#e2e8f0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .mail-row-subj { font-size:12px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+  .mail-row-date { font-size:10px;color:rgba(255,255,255,0.3);flex-shrink:0; }
+  .mail-row-top  { display:flex;justify-content:space-between;align-items:baseline;gap:6px; }
+  .mail-unread-dot { width:6px;height:6px;border-radius:50%;background:#3b82f6;flex-shrink:0;margin-right:4px; }
+  .mail-body-hdr { border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:16px;margin-bottom:16px; }
+  .mail-body-subj { font-size:18px;font-weight:700;color:#f1f5f9;margin-bottom:10px;line-height:1.3; }
+  .mail-body-meta { font-size:12px;color:rgba(255,255,255,0.4);display:flex;flex-direction:column;gap:3px; }
+  .mail-body-text { font-size:13px;color:#cbd5e1;line-height:1.7;white-space:pre-wrap;word-break:break-word; }
+  /* Overview Dashboard */
+  .ai-overview { background: linear-gradient(145deg,#a78bfa 0%,#7c3aed 50%,#2e1065 100%); }
+  .ov-wrap { height:100%;overflow-y:auto;padding:20px 24px;background:#080c1a;color:#e2e8f0;font-size:13px; }
+  .ov-topbar { display:flex;align-items:center;justify-content:space-between;margin-bottom:18px; }
+  .ov-title { font-size:17px;font-weight:700;color:#f1f5f9; }
+  .ov-date { font-size:11px;color:rgba(255,255,255,0.35); }
+  .ov-kpi-row { display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap; }
+  .ov-kpi { background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:12px 16px;flex:1;min-width:100px; }
+  .ov-kpi-num { font-size:24px;font-weight:700;line-height:1; }
+  .ov-kpi-label { font-size:10px;color:rgba(255,255,255,0.4);margin-top:4px;text-transform:uppercase;letter-spacing:0.06em; }
+  .ov-section { margin-bottom:20px; }
+  .ov-section-title { font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.35);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.07); }
+  .ov-cards { display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px; }
+  .ov-card { background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:14px 16px; }
+  .ov-card-hdr { display:flex;align-items:center;justify-content:space-between;margin-bottom:10px; }
+  .ov-card-title { font-weight:600;font-size:13px;color:#f1f5f9; }
+  .ov-badge { font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;letter-spacing:0.04em; }
+  .ov-badge-red    { background:rgba(239,68,68,0.2);color:#fca5a5;border:1px solid rgba(239,68,68,0.3); }
+  .ov-badge-orange { background:rgba(249,115,22,0.2);color:#fdba74;border:1px solid rgba(249,115,22,0.3); }
+  .ov-badge-yellow { background:rgba(234,179,8,0.15);color:#fde047;border:1px solid rgba(234,179,8,0.3); }
+  .ov-badge-green  { background:rgba(34,197,94,0.15);color:#86efac;border:1px solid rgba(34,197,94,0.3); }
+  .ov-badge-gray   { background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.45);border:1px solid rgba(255,255,255,0.12); }
+  .ov-thread { display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05); }
+  .ov-thread:last-child { border-bottom:none; }
+  .ov-dot { width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px; }
+  .ov-dot-red    { background:#f87171; }
+  .ov-dot-orange { background:#fb923c; }
+  .ov-dot-yellow { background:#facc15; }
+  .ov-dot-green  { background:#4ade80; }
+  .ov-dot-gray   { background:rgba(255,255,255,0.2); }
+  .ov-thread-txt { flex:1;min-width:0; }
+  .ov-thread-main { font-size:12px;color:#e2e8f0;line-height:1.4; }
+  .ov-thread-sub  { font-size:10.5px;color:rgba(255,255,255,0.35);margin-top:1px; }
+  .ov-thread-badge { font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px;flex-shrink:0;align-self:center; }
   /* Admin-only dock items */
   .dock-admin { display:none; }
   body.admin-user .dock-admin { display:flex; }
@@ -489,6 +539,45 @@
   .browser-win { display:flex; flex-direction:column; height:100%; background:#0d1117; }
   .koe-win { height:100%; background:#0a0814; }
   .koe-iframe { width:100%; height:100%; border:none; display:block; }
+
+  /* ── Koe Voice App ─────────────────────────────────── */
+  .kva{display:flex;flex-direction:column;height:100%;background:linear-gradient(170deg,#0d0520 0%,#0a0814 40%,#050310 100%);position:relative;overflow:hidden;user-select:none}
+  .kva::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(124,58,237,.18) 0%,transparent 70%);pointer-events:none}
+  .kva-hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px;z-index:2}
+  .kva-hdr-title{font-size:12px;font-weight:700;letter-spacing:.1em;color:rgba(167,139,250,.8);text-transform:uppercase}
+  .kva-status{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.04em;transition:color .3s}
+  .kva-status.listening{color:#a78bfa;animation:kva-pulse-txt 1.2s ease-in-out infinite}
+  .kva-status.thinking{color:#60a5fa}
+  .kva-status.speaking{color:#34d399}
+  @keyframes kva-pulse-txt{0%,100%{opacity:1}50%{opacity:.5}}
+  .kva-canvas-wrap{flex-shrink:0;height:80px;display:flex;align-items:center;justify-content:center;padding:0 12px;z-index:2}
+  .kva-canvas{width:100%;height:64px;border-radius:8px}
+  .kva-orb-area{flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:8px 0 12px;z-index:2}
+  .kva-orb{width:96px;height:96px;border-radius:50%;background:linear-gradient(145deg,#7c3aed,#4c1d95);border:none;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .3s;box-shadow:0 0 32px rgba(124,58,237,.5);outline:none}
+  .kva-orb:hover{transform:scale(1.05)}
+  .kva-orb:active{transform:scale(.96)}
+  .kva-orb.listening{box-shadow:0 0 48px rgba(167,139,250,.9),0 0 80px rgba(124,58,237,.4);background:linear-gradient(145deg,#8b5cf6,#6d28d9)}
+  .kva-orb.thinking{box-shadow:0 0 48px rgba(96,165,250,.6);animation:kva-orb-think .8s ease-in-out infinite}
+  @keyframes kva-orb-think{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+  .kva-ring{position:absolute;inset:-12px;border-radius:50%;border:1.5px solid rgba(167,139,250,.35);animation:kva-ring-out 2s ease-out infinite}
+  .kva-ring2{inset:-22px;animation-delay:.7s;border-color:rgba(167,139,250,.18)}
+  .kva-ring.active,.kva-ring2.active{animation:kva-ring-active 1s ease-out infinite}
+  @keyframes kva-ring-out{0%{transform:scale(.92);opacity:.6}100%{transform:scale(1.06);opacity:0}}
+  @keyframes kva-ring-active{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.15);opacity:0}}
+  .kva-hint{flex-shrink:0;text-align:center;font-size:10px;color:rgba(255,255,255,.25);padding:0 0 8px;letter-spacing:.04em;z-index:2}
+  .kva-msgs{flex:1;overflow-y:auto;padding:0 14px 8px;display:flex;flex-direction:column;gap:8px;z-index:2}
+  .kva-msgs::-webkit-scrollbar{width:2px}.kva-msgs::-webkit-scrollbar-thumb{background:rgba(124,58,237,.4);border-radius:2px}
+  .kva-msg{max-width:88%;font-size:12.5px;line-height:1.65;padding:9px 13px;border-radius:14px;animation:kva-msg-in .22s ease}
+  @keyframes kva-msg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .kva-msg-user{align-self:flex-end;background:rgba(124,58,237,.35);color:#ede9f8;border-bottom-right-radius:4px}
+  .kva-msg-bot{align-self:flex-start;background:rgba(255,255,255,.07);color:#e2dff0;border-bottom-left-radius:4px}
+  .kva-msg-thinking{color:rgba(255,255,255,.4);font-style:italic}
+  .kva-input-row{flex-shrink:0;display:flex;gap:6px;padding:8px 12px 12px;border-top:1px solid rgba(255,255,255,.05);z-index:2}
+  .kva-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:7px 13px;color:#e8e4f8;font-size:12px;outline:none;font-family:inherit}
+  .kva-input:focus{border-color:rgba(124,58,237,.65);background:rgba(255,255,255,.1)}
+  .kva-input::placeholder{color:rgba(255,255,255,.25)}
+  .kva-send{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.5);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+  .kva-send:hover{background:rgba(124,58,237,.8)}
   .browser-toolbar {
     display:flex; align-items:center; gap:6px; padding:7px 10px;
     background:#1c1f26; border-bottom:1px solid rgba(255,255,255,0.06); flex-shrink:0;
@@ -2194,8 +2283,14 @@
     <div class="dock-icon-wrap ai ai-settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="rgba(255,255,255,0.9)"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">設定</span>
   </div>
   <!-- Admin-only dock items -->
+  <div class="dock-admin dock-app" data-app="overview" onclick="dockClick('overview')" title="案件ダッシュボード">
+    <div class="dock-icon-wrap ai ai-overview"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.9)"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.9)"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.55)"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.55)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Dashboard</span>
+  </div>
   <div class="dock-admin dock-app" data-app="analytics" onclick="dockClick('analytics')" title="Analytics">
     <div class="dock-icon-wrap ai ai-analytics"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="12" width="4" height="9" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="10" y="7" width="4" height="14" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="17" y="3" width="4" height="18" rx="1" fill="rgba(255,255,255,0.9)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Analytics</span>
+  </div>
+  <div class="dock-admin dock-app" data-app="mail" onclick="dockClick('mail')" title="Mail">
+    <div class="dock-icon-wrap ai ai-mail"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="rgba(255,255,255,0.12)"/><polyline points="22,6 12,13 2,6" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Mail</span>
   </div>
   <div class="dock-admin dock-app" data-app="m5dash" onclick="dockClick('m5dash')" title="M5 Dashboard">
     <div class="dock-icon-wrap ai ai-m5dash"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2.5" fill="rgba(255,255,255,0.15)"/><rect x="2" y="3" width="20" height="14" rx="2.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/><rect x="9" y="17" width="6" height="3" rx="0.5" fill="rgba(255,255,255,0.6)"/><rect x="6" y="20" width="12" height="1" rx="0.5" fill="rgba(255,255,255,0.6)"/><circle cx="12" cy="10" r="3.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/><path d="M12 10 L12 7" stroke="rgba(255,200,50,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">M5</span>
@@ -2691,12 +2786,36 @@
     </div>
   </div>
 
-  <!-- KOE -->
+  <!-- KOE VOICE -->
   <div id="tpl-koe">
-    <div class="koe-win">
-      <iframe class="koe-iframe" src="https://koe.live/app"
-        allow="microphone; camera; clipboard-write"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads allow-modals allow-pointer-lock"></iframe>
+    <div class="kva" id="kvaRoot">
+      <div class="kva-hdr">
+        <span class="kva-hdr-title">🎙 Koe</span>
+        <span class="kva-status" id="kvaStatus">タップして話しかける</span>
+      </div>
+      <div class="kva-canvas-wrap">
+        <canvas class="kva-canvas" id="kvaCanvas"></canvas>
+      </div>
+      <div class="kva-orb-area">
+        <button class="kva-orb" id="kvaOrb" onclick="kvaToggle()">
+          <div class="kva-ring" id="kvaRing"></div>
+          <div class="kva-ring kva-ring2" id="kvaRing2"></div>
+          <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="10" r="4" fill="rgba(255,255,255,.92)"/>
+            <rect x="10.5" y="13.5" width="3" height="3.5" fill="rgba(255,255,255,.92)"/>
+            <rect x="9" y="17" width="6" height="1.8" rx=".9" fill="rgba(255,255,255,.92)"/>
+            <path d="M8 10c0 2.21 1.79 4 4 4s4-1.79 4-4" stroke="rgba(255,255,255,.8)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="kva-hint" id="kvaHint">タップして録音開始・もう一度タップで送信</div>
+      <div class="kva-msgs" id="kvaMsgs">
+        <div class="kva-msg kva-msg-bot">こんにちは。何でも声で話しかけてください。</div>
+      </div>
+      <div class="kva-input-row">
+        <input class="kva-input" id="kvaInput" placeholder="テキストでも話せます..." autocomplete="off"/>
+        <button class="kva-send" id="kvaSendBtn" onclick="kvaSendText()">↑</button>
+      </div>
     </div>
   </div>
 
@@ -2722,6 +2841,353 @@
     <div class="koe-win" style="background:#050810;">
       <iframe class="koe-iframe" src="https://enabler-analytics.fly.dev/"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    </div>
+  </div>
+
+  <!-- MAIL (admin only) -->
+  <div id="tpl-mail">
+    <div style="display:flex;height:100%;font-size:13px;color:#e2e8f0;background:#0f172a;">
+      <!-- Sidebar -->
+      <div id="mail-sidebar" style="width:160px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column;padding:8px 0;gap:2px;overflow:hidden;">
+        <div style="padding:8px 14px 6px;font-size:10px;font-weight:600;letter-spacing:0.08em;color:rgba(255,255,255,0.35);text-transform:uppercase;">Mailboxes</div>
+        <button class="mail-folder-btn active" data-folder="inbox"    onclick="mailSetFolder(this,'inbox')">    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 12h-6l-2 3H10l-2-3H2"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg> 受信トレイ</button>
+        <button class="mail-folder-btn" data-folder="unread"   onclick="mailSetFolder(this,'unread')">   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> 未読</button>
+        <button class="mail-folder-btn" data-folder="important" onclick="mailSetFolder(this,'important')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> 重要</button>
+        <button class="mail-folder-btn" data-folder="sent"     onclick="mailSetFolder(this,'sent')">     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> 送信済み</button>
+        <div style="flex:1;"></div>
+        <button onclick="mailRefresh()" style="background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;padding:8px 14px;text-align:left;font-size:11px;display:flex;align-items:center;gap:6px;" title="更新">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+          更新
+        </button>
+      </div>
+      <!-- Message list -->
+      <div id="mail-list" style="width:280px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.08);overflow-y:auto;display:flex;flex-direction:column;">
+        <div style="padding:12px 14px 8px;font-size:10px;font-weight:600;letter-spacing:0.08em;color:rgba(255,255,255,0.35);text-transform:uppercase;flex-shrink:0;">受信トレイ</div>
+        <div id="mail-list-inner" style="flex:1;overflow-y:auto;">
+          <div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,0.25);font-size:12px;">読み込み中…</div>
+        </div>
+      </div>
+      <!-- Message body -->
+      <div id="mail-body" style="flex:1;overflow-y:auto;padding:24px 28px;min-width:0;">
+        <div style="color:rgba(255,255,255,0.2);text-align:center;margin-top:80px;font-size:13px;">メールを選択してください</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERVIEW DASHBOARD (admin only) -->
+  <div id="tpl-overview">
+    <div class="ov-wrap">
+      <div class="ov-topbar">
+        <div class="ov-title">📋 案件ダッシュボード</div>
+        <div class="ov-date">2026-04-28 更新</div>
+      </div>
+
+      <!-- KPI bar -->
+      <div class="ov-kpi-row">
+        <div class="ov-kpi"><div class="ov-kpi-num" style="color:#f87171;">4</div><div class="ov-kpi-label">要対応</div></div>
+        <div class="ov-kpi"><div class="ov-kpi-num" style="color:#fb923c;">5</div><div class="ov-kpi-label">返信あり・処理待ち</div></div>
+        <div class="ov-kpi"><div class="ov-kpi-num" style="color:#facc15;">12</div><div class="ov-kpi-label">返信待ち</div></div>
+        <div class="ov-kpi"><div class="ov-kpi-num" style="color:#4ade80;">70+</div><div class="ov-kpi-label">送信済み（7日間）</div></div>
+      </div>
+
+      <!-- SOLUNA 建材 -->
+      <div class="ov-section">
+        <div class="ov-section-title">🏗 SOLUNA 建材開発</div>
+        <div class="ov-cards">
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">試験機関（GBRC）</div>
+              <span class="ov-badge ov-badge-orange">3件 処理待ち</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-orange"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">山田優花 — 熱伝導率試験</div>
+                <div class="ov-thread-sub">試験依頼書・データシート送付済み → <strong style="color:#fdba74;">書類記入・返送が必要</strong></div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-orange"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">落合泰誠 — 吸音率試験</div>
+                <div class="ov-thread-sub">4/28 返信あり → 試験詳細確認中</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">今西達也 — 竹材 壁倍率試験</div>
+                <div class="ov-thread-sub">4/24 返信あり → 試験可否・条件確認中</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">玉井裕 — 曲げ強度・難燃性試験</div>
+                <div class="ov-thread-sub">4/27 試験申込済み → 返信待ち</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">製造委託（鈴工）</div>
+              <span class="ov-badge ov-badge-red">要電話折り返し</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-red"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">鈴木 Hiroyuki — 籾殻ボード×CLTパネル</div>
+                <div class="ov-thread-sub">留守電あり「一度お話したい」CLT 12mm仕様確認 → <strong style="color:#fca5a5;">折り返し電話が必要</strong></div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">くん炭ボード（kuntanboard@gmail.com）</div>
+                <div class="ov-thread-sub">スレッド8件 → 要確認</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">試験機関（林産試験場）</div>
+              <span class="ov-badge ov-badge-gray">返信待ち</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">北海道立総合研究機構 林産試験場</div>
+                <div class="ov-thread-sub">4/28 送信（五十田博教授紹介） → 返信待ち</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">その他 建材調達</div>
+              <span class="ov-badge ov-badge-gray">複数社 返信待ち</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">CLT / 竹集成 / 焼きカラマツ 各社</div>
+                <div class="ov-thread-sub">製造委託・調達 問い合わせ済み（10社以上）</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">Tsugite 商用利用 / CNC加工</div>
+                <div class="ov-thread-sub">スレッドあり → 返信待ち</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">スクリュー杭 / ストローベイル / 漆喰</div>
+                <div class="ov-thread-sub">複数社へ問い合わせ済み</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">弟子屈町 建設相談</div>
+                <div class="ov-thread-sub">スレッド12件 → 要確認</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">菌糸体 素材調達</div>
+              <span class="ov-badge ov-badge-gray">返信待ち</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">霊芝・ヒラタケ種菌（業務用）</div>
+                <div class="ov-thread-sub">スレッド4件 → 返信待ち</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">海外サプライヤー（英文）×3社</div>
+                <div class="ov-thread-sub">Mycelium panels inquiry → 返信待ち</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- SOLUNA FEST HAWAII -->
+      <div class="ov-section">
+        <div class="ov-section-title">🌴 SOLUNA FEST HAWAII 2026（Zamna）</div>
+        <div class="ov-cards">
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">Zamna / 運営チーム</div>
+              <span class="ov-badge ov-badge-red">要確認</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-red"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">JC Sterrett（Zamna）</div>
+                <div class="ov-thread-sub">未読あり → 内容確認が必要</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">Keyanna Gibson（solunahi.com）</div>
+                <div class="ov-thread-sub">4/20 更新あり スレッド8件</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">Sid Zuber（solunahi.com）</div>
+                <div class="ov-thread-sub">スレッド11件 → 要確認</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">ヘッドライナー ブッキング</div>
+              <span class="ov-badge ov-badge-yellow">交渉中</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">Mahmut Orhan</div>
+                <div class="ov-thread-sub">謝罪・再調整メール送信済み → 返信待ち</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">Nora En Pure</div>
+                <div class="ov-thread-sub">ブッキング問い合わせ済み → 返信待ち</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">大型イベント許可申請（9,000名）</div>
+                <div class="ov-thread-sub">2026/9/4 → 問い合わせ済み</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 特許・法務 -->
+      <div class="ov-section">
+        <div class="ov-section-title">📄 特許・法務・許認可</div>
+        <div class="ov-cards">
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">特許出願</div>
+              <span class="ov-badge ov-badge-yellow">返信待ち</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">IPX弁理士法人 — MFC×換気システム</div>
+                <div class="ov-thread-sub">4/28 送信 / 発明A・B / 仮出願今月中希望 → 返信待ち</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">不動産特定共同事業法</div>
+              <span class="ov-badge ov-badge-yellow">相談中</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">第1号許可申請 / 小規模特例届出</div>
+                <div class="ov-thread-sub">4/17 複数行政窓口へ問い合わせ済み → 返信待ち</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">業務管理者講習 申込</div>
+                <div class="ov-thread-sub">スレッドあり → 確認中</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Koe / PCB -->
+      <div class="ov-section">
+        <div class="ov-section-title">🔧 Koe COIN / KAGI ハードウェア</div>
+        <div class="ov-cards">
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">PCBWay 製造</div>
+              <span class="ov-badge ov-badge-red">要対応</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-red"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">BOM file アップロード要求</div>
+                <div class="ov-thread-sub">Order T-1JP3W1046165A → <strong style="color:#fca5a5;">要アップロード</strong></div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-red"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">End-Use Statement 署名要求</div>
+                <div class="ov-thread-sub">W1046165AS1JP2 → <strong style="color:#fca5a5;">署名して返送が必要</strong></div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-yellow"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">KAGI IKI Lite PCBA 見積</div>
+                <div class="ov-thread-sub">スレッド4件 → 確認中</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ov-card">
+            <div class="ov-card-hdr">
+              <div class="ov-card-title">NexTone / その他</div>
+              <span class="ov-badge ov-badge-orange">未読あり</span>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-orange"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">NexTone（PlayN）利用者情報確認</div>
+                <div class="ov-thread-sub">スレッド5件 未読 → 要確認</div>
+              </div>
+            </div>
+            <div class="ov-thread">
+              <div class="ov-dot ov-dot-gray"></div>
+              <div class="ov-thread-txt">
+                <div class="ov-thread-main">Growatt SPF5000-ES 発注</div>
+                <div class="ov-thread-sub">4/17 送信済み → 返信待ち</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -3873,6 +4339,8 @@ const APPS = {
   news:     { title:'news.xyz',            w:900, h:640, cls:'ai-news' },
   analytics:{ title:'Analytics',           w:960, h:640, cls:'ai-analytics' },
   m5dash:   { title:'M5 Dashboard',        w:960, h:640, cls:'ai-m5dash' },
+  overview: { title:'案件ダッシュボード',    w:1100, h:720, cls:'ai-overview' },
+  mail:     { title:'Mail',                w:1080, h:680, cls:'ai-mail' },
   settings: { title:'システム環境設定',     w:480, h:420, cls:'ai-settings' },
   camera:   { title:'Camera',            w:640, h:520, cls:'ai-camera' },
   login:    { title:'Admin Login',        w:340, h:390, cls:'ai-about' },
@@ -3913,6 +4381,7 @@ function openApp(id) {
     if (id === 'blog') initBlog(el);
     if (id === 'settings') setTimeout(renderSkinCards, 50);
     if (id === 'camera') setTimeout(() => initCamera(), 80);
+    if (id === 'mail') setTimeout(() => initMail(), 80);
     if (id === 'music') {
       // Show start confirmation overlay inside the window (not the hidden template)
       const overlay = el.querySelector('#dj-start-overlay');
@@ -4335,6 +4804,117 @@ async function camLoadGallery() {
   }
 }
 // ─── End Camera ─────────────────────────────────────────────────────────────
+
+// ─── Mail ───────────────────────────────────────────────────────────────────
+var _mailFolder = 'inbox';
+var _mailSelectedId = null;
+
+function initMail() {
+  mailLoadList();
+}
+
+function mailSetFolder(btn, folder) {
+  _mailFolder = folder;
+  _mailSelectedId = null;
+  document.querySelectorAll('.mail-folder-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  var hdr = document.getElementById('mail-list');
+  if (hdr) {
+    var labels = { inbox:'受信トレイ', unread:'未読', important:'重要', sent:'送信済み' };
+    hdr.querySelector('div').textContent = labels[folder] || folder;
+  }
+  var body = document.getElementById('mail-body');
+  if (body) body.innerHTML = '<div style="color:rgba(255,255,255,0.2);text-align:center;margin-top:80px;font-size:13px;">メールを選択してください</div>';
+  mailLoadList();
+}
+
+function mailRefresh() {
+  _mailSelectedId = null;
+  mailLoadList();
+}
+
+async function mailLoadList() {
+  var inner = document.getElementById('mail-list-inner');
+  if (!inner) return;
+  inner.innerHTML = '<div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,0.25);font-size:12px;">読み込み中…</div>';
+  var token = getUserToken() || '';
+  if (!token) {
+    inner.innerHTML = '<div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,0.35);font-size:12px;">ログインが必要です</div>';
+    return;
+  }
+  try {
+    var resp = await fetch('/api/mail/list?folder=' + _mailFolder + '&token=' + encodeURIComponent(token));
+    if (resp.status === 403) {
+      inner.innerHTML = '<div style="padding:40px 20px;text-align:center;color:rgba(255,100,100,0.7);font-size:12px;">アクセス権限がありません</div>';
+      return;
+    }
+    var data = await resp.json();
+    var msgs = data.messages || [];
+    if (msgs.length === 0) {
+      inner.innerHTML = '<div style="padding:40px 20px;text-align:center;color:rgba(255,255,255,0.25);font-size:12px;">メールはありません</div>';
+      return;
+    }
+    inner.innerHTML = '';
+    msgs.forEach(function(m) {
+      var row = document.createElement('div');
+      row.className = 'mail-row' + (m.id === _mailSelectedId ? ' selected' : '');
+      row.dataset.id = m.id;
+      var dateStr = mailFormatDate(m.date);
+      var unread = m.unread ? '<span class="mail-unread-dot"></span>' : '';
+      row.innerHTML =
+        '<div class="mail-row-top">' +
+          '<div class="mail-row-from" style="display:flex;align-items:center;">' + unread + escHtml(m.from_name || m.from_email || '(不明)') + '</div>' +
+          '<div class="mail-row-date">' + dateStr + '</div>' +
+        '</div>' +
+        '<div class="mail-row-subj">' + escHtml(m.subject || '(件名なし)') + '</div>';
+      row.addEventListener('click', function() { mailOpenMessage(m.id); });
+      inner.appendChild(row);
+    });
+  } catch(e) {
+    inner.innerHTML = '<div style="padding:40px 20px;text-align:center;color:#fca5a5;font-size:12px;">取得失敗: ' + escHtml(String(e)) + '</div>';
+  }
+}
+
+async function mailOpenMessage(id) {
+  _mailSelectedId = id;
+  document.querySelectorAll('.mail-row').forEach(r => r.classList.toggle('selected', r.dataset.id === id));
+  var body = document.getElementById('mail-body');
+  if (!body) return;
+  body.innerHTML = '<div style="color:rgba(255,255,255,0.25);text-align:center;margin-top:80px;font-size:12px;">読み込み中…</div>';
+  var token = getUserToken() || '';
+  try {
+    var resp = await fetch('/api/mail/message/' + encodeURIComponent(id) + '?token=' + encodeURIComponent(token));
+    var m = await resp.json();
+    var dateStr = m.date ? new Date(m.date).toLocaleString('ja-JP') : '';
+    body.innerHTML =
+      '<div class="mail-body-hdr">' +
+        '<div class="mail-body-subj">' + escHtml(m.subject || '(件名なし)') + '</div>' +
+        '<div class="mail-body-meta">' +
+          '<span>From: <strong style="color:#93c5fd;">' + escHtml(m.from_email || '') + '</strong></span>' +
+          (m.to ? '<span>To: ' + escHtml(m.to) + '</span>' : '') +
+          '<span>' + dateStr + '</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="mail-body-text">' + escHtml(m.body || '') + '</div>';
+  } catch(e) {
+    body.innerHTML = '<div style="color:#fca5a5;padding:20px;font-size:12px;">取得失敗: ' + escHtml(String(e)) + '</div>';
+  }
+}
+
+function mailFormatDate(ts) {
+  if (!ts) return '';
+  var d = new Date(ts);
+  var now = new Date();
+  if (d.toDateString() === now.toDateString()) {
+    return d.toLocaleTimeString('ja-JP', { hour:'2-digit', minute:'2-digit' });
+  }
+  return (d.getMonth()+1) + '/' + d.getDate();
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+// ─── End Mail ────────────────────────────────────────────────────────────────
 
 function djInit() {
   if (djCtx) return;
@@ -6176,6 +6756,248 @@ window.openIframeWin = function(url, title, w, h) {
     e.preventDefault();
     externalOpen(href);
   }, true);
+})();
+
+// ── Koe Voice App ───────────────────────────────────────────
+(function() {
+  let mediaRec = null, audioChunks = [], stream = null;
+  let audioCtx = null, analyser = null, animId = null;
+  let state = 'idle'; // idle | listening | thinking | speaking
+  let kvaHistory = [];
+  let kvaBusy = false;
+  const KVA_USER_ID = 'kva_' + Math.random().toString(36).slice(2);
+
+  function kvaEl(id) { return document.getElementById(id); }
+
+  function kvaSetState(s) {
+    state = s;
+    const orb = kvaEl('kvaOrb'), st = kvaEl('kvaStatus'), hint = kvaEl('kvaHint');
+    const r = kvaEl('kvaRing'), r2 = kvaEl('kvaRing2');
+    if (!orb) return;
+    orb.className = 'kva-orb' + (s !== 'idle' ? ' ' + s : '');
+    st.className = 'kva-status' + (s !== 'idle' ? ' ' + s : '');
+    r.className = 'kva-ring' + (s === 'listening' ? ' active' : '');
+    r2.className = 'kva-ring kva-ring2' + (s === 'listening' ? ' active' : '');
+    if (s === 'idle')       { st.textContent = 'タップして話しかける'; hint.textContent = 'タップして録音開始・もう一度タップで送信'; }
+    if (s === 'listening')  { st.textContent = '録音中… もう一度タップで送信'; hint.textContent = ''; }
+    if (s === 'thinking')   { st.textContent = '考え中…'; hint.textContent = ''; }
+    if (s === 'speaking')   { st.textContent = '話し中…'; hint.textContent = 'タップで止める'; }
+  }
+
+  function kvaAddMsg(role, text) {
+    const msgs = kvaEl('kvaMsgs'); if (!msgs) return null;
+    const d = document.createElement('div');
+    d.className = 'kva-msg kva-msg-' + role;
+    d.textContent = text;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+    return d;
+  }
+
+  // ── Canvas waveform ──
+  function kvaDrawIdle(canvas) {
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(124,58,237,0.25)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    const t = Date.now() / 1200;
+    for (let x = 0; x < w; x++) {
+      const y = h/2 + Math.sin(x * 0.04 + t) * 5 + Math.sin(x * 0.015 + t * 0.7) * 3;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  function kvaDrawLive(canvas) {
+    if (!analyser) return kvaDrawIdle(canvas);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    analyser.getByteTimeDomainData(data);
+    const ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
+    ctx.clearRect(0, 0, w, h);
+    const grad = ctx.createLinearGradient(0, 0, w, 0);
+    grad.addColorStop(0, 'rgba(124,58,237,0.4)');
+    grad.addColorStop(0.5, 'rgba(167,139,250,0.9)');
+    grad.addColorStop(1, 'rgba(124,58,237,0.4)');
+    ctx.strokeStyle = grad;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    const step = w / data.length;
+    data.forEach((v, i) => {
+      const y = (v / 128 - 1) * (h * 0.42) + h / 2;
+      i === 0 ? ctx.moveTo(0, y) : ctx.lineTo(i * step, y);
+    });
+    ctx.stroke();
+  }
+
+  function kvaAnimate() {
+    const canvas = kvaEl('kvaCanvas'); if (!canvas) return;
+    canvas.width = canvas.offsetWidth || 360;
+    (state === 'listening' ? kvaDrawLive : kvaDrawIdle)(canvas);
+    animId = requestAnimationFrame(kvaAnimate);
+  }
+
+  // ── Speech Recognition (Web Speech API) ──
+  var recog = null;
+
+  function kvaStartRec() {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) {
+      kvaAddMsg('bot', 'このブラウザは音声認識に対応していません。テキスト入力をお使いください。');
+      return;
+    }
+    try {
+      // Waveform visualizer via AudioContext
+      navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+        stream = s;
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const src = audioCtx.createMediaStreamSource(s);
+        analyser = audioCtx.createAnalyser();
+        analyser.fftSize = 512;
+        src.connect(analyser);
+      }).catch(() => {});
+
+      recog = new SR();
+      recog.lang = 'ja-JP';
+      recog.interimResults = false;
+      recog.maxAlternatives = 1;
+      recog.continuous = false;
+
+      recog.onresult = e => {
+        const text = e.results[0][0].transcript.trim();
+        kvaStopStream();
+        if (text) {
+          kvaAddMsg('user', text);
+          kvaHistory.push({ role: 'user', content: text });
+          kvaSetState('thinking');
+          kvaSendToChat();
+        } else {
+          kvaSetState('idle');
+        }
+      };
+      recog.onerror = e => {
+        kvaStopStream();
+        if (e.error !== 'no-speech') {
+          kvaAddMsg('bot', 'マイクエラー: ' + e.error + '。ブラウザの設定を確認してください。');
+        }
+        kvaSetState('idle');
+      };
+      recog.onend = () => {
+        kvaStopStream();
+        if (state === 'listening') kvaSetState('idle');
+      };
+
+      recog.start();
+      kvaSetState('listening');
+    } catch(e) {
+      kvaAddMsg('bot', '音声認識を開始できませんでした。');
+      kvaSetState('idle');
+    }
+  }
+
+  function kvaStopStream() {
+    stream?.getTracks().forEach(t => t.stop());
+    stream = null;
+    analyser = null;
+  }
+
+  function kvaStopRec() {
+    if (recog) { try { recog.stop(); } catch(_) {} recog = null; }
+    kvaStopStream();
+    kvaSetState('idle');
+  }
+
+  async function kvaSendToChat() {
+    kvaBusy = true;
+    const botEl = kvaAddMsg('bot', '');
+    botEl.classList.add('kva-msg-thinking');
+    botEl.textContent = '…';
+    let full = '';
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: kvaHistory, user_id: KVA_USER_ID })
+      });
+      if (!res.ok || !res.body) throw new Error('net');
+      const reader = res.body.getReader(), dec = new TextDecoder();
+      let buf = '';
+      while (true) {
+        const { done, value } = await reader.read(); if (done) break;
+        buf += dec.decode(value, { stream: true });
+        const lines = buf.split('\n'); buf = lines.pop() || '';
+        for (const line of lines) {
+          if (!line.startsWith('data: ')) continue;
+          try {
+            const d = JSON.parse(line.slice(6));
+            if (d.delta) {
+              if (!full) { botEl.classList.remove('kva-msg-thinking'); botEl.textContent = ''; }
+              full += d.delta; botEl.textContent = full;
+              kvaEl('kvaMsgs').scrollTop = kvaEl('kvaMsgs').scrollHeight;
+            }
+          } catch(_) {}
+        }
+      }
+    } catch(_) { full = '通信エラーが発生しました。'; botEl.textContent = full; }
+
+    if (full) {
+      kvaHistory.push({ role: 'assistant', content: full });
+      if (kvaHistory.length > 20) kvaHistory = kvaHistory.slice(-20);
+      kvaSpeak(full);
+    } else {
+      kvaSetState('idle');
+    }
+    kvaBusy = false;
+  }
+
+  // ── TTS ──
+  function kvaSpeak(text) {
+    if (!window.speechSynthesis) { kvaSetState('idle'); return; }
+    window.speechSynthesis.cancel();
+    kvaSetState('speaking');
+    const clean = text.replace(/[*_`#>]/g, '').slice(0, 600);
+    const utt = new SpeechSynthesisUtterance(clean);
+    utt.lang = 'ja-JP'; utt.rate = 1.05; utt.pitch = 1.0;
+    // prefer Japanese voice
+    const voices = speechSynthesis.getVoices();
+    const jaVoice = voices.find(v => v.lang.startsWith('ja') && v.localService) ||
+                    voices.find(v => v.lang.startsWith('ja'));
+    if (jaVoice) utt.voice = jaVoice;
+    utt.onend = () => kvaSetState('idle');
+    utt.onerror = () => kvaSetState('idle');
+    speechSynthesis.speak(utt);
+  }
+
+  // ── Public controls ──
+  window.kvaToggle = function() {
+    if (state === 'speaking') { speechSynthesis.cancel(); kvaSetState('idle'); return; }
+    if (state === 'idle')     { kvaStartRec(); return; }
+    if (state === 'listening') { kvaStopRec(); return; }
+    if (state === 'thinking') return;
+  };
+
+  window.kvaSendText = function() {
+    const inp = kvaEl('kvaInput'); if (!inp) return;
+    const text = inp.value.trim(); if (!text || kvaBusy) return;
+    inp.value = '';
+    kvaAddMsg('user', text);
+    kvaHistory.push({ role: 'user', content: text });
+    kvaSetState('thinking');
+    kvaBusy = false;
+    kvaSendToChat();
+  };
+
+  // Enter key
+  document.addEventListener('DOMContentLoaded', () => {
+    const inp = kvaEl('kvaInput');
+    if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') window.kvaSendText(); });
+    // Start animation loop
+    kvaAnimate();
+    // Preload voices
+    speechSynthesis?.getVoices();
+    speechSynthesis?.addEventListener('voiceschanged', () => speechSynthesis.getVoices());
+  });
 })();
 </script>
 
