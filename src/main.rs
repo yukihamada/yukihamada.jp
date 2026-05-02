@@ -566,7 +566,23 @@ async fn blog_list() -> impl IntoResponse {
 
 async fn blog_list_tag(
     axum::extract::Query(params): axum::extract::Query<std::collections::HashMap<String, String>>,
-) -> impl IntoResponse {
+    headers: HeaderMap,
+    State(state): State<Arc<AppState>>,
+) -> Response {
+    let fetch_mode = headers.get("sec-fetch-mode")
+        .and_then(|v| v.to_str().ok()).unwrap_or("");
+    if fetch_mode == "navigate" {
+        let tmpl = HomeTemplate {
+            projects: PROJECTS,
+            careers: CAREERS,
+            posts: &state.posts[..state.posts.len().min(5)],
+            tracks: TRACKS,
+        };
+        let mut html = tmpl.render().unwrap_or_default();
+        let script = r#"<script>window.__autoOpenApp="blog";</script>"#;
+        html = html.replace("</body>", &format!("{script}\n</body>"));
+        return Html(html).into_response();
+    }
     if let Some(tag) = params.get("tag") {
         Redirect::permanent(&format!("/#blog?tag={tag}")).into_response()
     } else {
@@ -581,11 +597,23 @@ async fn blog_post(
 ) -> Response {
     let fetch_mode = headers.get("sec-fetch-mode")
         .and_then(|v| v.to_str().ok()).unwrap_or("");
-    // Only redirect when Sec-Fetch-Mode is "navigate" (real browser navigation, not crawlers).
     // Crawlers (Googlebot etc.) send no Sec-Fetch-* headers → serve actual HTML for indexing.
     // openPost fetch() sends Sec-Fetch-Mode: cors/no-cors → serve actual HTML for window content.
+    // Browser navigation → serve home page with auto-open script (avoids redirect+hash race).
     if fetch_mode == "navigate" {
-        return Redirect::temporary(&format!("/#blog/{slug}")).into_response();
+        let tmpl = HomeTemplate {
+            projects: PROJECTS,
+            careers: CAREERS,
+            posts: &state.posts[..state.posts.len().min(5)],
+            tracks: TRACKS,
+        };
+        let safe_slug = slug.chars()
+            .filter(|c| c.is_alphanumeric() || *c == '-' || *c == '_')
+            .collect::<String>();
+        let mut html = tmpl.render().unwrap_or_default();
+        let script = format!(r#"<script>window.__autoOpenSlug="{safe_slug}";</script>"#);
+        html = html.replace("</body>", &format!("{script}\n</body>"));
+        return Html(html).into_response();
     }
 
     // Serve actual blog post HTML (for openPost fetch or same-origin requests)
@@ -994,8 +1022,10 @@ async fn security_headers(
         "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://enabler-analytics.fly.dev; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' data: blob: https:; frame-src https://koe.live https://uta.live https://solun.art https://soluna-web.fly.dev https://chatweb.ai https://teai.io https://jiuflow.art https://stayflowapp.com https://banto.work https://pasha.run https://enablerdao.com https://misebanai.com https://news.xyz https://flow-anime.com https://kokon.tokyo https://yukihamada.jp https://yukihamada-jp.fly.dev https://enabler-analytics.fly.dev https://m5-dashboard.chatweb.ai; media-src 'self' blob:; connect-src 'self' https://enabler-analytics.fly.dev wss://yukihamada.jp wss://yukihamada-jp.fly.dev ws://localhost:8080 https://solun.art https://chatweb.ai wss://chatweb.ai"
         .parse().unwrap());
     // Cache-Control for static assets
-    if path.starts_with("/assets/") || path.starts_with("/audio/") || path.starts_with("/blog/images/") {
+    if path.starts_with("/assets/") || path.starts_with("/blog/images/") {
         h.insert("cache-control", "public, max-age=31536000, immutable".parse().unwrap()); // 1 year + immutable
+    } else if path.starts_with("/audio/") {
+        h.insert("cache-control", "public, max-age=3600".parse().unwrap()); // 1 hour — audio can be regenerated
     }
     res
 }
