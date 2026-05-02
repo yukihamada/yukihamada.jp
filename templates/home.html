@@ -2993,20 +2993,64 @@
         <div id="gInfoDesc" style="font-size:12px;opacity:.75;line-height:1.6"></div>
         <div id="gInfoHint" style="font-size:10px;opacity:.4;margin-top:6px">F キーで詳細を開く</div>
       </div>
-      <div id="gOverlay" style="position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;background:rgba(0,0,0,.78);color:#fff;cursor:pointer;font-family:var(--font);text-align:center;padding:24px">
-        <div style="font-size:36px">🌿</div>
-        <div style="font-size:22px;font-weight:700;letter-spacing:.04em">Voxel World</div>
-        <div style="font-size:11px;opacity:.5;margin-bottom:2px">yukihamada.jp のプロジェクトが世界に散らばっている</div>
-        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 20px;font-size:12px;line-height:2.2;text-align:left">
-          <div><span style="opacity:.5;width:100px;display:inline-block">移動</span><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">W A S D</kbd> または 矢印キー</div>
-          <div><span style="opacity:.5;width:100px;display:inline-block">ジャンプ</span><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">スペース</kbd></div>
-          <div><span style="opacity:.5;width:100px;display:inline-block">ブロック破壊</span>左クリック</div>
-          <div><span style="opacity:.5;width:100px;display:inline-block">ブロック設置</span>右クリック</div>
-          <div><span style="opacity:.5;width:100px;display:inline-block">ブロック切替</span>スクロール または <kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">1〜7</kbd></div>
-          <div><span style="opacity:.5;width:100px;display:inline-block">カメラ解除</span><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">Esc</kbd></div>
+      <div id="gOverlay" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.85);color:#fff;font-family:var(--font);text-align:center;padding:20px;overflow-y:auto;">
+        <div style="max-width:460px;width:100%">
+          <div style="font-size:38px;margin-bottom:6px">🌿</div>
+          <div style="font-size:22px;font-weight:700;letter-spacing:.03em;margin-bottom:3px">yukihamada World</div>
+          <div style="font-size:11px;opacity:.45;margin-bottom:14px">プロジェクト・ブログ・経歴が3Dワールドに存在する</div>
+          <!-- Tabs -->
+          <div style="display:flex;gap:2px;background:rgba(255,255,255,.07);border-radius:8px;padding:3px;margin-bottom:14px;">
+            <button id="gTab1" onclick="window.gTabSwitch&&gTabSwitch(1)" style="flex:1;padding:7px;border:none;border-radius:6px;background:rgba(255,255,255,.15);color:#fff;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">🎮 操作方法</button>
+            <button id="gTab2" onclick="window.gTabSwitch&&gTabSwitch(2)" style="flex:1;padding:7px;border:none;border-radius:6px;background:transparent;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;font-family:inherit;">🗺 ワールドマップ</button>
+          </div>
+          <!-- Controls tab -->
+          <div id="gTabC1" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 18px;margin-bottom:14px;text-align:left;">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;font-size:12px;">
+              <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px;font-size:10px;">W A S D</kbd>　移動</div>
+              <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px;font-size:10px;">Space</kbd>　ジャンプ</div>
+              <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px;font-size:10px;">Shift</kbd>　ダッシュ走り</div>
+              <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px;font-size:10px;">F</kbd>　プロジェクトを開く</div>
+              <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">左クリック　ブロック破壊</div>
+              <div style="padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)">右クリック　ブロック設置</div>
+              <div style="padding:5px 0"><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px;font-size:10px;">1〜7</kbd> or スクロール 切替</div>
+              <div style="padding:5px 0"><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px;font-size:10px;">Esc</kbd>　カメラ解除</div>
+            </div>
+            <div style="margin-top:10px;font-size:10.5px;opacity:.5;line-height:1.8">📍 建物に近づくと名前と説明が表示されます<br>F キーで実際のサイトを開けます</div>
+          </div>
+          <!-- Map tab -->
+          <div id="gTabC2" style="display:none;margin-bottom:14px;">
+            <svg viewBox="0 0 220 220" style="width:100%;max-width:220px;border-radius:10px;background:rgba(20,60,20,.5);border:1px solid rgba(255,255,255,.1);">
+              <rect width="220" height="220" fill="#1a4a18" rx="8"/>
+              <line x1="110" y1="110" x2="168" y2="36" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <line x1="110" y1="110" x2="46" y2="36" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <line x1="110" y1="110" x2="46" y2="174" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <line x1="110" y1="110" x2="168" y2="174" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <line x1="110" y1="110" x2="110" y2="36" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <line x1="110" y1="110" x2="110" y2="174" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <line x1="110" y1="110" x2="168" y2="110" stroke="rgba(255,220,80,.25)" stroke-width="2" stroke-dasharray="4,3"/>
+              <rect x="99" y="99" width="22" height="22" fill="rgba(100,50,20,.8)" rx="3" stroke="rgba(255,200,80,.6)" stroke-width="1"/>
+              <text x="110" y="114" text-anchor="middle" fill="#ffd050" font-size="8" font-weight="bold">📚</text>
+              <circle cx="168" cy="36" r="6" fill="#1e4a8a" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="168" y="26" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">chatweb.ai</text>
+              <circle cx="46" cy="36" r="6" fill="#1565C0" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="46" y="26" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">JiuFlow</text>
+              <circle cx="46" cy="174" r="6" fill="#c04030" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="46" y="186" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">パシャ</text>
+              <circle cx="168" cy="174" r="6" fill="#888" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="168" y="186" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">Koe</text>
+              <circle cx="110" cy="36" r="6" fill="#c89040" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="110" y="26" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">BANTO</text>
+              <circle cx="110" cy="174" r="6" fill="#2e7d32" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="110" y="186" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">SOLUNA</text>
+              <circle cx="168" cy="110" r="6" fill="#c04030" stroke="rgba(255,255,255,.4)" stroke-width="1"/>
+              <text x="184" y="113" text-anchor="middle" fill="rgba(255,255,255,.85)" font-size="7">miseban</text>
+              <circle cx="110" cy="110" r="4" fill="white" opacity=".9"/>
+              <text x="110" y="102" text-anchor="middle" fill="rgba(255,255,255,.6)" font-size="6">あなた</text>
+            </svg>
+          </div>
+          <button onclick="window._startGame&&_startGame()" style="width:100%;background:#e8a04c;color:#000;border:none;border-radius:8px;padding:12px 32px;font-size:15px;font-weight:700;letter-spacing:.03em;cursor:pointer;font-family:inherit;animation:pulse-btn 1.4s ease-in-out infinite;">▶ ゲームを開始</button>
+          <div style="font-size:10px;opacity:.28;margin-top:8px">クリック後にマウスがキャプチャされます。Esc で解除。</div>
         </div>
-        <div style="margin-top:4px;background:var(--accent);color:#000;border-radius:8px;padding:10px 32px;font-size:14px;font-weight:700;letter-spacing:.03em;animation:pulse-btn 1.4s ease-in-out infinite">▶ クリックして開始</div>
-        <div style="font-size:10px;opacity:.3">※ クリック後にマウスがキャプチャされます。Esc で解除。</div>
       </div>
       <div id="gPause" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#fff;font-family:var(--font);cursor:pointer">
         <div style="font-size:18px;font-weight:700">⏸ 一時停止中</div>
@@ -6228,8 +6272,11 @@ function handleHash(hash) {
       if (meta) {
         openPost(slug, meta.title, meta.date, false);
         document.title = meta.title + ' — 濱田優貴';
+      } else {
+        // Fallback: open post directly even if not yet in postMeta
+        openPost(slug, '…', '', false);
       }
-    }, 200);
+    }, 300);
     return;
   }
   if (APPS[h]) {
@@ -6546,6 +6593,14 @@ window.addEventListener('load', () => {
   // Restore icon order on boot
   restoreIconOrder();
   initIconDrag();
+
+  // Server-injected auto-open slug (from /blog/slug direct browser navigation)
+  if (window.__autoOpenSlug) {
+    const _s = window.__autoOpenSlug;
+    history.replaceState(null, '', '/#blog/' + _s);
+    setTimeout(() => { handleHash('blog/' + _s); }, 100);
+    return;
+  }
 
   const hash = location.hash.slice(1); // remove leading #
   setTimeout(() => {
@@ -7011,140 +7066,230 @@ window.openIframeWin = function(url, title, w, h) {
 
 // ── Voxel Game ───────────────────────────────────────────────
 function initGame(winEl) {
-  const wrap    = winEl.querySelector('#gWrap');
-  const canvas  = winEl.querySelector('#gCanvas');
-  const overlay = winEl.querySelector('#gOverlay');
-  const pause   = winEl.querySelector('#gPause');
-  const cross   = winEl.querySelector('#gCross');
-  const bar     = winEl.querySelector('#gBar');
+  const wrap   = winEl.querySelector('#gWrap');
+  const canvas = winEl.querySelector('#gCanvas');
+  const overlay= winEl.querySelector('#gOverlay');
+  const pause  = winEl.querySelector('#gPause');
+  const cross  = winEl.querySelector('#gCross');
+  const bar    = winEl.querySelector('#gBar');
+  const infoEl = document.getElementById('gInfo');
+  const infoTitle = document.getElementById('gInfoTitle');
+  const infoDesc  = document.getElementById('gInfoDesc');
   if (!canvas || !wrap) return;
 
   let THREE_loaded = typeof THREE !== 'undefined';
-
-  function boot() {
-    THREE_loaded = true;
-    overlay.onclick = () => startGame();
-  }
-
+  function boot(){ THREE_loaded = true; }
   if (!THREE_loaded) {
     const s = document.createElement('script');
     s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js';
-    s.onload = boot;
-    document.head.appendChild(s);
-  } else {
-    boot();
-  }
+    s.onload = boot; document.head.appendChild(s);
+  } else { boot(); }
 
-  // ── Game state ──
-  let started = false, locked = false;
-  const W = 32, D = 32, H = 20;
-  const world = new Uint8Array(W * D * H);
+  // Tab switching for overlay
+  window.gTabSwitch = function(n){
+    ['gTabC1','gTabC2'].forEach((id,i)=>{ document.getElementById(id).style.display=i+1===n?'':'none'; });
+    ['gTab1','gTab2'].forEach((id,i)=>{
+      const el=document.getElementById(id);
+      if(!el)return;
+      el.style.background=i+1===n?'rgba(255,255,255,.15)':'transparent';
+      el.style.color=i+1===n?'#fff':'rgba(255,255,255,.5)';
+    });
+  };
+
+  // ── World ──
+  const W=48, D=48, H=28;
+  const world = new Uint8Array(W*D*H);
   const BLOCKS = [
     null,
-    { top:0x4CAF50, side:0x795548, bot:0x795548, name:'草ブロック' },
-    { top:0x795548, side:0x795548, bot:0x795548, name:'土' },
-    { top:0x9E9E9E, side:0x9E9E9E, bot:0x9E9E9E, name:'石' },
-    { top:0xF5DEB3, side:0xF5DEB3, bot:0xF5DEB3, name:'砂' },
-    { top:0x4E342E, side:0x6D4C41, bot:0x4E342E, name:'木材' },
-    { top:0x2E7D32, side:0x388E3C, bot:0x2E7D32, name:'葉' },
-    { top:0xB71C1C, side:0xC62828, bot:0xB71C1C, name:'レンガ' },
-    { top:0x1565C0, side:0x1976D2, bot:0x1565C0, name:'青石' },
+    {top:0x5a9c28,side:0x7b5b32,bot:0x6b4226,name:'草'},
+    {top:0x7b5b32,side:0x7b5b32,bot:0x7b5b32,name:'土'},
+    {top:0x888888,side:0x808080,bot:0x787878,name:'石'},
+    {top:0xf0e0a0,side:0xe8d090,bot:0xe0c080,name:'砂'},
+    {top:0x5c3d1e,side:0x5c3d1e,bot:0x4a3010,name:'木'},
+    {top:0x2d6b18,side:0x387020,bot:0x2d6b18,name:'葉'},
+    {top:0xc04030,side:0xb03828,bot:0xa03020,name:'レンガ'},
+    {top:0x1a3a7a,side:0x1e4a8a,bot:0x162e62,name:'青石'},
+    {top:0x2850d0,side:0x3060d8,bot:0x2040b8,name:'水'},
+    {top:0xd0a050,side:0xc89040,bot:0xb88030,name:'板'},
+    {top:0xa8c8f0,side:0x98b8e0,bot:0xa8c8f0,name:'ガラス'},
+    {top:0x909090,side:0x888888,bot:0x808080,name:'鉄'},
+    {top:0xe8c020,side:0xd8b018,bot:0xc8a010,name:'金'},
+    {top:0x181828,side:0x181828,bot:0x101020,name:'黒石'},
+    {top:0x30a060,side:0x288850,bot:0x207040,name:'翡翠'},
   ];
-  const hotbarTypes = [1,2,3,4,5,7,8];
-  let hotSel = 0;
-  const keys = {};
-  let meshObj = null;
+  const hotbarTypes=[1,2,3,7,8,10,12]; let hotSel=0;
+  const keys={}; let meshObj=null;
 
-  function idx(x,y,z){ if(x<0||x>=W||y<0||y>=H||z<0||z>=D) return -1; return x+z*W+y*W*D; }
-  function getB(x,y,z){ const i=idx(x,y,z); return i<0?1:world[i]; } // walls = solid outside
-  function setB(x,y,z,t){ const i=idx(x,y,z); if(i>=0) world[i]=t; }
+  function idx(x,y,z){ if(x<0||x>=W||y<0||y>=H||z<0||z>=D)return -1; return x+z*W+y*W*D; }
+  function getB(x,y,z){ const i=idx(x,y,z); return i<0?1:world[i]; }
+  function setB(x,y,z,t){ const i=idx(x,y,z); if(i>=0)world[i]=t; }
 
   function noise(x,z){
-    let h=0,a=1,f=0.08;
-    for(let i=0;i<4;i++){
-      h+=a*(Math.sin(x*f+1.3)*Math.cos(z*f+0.7)+Math.sin(x*f*1.9+2.1)*0.5);
-      a*=0.5; f*=2;
+    let h=0,a=1,f=0.05;
+    for(let i=0;i<5;i++){
+      h+=a*(Math.sin(x*f+1.3+i*0.7)*Math.cos(z*f+0.7+i*0.9)+Math.sin((x+z)*f*1.4+2.1+i)*0.5);
+      a*=0.5; f*=2.1;
     }
-    return Math.max(3, Math.min(H-3, Math.round(7 + h*3)));
+    return Math.max(5,Math.min(H-5,Math.round(11+h*4)));
+  }
+  function gnd(x,z){ return noise(x,z); }
+
+  // Building helpers
+  function fill(x1,y1,z1,x2,y2,z2,b){
+    for(let x=x1;x<=x2;x++) for(let y=y1;y<=y2;y++) for(let z=z1;z<=z2;z++) setB(x,y,z,b);
+  }
+  function walls(x1,y1,z1,x2,y2,z2,b){
+    fill(x1,y1,z1,x2,y2,z2,b);
+    if(x2-x1>1&&z2-z1>1) fill(x1+1,y1+1,z1+1,x2-1,y2,z2-1,0);
   }
 
-  // Project monuments: {x, z, block, height, title, desc, url}
-  const MONUMENTS = [
-    { x:6,  z:6,  block:8, h:5, title:'JiuFlow', desc:'柔術トレーニング管理アプリ / 大会・ゲームプラン', url:'https://jiuflow.art' },
-    { x:24, z:6,  block:7, h:5, title:'chatweb.ai', desc:'ブラウザで使える Claude Code ターミナル', url:'https://chatweb.ai' },
-    { x:6,  z:24, block:4, h:5, title:'パシャ', desc:'レシートをAI-OCRで電子帳簿保存法対応', url:'https://pasha.run' },
-    { x:24, z:24, block:3, h:5, title:'Koe', desc:'声で入力するAIデバイス / koe.live', url:'https://koe.live' },
-    { x:15, z:6,  block:5, h:4, title:'BANTO', desc:'ビジネス請求・収支管理SaaS', url:'https://banto.work' },
-    { x:15, z:24, block:2, h:4, title:'SOLUNA', desc:'弟子屈の共同別荘プロジェクト', url:'https://solun.art' },
+  // ── Project buildings ──
+  function buildChatweb(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-2,g,mz-2,mx+2,g+9,mz+2,14);       // dark stone tower
+    for(let y=g+2;y<=g+7;y++) for(let z=mz-1;z<=mz+1;z++) setB(mx,y,z,11); // glass spine front/back
+    for(let y=g;y<=g+9;y++){setB(mx-2,y,mz-2,12);setB(mx+2,y,mz-2,12);setB(mx-2,y,mz+2,12);setB(mx+2,y,mz+2,12);}// iron corners
+    fill(mx-2,g+10,mz-2,mx+2,g+10,mz+2,13);     // gold crown
+    setB(mx,g+11,mz,12);setB(mx,g+12,mz,12);setB(mx-1,g+12,mz,12);setB(mx+1,g+12,mz,12); // antenna
+    setB(mx,g+2,mz-2,0);setB(mx,g+3,mz-2,0);    // entrance gap
+  }
+  function buildJiuflow(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-3,g,mz-2,mx+3,g+5,mz+2,8);         // blue dojo
+    fill(mx-2,g,mz-1,mx+2,g,mz+1,4);             // sand mat
+    for(let y=g;y<=g+5;y++){setB(mx-3,y,mz-2,3);setB(mx+3,y,mz-2,3);setB(mx-3,y,mz+2,3);setB(mx+3,y,mz+2,3);}
+    setB(mx,g+1,mz-2,0);setB(mx,g+2,mz-2,0);    // entrance
+    fill(mx-1,g,mz-4,mx+1,g,mz-3,10);            // front step
+    fill(mx-3,g+6,mz-2,mx+3,g+6,mz+2,3);         // stone roof
+  }
+  function buildPasha(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-2,g,mz-2,mx+2,g+6,mz+2,7);          // brick
+    fill(mx-2,g+7,mz-2,mx+2,g+7,mz+2,13);         // gold top
+    setB(mx,g+1,mz-2,0);setB(mx,g+2,mz-2,0);
+    setB(mx-1,g+4,mz-2,15);setB(mx,g+4,mz-2,15);setB(mx+1,g+4,mz-2,15); // emerald sign
+    fill(mx-1,g,mz-4,mx+1,g,mz-3,4);              // step
+  }
+  function buildKoe(mx,mz){
+    const g=gnd(mx,mz);
+    fill(mx-2,g,mz-2,mx+2,g,mz+2,3);              // stone base
+    walls(mx-1,g,mz-1,mx+1,g+12,mz+1,12);         // iron tower
+    for(let i=-2;i<=2;i++){setB(mx+i,g+13,mz,12);setB(mx,g+13,mz+i,12);}// cross top
+    setB(mx,g+14,mz,13);                            // gold tip
+    for(let y=g+4;y<=g+10;y+=3){setB(mx-1,y,mz+1,12);setB(mx+1,y,mz+1,12);}// vents
+  }
+  function buildBanto(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-3,g,mz-2,mx+3,g+5,mz+2,10);           // wood plank office
+    fill(mx-3,g,mz-2,mx+3,g,mz+2,3);               // stone floor
+    fill(mx-3,g+5,mz-2,mx+3,g+5,mz+2,3);           // stone roof
+    for(let y=g+2;y<=g+4;y++) for(let x=mx-2;x<=mx+2;x++) setB(x,y,mz-2,11); // glass facade
+    setB(mx,g+1,mz-2,0);setB(mx,g+2,mz-2,0);
+    fill(mx-2,g,mz-5,mx+2,g,mz-3,3);               // parking
+  }
+  function buildSoluna(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-2,g,mz-2,mx+2,g+4,mz+2,5);            // log cabin
+    fill(mx-1,g,mz-1,mx+1,g,mz+1,10);              // plank floor
+    fill(mx-3,g+5,mz-3,mx+3,g+5,mz+3,6);           // leaf roof level 1
+    fill(mx-2,g+6,mz-2,mx+2,g+6,mz+2,6);           // level 2
+    setB(mx,g+7,mz,6);                               // peak
+    setB(mx+1,g+5,mz+1,3);setB(mx+1,g+6,mz+1,3);setB(mx+1,g+7,mz+1,3); // chimney
+    setB(mx,g+1,mz-2,0);setB(mx,g+2,mz-2,0);
+    setB(mx,g+3,mz-2,13);                            // gold sign
+  }
+  function buildLibrary(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-4,g,mz-3,mx+4,g+6,mz+3,14);           // dark hall
+    fill(mx-3,g,mz-2,mx+3,g,mz+2,3);               // stone floor
+    for(let y=g;y<=g+6;y++){setB(mx-4,y,mz-3,7);setB(mx+4,y,mz-3,7);setB(mx-4,y,mz+3,7);setB(mx+4,y,mz+3,7);}// brick columns
+    fill(mx-4,g+7,mz-3,mx+4,g+7,mz+3,13);          // gold crown
+    for(let y=g+2;y<=g+5;y++) for(let z=mz-2;z<=mz+2;z++){setB(mx-4,y,z,11);setB(mx+4,y,z,11);}// glass sides
+    setB(mx-1,g+1,mz-3,0);setB(mx-1,g+2,mz-3,0);   // double door
+    setB(mx,g+1,mz-3,0);setB(mx,g+2,mz-3,0);
+    setB(mx+1,g+1,mz-3,0);setB(mx+1,g+2,mz-3,0);
+    for(let y=g+1;y<=g+5;y++){setB(mx-3,y,mz-2,15);setB(mx-3,y,mz,15);setB(mx-3,y,mz+2,15);setB(mx+3,y,mz-2,15);setB(mx+3,y,mz,15);setB(mx+3,y,mz+2,15);}// bookshelves
+  }
+  function buildMiseban(mx,mz){
+    const g=gnd(mx,mz);
+    walls(mx-2,g,mz-2,mx+2,g+5,mz+2,7);
+    fill(mx-2,g+6,mz-2,mx+2,g+6,mz+2,10);
+    for(let y=g+1;y<=g+4;y++) for(let x=mx-1;x<=mx+1;x++) setB(x,y,mz-2,11);
+    setB(mx,g+1,mz-2,0);setB(mx,g+2,mz-2,0);
+    setB(mx-1,g+5,mz-2,13);setB(mx,g+5,mz-2,13);setB(mx+1,g+5,mz-2,13);
+  }
+
+  function buildPath(x1,z1,x2,z2){
+    const steps=Math.max(Math.abs(x2-x1),Math.abs(z2-z1));
+    for(let s=0;s<=steps;s++){
+      const x=Math.round(x1+(x2-x1)*s/steps), z=Math.round(z1+(z2-z1)*s/steps);
+      const g=gnd(x,z);
+      setB(x,g-1,z,4); setB(x,g,z,4);
+      if(world[idx(x-1,g,z)]===1) setB(x-1,g,z,4);
+      if(world[idx(x+1,g,z)]===1) setB(x+1,g,z,4);
+    }
+  }
+
+  const MONUMENTS=[
+    {x:38,z:8,  title:'chatweb.ai',  desc:'ブラウザで使える Claude Code ターミナル',     url:'https://chatweb.ai'},
+    {x:10,z:8,  title:'JiuFlow',     desc:'柔術トレーニング管理 / 大会・ゲームプラン',    url:'https://jiuflow.art'},
+    {x:10,z:38, title:'パシャ',      desc:'レシートをAI-OCRで電子帳簿保存法対応',          url:'https://pasha.run'},
+    {x:38,z:38, title:'Koe Device',  desc:'声で入力するAIデバイス / koe.live',             url:'https://koe.live'},
+    {x:24,z:8,  title:'BANTO',       desc:'ビジネス請求・収支管理SaaS',                    url:'https://banto.work'},
+    {x:24,z:38, title:'SOLUNA',      desc:'弟子屈 3万坪の共同別荘プロジェクト',            url:'https://solun.art'},
+    {x:24,z:24, title:'Blog Library',desc:'濱田優貴のブログ — 最新記事を読む',             url:'/blog'},
+    {x:38,z:24, title:'ミセバンAI',  desc:'店舗向けAIツール / misebanai.com',              url:'https://misebanai.com'},
   ];
-
-  function buildMonument(mx, mz, block, h) {
-    const gh = noise(mx, mz);
-    // 3x3 base, center pillar
-    for(let bx=mx-1;bx<=mx+1;bx++) for(let bz=mz-1;bz<=mz+1;bz++) {
-      setB(bx, gh, bz, block);
-    }
-    // pillar up
-    for(let y=gh+1;y<gh+h;y++) setB(mx, y, mz, block);
-    // cap
-    setB(mx-1, gh+h, mz, block); setB(mx+1, gh+h, mz, block);
-    setB(mx, gh+h, mz-1, block); setB(mx, gh+h, mz+1, block);
-    setB(mx, gh+h+1, mz, block);
-  }
 
   function genWorld(){
     for(let x=0;x<W;x++) for(let z=0;z<D;z++){
       const h=noise(x,z);
-      for(let y=0;y<h-1;y++) setB(x,y,z, y<3?3:2);
-      setB(x,h-1,z,1); // grass top
-      // trees
-      if(h>5&&Math.sin(x*7.3+z*11.7)>0.88&&x>2&&x<W-3&&z>2&&z<D-3){
-        for(let ty=h;ty<h+4;ty++) setB(x,ty,z,5);
-        for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++){
-          if(Math.abs(lx)===2&&Math.abs(lz)===2) continue;
-          for(let ly=h+2;ly<=h+5;ly++) if(!getB(x+lx,ly,z+lz)) setB(x+lx,ly,z+lz,6);
+      if(h<=6){
+        for(let y=0;y<=5;y++) setB(x,y,z,y<4?3:9);
+        setB(x,3,z,4);
+      } else {
+        for(let y=0;y<h-1;y++) setB(x,y,z,y<3?3:2);
+        setB(x,h-1,z,1);
+        if(h>6&&h<15&&Math.sin(x*7.3+z*11.7)>0.9&&x>3&&x<W-4&&z>3&&z<D-4){
+          for(let ty=h;ty<h+4;ty++) setB(x,ty,z,5);
+          for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++){
+            if(Math.abs(lx)===2&&Math.abs(lz)===2) continue;
+            for(let ly=h+2;ly<=h+5;ly++) if(!getB(x+lx,ly,z+lz)) setB(x+lx,ly,z+lz,6);
+          }
         }
       }
     }
-    // Build project monuments
-    MONUMENTS.forEach(m => buildMonument(m.x, m.z, m.block, m.h));
+    // Roads from center to each monument
+    MONUMENTS.forEach(m=>buildPath(24,24,m.x,m.z));
+    // Buildings
+    buildChatweb(38,8); buildJiuflow(10,8); buildPasha(10,38); buildKoe(38,38);
+    buildBanto(24,8);   buildSoluna(24,38); buildLibrary(24,24); buildMiseban(38,24);
   }
 
-  // Proximity detection: show info when within 5 blocks of a monument
-  let nearMonument = null;
-  function checkProximity() {
-    if (!started || !plr.pos) return;
-    const px = plr.pos.x, pz = plr.pos.z;
-    let closest = null, minDist = 5.5;
-    MONUMENTS.forEach(m => {
-      const d = Math.sqrt((px-m.x)**2 + (pz-m.z)**2);
-      if (d < minDist) { minDist = d; closest = m; }
-    });
-    if (closest !== nearMonument) {
-      nearMonument = closest;
-      const info = document.getElementById('gInfo');
-      if (info) {
-        if (closest) {
-          document.getElementById('gInfoTitle').textContent = closest.title;
-          document.getElementById('gInfoDesc').textContent = closest.desc;
-          info.style.display = 'block';
-        } else {
-          info.style.display = 'none';
-        }
+  let nearMonument=null;
+  function checkProximity(){
+    if(!started||!plr.pos) return;
+    const px=plr.pos.x,pz=plr.pos.z;
+    let closest=null,minDist=7;
+    MONUMENTS.forEach(m=>{const d=Math.hypot(px-m.x,pz-m.z);if(d<minDist){minDist=d;closest=m;}});
+    if(closest!==nearMonument){
+      nearMonument=closest;
+      if(infoEl){
+        if(closest){infoTitle.textContent=closest.title;infoDesc.textContent=closest.desc;infoEl.style.display='block';}
+        else infoEl.style.display='none';
       }
     }
   }
 
   const FACES=[
-    {n:[0,1,0],v:[[0,1,0],[1,1,0],[1,1,1],[0,1,1]],k:'top', l:1.0},
-    {n:[0,-1,0],v:[[1,0,0],[0,0,0],[0,0,1],[1,0,1]],k:'bot', l:0.5},
-    {n:[0,0,1],v:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]],k:'side',l:0.7},
+    {n:[0,1,0], v:[[0,1,0],[1,1,0],[1,1,1],[0,1,1]],k:'top', l:1.0},
+    {n:[0,-1,0],v:[[1,0,0],[0,0,0],[0,0,1],[1,0,1]],k:'bot', l:0.45},
+    {n:[0,0,1], v:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]],k:'side',l:0.7},
     {n:[0,0,-1],v:[[1,0,0],[0,0,0],[0,1,0],[1,1,0]],k:'side',l:0.7},
-    {n:[1,0,0],v:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]],k:'side',l:0.85},
-    {n:[-1,0,0],v:[[0,0,1],[0,1,1],[0,1,0],[0,0,0]],k:'side',l:0.85},
+    {n:[1,0,0], v:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]],k:'side',l:0.85},
+    {n:[-1,0,0],v:[[0,0,1],[0,1,1],[0,1,0],[0,0,0]],k:'side',l:0.62},
   ];
-
-  let scene,camera,renderer,light;
+  let scene,camera,renderer;
 
   function buildMesh(){
     if(meshObj){scene.remove(meshObj);meshObj.geometry.dispose();}
@@ -7155,7 +7300,8 @@ function initGame(winEl) {
       const bd=BLOCKS[t];
       for(const f of FACES){
         if(getB(x+f.n[0],y+f.n[1],z+f.n[2])!==0) continue;
-        const hex=bd[f.k]; const r=((hex>>16)&0xff)/255*f.l,g=((hex>>8)&0xff)/255*f.l,b=(hex&0xff)/255*f.l;
+        const hex=bd[f.k]||bd.side;
+        const r=((hex>>16)&0xff)/255*f.l,g=((hex>>8)&0xff)/255*f.l,b=(hex&0xff)/255*f.l;
         for(const [cx,cy,cz] of f.v){pos.push(x+cx,y+cy,z+cz);col.push(r,g,b);}
         idx_.push(vi,vi+1,vi+2,vi,vi+2,vi+3); vi+=4;
       }
@@ -7169,42 +7315,44 @@ function initGame(winEl) {
     scene.add(meshObj);
   }
 
-  // Player (THREE not yet loaded; initialized in startGame after Three.js loads)
   const plr={pos:null,vel:null,yaw:0,pitch:0,onGround:false};
 
   function physics(dt){
+    const sp=(keys.ShiftLeft||keys.ShiftRight)?9:5.5;
     plr.vel.y+=-22*dt;
-    const sp=5.5,fwd=new THREE.Vector3(-Math.sin(plr.yaw),0,-Math.cos(plr.yaw)),rt=new THREE.Vector3(Math.cos(plr.yaw),0,-Math.sin(plr.yaw));
+    const fwd=new THREE.Vector3(-Math.sin(plr.yaw),0,-Math.cos(plr.yaw));
+    const rt=new THREE.Vector3(Math.cos(plr.yaw),0,-Math.sin(plr.yaw));
     let mx=0,mz=0;
     if(keys.KeyW||keys.ArrowUp){mx+=fwd.x;mz+=fwd.z;}
     if(keys.KeyS||keys.ArrowDown){mx-=fwd.x;mz-=fwd.z;}
     if(keys.KeyA||keys.ArrowLeft){mx-=rt.x;mz-=rt.z;}
     if(keys.KeyD||keys.ArrowRight){mx+=rt.x;mz+=rt.z;}
-    const ml=Math.sqrt(mx*mx+mz*mz);
-    if(ml>0){mx/=ml;mz/=ml;}
+    const ml=Math.hypot(mx,mz); if(ml>0){mx/=ml;mz/=ml;}
     plr.vel.x=mx*sp; plr.vel.z=mz*sp;
-    if((keys.Space)&&plr.onGround){plr.vel.y=9;plr.onGround=false;}
+    if(keys.Space&&plr.onGround){plr.vel.y=9.5;plr.onGround=false;}
     function moveY(dy){
       plr.pos.y+=dy;
       const bx=Math.floor(plr.pos.x),by=Math.floor(plr.pos.y),bz=Math.floor(plr.pos.z);
       for(let oy=0;oy<=2;oy++){
         if(getB(bx,by+oy,bz)!==0){
-          if(dy<0){plr.pos.y=by+oy+1;plr.onGround=true;}else{plr.pos.y=by+oy-2.2;}
+          if(dy<0){plr.pos.y=by+oy+1;plr.onGround=true;}else plr.pos.y=by+oy-2.2;
           plr.vel.y=0;break;
         }
       }
     }
     function moveXZ(dx,dz){
-      plr.pos.x+=dx; const bx=Math.floor(plr.pos.x),bz=Math.floor(plr.pos.z);
-      for(let oy=0;oy<=1;oy++){if(getB(bx,Math.floor(plr.pos.y)+oy,bz)!==0){plr.pos.x-=dx;break;}}
-      plr.pos.z+=dz; const bx2=Math.floor(plr.pos.x),bz2=Math.floor(plr.pos.z);
-      for(let oy=0;oy<=1;oy++){if(getB(bx2,Math.floor(plr.pos.y)+oy,bz2)!==0){plr.pos.z-=dz;break;}}
+      plr.pos.x+=dx;
+      const bx=Math.floor(plr.pos.x),bz=Math.floor(plr.pos.z);
+      for(let oy=0;oy<=1;oy++) if(getB(bx,Math.floor(plr.pos.y)+oy,bz)!==0){plr.pos.x-=dx;break;}
+      plr.pos.z+=dz;
+      const bx2=Math.floor(plr.pos.x),bz2=Math.floor(plr.pos.z);
+      for(let oy=0;oy<=1;oy++) if(getB(bx2,Math.floor(plr.pos.y)+oy,bz2)!==0){plr.pos.z-=dz;break;}
     }
     plr.onGround=false;
     moveXZ(plr.vel.x*dt,plr.vel.z*dt);
     moveY(plr.vel.y*dt);
-    plr.pos.x=Math.max(0.5,Math.min(W-0.5,plr.pos.x));
-    plr.pos.z=Math.max(0.5,Math.min(D-0.5,plr.pos.z));
+    plr.pos.x=Math.max(0.6,Math.min(W-0.6,plr.pos.x));
+    plr.pos.z=Math.max(0.6,Math.min(D-0.6,plr.pos.z));
   }
 
   function raycast(maxD){
@@ -7221,60 +7369,63 @@ function initGame(winEl) {
   }
 
   function renderBar(){
-    if(!bar) return;
+    if(!bar)return;
     bar.innerHTML=hotbarTypes.map((t,i)=>{
       const bd=BLOCKS[t]||BLOCKS[1];
-      const col='#'+bd.side.toString(16).padStart(6,'0');
-      return `<div style="width:38px;height:38px;border:2px solid ${i===hotSel?'#fff':'rgba(0,0,0,.5)'};background:rgba(50,50,50,.85);border-radius:5px;display:flex;align-items:center;justify-content:center" title="${bd.name}">
-        <div style="width:24px;height:24px;background:${col};border-radius:3px;border:1px solid rgba(0,0,0,.4)"></div></div>`;
+      const col='#'+(bd.top||bd.side).toString(16).padStart(6,'0');
+      return `<div style="width:38px;height:38px;border:2px solid ${i===hotSel?'#fff':'rgba(255,255,255,.3)'};background:rgba(0,0,0,.65);border-radius:5px;display:flex;align-items:center;justify-content:center" title="${bd.name}"><div style="width:24px;height:24px;background:${col};border-radius:3px;border:1px solid rgba(0,0,0,.5)"></div></div>`;
     }).join('');
   }
 
-  let lastT=0, proxTick=0;
+  let started=false,locked=false,lastT=0,proxTick=0,bobT=0;
+
   function loop(t){
     if(!started)return;
     requestAnimationFrame(loop);
     const dt=Math.min((t-lastT)/1000,0.05); lastT=t;
-    if(locked) physics(dt);
-    camera.position.copy(plr.pos).add(new THREE.Vector3(0,1.6,0));
+    if(locked){
+      physics(dt);
+      const moving=keys.KeyW||keys.KeyS||keys.KeyA||keys.KeyD;
+      if(moving) bobT+=dt*10;
+    }
+    camera.position.copy(plr.pos).add(new THREE.Vector3(0,1.65+Math.sin(bobT)*0.04,0));
     camera.rotation.order='YXZ'; camera.rotation.y=plr.yaw; camera.rotation.x=plr.pitch;
-    renderer.setSize(wrap.clientWidth,wrap.clientHeight,false);
-    camera.aspect=wrap.clientWidth/wrap.clientHeight; camera.updateProjectionMatrix();
+    const W0=wrap.clientWidth,H0=wrap.clientHeight;
+    renderer.setSize(W0,H0,false);
+    camera.aspect=W0/H0; camera.updateProjectionMatrix();
     renderer.render(scene,camera);
-    // Check proximity every 20 frames
-    if(++proxTick % 20 === 0) checkProximity();
+    if(++proxTick%20===0) checkProximity();
   }
 
   function startGame(){
-    if(!THREE_loaded||started) return;
+    if(!THREE_loaded||started)return;
     started=true;
     overlay.style.display='none';
     cross.style.display='block';
-    plr.pos=new THREE.Vector3(16,16,16);
+    plr.pos=new THREE.Vector3(24,16,24);
     plr.vel=new THREE.Vector3();
 
     scene=new THREE.Scene();
-    scene.background=new THREE.Color(0x87CEEB);
-    scene.fog=new THREE.Fog(0x87CEEB,40,90);
-    scene.add(new THREE.AmbientLight(0xffffff,0.55));
-    light=new THREE.DirectionalLight(0xfffde7,0.9); light.position.set(50,80,30); scene.add(light);
+    scene.background=new THREE.Color(0x87c8ef);
+    scene.fog=new THREE.FogExp2(0x87c8ef,0.011);
+    scene.add(new THREE.HemisphereLight(0xb8d8ff,0x284018,0.65));
+    const sun=new THREE.DirectionalLight(0xfff5e0,1.15); sun.position.set(60,100,40); scene.add(sun);
 
     const W0=wrap.clientWidth||600,H0=wrap.clientHeight||400;
-    camera=new THREE.PerspectiveCamera(70,W0/H0,0.05,200);
-    renderer=new THREE.WebGLRenderer({canvas,antialias:false});
-    renderer.setSize(W0,H0,false); renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+    camera=new THREE.PerspectiveCamera(75,W0/H0,0.05,200);
+    renderer=new THREE.WebGLRenderer({canvas,antialias:true,powerPreference:'high-performance'});
+    renderer.setSize(W0,H0,false);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 
     genWorld(); buildMesh(); renderBar();
-    // Spawn above terrain
-    const sx=16,sz=16,sh=noise(sx,sz);
-    plr.pos.set(sx+0.5,sh+3,sz+0.5);
-
+    const sh=noise(24,24);
+    plr.pos.set(24.5,sh+3,24.5);
     lastT=performance.now(); requestAnimationFrame(loop);
     canvas.requestPointerLock();
   }
+  window._startGame=startGame;
 
-  // Controls
-  canvas.addEventListener('click',()=>{ if(!started){startGame();}else{canvas.requestPointerLock();} });
+  canvas.addEventListener('click',()=>{ if(!started)startGame(); else canvas.requestPointerLock(); });
   document.addEventListener('pointerlockchange',()=>{
     locked=document.pointerLockElement===canvas;
     cross.style.display=started?(locked?'block':'none'):'none';
@@ -7283,30 +7434,27 @@ function initGame(winEl) {
   document.addEventListener('mousemove',e=>{
     if(!locked)return;
     plr.yaw-=e.movementX*0.002;
-    plr.pitch=Math.max(-1.5,Math.min(1.5,plr.pitch-e.movementY*0.002));
+    plr.pitch=Math.max(-1.4,Math.min(1.4,plr.pitch-e.movementY*0.002));
   });
   document.addEventListener('keydown',e=>{
     keys[e.code]=true;
     if(['KeyW','KeyA','KeyS','KeyD','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)&&locked) e.preventDefault();
     if(e.code.startsWith('Digit')){const n=+e.key-1;if(n>=0&&n<hotbarTypes.length){hotSel=n;renderBar();}}
-    // F key: open nearby monument URL
-    if(e.code==='KeyF' && nearMonument) {
+    if(e.code==='KeyF'&&nearMonument){
       document.exitPointerLock();
-      window.open(nearMonument.url, '_blank', 'noopener');
+      nearMonument.url.startsWith('/')?location.href=nearMonument.url:window.open(nearMonument.url,'_blank','noopener');
     }
   });
   document.addEventListener('keyup',e=>{ keys[e.code]=false; });
   document.addEventListener('mousedown',e=>{
     if(!locked)return;
-    const h=raycast(6);
-    if(!h)return;
+    const h=raycast(6); if(!h)return;
     if(e.button===0){setB(...h.hit,0);buildMesh();}
     else if(e.button===2&&h.prev){setB(...h.prev,hotbarTypes[hotSel]);buildMesh();}
   });
   document.addEventListener('wheel',e=>{
     if(!locked)return;
-    hotSel=(hotSel+(e.deltaY>0?1:-1)+hotbarTypes.length)%hotbarTypes.length;
-    renderBar();
+    hotSel=(hotSel+(e.deltaY>0?1:-1)+hotbarTypes.length)%hotbarTypes.length; renderBar();
   });
   canvas.addEventListener('contextmenu',e=>e.preventDefault());
 }
