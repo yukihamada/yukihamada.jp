@@ -10,6 +10,7 @@ use axum::{
 };
 use askama::Template;
 use std::sync::{Arc, Mutex};
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::collections::HashMap;
 use std::convert::Infallible;
 use std::io::{Read as IoRead, Write as IoWrite};
@@ -185,6 +186,10 @@ struct AppState {
     chat_notify_tx: broadcast::Sender<String>,
     // Pending admin replies keyed by visitor session_id
     pending_admin_replies: Mutex<HashMap<String, String>>,
+    // Owner (Yuki) last heartbeat unix timestamp (0 = never)
+    owner_last_seen: AtomicU64,
+    // Live-chat sessions waiting for owner reply: session_id → reply sender
+    pending_live_chats: Mutex<HashMap<String, tokio::sync::mpsc::UnboundedSender<String>>>,
     // Video gallery metadata
     videos: Mutex<Vec<VideoMeta>>,
     // Gmail OAuth
@@ -555,42 +560,55 @@ fn render_cli_home(posts: &[blog::BlogPost]) -> String {
     s
 }
 
-async fn blog_list(
-    State(state): State<Arc<AppState>>,
+async fn blog_list() -> impl IntoResponse {
+    Redirect::permanent("/#blog")
+}
+
+async fn blog_list_tag(
     axum::extract::Query(params): axum::extract::Query<std::collections::HashMap<String, String>>,
 ) -> impl IntoResponse {
-    let filter_tag = params.get("tag").cloned();
-    let tmpl = BlogListTemplate {
-        posts: &state.posts,
-        tags: &state.tags,
-        filter_tag,
-    };
-    Html(tmpl.render().unwrap_or_default())
+    if let Some(tag) = params.get("tag") {
+        Redirect::permanent(&format!("/#blog?tag={tag}")).into_response()
+    } else {
+        Redirect::permanent("/#blog").into_response()
+    }
 }
 
 async fn blog_post(
-    State(state): State<Arc<AppState>>,
     Path(slug): Path<String>,
+    headers: HeaderMap,
+    State(state): State<Arc<AppState>>,
 ) -> Response {
-    let idx = state.posts.iter().position(|p| p.slug == slug);
+    let fetch_mode = headers.get("sec-fetch-mode")
+        .and_then(|v| v.to_str().ok()).unwrap_or("");
+    // Only redirect when Sec-Fetch-Mode is "navigate" (real browser navigation, not crawlers).
+    // Crawlers (Googlebot etc.) send no Sec-Fetch-* headers → serve actual HTML for indexing.
+    // openPost fetch() sends Sec-Fetch-Mode: cors/no-cors → serve actual HTML for window content.
+    if fetch_mode == "navigate" {
+        return Redirect::temporary(&format!("/#blog/{slug}")).into_response();
+    }
+
+    // Serve actual blog post HTML (for openPost fetch or same-origin requests)
+    let posts = &state.posts;
+    let idx = posts.iter().position(|p| p.slug == slug);
     match idx {
         Some(i) => {
-            let post = &state.posts[i];
-            let prev_post = if i + 1 < state.posts.len() { Some(&state.posts[i + 1]) } else { None };
-            let next_post = if i > 0 { Some(&state.posts[i - 1]) } else { None };
-            let related_posts: Vec<&blog::BlogPost> = state.posts.iter()
+            let post = &posts[i];
+            let prev_post = posts.get(i + 1);
+            let next_post = if i > 0 { posts.get(i - 1) } else { None };
+            let related_posts: Vec<&blog::BlogPost> = posts.iter()
                 .filter(|p| p.slug != slug && p.tags.iter().any(|t| post.tags.contains(t)))
                 .take(3)
                 .collect();
             let tmpl = BlogPostTemplate { post, prev_post, next_post, related_posts };
             Html(tmpl.render().unwrap_or_default()).into_response()
         }
-        None => (StatusCode::NOT_FOUND, Html(NotFoundTemplate.render().unwrap_or_default())).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
     }
 }
 
 async fn blog_soluna_proxy(Path(slug): Path<String>) -> Response {
-    Redirect::to(&format!("/#blog/soluna/{}", slug)).into_response()
+    Redirect::permanent(&format!("/#blog/soluna/{slug}")).into_response()
 }
 
 
@@ -945,6 +963,21 @@ async fn health() -> &'static str {
     "ok"
 }
 
+async fn redirect_hamada_tokyo(
+    req: axum::http::Request<axum::body::Body>,
+    next: axum::middleware::Next,
+) -> Response {
+    let host = req.headers()
+        .get("host")
+        .and_then(|h| h.to_str().ok())
+        .unwrap_or("");
+    if host.contains("hamada.tokyo") {
+        let path = req.uri().path_and_query().map(|pq| pq.as_str()).unwrap_or("/");
+        return Redirect::permanent(&format!("https://yukihamada.jp{path}")).into_response();
+    }
+    next.run(req).await
+}
+
 async fn security_headers(
     req: axum::http::Request<axum::body::Body>,
     next: axum::middleware::Next,
@@ -953,7 +986,7 @@ async fn security_headers(
     let mut res = next.run(req).await;
     let h = res.headers_mut();
     h.insert("strict-transport-security", "max-age=63072000; includeSubDomains; preload".parse().unwrap());
-    h.insert("x-frame-options", "DENY".parse().unwrap());
+    h.insert("x-frame-options", "SAMEORIGIN".parse().unwrap());
     h.insert("x-content-type-options", "nosniff".parse().unwrap());
     h.insert("referrer-policy", "strict-origin-when-cross-origin".parse().unwrap());
     h.insert("permissions-policy", "camera=self, microphone=self, geolocation=()".parse().unwrap());
@@ -2463,7 +2496,7 @@ input:focus{border-color:#E8B64A;}
 button{width:100%;padding:12px;background:#E8B64A;color:#080808;border:none;border-radius:8px;font-weight:600;font-size:.9rem;cursor:pointer;}
 button:hover{background:#d4a43e;}</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head><body>
 <div class="login"><h1>Dashboard</h1><p>yukihamada.jp</p>
-<form method="POST" action="/dashboard/login"><input type="password" name="pw" placeholder="Password" autofocus autocomplete="current-password">
+<form method="POST" action="/dashboard/login"><input type="password" name="pw" placeholder="Password" autocomplete="current-password">
 <button type="submit">Login</button></form></div></body></html>"#;
     Some(([("content-type", "text/html; charset=utf-8")], html).into_response())
 }
@@ -2545,6 +2578,143 @@ fn extract_lang_from_ua(ua: &str) -> &str {
         }
     }
     if ua.contains("ja") { "ja" } else if ua.contains("en") { "en" } else { "other" }
+}
+
+async fn admin_analytics(State(state): State<Arc<AppState>>, headers: HeaderMap) -> Response {
+    // Check admin_auth cookie against admin_sessions
+    let authed = headers.get("cookie")
+        .and_then(|v| v.to_str().ok())
+        .and_then(|cookies| {
+            cookies.split(';').find_map(|part| {
+                part.trim().strip_prefix("admin_auth=").map(|t| t.to_string())
+            })
+        })
+        .map(|token| {
+            let sessions = state.admin_sessions.lock().unwrap();
+            sessions.get(&token)
+                .map(|(email, exp)| {
+                    (email == "mail@yukihamada.jp" || email == "yuki@hamada.tokyo") && *exp > now_secs()
+                })
+                .unwrap_or(false)
+        })
+        .unwrap_or(false);
+
+    if !authed {
+        let html = r#"<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analytics — yukihamada.jp</title>
+<style>*{margin:0;padding:0;box-sizing:border-box;}body{background:#080808;color:#e0e0e0;font-family:system-ui;display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.box{background:#111;border:1px solid #1a1a1a;border-radius:16px;padding:40px;max-width:380px;width:90%;text-align:center;}
+h1{font-size:1.1rem;color:#E8B64A;margin-bottom:6px;}p{font-size:.75rem;color:#666;margin-bottom:24px;}
+input{width:100%;padding:12px;background:#0a0a0a;border:1px solid #222;border-radius:8px;color:#e0e0e0;font-size:.9rem;margin-bottom:10px;outline:none;text-align:center;letter-spacing:.15em;}
+input:focus{border-color:#E8B64A;}
+button{width:100%;padding:12px;background:#E8B64A;color:#080808;border:none;border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:8px;}
+button:hover{opacity:.85;}.msg{font-size:.8rem;color:#E8B64A;margin-top:8px;min-height:20px;}
+#step2{display:none;}</style></head><body>
+<div class="box">
+  <h1>Analytics</h1><p>yukihamada.jp</p>
+  <div id="step1">
+    <button onclick="sendOtp()">メールでコードを送る</button>
+    <div class="msg" id="msg1"></div>
+  </div>
+  <div id="step2">
+    <p style="margin-bottom:14px;font-size:.8rem;color:#aaa;">mail@yukihamada.jp に送られたコードを入力</p>
+    <input id="code" type="text" inputmode="numeric" placeholder="000000" maxlength="6">
+    <button onclick="verify()">ログイン</button>
+    <div class="msg" id="msg2"></div>
+  </div>
+</div>
+<script>
+async function sendOtp() {
+  document.getElementById('msg1').textContent = '送信中...';
+  const r = await fetch('/api/login/otp', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'mail@yukihamada.jp'})});
+  const d = await r.json();
+  if (d.ok) { document.getElementById('step1').style.display='none'; document.getElementById('step2').style.display='block'; }
+  else { document.getElementById('msg1').textContent = d.error || 'エラー'; }
+}
+async function verify() {
+  const code = document.getElementById('code').value.trim();
+  document.getElementById('msg2').textContent = '確認中...';
+  const r = await fetch('/api/login/verify', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:'mail@yukihamada.jp',code})});
+  const d = await r.json();
+  if (d.ok && d.token) {
+    document.cookie = `admin_auth=${d.token}; path=/; max-age=${30*24*3600}; SameSite=Lax`;
+    location.reload();
+  } else { document.getElementById('msg2').textContent = d.error || 'コードが正しくありません'; }
+}
+document.addEventListener('keydown', e => { if(e.key==='Enter') { if(document.getElementById('step2').style.display==='block') verify(); else sendOtp(); }});
+</script></body></html>"#;
+        return ([("content-type", "text/html; charset=utf-8")], html).into_response();
+    }
+
+    let html = r#"<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Analytics — yukihamada.jp</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#080808;color:#e0e0e0;font-family:system-ui;padding:24px;}
+h1{font-size:1.1rem;color:#E8B64A;margin-bottom:4px;}
+.sub{font-size:.75rem;color:#555;margin-bottom:24px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:24px;}
+.card{background:#111;border:1px solid #1a1a1a;border-radius:12px;padding:18px;}
+.card-label{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#555;margin-bottom:6px;}
+.card-val{font-size:1.8rem;font-weight:700;color:#E8B64A;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+th{text-align:left;padding:8px 10px;color:#555;font-weight:400;border-bottom:1px solid #1a1a1a;}
+td{padding:8px 10px;border-bottom:1px solid #111;}
+tr:hover td{background:#111;}
+.section{background:#0d0d0d;border:1px solid #1a1a1a;border-radius:12px;padding:18px;margin-bottom:16px;}
+.section h2{font-size:.8rem;color:#aaa;margin-bottom:14px;letter-spacing:.08em;}
+.logout{float:right;font-size:.7rem;color:#444;text-decoration:none;cursor:pointer;}
+.logout:hover{color:#E8B64A;}
+.days{display:flex;gap:8px;margin-bottom:20px;}
+.days button{padding:6px 14px;background:#111;border:1px solid #222;border-radius:6px;color:#aaa;font-size:.75rem;cursor:pointer;}
+.days button.active{background:#E8B64A;color:#080808;border-color:#E8B64A;}
+</style></head><body>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+  <h1>Analytics</h1>
+  <a class="logout" onclick="logout()">ログアウト</a>
+</div>
+<div class="sub">yukihamada.jp + 全サイト</div>
+<div class="days">
+  <button class="active" onclick="load(7,this)">7日</button>
+  <button onclick="load(30,this)">30日</button>
+  <button onclick="load(90,this)">90日</button>
+</div>
+<div class="grid" id="stats"></div>
+<div class="section"><h2>サイト別 PV</h2><table id="sites-table"><tr><th>サイト</th><th>今日</th><th>7d</th><th>30d</th></tr></table></div>
+<div class="section"><h2>ページ別 PV（全サイト）</h2><table id="pages-table"><tr><th>ページ</th><th>PV</th></tr></table></div>
+<div class="section"><h2>流入元</h2><table id="ref-table"><tr><th>Referrer</th><th>PV</th></tr></table></div>
+<script>
+const BASE = 'https://enabler-analytics.fly.dev';
+function fmt(n){return n>=1000?(n/1000).toFixed(1)+'k':n;}
+async function load(days, btn) {
+  document.querySelectorAll('.days button').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  const [stats, breakdown, pages, refs] = await Promise.all([
+    fetch(`${BASE}/api/stats?days=${days}`).then(r=>r.json()).catch(()=>({})),
+    fetch(`${BASE}/api/site-breakdown?days=${days}`).then(r=>r.json()).catch(()=>[]),
+    fetch(`${BASE}/api/pages?days=${days}`).then(r=>r.json()).catch(()=>[]),
+    fetch(`${BASE}/api/referrers?days=${days}`).then(r=>r.json()).catch(()=>[]),
+  ]);
+  document.getElementById('stats').innerHTML = `
+    <div class="card"><div class="card-label">今日</div><div class="card-val">${fmt(stats.today||0)}</div></div>
+    <div class="card"><div class="card-label">今週</div><div class="card-val">${fmt(stats.this_week||0)}</div></div>
+    <div class="card"><div class="card-label">今月</div><div class="card-val">${fmt(stats.this_month||0)}</div></div>
+    <div class="card"><div class="card-label">${days}日合計</div><div class="card-val">${fmt(stats.total||0)}</div></div>
+  `;
+  const sites = Array.isArray(breakdown)?breakdown:[];
+  document.getElementById('sites-table').innerHTML = '<tr><th>サイト</th><th>今日</th><th>7d</th><th>30d</th></tr>'
+    + sites.map(s=>`<tr><td>${s.site||s.domain||'-'}</td><td>${fmt(s.today||0)}</td><td>${fmt(s.last_7d||0)}</td><td>${fmt(s.last_30d||0)}</td></tr>`).join('');
+  const pg = Array.isArray(pages)?pages.slice(0,30):[];
+  document.getElementById('pages-table').innerHTML = '<tr><th>ページ</th><th>PV</th></tr>'
+    + pg.map(p=>`<tr><td style="max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.path||p.page||'-'}</td><td>${fmt(p.count||p.pv||0)}</td></tr>`).join('');
+  const rf = Array.isArray(refs)?refs.slice(0,20):[];
+  document.getElementById('ref-table').innerHTML = '<tr><th>Referrer</th><th>PV</th></tr>'
+    + rf.map(r=>`<tr><td>${r.referrer||r.ref||'-'}</td><td>${fmt(r.count||r.pv||0)}</td></tr>`).join('');
+}
+function logout(){document.cookie='admin_auth=;path=/;max-age=0';location.reload();}
+load(7);
+</script></body></html>"#;
+    ([("content-type", "text/html; charset=utf-8")], html).into_response()
 }
 
 async fn analytics_dashboard(State(state): State<Arc<AppState>>, headers: HeaderMap) -> Response {
@@ -4287,6 +4457,53 @@ async fn chat_handler(
             }
         }
 
+        // ── Owner live-chat mode ──
+        // If Yuki is online (heartbeat within 90s), wait for his direct reply
+        // instead of running the LLM.
+        let owner_online = {
+            let last = state_clone.owner_last_seen.load(Ordering::Relaxed);
+            last > 0 && (now_secs() - last) < 90
+        };
+        if owner_online {
+            let (reply_tx, mut reply_rx) = tokio::sync::mpsc::unbounded_channel::<String>();
+            state_clone.pending_live_chats.lock().unwrap()
+                .insert(session_id.clone(), reply_tx);
+
+            yield Ok::<_, Infallible>(Event::default()
+                .data(serde_json::json!({"waiting": "濱田本人がオンラインです。少々お待ちください…"}).to_string()));
+
+            // Wait up to 3 minutes for owner reply
+            let owner_reply = tokio::time::timeout(
+                tokio::time::Duration::from_secs(180),
+                reply_rx.recv()
+            ).await;
+
+            // Clean up if timed out
+            state_clone.pending_live_chats.lock().unwrap().remove(&session_id);
+
+            let is_live_reply = matches!(owner_reply, Ok(Some(_)));
+            let text = match owner_reply {
+                Ok(Some(r)) => r,
+                _ => {
+                    // Timed out — fall through to LLM below by yielding a fallback
+                    yield Ok::<_, Infallible>(Event::default()
+                        .data(serde_json::json!({"waiting": "AIが代わりにお答えします…"}).to_string()));
+                    // Run LLM as fallback
+                    run_agentic_chat_with_progress(
+                        &api_key, &system, &tools, init_msgs.clone(), &state_clone,
+                        &query, user_id.clone(), None
+                    ).await.unwrap_or_else(|e| format!("エラー: {}", e))
+                }
+            };
+
+            let header = if is_live_reply {
+                "<span style=\"font-size:10px;color:#5eead4;display:block;margin-bottom:4px;\">✍️ 本人より</span>"
+            } else { "" };
+            yield Ok::<_, Infallible>(Event::default()
+                .data(serde_json::json!({"delta": format!("{}{}", header, text), "done": true}).to_string()));
+            return;
+        }
+
         let (progress_tx, mut progress_rx) = tokio::sync::mpsc::unbounded_channel::<String>();
         let uid_for_work = user_id.clone();
         let query_for_work = query.clone();
@@ -4385,8 +4602,14 @@ async fn admin_chat_reply(
     if body.session_id.is_empty() || body.text.is_empty() {
         return (StatusCode::BAD_REQUEST, Json(serde_json::json!({"error": "session_id and text required"}))).into_response();
     }
+    let text: String = body.text.chars().take(2000).collect();
+    // Wake up live-chat SSE if session is waiting
+    let live_tx = state.pending_live_chats.lock().unwrap().remove(&body.session_id);
+    if let Some(tx) = live_tx {
+        let _ = tx.send(text.clone());
+    }
     state.pending_admin_replies.lock().unwrap()
-        .insert(body.session_id.clone(), body.text.chars().take(2000).collect());
+        .insert(body.session_id.clone(), text);
     Json(serde_json::json!({"ok": true})).into_response()
 }
 
@@ -4400,6 +4623,29 @@ async fn poll_admin_reply(
     }
     let reply = state.pending_admin_replies.lock().unwrap().remove(&session_id);
     Json(serde_json::json!({"reply": reply})).into_response()
+}
+
+// ── Owner presence heartbeat ──
+
+async fn owner_heartbeat_handler(
+    State(state): State<Arc<AppState>>,
+    Query(params): Query<HashMap<String, String>>,
+) -> impl IntoResponse {
+    let token = params.get("token").cloned().unwrap_or_default();
+    if !validate_admin_token(&state, &token) {
+        return (StatusCode::UNAUTHORIZED, cors_headers(),
+            Json(serde_json::json!({"error": "unauthorized"}))).into_response();
+    }
+    state.owner_last_seen.store(now_secs(), Ordering::Relaxed);
+    (cors_headers(), Json(serde_json::json!({"ok": true}))).into_response()
+}
+
+async fn owner_online_handler(
+    State(state): State<Arc<AppState>>,
+) -> impl IntoResponse {
+    let last = state.owner_last_seen.load(Ordering::Relaxed);
+    let online = last > 0 && (now_secs() - last) < 90;
+    Json(serde_json::json!({"online": online}))
 }
 
 async fn transcribe_audio(
@@ -5307,6 +5553,8 @@ async fn main() {
         groq_api_key,
         chat_notify_tx,
         pending_admin_replies: Mutex::new(HashMap::new()),
+        owner_last_seen: AtomicU64::new(0),
+        pending_live_chats: Mutex::new(HashMap::new()),
         videos: Mutex::new(load_video_meta()),
         gmail_client_id,
         gmail_client_secret,
@@ -5322,7 +5570,7 @@ async fn main() {
         .route("/en", get(redirect_root))
         .route("/about", get(about))
         .route("/soluna", get(soluna_page))
-        .route("/blog", get(blog_list))
+        .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
         .route("/blog/{slug}", get(blog_post))
         .route("/sitemap.xml", get(sitemap))
@@ -5424,6 +5672,9 @@ async fn main() {
         .route("/api/chat/admin-reply", post(admin_chat_reply))
         .route("/api/chat/admin-reply", axum::routing::options(options_cors))
         .route("/api/chat/poll-reply", get(poll_admin_reply))
+        .route("/api/chat/owner-heartbeat", post(owner_heartbeat_handler))
+        .route("/api/chat/owner-heartbeat", axum::routing::options(options_cors))
+        .route("/api/chat/owner-online", get(owner_online_handler))
         .route("/api/transcribe", post(transcribe_audio))
         .route("/api/transcribe", axum::routing::options(options_cors))
         .route("/api/chat/ai-suggest", post(admin_ai_suggest))
@@ -5437,6 +5688,7 @@ async fn main() {
         .route("/api/analytics/log", post(analytics_log))
         .route("/api/analytics/log", axum::routing::options(options_cors))
         .route("/api/analytics", get(analytics_dashboard))
+        .route("/analytics", get(admin_analytics))
         .route("/dashboard", get(analytics_dashboard))
         .route("/dashboard/login", post(dashboard_login_post))
         .route("/dashboard/x", get(x_dashboard))
@@ -5448,7 +5700,8 @@ async fn main() {
         .fallback(get(not_found))
         .with_state(state)
         .layer(CompressionLayer::new())
-        .layer(axum::middleware::from_fn(security_headers));
+        .layer(axum::middleware::from_fn(security_headers))
+        .layer(axum::middleware::from_fn(redirect_hamada_tokyo));
 
     let addr = "0.0.0.0:8080";
     println!("listening on http://{addr}");
