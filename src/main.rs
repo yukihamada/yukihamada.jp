@@ -424,6 +424,7 @@ struct BlogPostTemplate<'a> {
     prev_post: Option<&'a blog::BlogPost>,
     next_post: Option<&'a blog::BlogPost>,
     related_posts: Vec<&'a blog::BlogPost>,
+    og_image: String,
 }
 
 #[derive(Template)]
@@ -628,7 +629,13 @@ async fn blog_post(
                 .filter(|p| p.slug != slug && p.tags.iter().any(|t| post.tags.contains(t)))
                 .take(3)
                 .collect();
-            let tmpl = BlogPostTemplate { post, prev_post, next_post, related_posts };
+            let ogp_path = format!("public/blog/images/{}-ogp.jpg", post.slug);
+            let og_image = if std::path::Path::new(&ogp_path).exists() {
+                format!("https://yukihamada.jp/blog/images/{}-ogp.jpg", post.slug)
+            } else {
+                "https://yukihamada.jp/og-image.jpg".to_string()
+            };
+            let tmpl = BlogPostTemplate { post, prev_post, next_post, related_posts, og_image };
             Html(tmpl.render().unwrap_or_default()).into_response()
         }
         None => StatusCode::NOT_FOUND.into_response(),
