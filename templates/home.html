@@ -463,6 +463,7 @@
   .ai-chat     { background: linear-gradient(145deg,#34d399 0%,#0d9488 50%,#134e4a 100%); }
   .ai-browser  { background: linear-gradient(145deg,#60a5fa 0%,#2563eb 50%,#1e3a8a 100%); }
   .ai-koe      { background: linear-gradient(145deg,#a78bfa 0%,#7c3aed 50%,#3b0764 100%); }
+  .ai-game     { background: linear-gradient(145deg,#4ade80 0%,#16a34a 50%,#052e16 100%); }
   .ai-uta      { background: linear-gradient(145deg,#f472b6 0%,#ec4899 50%,#9d174d 100%); }
   .ai-news     { background: linear-gradient(145deg,#f59e0b 0%,#d97706 50%,#92400e 100%); }
   .ai-settings  { background: linear-gradient(145deg,#94a3b8 0%,#64748b 50%,#1e293b 100%); }
@@ -540,43 +541,60 @@
   .koe-win { height:100%; background:#0a0814; }
   .koe-iframe { width:100%; height:100%; border:none; display:block; }
 
-  /* ── Koe Voice App ─────────────────────────────────── */
-  .kva{display:flex;flex-direction:column;height:100%;background:linear-gradient(170deg,#0d0520 0%,#0a0814 40%,#050310 100%);position:relative;overflow:hidden;user-select:none}
-  .kva::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 50% at 50% 30%,rgba(124,58,237,.18) 0%,transparent 70%);pointer-events:none}
-  .kva-hdr{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px;z-index:2}
-  .kva-hdr-title{font-size:12px;font-weight:700;letter-spacing:.1em;color:rgba(167,139,250,.8);text-transform:uppercase}
-  .kva-status{font-size:11px;color:rgba(255,255,255,.35);letter-spacing:.04em;transition:color .3s}
+  /* ── Koe Video Call ─────────────────────────────────── */
+  .kva{display:flex;flex-direction:column;height:100%;background:#0a0010;position:relative;overflow:hidden;user-select:none}
+  /* AI large area */
+  .kva-main{flex:1;position:relative;background:#0d0118;display:flex;align-items:center;justify-content:center;overflow:hidden;min-height:0}
+  .kva-ai-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 70% at 50% 50%,rgba(109,40,217,.25) 0%,transparent 70%);transition:opacity .5s}
+  .kva-ai-bg.active{background:radial-gradient(ellipse 80% 70% at 50% 50%,rgba(109,40,217,.45) 0%,transparent 70%)}
+  .kva-ai-avatar{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:10px}
+  .kva-ai-orb{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#7c3aed,#4c1d95);box-shadow:0 0 48px rgba(124,58,237,.6);display:flex;align-items:center;justify-content:center;position:relative;transition:box-shadow .3s}
+  .kva-ai-orb.speaking{box-shadow:0 0 64px rgba(167,139,250,.9),0 0 100px rgba(124,58,237,.5);animation:kva-orb-speak .6s ease-in-out infinite alternate}
+  .kva-ai-orb.thinking{animation:kva-orb-think .9s ease-in-out infinite}
+  @keyframes kva-orb-speak{0%{transform:scale(1)}100%{transform:scale(1.08)}}
+  @keyframes kva-orb-think{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(1.04);opacity:1}}
+  .kva-ai-ring{position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(167,139,250,.4);animation:kva-ring-idle 2.2s ease-out infinite}
+  .kva-ai-ring2{inset:-26px;animation-delay:.8s;border-color:rgba(167,139,250,.18)}
+  .kva-ai-ring.active{animation:kva-ring-active 1s ease-out infinite}
+  .kva-ai-ring2.active{animation:kva-ring-active 1s ease-out infinite;animation-delay:.4s}
+  @keyframes kva-ring-idle{0%{transform:scale(.92);opacity:.5}100%{transform:scale(1.08);opacity:0}}
+  @keyframes kva-ring-active{0%{transform:scale(.88);opacity:.8}100%{transform:scale(1.18);opacity:0}}
+  .kva-canvas{position:absolute;bottom:0;left:0;right:0;height:44px;opacity:.7}
+  .kva-ai-name{font-size:13px;font-weight:600;color:rgba(167,139,250,.9);letter-spacing:.06em}
+  .kva-status{font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.04em;transition:color .3s;text-align:center}
   .kva-status.listening{color:#a78bfa;animation:kva-pulse-txt 1.2s ease-in-out infinite}
   .kva-status.thinking{color:#60a5fa}
   .kva-status.speaking{color:#34d399}
-  @keyframes kva-pulse-txt{0%,100%{opacity:1}50%{opacity:.5}}
-  .kva-canvas-wrap{flex-shrink:0;height:80px;display:flex;align-items:center;justify-content:center;padding:0 12px;z-index:2}
-  .kva-canvas{width:100%;height:64px;border-radius:8px}
-  .kva-orb-area{flex-shrink:0;display:flex;align-items:center;justify-content:center;padding:8px 0 12px;z-index:2}
-  .kva-orb{width:96px;height:96px;border-radius:50%;background:linear-gradient(145deg,#7c3aed,#4c1d95);border:none;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;transition:transform .15s,box-shadow .3s;box-shadow:0 0 32px rgba(124,58,237,.5);outline:none}
-  .kva-orb:hover{transform:scale(1.05)}
-  .kva-orb:active{transform:scale(.96)}
-  .kva-orb.listening{box-shadow:0 0 48px rgba(167,139,250,.9),0 0 80px rgba(124,58,237,.4);background:linear-gradient(145deg,#8b5cf6,#6d28d9)}
-  .kva-orb.thinking{box-shadow:0 0 48px rgba(96,165,250,.6);animation:kva-orb-think .8s ease-in-out infinite}
-  @keyframes kva-orb-think{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
-  .kva-ring{position:absolute;inset:-12px;border-radius:50%;border:1.5px solid rgba(167,139,250,.35);animation:kva-ring-out 2s ease-out infinite}
-  .kva-ring2{inset:-22px;animation-delay:.7s;border-color:rgba(167,139,250,.18)}
-  .kva-ring.active,.kva-ring2.active{animation:kva-ring-active 1s ease-out infinite}
-  @keyframes kva-ring-out{0%{transform:scale(.92);opacity:.6}100%{transform:scale(1.06);opacity:0}}
-  @keyframes kva-ring-active{0%{transform:scale(.9);opacity:.9}100%{transform:scale(1.15);opacity:0}}
-  .kva-hint{flex-shrink:0;text-align:center;font-size:10px;color:rgba(255,255,255,.25);padding:0 0 8px;letter-spacing:.04em;z-index:2}
-  .kva-msgs{flex:1;overflow-y:auto;padding:0 14px 8px;display:flex;flex-direction:column;gap:8px;z-index:2}
+  @keyframes kva-pulse-txt{0%,100%{opacity:1}50%{opacity:.45}}
+  .kva-interim{position:absolute;bottom:52px;left:0;right:0;text-align:center;font-size:11px;color:rgba(167,139,250,.7);font-style:italic;padding:0 16px;pointer-events:none;z-index:3;min-height:16px}
+  /* user camera pip */
+  .kva-pip{position:absolute;bottom:12px;right:12px;width:80px;height:106px;border-radius:10px;overflow:hidden;border:1.5px solid rgba(124,58,237,.5);z-index:4;background:#111;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+  .kva-pip video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+  .kva-pip-off{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;color:rgba(255,255,255,.2)}
+  /* transcript */
+  .kva-msgs{max-height:120px;overflow-y:auto;padding:0 14px 4px;display:flex;flex-direction:column;gap:6px;flex-shrink:0}
   .kva-msgs::-webkit-scrollbar{width:2px}.kva-msgs::-webkit-scrollbar-thumb{background:rgba(124,58,237,.4);border-radius:2px}
-  .kva-msg{max-width:88%;font-size:12.5px;line-height:1.65;padding:9px 13px;border-radius:14px;animation:kva-msg-in .22s ease}
-  @keyframes kva-msg-in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  .kva-msg-user{align-self:flex-end;background:rgba(124,58,237,.35);color:#ede9f8;border-bottom-right-radius:4px}
-  .kva-msg-bot{align-self:flex-start;background:rgba(255,255,255,.07);color:#e2dff0;border-bottom-left-radius:4px}
+  .kva-msg{max-width:90%;font-size:12px;line-height:1.6;padding:7px 12px;border-radius:12px;animation:kva-msg-in .2s ease}
+  @keyframes kva-msg-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .kva-msg-user{align-self:flex-end;background:rgba(124,58,237,.32);color:#ede9f8;border-bottom-right-radius:3px}
+  .kva-msg-bot{align-self:flex-start;background:rgba(255,255,255,.06);color:#e2dff0;border-bottom-left-radius:3px}
   .kva-msg-thinking{color:rgba(255,255,255,.4);font-style:italic}
-  .kva-input-row{flex-shrink:0;display:flex;gap:6px;padding:8px 12px 12px;border-top:1px solid rgba(255,255,255,.05);z-index:2}
+  /* controls */
+  .kva-controls{flex-shrink:0;display:flex;align-items:center;justify-content:center;gap:14px;padding:10px 14px 12px;border-top:1px solid rgba(255,255,255,.05)}
+  .kva-ctrl-btn{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:transform .15s,background .2s;outline:none}
+  .kva-ctrl-btn:active{transform:scale(.9)}
+  .kva-ctrl-call{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 0 24px rgba(34,197,94,.5);width:60px;height:60px;font-size:24px}
+  .kva-ctrl-call.calling{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 0 24px rgba(239,68,68,.5)}
+  .kva-ctrl-mute{background:rgba(255,255,255,.1)}
+  .kva-ctrl-mute.muted{background:rgba(239,68,68,.3)}
+  .kva-ctrl-cam{background:rgba(255,255,255,.1)}
+  .kva-ctrl-cam.off{background:rgba(239,68,68,.3)}
+  /* text input */
+  .kva-input-row{flex-shrink:0;display:flex;gap:6px;padding:0 12px 10px}
   .kva-input{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(124,58,237,.3);border-radius:20px;padding:7px 13px;color:#e8e4f8;font-size:12px;outline:none;font-family:inherit}
-  .kva-input:focus{border-color:rgba(124,58,237,.65);background:rgba(255,255,255,.1)}
-  .kva-input::placeholder{color:rgba(255,255,255,.25)}
-  .kva-send{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:rgba(124,58,237,.5);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+  .kva-input:focus{border-color:rgba(124,58,237,.6)}
+  .kva-input::placeholder{color:rgba(255,255,255,.22)}
+  .kva-send{flex-shrink:0;width:32px;height:32px;border-radius:50%;background:rgba(124,58,237,.5);border:none;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
   .kva-send:hover{background:rgba(124,58,237,.8)}
   .browser-toolbar {
     display:flex; align-items:center; gap:6px; padding:7px 10px;
@@ -716,6 +734,7 @@
   .chat-mic-btn:hover { background: rgba(255,255,255,0.12); }
   .chat-mic-btn.recording { background: rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.5); animation: pulse-red 0.8s infinite; }
   @keyframes pulse-red { 0%,100%{opacity:1} 50%{opacity:0.6} }
+  @keyframes pulse-btn { 0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(232,160,76,.5)} 50%{transform:scale(1.03);box-shadow:0 0 0 8px rgba(232,160,76,0)} }
   .chat-quick-btns {
     display: flex; gap: 6px; padding: 8px 12px 4px;
     overflow-x: auto; flex-shrink: 0;
@@ -983,8 +1002,8 @@
   .blog-more-link { font-size: 12px; color: var(--accent); text-decoration: none; opacity: 0.8; }
   .blog-more-link:hover { opacity: 1; }
   .blog-row-body { flex: 1; min-width: 0; }
-  .blog-row-body h3 { font-size: 14px; font-weight: 600; color: #e8e8f0; margin: 0; line-height: 1.4; letter-spacing: -0.02em; }
-  .blog-row-body p  { font-size: 12px; color: #6a6a7a; margin: 4px 0 0; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .blog-row-body h3 { font-size: 15px; font-weight: 600; color: #e8e8f0; margin: 0; line-height: 1.4; letter-spacing: -0.02em; }
+  .blog-row-body p  { font-size: 13px; color: #6a6a7a; margin: 4px 0 0; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .blog-row-meta { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
   .blog-read-time { font-size: 10px; color: #484858; font-variant-numeric: tabular-nums; }
   .blog-arrow { margin-left: auto; font-size: 13px; color: rgba(232,160,76,0.5); flex-shrink: 0; transition: opacity 0.15s, transform 0.15s; opacity: 0; padding-top: 2px; }
@@ -1283,6 +1302,11 @@
     flex: 1; overflow-y: auto; min-height: 0;
     padding: 28px 32px 40px;
   }
+  .post-scroll > * {
+    max-width: 680px;
+    margin-left: auto;
+    margin-right: auto;
+  }
   .post-scroll::-webkit-scrollbar { width: 5px; }
   .post-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
 
@@ -1304,24 +1328,24 @@
   }
 
   .post-h1 {
-    font-size: 22px; font-weight: 800;
-    color: #ececf0; line-height: 1.35;
-    letter-spacing: -0.02em; margin-bottom: 10px;
+    font-size: 26px; font-weight: 800;
+    color: #ececf0; line-height: 1.3;
+    letter-spacing: -0.03em; margin-bottom: 12px;
   }
   .post-lead {
-    font-size: 14px; color: #8b8b94; line-height: 1.7;
-    margin-bottom: 24px;
-    padding-bottom: 20px;
+    font-size: 15px; color: #8b8b94; line-height: 1.75;
+    margin-bottom: 28px;
+    padding-bottom: 22px;
     border-bottom: 1px solid rgba(255,255,255,0.06);
   }
 
   /* Article body */
-  .post-body { color: #d0d0d8; font-size: 14.5px; line-height: 1.8; }
+  .post-body { color: #d0d0d8; font-size: 16px; line-height: 1.85; }
 
   .post-body h2 {
-    font-size: 18px; font-weight: 700; color: #ececf0;
-    margin: 32px 0 12px; letter-spacing: -0.01em;
-    padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 20px; font-weight: 700; color: #ececf0;
+    margin: 40px 0 14px; letter-spacing: -0.02em;
+    padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.08);
   }
   .post-body h3 {
     font-size: 15px; font-weight: 600; color: #dcdce4;
@@ -1331,7 +1355,7 @@
     font-size: 14px; font-weight: 600; color: #dcdce4;
     margin: 16px 0 6px;
   }
-  .post-body p { margin: 0 0 14px; }
+  .post-body p { margin: 0 0 18px; }
   .post-body p:last-child { margin-bottom: 0; }
 
   .post-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(232,160,76,0.4); }
@@ -1379,9 +1403,10 @@
     border: none; border-top: 1px solid rgba(255,255,255,0.08);
     margin: 28px 0;
   }
+  .post-body .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0; }
   .post-body table {
-    width: 100%; border-collapse: collapse; margin: 14px 0;
-    font-size: 13px;
+    width: 100%; border-collapse: collapse; margin: 0;
+    font-size: 13px; min-width: 400px;
   }
   .post-body th, .post-body td {
     padding: 8px 12px; text-align: left;
@@ -1390,6 +1415,28 @@
   .post-body th { color: #e0e0e8; font-weight: 600; background: rgba(255,255,255,0.03); }
   .post-body strong { color: #e0e0e8; font-weight: 600; }
   .post-body em { color: #aaa0b8; }
+
+  /* Podcast player */
+  .podcast-player {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(232,160,76,0.06);
+    border: 1px solid rgba(232,160,76,0.2);
+    border-radius: 12px; padding: 12px 16px;
+    margin-bottom: 24px;
+  }
+  .podcast-play-btn {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: var(--accent); border: none; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity .15s;
+  }
+  .podcast-play-btn:hover { opacity: .85; }
+  .podcast-play-btn svg { width: 16px; height: 16px; fill: #111; }
+  .podcast-info { flex: 1; min-width: 0; }
+  .podcast-label { font-size: 10px; letter-spacing: .12em; color: var(--accent); font-weight: 600; text-transform: uppercase; margin-bottom: 3px; }
+  .podcast-progress-wrap { position: relative; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; cursor: pointer; margin-top: 6px; }
+  .podcast-progress-fill { height: 100%; background: var(--accent); border-radius: 2px; width: 0%; transition: width .5s linear; pointer-events: none; }
+  .podcast-time { font-size: 11px; color: #606070; white-space: nowrap; flex-shrink: 0; }
 
   /* Loading state */
   .post-loading {
@@ -1652,6 +1699,54 @@
   }
   .mh-btn:hover { background: rgba(255,255,255,0.12); }
   .mh-btn.primary { background: rgba(232,160,76,0.15); border-color: rgba(232,160,76,0.3); color: rgba(232,160,76,0.95); }
+
+  /* ── Mobile WOW: Hero 3D tilt ── */
+  #mobile-hero {
+    transform-style: preserve-3d;
+    will-change: transform;
+    transition: box-shadow .2s;
+  }
+  #mobile-hero.tilt-active {
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px rgba(232,160,76,0.12);
+  }
+
+  /* ── Touch ripple ── */
+  .touch-ripple {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: scale(0);
+    background: radial-gradient(circle, rgba(232,160,76,0.35) 0%, rgba(232,160,76,0.08) 50%, transparent 70%);
+    animation: rippleOut 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  @keyframes rippleOut {
+    to { transform: scale(1); opacity: 0; }
+  }
+
+  /* ── Dock spring pop-in (mobile) ── */
+  @media (max-width: 767px) {
+    .dock-app {
+      opacity: 0;
+      transform: translateY(30px) scale(0.7);
+      animation: dockPop 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes dockPop {
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .dock-app:active .dock-icon-wrap {
+      transform: scale(0.82);
+      transition: transform 0.1s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    /* Hero entry animation */
+    #mobile-hero {
+      animation: heroSpring 0.7s cubic-bezier(0.34,1.4,0.64,1) both;
+    }
+    @keyframes heroSpring {
+      from { opacity: 0; transform: scale(0.88) translateY(24px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+  }
 
   @media (max-width: 767px) {
     #mobile-hero { display: block; }
@@ -2135,6 +2230,20 @@
       </div></div>
       <div class="desk-icon-label">Soluna</div>
     </div>
+    <div class="desk-icon" data-app="game" onclick="openApp('game')">
+      <div class="desk-icon-img"><div class="ai ai-game">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="6" width="20" height="13" rx="3" fill="rgba(255,255,255,0.88)"/>
+          <rect x="6" y="10" width="1.5" height="5" rx=".75" fill="rgba(50,50,50,0.7)"/>
+          <rect x="4.25" y="11.75" width="5" height="1.5" rx=".75" fill="rgba(50,50,50,0.7)"/>
+          <circle cx="16" cy="11" r="1.1" fill="rgba(220,50,50,0.8)"/>
+          <circle cx="18.5" cy="13" r="1.1" fill="rgba(50,50,220,0.8)"/>
+          <circle cx="16" cy="15" r="1.1" fill="rgba(50,180,50,0.8)"/>
+          <circle cx="13.5" cy="13" r="1.1" fill="rgba(220,180,50,0.8)"/>
+        </svg>
+      </div></div>
+      <div class="desk-icon-label">Game</div>
+    </div>
     <div class="desk-icon" data-app="anime"    onclick="openApp('anime')">
       <div class="desk-icon-img"><div class="ai ai-anime">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -2257,6 +2366,20 @@
   </div>
   <div class="dock-app" data-app="soluna"   onclick="dockClick('soluna')"   title="Soluna">
     <div class="dock-icon-wrap ai ai-soluna"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="rgba(255,255,255,0.92)"/><circle cx="17.5" cy="5" r="1.3" fill="rgba(255,255,255,0.9)"/><circle cx="20.8" cy="8.5" r="0.9" fill="rgba(255,255,255,0.75)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Soluna</span>
+  </div>
+  <div class="dock-app" data-app="finder" onclick="dockClick('finder')" title="Finder">
+    <div class="dock-icon-wrap" style="background:linear-gradient(145deg,#60d8f0 0%,#2563eb 60%,#1e3a8a 100%);">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="4" width="20" height="16" rx="2.5" fill="rgba(255,255,255,0.92)"/>
+        <rect x="2" y="4" width="6" height="16" rx="2.5" fill="rgba(0,0,0,0.08)"/>
+        <rect x="9" y="8" width="9" height="1.4" rx=".7" fill="rgba(37,99,235,0.7)"/>
+        <rect x="9" y="11" width="7" height="1.4" rx=".7" fill="rgba(37,99,235,0.5)"/>
+        <rect x="9" y="14" width="5" height="1.4" rx=".7" fill="rgba(37,99,235,0.35)"/>
+      </svg>
+    </div><div class="dock-dot"></div><span class="dock-label" style="display:none">Finder</span>
+  </div>
+  <div class="dock-app" data-app="game" onclick="dockClick('game')" title="Game">
+    <div class="dock-icon-wrap ai ai-game"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="3" fill="rgba(255,255,255,0.88)"/><rect x="6" y="10" width="1.5" height="5" rx=".75" fill="rgba(50,50,50,0.7)"/><rect x="4.25" y="11.75" width="5" height="1.5" rx=".75" fill="rgba(50,50,50,0.7)"/><circle cx="16" cy="11" r="1.1" fill="rgba(220,50,50,0.8)"/><circle cx="18.5" cy="13" r="1.1" fill="rgba(50,50,220,0.8)"/><circle cx="16" cy="15" r="1.1" fill="rgba(50,180,50,0.8)"/><circle cx="13.5" cy="13" r="1.1" fill="rgba(220,180,50,0.8)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Game</span>
   </div>
   <div class="dock-app" data-app="anime"    onclick="dockClick('anime')"    title="Anime">
     <div class="dock-icon-wrap ai ai-anime"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="2" y="8.5" width="20" height="13" rx="2.2" fill="rgba(255,255,255,0.9)"/><rect x="2" y="4" width="20" height="5.5" rx="2" fill="rgba(255,255,255,0.65)"/><clipPath id="cd"><rect x="2" y="4" width="20" height="5.5" rx="2"/></clipPath><g clip-path="url(#cd)"><rect x="3.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/><rect x="9.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/><rect x="15.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/></g><polygon points="9,13 9,18.5 17,15.75" fill="rgba(160,20,20,0.65)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Anime</span>
@@ -2709,6 +2832,34 @@
   </div>
 
 
+  <!-- FINDER -->
+  <div id="tpl-finder" style="height:100%;display:flex;flex-direction:column;">
+    <div style="display:flex;height:100%;overflow:hidden;">
+      <!-- Sidebar -->
+      <div style="width:140px;flex-shrink:0;border-right:1px solid rgba(255,255,255,0.07);padding:10px 0;background:rgba(0,0,0,0.2);overflow-y:auto;">
+        <div style="padding:4px 12px;font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:.1em;margin-bottom:4px;">お気に入り</div>
+        <div class="finder-sidebar-item active" onclick="finderOpenFolder('soluna')" style="display:flex;align-items:center;gap:7px;padding:5px 12px;cursor:pointer;border-radius:5px;margin:0 6px;background:rgba(232,160,76,0.12);">
+          <span>🌙</span><span style="font-size:11.5px;color:#dcdce4;">SOLUNA</span>
+        </div>
+        <div class="finder-sidebar-item" onclick="finderOpenFolder('projects')" style="display:flex;align-items:center;gap:7px;padding:5px 12px;cursor:pointer;border-radius:5px;margin:0 6px;">
+          <span>🚀</span><span style="font-size:11.5px;color:rgba(180,180,192,0.8);">Projects</span>
+        </div>
+        <div class="finder-sidebar-item" onclick="finderOpenFolder('links')" style="display:flex;align-items:center;gap:7px;padding:5px 12px;cursor:pointer;border-radius:5px;margin:0 6px;">
+          <span>🔗</span><span style="font-size:11.5px;color:rgba(180,180,192,0.8);">Links</span>
+        </div>
+        <div style="padding:4px 12px;font-size:9px;font-weight:700;color:rgba(255,255,255,0.25);letter-spacing:.1em;margin:8px 0 4px;">場所</div>
+        <div class="finder-sidebar-item" onclick="finderOpenFolder('hokkaido')" style="display:flex;align-items:center;gap:7px;padding:5px 12px;cursor:pointer;border-radius:5px;margin:0 6px;">
+          <span>🏔</span><span style="font-size:11.5px;color:rgba(180,180,192,0.8);">北海道</span>
+        </div>
+        <div class="finder-sidebar-item" onclick="finderOpenFolder('hawaii')" style="display:flex;align-items:center;gap:7px;padding:5px 12px;cursor:pointer;border-radius:5px;margin:0 6px;">
+          <span>🌺</span><span style="font-size:11.5px;color:rgba(180,180,192,0.8);">Hawaii</span>
+        </div>
+      </div>
+      <!-- File List -->
+      <div style="flex:1;overflow-y:auto;padding:10px;" id="finder-file-area"></div>
+    </div>
+  </div>
+
   <!-- SOLUNA -->
   <div id="tpl-soluna">
     <div class="soluna-head">
@@ -2789,32 +2940,77 @@
   <!-- KOE VOICE -->
   <div id="tpl-koe">
     <div class="kva" id="kvaRoot">
-      <div class="kva-hdr">
-        <span class="kva-hdr-title">🎙 Koe</span>
-        <span class="kva-status" id="kvaStatus">タップして話しかける</span>
-      </div>
-      <div class="kva-canvas-wrap">
+      <!-- AI main view -->
+      <div class="kva-main" id="kvaMain">
+        <div class="kva-ai-bg" id="kvaAiBg"></div>
+        <div class="kva-ai-avatar">
+          <div class="kva-ai-orb" id="kvaAiOrb">
+            <div class="kva-ai-ring" id="kvaRing"></div>
+            <div class="kva-ai-ring kva-ai-ring2" id="kvaRing2"></div>
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none">
+              <circle cx="12" cy="9" r="4" fill="rgba(255,255,255,.9)"/>
+              <path d="M4 20c0-4 3.58-7 8-7s8 3 8 7" stroke="rgba(255,255,255,.75)" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="kva-ai-name">Yuki AI</div>
+          <div class="kva-status" id="kvaStatus">通話ボタンを押して開始</div>
+        </div>
+        <div class="kva-interim" id="kvaInterim"></div>
         <canvas class="kva-canvas" id="kvaCanvas"></canvas>
+        <!-- user camera PIP -->
+        <div class="kva-pip" id="kvaPip">
+          <video id="kvaVideo" autoplay muted playsinline></video>
+          <div class="kva-pip-off" id="kvaPipOff">📷</div>
+        </div>
       </div>
-      <div class="kva-orb-area">
-        <button class="kva-orb" id="kvaOrb" onclick="kvaToggle()">
-          <div class="kva-ring" id="kvaRing"></div>
-          <div class="kva-ring kva-ring2" id="kvaRing2"></div>
-          <svg width="42" height="42" viewBox="0 0 24 24" fill="none">
-            <circle cx="12" cy="10" r="4" fill="rgba(255,255,255,.92)"/>
-            <rect x="10.5" y="13.5" width="3" height="3.5" fill="rgba(255,255,255,.92)"/>
-            <rect x="9" y="17" width="6" height="1.8" rx=".9" fill="rgba(255,255,255,.92)"/>
-            <path d="M8 10c0 2.21 1.79 4 4 4s4-1.79 4-4" stroke="rgba(255,255,255,.8)" stroke-width="1.4" fill="none" stroke-linecap="round"/>
-          </svg>
-        </button>
-      </div>
-      <div class="kva-hint" id="kvaHint">タップして録音開始・もう一度タップで送信</div>
+      <!-- transcript -->
       <div class="kva-msgs" id="kvaMsgs">
-        <div class="kva-msg kva-msg-bot">こんにちは。何でも声で話しかけてください。</div>
+        <div class="kva-msg kva-msg-bot">通話を開始すると声で話せます。</div>
       </div>
+      <!-- text input -->
       <div class="kva-input-row">
-        <input class="kva-input" id="kvaInput" placeholder="テキストでも話せます..." autocomplete="off"/>
-        <button class="kva-send" id="kvaSendBtn" onclick="kvaSendText()">↑</button>
+        <input class="kva-input" id="kvaInput" placeholder="テキストでも送信できます..." autocomplete="off"/>
+        <button class="kva-send" onclick="kvaSendText()">↑</button>
+      </div>
+      <!-- call controls -->
+      <div class="kva-controls">
+        <button class="kva-ctrl-btn kva-ctrl-mute" id="kvaMuteBtn" onclick="kvaToggleMute()" title="ミュート">🎤</button>
+        <button class="kva-ctrl-btn kva-ctrl-call" id="kvaCallBtn" onclick="kvaToggleCall()" title="通話">📞</button>
+        <button class="kva-ctrl-btn kva-ctrl-cam" id="kvaCamBtn" onclick="kvaToggleCam()" title="カメラ">📹</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME -->
+  <div id="tpl-game">
+    <div id="gWrap" style="width:100%;height:100%;position:relative;overflow:hidden;background:#87CEEB">
+      <canvas id="gCanvas" style="display:block;width:100%;height:100%;outline:none"></canvas>
+      <div id="gCross" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-size:22px;font-weight:100;text-shadow:1px 1px 2px #000,-1px -1px 2px #000;pointer-events:none;line-height:1">+</div>
+      <div id="gBar" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:3px;pointer-events:none"></div>
+      <!-- Info popup when near a monument -->
+      <div id="gInfo" style="display:none;position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(10,10,20,.88);border:1px solid rgba(255,255,255,.18);border-radius:10px;padding:12px 20px;color:#fff;font-family:var(--font);min-width:220px;max-width:320px;text-align:center;pointer-events:none;backdrop-filter:blur(8px)">
+        <div id="gInfoTitle" style="font-size:15px;font-weight:700;color:var(--accent);margin-bottom:4px"></div>
+        <div id="gInfoDesc" style="font-size:12px;opacity:.75;line-height:1.6"></div>
+        <div id="gInfoHint" style="font-size:10px;opacity:.4;margin-top:6px">F キーで詳細を開く</div>
+      </div>
+      <div id="gOverlay" style="position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;background:rgba(0,0,0,.78);color:#fff;cursor:pointer;font-family:var(--font);text-align:center;padding:24px">
+        <div style="font-size:36px">🌿</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:.04em">Voxel World</div>
+        <div style="font-size:11px;opacity:.5;margin-bottom:2px">yukihamada.jp のプロジェクトが世界に散らばっている</div>
+        <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px 20px;font-size:12px;line-height:2.2;text-align:left">
+          <div><span style="opacity:.5;width:100px;display:inline-block">移動</span><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">W A S D</kbd> または 矢印キー</div>
+          <div><span style="opacity:.5;width:100px;display:inline-block">ジャンプ</span><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">スペース</kbd></div>
+          <div><span style="opacity:.5;width:100px;display:inline-block">ブロック破壊</span>左クリック</div>
+          <div><span style="opacity:.5;width:100px;display:inline-block">ブロック設置</span>右クリック</div>
+          <div><span style="opacity:.5;width:100px;display:inline-block">ブロック切替</span>スクロール または <kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">1〜7</kbd></div>
+          <div><span style="opacity:.5;width:100px;display:inline-block">カメラ解除</span><kbd style="background:rgba(255,255,255,.15);border-radius:4px;padding:1px 7px">Esc</kbd></div>
+        </div>
+        <div style="margin-top:4px;background:var(--accent);color:#000;border-radius:8px;padding:10px 32px;font-size:14px;font-weight:700;letter-spacing:.03em;animation:pulse-btn 1.4s ease-in-out infinite">▶ クリックして開始</div>
+        <div style="font-size:10px;opacity:.3">※ クリック後にマウスがキャプチャされます。Esc で解除。</div>
+      </div>
+      <div id="gPause" style="display:none;position:absolute;inset:0;background:rgba(0,0,0,.55);align-items:center;justify-content:center;flex-direction:column;gap:10px;color:#fff;font-family:var(--font);cursor:pointer">
+        <div style="font-size:18px;font-weight:700">⏸ 一時停止中</div>
+        <div style="font-size:13px;opacity:.6">クリックまたは Esc でゲームに戻る</div>
       </div>
     </div>
   </div>
@@ -3331,7 +3527,7 @@
         <img class="chat-av" src="/assets/yuki-profile.jpg" alt="Yuki" onerror="this.style.display='none'">
         <div style="flex:1">
           <div class="chat-name">濱田優貴 AI</div>
-          <div class="chat-status" id="chat-status-text">● オンライン</div>
+          <div class="chat-status" id="chat-status-text">● AI対応中</div>
         </div>
         <button class="chat-reset-btn" onclick="shareUrl('濱田優貴 — Enabler CEO · Builder', 'https://yukihamada.jp')" title="共有" style="margin-right:4px;font-size:14px;">⬆</button>
         <button class="chat-reset-btn" onclick="chatReset(this)">↺</button>
@@ -4226,7 +4422,7 @@ function getSavedDesktopState() {
 function restoreDesktopState(state) {
   if (!state || !state.windows || !state.windows.length) return;
   state.windows.forEach(function(w) {
-    if (!APPS[w.id] || w.id === 'login' || w.id === 'settings') return;
+    if (!APPS[w.id] || w.id === 'login' || w.id === 'settings' || w.id === 'chat') return;
     openApp(w.id);
     var win = wins[w.id];
     if (!win) return;
@@ -4344,6 +4540,8 @@ const APPS = {
   settings: { title:'システム環境設定',     w:480, h:420, cls:'ai-settings' },
   camera:   { title:'Camera',            w:640, h:520, cls:'ai-camera' },
   login:    { title:'Admin Login',        w:340, h:390, cls:'ai-about' },
+  game:     { title:'Voxel World',        w:820, h:580, cls:'ai-game' },
+  finder:   { title:'Finder',             w:680, h:480, cls:'ai-projects' },
 };
 
 const wins = {};       // appId → { el, min, maxed, prevRect }
@@ -4382,6 +4580,8 @@ function openApp(id) {
     if (id === 'settings') setTimeout(renderSkinCards, 50);
     if (id === 'camera') setTimeout(() => initCamera(), 80);
     if (id === 'mail') setTimeout(() => initMail(), 80);
+    if (id === 'game') setTimeout(() => initGame(el), 80);
+    if (id === 'finder') setTimeout(() => finderOpenFolder('soluna'), 30);
     if (id === 'music') {
       // Show start confirmation overlay inside the window (not the hidden template)
       const overlay = el.querySelector('#dj-start-overlay');
@@ -5739,6 +5939,67 @@ function openPost(slug, title, date) {
 
       scroll.innerHTML = hdrHtml + '<div class="post-body">' + art.innerHTML + '</div>';
 
+      // Podcast player — inject if audio exists
+      (async () => {
+        const audioUrl = '/audio/blog/' + slug + '.mp3';
+        const head = await fetch(audioUrl, {method:'HEAD'}).catch(() => null);
+        if (!head || !head.ok) return;
+        const player = document.createElement('div');
+        player.className = 'podcast-player';
+        player.innerHTML = `
+          <button class="podcast-play-btn" id="ppb-${slug}" aria-label="再生">
+            <svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6V2z"/></svg>
+          </button>
+          <div class="podcast-info">
+            <div class="podcast-label">🎧 Podcast</div>
+            <div class="podcast-progress-wrap" id="ppw-${slug}">
+              <div class="podcast-progress-fill" id="ppf-${slug}"></div>
+            </div>
+          </div>
+          <span class="podcast-time" id="ppt-${slug}">--:--</span>`;
+        // Insert before post-body
+        const body = scroll.querySelector('.post-body');
+        if (body) scroll.insertBefore(player, body);
+        const audio = new Audio(audioUrl);
+        const btn  = document.getElementById('ppb-' + slug);
+        const fill = document.getElementById('ppf-' + slug);
+        const wrap = document.getElementById('ppw-' + slug);
+        const time = document.getElementById('ppt-' + slug);
+        const fmt  = s => { const m = Math.floor(s/60); return m+':'+String(Math.floor(s%60)).padStart(2,'0'); };
+        audio.addEventListener('timeupdate', () => {
+          if (!audio.duration) return;
+          fill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+          time.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+        });
+        audio.addEventListener('ended', () => {
+          btn.innerHTML = '<svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6V2z"/></svg>';
+        });
+        wrap.addEventListener('click', e => {
+          if (!audio.duration) return;
+          const rect = wrap.getBoundingClientRect();
+          audio.currentTime = (e.clientX - rect.left) / rect.width * audio.duration;
+        });
+        btn.addEventListener('click', () => {
+          if (audio.paused) {
+            audio.play();
+            btn.innerHTML = '<svg viewBox="0 0 16 16"><rect x="3" y="2" width="4" height="12"/><rect x="9" y="2" width="4" height="12"/></svg>';
+          } else {
+            audio.pause();
+            btn.innerHTML = '<svg viewBox="0 0 16 16"><path d="M4 2l10 6-10 6V2z"/></svg>';
+          }
+        });
+      })();
+
+      // Wrap tables for mobile scroll
+      scroll.querySelectorAll('.post-body table').forEach(t => {
+        if (!t.parentElement.classList.contains('table-wrap')) {
+          const w = document.createElement('div');
+          w.className = 'table-wrap';
+          t.parentNode.insertBefore(w, t);
+          w.appendChild(t);
+        }
+      });
+
       // Reading progress
       const fill = document.getElementById('pp-' + slug);
       if (fill) {
@@ -5783,6 +6044,8 @@ const SP_ITEMS = [
   { icon: spIco('ai-chat',     _svgChat),     title:'Chat',        desc:'濱田優貴 AI · ⌘5',         action:()=>openApp('chat') },
   { icon: spIco('ai-music',    _svgMusic),    title:'DJ Studio',   desc:'オリジナル楽曲',            action:()=>openApp('music') },
   { icon: spIco('ai-soluna',   _svgSoluna),   title:'Soluna',      desc:'北海道弟子屈',              action:()=>openApp('soluna') },
+  { icon: spIco('ai-projects',_svgProjects), title:'Finder',      desc:'ファイル・プロジェクト一覧', action:()=>openApp('finder') },
+  { icon: spIco('ai-soluna',  _svgSoluna),   title:'SOLUNA Files', desc:'弟子屈ロッジ・Hawaii Fest', action:()=>openApp('finder') },
   { icon: spIco('ai-anime',    _svgAnime),    title:'Anime',       desc:'AIアニメシリーズ',          action:()=>openApp('anime') },
   { icon: spIco('ai-terminal', _svgTerm),     title:'Terminal',    desc:'コマンドライン',            action:()=>openApp('terminal') },
   { icon: spIco('ai-x',        _svgX),        title:'Twitter/X',   desc:'@yukihamada',               action:()=>externalOpen('https://x.com/yukihamada') },
@@ -6295,21 +6558,8 @@ window.addEventListener('load', () => {
         restoreDesktopState(saved);
       } else {
         const isMobile = window.innerWidth < 768;
-        if (isMobile) {
-          openApp('chat');
-        } else {
+        if (!isMobile) {
           openApp('about');
-          openApp('chat');
-          // Position chat on the right side of the screen
-          const chatEl = wins['chat'] && wins['chat'].el;
-          if (chatEl) {
-            const layer = document.getElementById('win-layer');
-            const dw = layer.offsetWidth, dh = layer.offsetHeight;
-            const chatW = 380, chatH = Math.min(560, dh - 60);
-            chatEl.style.left = (dw - chatW - 24) + 'px';
-            chatEl.style.top  = Math.max(10, Math.round((dh - chatH) / 2)) + 'px';
-            chatEl.style.height = chatH + 'px';
-          }
         }
       }
     }
@@ -6348,6 +6598,7 @@ window.addEventListener('load', () => {
   }
 
   window.initChat = function(winEl) {
+    document.dispatchEvent(new Event('chatOpened'));
     const msgs      = winEl.querySelector('.chat-msgs');
     const input     = winEl.querySelector('.chat-input');
     const sendBtn   = winEl.querySelector('.chat-send-btn');
@@ -6758,30 +7009,340 @@ window.openIframeWin = function(url, title, w, h) {
   }, true);
 })();
 
-// ── Koe Voice App ───────────────────────────────────────────
+// ── Voxel Game ───────────────────────────────────────────────
+function initGame(winEl) {
+  const wrap    = winEl.querySelector('#gWrap');
+  const canvas  = winEl.querySelector('#gCanvas');
+  const overlay = winEl.querySelector('#gOverlay');
+  const pause   = winEl.querySelector('#gPause');
+  const cross   = winEl.querySelector('#gCross');
+  const bar     = winEl.querySelector('#gBar');
+  if (!canvas || !wrap) return;
+
+  let THREE_loaded = typeof THREE !== 'undefined';
+
+  function boot() {
+    THREE_loaded = true;
+    overlay.onclick = () => startGame();
+  }
+
+  if (!THREE_loaded) {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js';
+    s.onload = boot;
+    document.head.appendChild(s);
+  } else {
+    boot();
+  }
+
+  // ── Game state ──
+  let started = false, locked = false;
+  const W = 32, D = 32, H = 20;
+  const world = new Uint8Array(W * D * H);
+  const BLOCKS = [
+    null,
+    { top:0x4CAF50, side:0x795548, bot:0x795548, name:'草ブロック' },
+    { top:0x795548, side:0x795548, bot:0x795548, name:'土' },
+    { top:0x9E9E9E, side:0x9E9E9E, bot:0x9E9E9E, name:'石' },
+    { top:0xF5DEB3, side:0xF5DEB3, bot:0xF5DEB3, name:'砂' },
+    { top:0x4E342E, side:0x6D4C41, bot:0x4E342E, name:'木材' },
+    { top:0x2E7D32, side:0x388E3C, bot:0x2E7D32, name:'葉' },
+    { top:0xB71C1C, side:0xC62828, bot:0xB71C1C, name:'レンガ' },
+    { top:0x1565C0, side:0x1976D2, bot:0x1565C0, name:'青石' },
+  ];
+  const hotbarTypes = [1,2,3,4,5,7,8];
+  let hotSel = 0;
+  const keys = {};
+  let meshObj = null;
+
+  function idx(x,y,z){ if(x<0||x>=W||y<0||y>=H||z<0||z>=D) return -1; return x+z*W+y*W*D; }
+  function getB(x,y,z){ const i=idx(x,y,z); return i<0?1:world[i]; } // walls = solid outside
+  function setB(x,y,z,t){ const i=idx(x,y,z); if(i>=0) world[i]=t; }
+
+  function noise(x,z){
+    let h=0,a=1,f=0.08;
+    for(let i=0;i<4;i++){
+      h+=a*(Math.sin(x*f+1.3)*Math.cos(z*f+0.7)+Math.sin(x*f*1.9+2.1)*0.5);
+      a*=0.5; f*=2;
+    }
+    return Math.max(3, Math.min(H-3, Math.round(7 + h*3)));
+  }
+
+  // Project monuments: {x, z, block, height, title, desc, url}
+  const MONUMENTS = [
+    { x:6,  z:6,  block:8, h:5, title:'JiuFlow', desc:'柔術トレーニング管理アプリ / 大会・ゲームプラン', url:'https://jiuflow.art' },
+    { x:24, z:6,  block:7, h:5, title:'chatweb.ai', desc:'ブラウザで使える Claude Code ターミナル', url:'https://chatweb.ai' },
+    { x:6,  z:24, block:4, h:5, title:'パシャ', desc:'レシートをAI-OCRで電子帳簿保存法対応', url:'https://pasha.run' },
+    { x:24, z:24, block:3, h:5, title:'Koe', desc:'声で入力するAIデバイス / koe.live', url:'https://koe.live' },
+    { x:15, z:6,  block:5, h:4, title:'BANTO', desc:'ビジネス請求・収支管理SaaS', url:'https://banto.work' },
+    { x:15, z:24, block:2, h:4, title:'SOLUNA', desc:'弟子屈の共同別荘プロジェクト', url:'https://solun.art' },
+  ];
+
+  function buildMonument(mx, mz, block, h) {
+    const gh = noise(mx, mz);
+    // 3x3 base, center pillar
+    for(let bx=mx-1;bx<=mx+1;bx++) for(let bz=mz-1;bz<=mz+1;bz++) {
+      setB(bx, gh, bz, block);
+    }
+    // pillar up
+    for(let y=gh+1;y<gh+h;y++) setB(mx, y, mz, block);
+    // cap
+    setB(mx-1, gh+h, mz, block); setB(mx+1, gh+h, mz, block);
+    setB(mx, gh+h, mz-1, block); setB(mx, gh+h, mz+1, block);
+    setB(mx, gh+h+1, mz, block);
+  }
+
+  function genWorld(){
+    for(let x=0;x<W;x++) for(let z=0;z<D;z++){
+      const h=noise(x,z);
+      for(let y=0;y<h-1;y++) setB(x,y,z, y<3?3:2);
+      setB(x,h-1,z,1); // grass top
+      // trees
+      if(h>5&&Math.sin(x*7.3+z*11.7)>0.88&&x>2&&x<W-3&&z>2&&z<D-3){
+        for(let ty=h;ty<h+4;ty++) setB(x,ty,z,5);
+        for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++){
+          if(Math.abs(lx)===2&&Math.abs(lz)===2) continue;
+          for(let ly=h+2;ly<=h+5;ly++) if(!getB(x+lx,ly,z+lz)) setB(x+lx,ly,z+lz,6);
+        }
+      }
+    }
+    // Build project monuments
+    MONUMENTS.forEach(m => buildMonument(m.x, m.z, m.block, m.h));
+  }
+
+  // Proximity detection: show info when within 5 blocks of a monument
+  let nearMonument = null;
+  function checkProximity() {
+    if (!started || !plr.pos) return;
+    const px = plr.pos.x, pz = plr.pos.z;
+    let closest = null, minDist = 5.5;
+    MONUMENTS.forEach(m => {
+      const d = Math.sqrt((px-m.x)**2 + (pz-m.z)**2);
+      if (d < minDist) { minDist = d; closest = m; }
+    });
+    if (closest !== nearMonument) {
+      nearMonument = closest;
+      const info = document.getElementById('gInfo');
+      if (info) {
+        if (closest) {
+          document.getElementById('gInfoTitle').textContent = closest.title;
+          document.getElementById('gInfoDesc').textContent = closest.desc;
+          info.style.display = 'block';
+        } else {
+          info.style.display = 'none';
+        }
+      }
+    }
+  }
+
+  const FACES=[
+    {n:[0,1,0],v:[[0,1,0],[1,1,0],[1,1,1],[0,1,1]],k:'top', l:1.0},
+    {n:[0,-1,0],v:[[1,0,0],[0,0,0],[0,0,1],[1,0,1]],k:'bot', l:0.5},
+    {n:[0,0,1],v:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]],k:'side',l:0.7},
+    {n:[0,0,-1],v:[[1,0,0],[0,0,0],[0,1,0],[1,1,0]],k:'side',l:0.7},
+    {n:[1,0,0],v:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]],k:'side',l:0.85},
+    {n:[-1,0,0],v:[[0,0,1],[0,1,1],[0,1,0],[0,0,0]],k:'side',l:0.85},
+  ];
+
+  let scene,camera,renderer,light;
+
+  function buildMesh(){
+    if(meshObj){scene.remove(meshObj);meshObj.geometry.dispose();}
+    const pos=[],col=[],idx_=[];
+    let vi=0;
+    for(let x=0;x<W;x++) for(let y=0;y<H;y++) for(let z=0;z<D;z++){
+      const t=getB(x,y,z); if(!t||!BLOCKS[t]) continue;
+      const bd=BLOCKS[t];
+      for(const f of FACES){
+        if(getB(x+f.n[0],y+f.n[1],z+f.n[2])!==0) continue;
+        const hex=bd[f.k]; const r=((hex>>16)&0xff)/255*f.l,g=((hex>>8)&0xff)/255*f.l,b=(hex&0xff)/255*f.l;
+        for(const [cx,cy,cz] of f.v){pos.push(x+cx,y+cy,z+cz);col.push(r,g,b);}
+        idx_.push(vi,vi+1,vi+2,vi,vi+2,vi+3); vi+=4;
+      }
+    }
+    const geo=new THREE.BufferGeometry();
+    geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+    geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+    geo.setIndex(idx_);
+    geo.computeVertexNormals();
+    meshObj=new THREE.Mesh(geo,new THREE.MeshLambertMaterial({vertexColors:true}));
+    scene.add(meshObj);
+  }
+
+  // Player (THREE not yet loaded; initialized in startGame after Three.js loads)
+  const plr={pos:null,vel:null,yaw:0,pitch:0,onGround:false};
+
+  function physics(dt){
+    plr.vel.y+=-22*dt;
+    const sp=5.5,fwd=new THREE.Vector3(-Math.sin(plr.yaw),0,-Math.cos(plr.yaw)),rt=new THREE.Vector3(Math.cos(plr.yaw),0,-Math.sin(plr.yaw));
+    let mx=0,mz=0;
+    if(keys.KeyW||keys.ArrowUp){mx+=fwd.x;mz+=fwd.z;}
+    if(keys.KeyS||keys.ArrowDown){mx-=fwd.x;mz-=fwd.z;}
+    if(keys.KeyA||keys.ArrowLeft){mx-=rt.x;mz-=rt.z;}
+    if(keys.KeyD||keys.ArrowRight){mx+=rt.x;mz+=rt.z;}
+    const ml=Math.sqrt(mx*mx+mz*mz);
+    if(ml>0){mx/=ml;mz/=ml;}
+    plr.vel.x=mx*sp; plr.vel.z=mz*sp;
+    if((keys.Space)&&plr.onGround){plr.vel.y=9;plr.onGround=false;}
+    function moveY(dy){
+      plr.pos.y+=dy;
+      const bx=Math.floor(plr.pos.x),by=Math.floor(plr.pos.y),bz=Math.floor(plr.pos.z);
+      for(let oy=0;oy<=2;oy++){
+        if(getB(bx,by+oy,bz)!==0){
+          if(dy<0){plr.pos.y=by+oy+1;plr.onGround=true;}else{plr.pos.y=by+oy-2.2;}
+          plr.vel.y=0;break;
+        }
+      }
+    }
+    function moveXZ(dx,dz){
+      plr.pos.x+=dx; const bx=Math.floor(plr.pos.x),bz=Math.floor(plr.pos.z);
+      for(let oy=0;oy<=1;oy++){if(getB(bx,Math.floor(plr.pos.y)+oy,bz)!==0){plr.pos.x-=dx;break;}}
+      plr.pos.z+=dz; const bx2=Math.floor(plr.pos.x),bz2=Math.floor(plr.pos.z);
+      for(let oy=0;oy<=1;oy++){if(getB(bx2,Math.floor(plr.pos.y)+oy,bz2)!==0){plr.pos.z-=dz;break;}}
+    }
+    plr.onGround=false;
+    moveXZ(plr.vel.x*dt,plr.vel.z*dt);
+    moveY(plr.vel.y*dt);
+    plr.pos.x=Math.max(0.5,Math.min(W-0.5,plr.pos.x));
+    plr.pos.z=Math.max(0.5,Math.min(D-0.5,plr.pos.z));
+  }
+
+  function raycast(maxD){
+    const dir=new THREE.Vector3(0,0,-1).applyEuler(new THREE.Euler(plr.pitch,plr.yaw,0,'YXZ'));
+    const eye=plr.pos.clone().add(new THREE.Vector3(0,1.6,0));
+    let prev=null;
+    for(let d=0;d<maxD;d+=0.05){
+      const p=eye.clone().addScaledVector(dir,d);
+      const bx=Math.floor(p.x),by=Math.floor(p.y),bz=Math.floor(p.z);
+      if(getB(bx,by,bz)!==0) return{hit:[bx,by,bz],prev};
+      prev=[bx,by,bz];
+    }
+    return null;
+  }
+
+  function renderBar(){
+    if(!bar) return;
+    bar.innerHTML=hotbarTypes.map((t,i)=>{
+      const bd=BLOCKS[t]||BLOCKS[1];
+      const col='#'+bd.side.toString(16).padStart(6,'0');
+      return `<div style="width:38px;height:38px;border:2px solid ${i===hotSel?'#fff':'rgba(0,0,0,.5)'};background:rgba(50,50,50,.85);border-radius:5px;display:flex;align-items:center;justify-content:center" title="${bd.name}">
+        <div style="width:24px;height:24px;background:${col};border-radius:3px;border:1px solid rgba(0,0,0,.4)"></div></div>`;
+    }).join('');
+  }
+
+  let lastT=0, proxTick=0;
+  function loop(t){
+    if(!started)return;
+    requestAnimationFrame(loop);
+    const dt=Math.min((t-lastT)/1000,0.05); lastT=t;
+    if(locked) physics(dt);
+    camera.position.copy(plr.pos).add(new THREE.Vector3(0,1.6,0));
+    camera.rotation.order='YXZ'; camera.rotation.y=plr.yaw; camera.rotation.x=plr.pitch;
+    renderer.setSize(wrap.clientWidth,wrap.clientHeight,false);
+    camera.aspect=wrap.clientWidth/wrap.clientHeight; camera.updateProjectionMatrix();
+    renderer.render(scene,camera);
+    // Check proximity every 20 frames
+    if(++proxTick % 20 === 0) checkProximity();
+  }
+
+  function startGame(){
+    if(!THREE_loaded||started) return;
+    started=true;
+    overlay.style.display='none';
+    cross.style.display='block';
+    plr.pos=new THREE.Vector3(16,16,16);
+    plr.vel=new THREE.Vector3();
+
+    scene=new THREE.Scene();
+    scene.background=new THREE.Color(0x87CEEB);
+    scene.fog=new THREE.Fog(0x87CEEB,40,90);
+    scene.add(new THREE.AmbientLight(0xffffff,0.55));
+    light=new THREE.DirectionalLight(0xfffde7,0.9); light.position.set(50,80,30); scene.add(light);
+
+    const W0=wrap.clientWidth||600,H0=wrap.clientHeight||400;
+    camera=new THREE.PerspectiveCamera(70,W0/H0,0.05,200);
+    renderer=new THREE.WebGLRenderer({canvas,antialias:false});
+    renderer.setSize(W0,H0,false); renderer.setPixelRatio(Math.min(window.devicePixelRatio,1.5));
+
+    genWorld(); buildMesh(); renderBar();
+    // Spawn above terrain
+    const sx=16,sz=16,sh=noise(sx,sz);
+    plr.pos.set(sx+0.5,sh+3,sz+0.5);
+
+    lastT=performance.now(); requestAnimationFrame(loop);
+    canvas.requestPointerLock();
+  }
+
+  // Controls
+  canvas.addEventListener('click',()=>{ if(!started){startGame();}else{canvas.requestPointerLock();} });
+  document.addEventListener('pointerlockchange',()=>{
+    locked=document.pointerLockElement===canvas;
+    cross.style.display=started?(locked?'block':'none'):'none';
+    if(pause) pause.style.display=started&&!locked?'flex':'none';
+  });
+  document.addEventListener('mousemove',e=>{
+    if(!locked)return;
+    plr.yaw-=e.movementX*0.002;
+    plr.pitch=Math.max(-1.5,Math.min(1.5,plr.pitch-e.movementY*0.002));
+  });
+  document.addEventListener('keydown',e=>{
+    keys[e.code]=true;
+    if(['KeyW','KeyA','KeyS','KeyD','Space','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code)&&locked) e.preventDefault();
+    if(e.code.startsWith('Digit')){const n=+e.key-1;if(n>=0&&n<hotbarTypes.length){hotSel=n;renderBar();}}
+    // F key: open nearby monument URL
+    if(e.code==='KeyF' && nearMonument) {
+      document.exitPointerLock();
+      window.open(nearMonument.url, '_blank', 'noopener');
+    }
+  });
+  document.addEventListener('keyup',e=>{ keys[e.code]=false; });
+  document.addEventListener('mousedown',e=>{
+    if(!locked)return;
+    const h=raycast(6);
+    if(!h)return;
+    if(e.button===0){setB(...h.hit,0);buildMesh();}
+    else if(e.button===2&&h.prev){setB(...h.prev,hotbarTypes[hotSel]);buildMesh();}
+  });
+  document.addEventListener('wheel',e=>{
+    if(!locked)return;
+    hotSel=(hotSel+(e.deltaY>0?1:-1)+hotbarTypes.length)%hotbarTypes.length;
+    renderBar();
+  });
+  canvas.addEventListener('contextmenu',e=>e.preventDefault());
+}
+
+// ── Koe Video Call ───────────────────────────────────────────
 (function() {
-  let mediaRec = null, audioChunks = [], stream = null;
+  // State
+  let callActive = false;   // phone call on/off
+  let muted = false;
+  let camOn = false;
+  let stream = null;        // mic stream for visualizer
+  let camStream = null;     // camera stream
   let audioCtx = null, analyser = null, animId = null;
-  let state = 'idle'; // idle | listening | thinking | speaking
+  let recog = null;
+  let speaking = false;     // TTS active
   let kvaHistory = [];
   let kvaBusy = false;
   const KVA_USER_ID = 'kva_' + Math.random().toString(36).slice(2);
 
   function kvaEl(id) { return document.getElementById(id); }
 
-  function kvaSetState(s) {
-    state = s;
-    const orb = kvaEl('kvaOrb'), st = kvaEl('kvaStatus'), hint = kvaEl('kvaHint');
+  // ── UI update ──
+  function kvaSetUI(s) {
+    const st = kvaEl('kvaStatus');
+    const orb = kvaEl('kvaAiOrb');
     const r = kvaEl('kvaRing'), r2 = kvaEl('kvaRing2');
-    if (!orb) return;
-    orb.className = 'kva-orb' + (s !== 'idle' ? ' ' + s : '');
-    st.className = 'kva-status' + (s !== 'idle' ? ' ' + s : '');
-    r.className = 'kva-ring' + (s === 'listening' ? ' active' : '');
-    r2.className = 'kva-ring kva-ring2' + (s === 'listening' ? ' active' : '');
-    if (s === 'idle')       { st.textContent = 'タップして話しかける'; hint.textContent = 'タップして録音開始・もう一度タップで送信'; }
-    if (s === 'listening')  { st.textContent = '録音中… もう一度タップで送信'; hint.textContent = ''; }
-    if (s === 'thinking')   { st.textContent = '考え中…'; hint.textContent = ''; }
-    if (s === 'speaking')   { st.textContent = '話し中…'; hint.textContent = 'タップで止める'; }
+    const bg = kvaEl('kvaAiBg');
+    if (!st) return;
+    st.className = 'kva-status' + (s && s !== 'idle' ? ' ' + s : '');
+    if (orb) orb.className = 'kva-ai-orb' + (s === 'speaking' ? ' speaking' : s === 'thinking' ? ' thinking' : '');
+    if (r) r.className = 'kva-ai-ring' + (s === 'listening' ? ' active' : '');
+    if (r2) r2.className = 'kva-ai-ring kva-ai-ring2' + (s === 'listening' ? ' active' : '');
+    if (bg) bg.className = 'kva-ai-bg' + (s !== 'idle' ? ' active' : '');
+    const labels = { idle: '通話ボタンを押して開始', listening: '聞いています…', thinking: '考え中…', speaking: '話し中…（話しかけると割り込めます）' };
+    if (!callActive) st.textContent = '通話ボタンを押して開始';
+    else st.textContent = labels[s] || s;
   }
 
   function kvaAddMsg(role, text) {
@@ -6795,119 +7356,106 @@ window.openIframeWin = function(url, title, w, h) {
   }
 
   // ── Canvas waveform ──
-  function kvaDrawIdle(canvas) {
-    const ctx = canvas.getContext('2d');
-    const w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    ctx.strokeStyle = 'rgba(124,58,237,0.25)';
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    const t = Date.now() / 1200;
-    for (let x = 0; x < w; x++) {
-      const y = h/2 + Math.sin(x * 0.04 + t) * 5 + Math.sin(x * 0.015 + t * 0.7) * 3;
-      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-  }
-
-  function kvaDrawLive(canvas) {
-    if (!analyser) return kvaDrawIdle(canvas);
-    const data = new Uint8Array(analyser.frequencyBinCount);
-    analyser.getByteTimeDomainData(data);
-    const ctx = canvas.getContext('2d'), w = canvas.width, h = canvas.height;
-    ctx.clearRect(0, 0, w, h);
-    const grad = ctx.createLinearGradient(0, 0, w, 0);
-    grad.addColorStop(0, 'rgba(124,58,237,0.4)');
-    grad.addColorStop(0.5, 'rgba(167,139,250,0.9)');
-    grad.addColorStop(1, 'rgba(124,58,237,0.4)');
-    ctx.strokeStyle = grad;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    const step = w / data.length;
-    data.forEach((v, i) => {
-      const y = (v / 128 - 1) * (h * 0.42) + h / 2;
-      i === 0 ? ctx.moveTo(0, y) : ctx.lineTo(i * step, y);
-    });
-    ctx.stroke();
-  }
-
   function kvaAnimate() {
     const canvas = kvaEl('kvaCanvas'); if (!canvas) return;
-    canvas.width = canvas.offsetWidth || 360;
-    (state === 'listening' ? kvaDrawLive : kvaDrawIdle)(canvas);
+    const w = canvas.offsetWidth || 360, h = canvas.offsetHeight || 44;
+    canvas.width = w; canvas.height = h;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, w, h);
+    if (analyser && callActive) {
+      const data = new Uint8Array(analyser.frequencyBinCount);
+      analyser.getByteTimeDomainData(data);
+      const grad = ctx.createLinearGradient(0, 0, w, 0);
+      grad.addColorStop(0, 'rgba(124,58,237,0.3)');
+      grad.addColorStop(0.5, 'rgba(167,139,250,0.85)');
+      grad.addColorStop(1, 'rgba(124,58,237,0.3)');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      const step = w / data.length;
+      data.forEach((v, i) => {
+        const y = (v / 128 - 1) * (h * 0.45) + h / 2;
+        i === 0 ? ctx.moveTo(0, y) : ctx.lineTo(i * step, y);
+      });
+      ctx.stroke();
+    } else {
+      ctx.strokeStyle = 'rgba(124,58,237,0.2)';
+      ctx.lineWidth = 1.5; ctx.beginPath();
+      const t = Date.now() / 1400;
+      for (let x = 0; x < w; x++) {
+        const y = h/2 + Math.sin(x * 0.035 + t) * 4 + Math.sin(x * 0.012 + t * 0.6) * 2.5;
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
     animId = requestAnimationFrame(kvaAnimate);
   }
 
-  // ── Speech Recognition (Web Speech API) ──
-  var recog = null;
-
-  function kvaStartRec() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      kvaAddMsg('bot', 'このブラウザは音声認識に対応していません。テキスト入力をお使いください。');
-      return;
-    }
-    try {
-      // Waveform visualizer via AudioContext
-      navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
-        stream = s;
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const src = audioCtx.createMediaStreamSource(s);
-        analyser = audioCtx.createAnalyser();
-        analyser.fftSize = 512;
-        src.connect(analyser);
-      }).catch(() => {});
-
-      recog = new SR();
-      recog.lang = 'ja-JP';
-      recog.interimResults = false;
-      recog.maxAlternatives = 1;
-      recog.continuous = false;
-
-      recog.onresult = e => {
-        const text = e.results[0][0].transcript.trim();
-        kvaStopStream();
-        if (text) {
-          kvaAddMsg('user', text);
-          kvaHistory.push({ role: 'user', content: text });
-          kvaSetState('thinking');
-          kvaSendToChat();
-        } else {
-          kvaSetState('idle');
-        }
-      };
-      recog.onerror = e => {
-        kvaStopStream();
-        if (e.error !== 'no-speech') {
-          kvaAddMsg('bot', 'マイクエラー: ' + e.error + '。ブラウザの設定を確認してください。');
-        }
-        kvaSetState('idle');
-      };
-      recog.onend = () => {
-        kvaStopStream();
-        if (state === 'listening') kvaSetState('idle');
-      };
-
-      recog.start();
-      kvaSetState('listening');
-    } catch(e) {
-      kvaAddMsg('bot', '音声認識を開始できませんでした。');
-      kvaSetState('idle');
-    }
+  // ── Mic stream ──
+  function kvaStartStream() {
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(s => {
+      stream = s;
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const src = audioCtx.createMediaStreamSource(s);
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 512;
+      src.connect(analyser);
+    }).catch(() => {});
   }
 
   function kvaStopStream() {
-    stream?.getTracks().forEach(t => t.stop());
-    stream = null;
-    analyser = null;
+    stream?.getTracks().forEach(t => t.stop()); stream = null;
+    audioCtx?.close().catch(() => {}); audioCtx = null; analyser = null;
   }
 
-  function kvaStopRec() {
-    if (recog) { try { recog.stop(); } catch(_) {} recog = null; }
-    kvaStopStream();
-    kvaSetState('idle');
+  // ── Speech Recognition loop ──
+  function kvaListen() {
+    if (!callActive || muted) return;
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { kvaAddMsg('bot', 'このブラウザは音声認識に未対応です。'); return; }
+    if (recog) { try { recog.abort(); } catch(_) {} recog = null; }
+
+    recog = new SR();
+    recog.lang = 'ja-JP';
+    recog.interimResults = true;
+    recog.maxAlternatives = 1;
+    recog.continuous = false;
+
+    recog.onresult = e => {
+      const last = e.results[e.results.length - 1];
+      const interim = kvaEl('kvaInterim');
+      if (!last.isFinal) {
+        if (interim) interim.textContent = last[0].transcript;
+        // interrupt TTS if AI was speaking
+        if (speaking) { window.speechSynthesis.cancel(); speaking = false; }
+        return;
+      }
+      if (interim) interim.textContent = '';
+      const text = last[0].transcript.trim();
+      if (!text) { kvaListen(); return; }
+      kvaAddMsg('user', text);
+      kvaHistory.push({ role: 'user', content: text });
+      kvaSetUI('thinking');
+      kvaSendToChat();
+    };
+
+    recog.onerror = e => {
+      if (e.error === 'no-speech' && callActive) { kvaListen(); return; }
+      if (e.error === 'aborted') return;
+      kvaAddMsg('bot', 'マイクエラー: ' + e.error);
+      kvaSetUI('idle');
+    };
+
+    recog.onend = () => {
+      // auto-restart when in call and not busy
+      if (callActive && !kvaBusy && !speaking) setTimeout(kvaListen, 300);
+    };
+
+    recog.start();
+    kvaSetUI('listening');
   }
 
+  // ── Chat → TTS → listen again ──
   async function kvaSendToChat() {
     kvaBusy = true;
     const botEl = kvaAddMsg('bot', '');
@@ -6939,42 +7487,86 @@ window.openIframeWin = function(url, title, w, h) {
           } catch(_) {}
         }
       }
-    } catch(_) { full = '通信エラーが発生しました。'; botEl.textContent = full; }
+    } catch(_) { full = '通信エラー。'; botEl.textContent = full; }
 
+    kvaBusy = false;
     if (full) {
       kvaHistory.push({ role: 'assistant', content: full });
-      if (kvaHistory.length > 20) kvaHistory = kvaHistory.slice(-20);
+      if (kvaHistory.length > 24) kvaHistory = kvaHistory.slice(-24);
       kvaSpeak(full);
-    } else {
-      kvaSetState('idle');
+    } else if (callActive) {
+      kvaListen();
     }
-    kvaBusy = false;
   }
 
-  // ── TTS ──
   function kvaSpeak(text) {
-    if (!window.speechSynthesis) { kvaSetState('idle'); return; }
+    if (!window.speechSynthesis || !callActive) { if (callActive) kvaListen(); return; }
     window.speechSynthesis.cancel();
-    kvaSetState('speaking');
-    const clean = text.replace(/[*_`#>]/g, '').slice(0, 600);
+    speaking = true;
+    kvaSetUI('speaking');
+    const clean = text.replace(/[*_`#>]/g, '').slice(0, 700);
     const utt = new SpeechSynthesisUtterance(clean);
     utt.lang = 'ja-JP'; utt.rate = 1.05; utt.pitch = 1.0;
-    // prefer Japanese voice
     const voices = speechSynthesis.getVoices();
     const jaVoice = voices.find(v => v.lang.startsWith('ja') && v.localService) ||
                     voices.find(v => v.lang.startsWith('ja'));
     if (jaVoice) utt.voice = jaVoice;
-    utt.onend = () => kvaSetState('idle');
-    utt.onerror = () => kvaSetState('idle');
+    utt.onend = utt.onerror = () => {
+      speaking = false;
+      if (callActive) kvaListen(); else kvaSetUI('idle');
+    };
     speechSynthesis.speak(utt);
   }
 
-  // ── Public controls ──
-  window.kvaToggle = function() {
-    if (state === 'speaking') { speechSynthesis.cancel(); kvaSetState('idle'); return; }
-    if (state === 'idle')     { kvaStartRec(); return; }
-    if (state === 'listening') { kvaStopRec(); return; }
-    if (state === 'thinking') return;
+  // ── Camera ──
+  function kvaStartCam() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } }).then(s => {
+      camStream = s;
+      const v = kvaEl('kvaVideo'), off = kvaEl('kvaPipOff');
+      if (v) { v.srcObject = s; v.style.display = 'block'; }
+      if (off) off.style.display = 'none';
+    }).catch(() => { camOn = false; kvaEl('kvaCamBtn').className = 'kva-ctrl-btn kva-ctrl-cam off'; });
+  }
+
+  function kvaStopCam() {
+    camStream?.getTracks().forEach(t => t.stop()); camStream = null;
+    const v = kvaEl('kvaVideo'), off = kvaEl('kvaPipOff');
+    if (v) { v.srcObject = null; v.style.display = 'none'; }
+    if (off) off.style.display = 'flex';
+  }
+
+  // ── Call controls ──
+  window.kvaToggleCall = function() {
+    callActive = !callActive;
+    const btn = kvaEl('kvaCallBtn');
+    if (callActive) {
+      btn.textContent = '📵'; btn.className = 'kva-ctrl-btn kva-ctrl-call calling';
+      kvaStartStream();
+      kvaListen();
+    } else {
+      btn.textContent = '📞'; btn.className = 'kva-ctrl-btn kva-ctrl-call';
+      if (recog) { try { recog.abort(); } catch(_) {} recog = null; }
+      window.speechSynthesis?.cancel(); speaking = false;
+      kvaStopStream();
+      kvaSetUI('idle');
+    }
+  };
+
+  window.kvaToggleMute = function() {
+    muted = !muted;
+    const btn = kvaEl('kvaMuteBtn');
+    btn.textContent = muted ? '🔇' : '🎤';
+    btn.className = 'kva-ctrl-btn kva-ctrl-mute' + (muted ? ' muted' : '');
+    if (muted && recog) { try { recog.abort(); } catch(_) {} recog = null; kvaSetUI('idle'); }
+    else if (!muted && callActive) kvaListen();
+  };
+
+  window.kvaToggleCam = function() {
+    camOn = !camOn;
+    const btn = kvaEl('kvaCamBtn');
+    btn.textContent = camOn ? '📹' : '📷';
+    btn.className = 'kva-ctrl-btn kva-ctrl-cam' + (camOn ? '' : ' off');
+    camOn ? kvaStartCam() : kvaStopCam();
   };
 
   window.kvaSendText = function() {
@@ -6983,18 +7575,17 @@ window.openIframeWin = function(url, title, w, h) {
     inp.value = '';
     kvaAddMsg('user', text);
     kvaHistory.push({ role: 'user', content: text });
-    kvaSetState('thinking');
-    kvaBusy = false;
+    if (recog) { try { recog.abort(); } catch(_) {} recog = null; }
+    window.speechSynthesis?.cancel(); speaking = false;
+    kvaSetUI('thinking');
     kvaSendToChat();
   };
 
-  // Enter key
+  // Enter key + init
   document.addEventListener('DOMContentLoaded', () => {
     const inp = kvaEl('kvaInput');
     if (inp) inp.addEventListener('keydown', e => { if (e.key === 'Enter') window.kvaSendText(); });
-    // Start animation loop
     kvaAnimate();
-    // Preload voices
     speechSynthesis?.getVoices();
     speechSynthesis?.addEventListener('voiceschanged', () => speechSynthesis.getVoices());
   });
@@ -7040,6 +7631,277 @@ function pwaInstall() {
   _installPrompt.userChoice.then(function() { _installPrompt = null; var btn = document.getElementById('pwa-install-btn'); if (btn) btn.style.display = 'none'; });
 }
 
+// ════════════════════════════════════════════
+// MOBILE WOW: Gyroscope + Touch Ripple + Hero 3D Tilt
+// ════════════════════════════════════════════
+(function() {
+  if (window.innerWidth > 767) return;
+
+  // ── 1. Touch Ripple ──
+  document.addEventListener('touchstart', function(e) {
+    var t = e.touches[0];
+    var size = 120;
+    var el = document.createElement('div');
+    el.className = 'touch-ripple';
+    el.style.cssText = 'width:' + size + 'px;height:' + size + 'px;' +
+      'left:' + (t.clientX - size/2) + 'px;top:' + (t.clientY - size/2) + 'px;';
+    document.body.appendChild(el);
+    setTimeout(function() { el.remove(); }, 700);
+    // Haptic
+    if (navigator.vibrate) navigator.vibrate(8);
+  }, { passive: true });
+
+  // ── 2. Hero Card 3D Tilt ──
+  var hero = document.getElementById('mobile-hero');
+  if (hero) {
+    var heroRect, touchStartX, touchStartY;
+    hero.addEventListener('touchstart', function(e) {
+      heroRect = hero.getBoundingClientRect();
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      hero.classList.add('tilt-active');
+      hero.style.transition = 'transform 0.05s, box-shadow .2s';
+    }, { passive: true });
+    hero.addEventListener('touchmove', function(e) {
+      if (!heroRect) return;
+      var cx = e.touches[0].clientX - heroRect.left;
+      var cy = e.touches[0].clientY - heroRect.top;
+      var rx = ((cy / heroRect.height) - 0.5) * -18;
+      var ry = ((cx / heroRect.width)  - 0.5) *  18;
+      hero.style.transform = 'perspective(700px) rotateX(' + rx + 'deg) rotateY(' + ry + 'deg) scale(1.02)';
+    }, { passive: true });
+    function resetHero() {
+      hero.classList.remove('tilt-active');
+      hero.style.transition = 'transform 0.5s cubic-bezier(0.34,1.2,0.64,1), box-shadow .3s';
+      hero.style.transform = 'perspective(700px) rotateX(0deg) rotateY(0deg) scale(1)';
+    }
+    hero.addEventListener('touchend', resetHero, { passive: true });
+    hero.addEventListener('touchcancel', resetHero, { passive: true });
+  }
+
+  // ── 3. Gyroscope Parallax ──
+  var starsCanvas = document.getElementById('stars-canvas');
+  var wallpaper   = document.getElementById('wallpaper');
+  var gyroX = 0, gyroY = 0, targetX = 0, targetY = 0;
+  var gyroEnabled = false;
+
+  function applyGyro() {
+    gyroX += (targetX - gyroX) * 0.08;
+    gyroY += (targetY - gyroY) * 0.08;
+    if (starsCanvas) {
+      starsCanvas.style.transform = 'translate(' + (gyroX * 12) + 'px,' + (gyroY * 8) + 'px) scale(1.05)';
+    }
+    if (wallpaper) {
+      wallpaper.style.transform = 'translate(' + (gyroX * 5) + 'px,' + (gyroY * 4) + 'px)';
+    }
+    if (hero) {
+      var idleRx = gyroY * -4;
+      var idleRy = gyroX *  4;
+      if (!hero.classList.contains('tilt-active')) {
+        hero.style.transition = 'transform 0.3s';
+        hero.style.transform = 'perspective(700px) rotateX(' + idleRx + 'deg) rotateY(' + idleRy + 'deg)';
+      }
+    }
+    requestAnimationFrame(applyGyro);
+  }
+
+  function startGyro() {
+    window.addEventListener('deviceorientation', function(e) {
+      if (e.beta === null) return;
+      // beta: front-back tilt (-180..180), gamma: left-right tilt (-90..90)
+      targetX = Math.max(-1, Math.min(1, e.gamma / 30));
+      targetY = Math.max(-1, Math.min(1, (e.beta - 45) / 30));
+    }, { passive: true });
+    applyGyro();
+    gyroEnabled = true;
+  }
+
+  // iOS 13+ requires permission
+  if (typeof DeviceOrientationEvent !== 'undefined' &&
+      typeof DeviceOrientationEvent.requestPermission === 'function') {
+    // Request on first tap anywhere
+    document.addEventListener('touchstart', function tryPermission() {
+      document.removeEventListener('touchstart', tryPermission);
+      DeviceOrientationEvent.requestPermission().then(function(state) {
+        if (state === 'granted') startGyro();
+      }).catch(function() {});
+    }, { once: true, passive: true });
+  } else if (window.DeviceOrientationEvent) {
+    startGyro();
+  }
+
+  // ── 4. Dock spring pop-in with stagger ──
+  var dockApps = document.querySelectorAll('.dock-app');
+  dockApps.forEach(function(app, i) {
+    app.style.animationDelay = (0.05 + i * 0.04) + 's';
+  });
+
+  // ── 5. Dock icon spring-back on tap ──
+  dockApps.forEach(function(app) {
+    app.addEventListener('touchstart', function() {
+      var wrap = app.querySelector('.dock-icon-wrap');
+      if (wrap) { wrap.style.transition = 'transform 0.1s'; wrap.style.transform = 'scale(0.8)'; }
+      if (navigator.vibrate) navigator.vibrate(6);
+    }, { passive: true });
+    app.addEventListener('touchend', function() {
+      var wrap = app.querySelector('.dock-icon-wrap');
+      if (wrap) {
+        wrap.style.transition = 'transform 0.4s cubic-bezier(0.34,1.7,0.64,1)';
+        wrap.style.transform = 'scale(1)';
+      }
+    }, { passive: true });
+  });
+
+})();
+
+// ════════════════════════════════════════════
+// FINDER APP
+// ════════════════════════════════════════════
+const FINDER_FOLDERS = {
+  soluna: {
+    label: '🌙 SOLUNA プロジェクト',
+    files: [
+      { icon: '🌐', name: 'solun.art',            desc: '公式サイト',           action: 'iframe', url: 'https://solun.art' },
+      { icon: '📋', name: '事業概要.pdf',          desc: '共同所有リゾート概要',  action: 'iframe', url: 'https://solun.art' },
+      { icon: '🏡', name: '弟子屈ロッジ',          desc: '北海道川上郡弟子屈町',  action: 'iframe', url: 'https://solun.art/#lodge' },
+      { icon: '🎵', name: 'SOLUNA FEST HAWAII',   desc: 'East Ventures出資済み', action: 'iframe', url: 'https://solun.art/#fest' },
+      { icon: '📡', name: 'Solunaプロトコル',      desc: 'デバイス3層設計',       action: 'iframe', url: 'https://solun.art/#protocol' },
+      { icon: '🛖', name: 'サウナ棟設計',          desc: '2026年7月着工予定',     action: 'open',   url: 'https://solun.art' },
+      { icon: '📐', name: 'ストローベイル離れ',    desc: '2026年8〜9月',          action: 'open',   url: 'https://solun.art' },
+    ]
+  },
+  projects: {
+    label: '🚀 プロダクト',
+    files: [
+      { icon: '🤖', name: 'chatweb.ai',   desc: 'AIターミナル',           action: 'iframe', url: 'https://chatweb.ai' },
+      { icon: '📱', name: 'パシャ',       desc: 'レシート経費管理',       action: 'open',   url: 'https://pasha.run' },
+      { icon: '🥋', name: 'JiuFlow',      desc: '柔術アプリ',             action: 'iframe', url: 'https://jiuflow.art' },
+      { icon: '🎵', name: 'Koe Device',   desc: 'ESP32音声デバイス',      action: 'iframe', url: 'https://koe.live' },
+      { icon: '🏢', name: 'enablerdao',   desc: '会社サイト',             action: 'iframe', url: 'https://enablerdao.com' },
+      { icon: '📰', name: 'news.xyz',     desc: 'AIニュースサイト',       action: 'open',   url: 'https://news.xyz' },
+    ]
+  },
+  links: {
+    label: '🔗 リンク集',
+    files: [
+      { icon: '🐦', name: 'X (@yukihamada)',   desc: 'Twitter/X',       action: 'open',   url: 'https://x.com/yukihamada' },
+      { icon: '💻', name: 'GitHub',            desc: 'yukihamada',      action: 'open',   url: 'https://github.com/yukihamada' },
+      { icon: '💼', name: 'LinkedIn',          desc: 'yukihamada',      action: 'open',   url: 'https://linkedin.com/in/yukihamada' },
+      { icon: '✉️', name: 'Mail',              desc: 'mail@yukihamada.jp', action: 'mail', url: 'mailto:mail@yukihamada.jp' },
+    ]
+  },
+  hokkaido: {
+    label: '🏔 北海道 弟子屈',
+    files: [
+      { icon: '🗺', name: '現地マップ',      desc: '熊牛原野',              action: 'iframe', url: 'https://www.google.com/maps/place/弟子屈町熊牛原野/@43.5,-144.5,12z' },
+      { icon: '🌙', name: 'SOLUNA Lodge',    desc: '施設ページ',            action: 'iframe', url: 'https://solun.art' },
+      { icon: '♨️',  name: '屈斜路湖',       desc: 'コタン温泉',            action: 'open',   url: 'https://www.masyuko.or.jp' },
+      { icon: '🌋', name: '摩周湖',          desc: '霧の摩周湖',            action: 'open',   url: 'https://www.masyuko.or.jp' },
+    ]
+  },
+  hawaii: {
+    label: '🌺 SOLUNA FEST HAWAII',
+    files: [
+      { icon: '🎪', name: 'フェスサイト',    desc: 'SOLUNA FEST 2026',     action: 'iframe', url: 'https://solun.art' },
+      { icon: '🏝', name: 'ハワイ会場',      desc: 'Big Island 予定',      action: 'open',   url: 'https://solun.art' },
+      { icon: '💰', name: 'East Ventures',   desc: '5000万円出資',          action: 'open',   url: 'https://eastventures.jp' },
+    ]
+  },
+};
+
+window.finderOpenFolder = function(key) {
+  var folder = FINDER_FOLDERS[key];
+  if (!folder) return;
+  var area = document.getElementById('finder-file-area');
+  if (!area) return;
+
+  // Update sidebar active state
+  document.querySelectorAll('.finder-sidebar-item').forEach(function(el) {
+    el.style.background = '';
+  });
+  var sideItems = document.querySelectorAll('.finder-sidebar-item');
+  var keys = ['soluna','projects','links','hokkaido','hawaii'];
+  var idx = keys.indexOf(key);
+  if (idx >= 0 && sideItems[idx]) sideItems[idx].style.background = 'rgba(232,160,76,0.12)';
+
+  area.innerHTML = '<div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.35);letter-spacing:.08em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,0.06);">' + folder.label + '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;">' +
+    folder.files.map(function(f) {
+      var onclick = '';
+      if (f.action === 'iframe') {
+        onclick = "openIframeWin('" + f.url + "','" + f.icon + ' ' + f.name + "',900,640)";
+      } else if (f.action === 'open') {
+        onclick = "window.open('" + f.url + "','_blank')";
+      } else if (f.action === 'mail') {
+        onclick = "location.href='" + f.url + "'";
+      }
+      return '<div onclick="' + onclick + '" style="display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 6px;border-radius:8px;cursor:pointer;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);transition:background .12s;" onmouseover="this.style.background=\'rgba(232,160,76,0.08)\'" onmouseout="this.style.background=\'rgba(255,255,255,0.03)\'">' +
+        '<div style="font-size:28px;line-height:1;">' + f.icon + '</div>' +
+        '<div style="font-size:10.5px;font-weight:600;color:#dcdce4;text-align:center;word-break:break-all;line-height:1.3;">' + f.name + '</div>' +
+        '<div style="font-size:9.5px;color:rgba(150,150,165,0.7);text-align:center;">' + f.desc + '</div>' +
+      '</div>';
+    }).join('') + '</div>';
+};
+
+// ════════════════════════════════════════════
+// OWNER HEARTBEAT + LIVE CHAT STATUS
+// ════════════════════════════════════════════
+(function() {
+  var heartbeatTimer = null;
+
+  function sendHeartbeat() {
+    var token = getUserIsAdmin() ? getUserToken() : null;
+    if (!token) return;
+    fetch('/api/chat/owner-heartbeat?token=' + encodeURIComponent(token), {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'}
+    }).catch(function() {});
+  }
+
+  function startHeartbeat() {
+    if (heartbeatTimer) return;
+    sendHeartbeat();
+    heartbeatTimer = setInterval(sendHeartbeat, 30000);
+  }
+
+  function stopHeartbeat() {
+    if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
+  }
+
+  // Start/stop based on admin login state
+  document.addEventListener('adminLoggedIn', function() {
+    if (getUserIsAdmin()) startHeartbeat();
+  });
+
+  // Also check on page load
+  if (getUserIsAdmin() && getUserToken()) startHeartbeat();
+
+  // Poll owner-online status and update chat header
+  function pollOwnerStatus() {
+    fetch('/api/chat/owner-online').then(function(r) { return r.json(); }).then(function(d) {
+      var el = document.getElementById('chat-status-text');
+      if (!el) return;
+      if (d.online) {
+        el.textContent = '🟢 本人オンライン';
+        el.style.color = '#5eead4';
+        var nameEl = el.previousElementSibling;
+        if (nameEl) nameEl.textContent = '濱田優貴';
+      } else {
+        el.textContent = '● AI対応中';
+        el.style.color = '';
+        var nameEl2 = el.previousElementSibling;
+        if (nameEl2) nameEl2.textContent = '濱田優貴 AI';
+      }
+    }).catch(function() {});
+  }
+
+  // Poll every 20s
+  pollOwnerStatus();
+  setInterval(pollOwnerStatus, 20000);
+  // Also refresh when chat opens
+  document.addEventListener('chatOpened', pollOwnerStatus);
+})();
+
 // ── Web Share API ──
 function shareUrl(title, url) {
   url = url || location.href;
@@ -7067,6 +7929,135 @@ function showToast(msg, ms) {
 }
 </script>
 
-<!-- Admin Notification Panel -->
+<!-- Admin Chat Inbox (shown only when logged in as admin) -->
+<div id="admin-chat-inbox" style="display:none;position:fixed;bottom:90px;right:16px;width:320px;max-height:480px;
+  background:rgba(12,14,22,0.96);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border:1px solid rgba(232,160,76,0.3);border-radius:16px;z-index:9500;
+  box-shadow:0 8px 40px rgba(0,0,0,0.6);overflow:hidden;display:none;flex-direction:column;">
+  <div style="padding:12px 14px 8px;border-bottom:1px solid rgba(255,255,255,0.07);
+    display:flex;align-items:center;justify-content:space-between;">
+    <span style="font-size:12px;font-weight:700;color:rgba(232,160,76,0.9);">💬 訪問者からのメッセージ</span>
+    <button onclick="document.getElementById('admin-chat-inbox').style.display='none'"
+      style="background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;font-size:16px;padding:0;">✕</button>
+  </div>
+  <div id="admin-inbox-msgs" style="flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px;max-height:280px;"></div>
+  <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);">
+    <div style="display:flex;gap:8px;">
+      <input id="admin-reply-input" type="text" placeholder="返信を入力…" maxlength="500"
+        style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+          border-radius:8px;padding:8px 10px;color:#eaeaf2;font-size:13px;outline:none;">
+      <button id="admin-reply-send"
+        style="background:rgba(232,160,76,0.2);border:1px solid rgba(232,160,76,0.3);
+          color:rgba(232,160,76,0.9);border-radius:8px;padding:8px 12px;cursor:pointer;font-size:13px;font-weight:600;">
+        送信
+      </button>
+    </div>
+    <button id="admin-ai-suggest-btn"
+      style="margin-top:6px;width:100%;background:rgba(94,234,212,0.08);border:1px solid rgba(94,234,212,0.2);
+        color:rgba(94,234,212,0.7);border-radius:8px;padding:6px;cursor:pointer;font-size:11.5px;">
+      ✨ AI返信案を生成
+    </button>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════
+// ADMIN CHAT INBOX
+// ════════════════════════════════════════════
+(function() {
+  var inbox   = document.getElementById('admin-chat-inbox');
+  var msgsEl  = document.getElementById('admin-inbox-msgs');
+  var input   = document.getElementById('admin-reply-input');
+  var sendBtn = document.getElementById('admin-reply-send');
+  var aiBtn   = document.getElementById('admin-ai-suggest-btn');
+  var currentSession = null;
+  var es = null;
+
+  function addInboxMsg(role, text) {
+    var div = document.createElement('div');
+    div.style.cssText = role === 'visitor'
+      ? 'background:rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;font-size:12.5px;color:#d0d0d8;'
+      : 'background:rgba(232,160,76,0.12);border-radius:8px;padding:8px 10px;font-size:12.5px;color:rgba(232,160,76,0.9);text-align:right;';
+    div.textContent = text;
+    msgsEl.appendChild(div);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
+  function startAdminStream(token) {
+    if (es) { es.close(); }
+    es = new EventSource('/api/chat/admin-stream?token=' + encodeURIComponent(token));
+    es.onmessage = function(e) {
+      try {
+        var d = JSON.parse(e.data);
+        if (d.ping) return;
+        if (d.session_id && d.message) {
+          currentSession = d.session_id;
+          msgsEl.innerHTML = '';
+          addInboxMsg('visitor', d.message);
+          inbox.style.display = 'flex';
+          // Haptic on mobile
+          if (navigator.vibrate) navigator.vibrate([30, 10, 30]);
+        }
+      } catch(_) {}
+    };
+    es.onerror = function() {
+      setTimeout(function() {
+        if (getUserIsAdmin() && getUserToken()) startAdminStream(getUserToken());
+      }, 5000);
+    };
+  }
+
+  function sendReply() {
+    var text = input.value.trim();
+    if (!text || !currentSession) return;
+    var token = getUserToken();
+    fetch('/api/chat/admin-reply?token=' + encodeURIComponent(token), {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({session_id: currentSession, text: text})
+    }).then(function() {
+      addInboxMsg('admin', text);
+      input.value = '';
+    }).catch(function() {});
+  }
+
+  sendBtn.addEventListener('click', sendReply);
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendReply(); }
+  });
+
+  aiBtn.addEventListener('click', function() {
+    if (!currentSession) return;
+    var token = getUserToken();
+    aiBtn.textContent = '…生成中';
+    aiBtn.disabled = true;
+    // Get last visitor message
+    var msgs = msgsEl.querySelectorAll('div');
+    var lastMsg = '';
+    msgs.forEach(function(m) { if (m.style.textAlign !== 'right') lastMsg = m.textContent; });
+    fetch('/api/chat/ai-suggest?token=' + encodeURIComponent(token), {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({message: lastMsg, session_id: currentSession})
+    }).then(function(r) { return r.json(); }).then(function(d) {
+      if (d.suggestion) input.value = d.suggestion;
+      aiBtn.textContent = '✨ AI返信案を生成';
+      aiBtn.disabled = false;
+    }).catch(function() {
+      aiBtn.textContent = '✨ AI返信案を生成';
+      aiBtn.disabled = false;
+    });
+  });
+
+  function init() {
+    if (!getUserIsAdmin() || !getUserToken()) return;
+    startAdminStream(getUserToken());
+  }
+
+  document.addEventListener('adminLoggedIn', init);
+  init();
+})();
+</script>
+
 </body>
 </html>
