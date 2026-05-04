@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>それ恋じゃなく柔術でした — シーン選択</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:system-ui,sans-serif;padding:20px 20px 80px;}
+h1{text-align:center;font-size:1.5rem;color:#E8B64A;margin-bottom:4px;}
+p.sub{text-align:center;color:#888;font-size:.85rem;margin-bottom:30px;}
+.section{margin-bottom:40px;border-bottom:1px solid #222;padding-bottom:30px;}
+.section h2{font-size:1.1rem;color:#E8B64A;margin-bottom:4px;}
+.section .lyric{font-size:.85rem;color:#aaa;margin-bottom:12px;font-style:italic;}
+.row{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;}
+.card{position:relative;flex-shrink:0;border:3px solid #333;border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .3s,transform .2s;}
+.card:hover{transform:scale(1.02);}
+.card.selected{border-color:#E8B64A;box-shadow:0 0 20px rgba(232,182,74,.3);}
+.card img{height:260px;display:block;}
+.card .badge{position:absolute;top:8px;right:8px;background:#E8B64A;color:#111;font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:8px;display:none;}
+.card.selected .badge{display:block;}
+.label{font-size:.7rem;color:#666;margin-top:4px;text-align:center;max-width:260px;}
+.confirm{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#E8B64A;color:#111;font-weight:700;font-size:1rem;padding:14px 40px;border:none;border-radius:30px;cursor:pointer;z-index:100;display:none;box-shadow:0 4px 20px rgba(232,182,74,.4);}
+.confirm:hover{background:#D4A03A;}
+.counter{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);color:#888;font-size:.8rem;z-index:100;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<h1>それ恋じゃなく柔術でした — シーン選択</h1>
+<p class="sub">YAWARA道場 × 黒SWEEP道着 — 各シーン好きな方をタップして選んでください</p>
+
+<div class="section" data-scene="1">
+  <h2>Scene 1: 「胸の上で息が詰まる」</h2>
+  <div class="lyric">また胸の上で息が詰まる / 離れたくない でも正直ちょっと苦しい</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s1a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s1a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_new_s1b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s1b.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f1a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f1a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f1b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f1b.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="2">
+  <h2>Scene 2: 「手首つかまれて逃げ道ない」</h2>
+  <div class="lyric">手首つかまれて逃げ道ない / なのに笑ってる 私もおかしい</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s2a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s2a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_new_s2b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s2b.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f2a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f2a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f2b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f2b.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="3">
+  <h2>Scene 3: 「1・2・3… tap, tap, tap」</h2>
+  <div class="lyric">1・2・3… 深く吸って / 目を開けたら世界がスローになる</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s3a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s3a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f3a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f3a.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="4">
+  <h2>Scene 4: 「ガードが固いから」★核心シーン</h2>
+  <div class="lyric">依存じゃない、ポジションだ / 離れられないのはガードが固いから</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s4a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s4a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_new_s4b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s4b.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f4a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f4a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f4b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f4b.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="5">
+  <h2>Scene 5: 「朝のベランダ 白い君」</h2>
+  <div class="lyric">朝のベランダ 風に揺れる白い君 / 袖口のほつれさえも愛しい</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s5a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s5a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f5a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f5a.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="6">
+  <h2>Scene 6: 「絡んで ほどいて また組み直す」</h2>
+  <div class="lyric">絡んで ほどいて また組み直す / 涙じゃなくて汗と笑い</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s6a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s6a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f6a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f6a.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="7">
+  <h2>Scene 7: 「青い日々 紫の夢」</h2>
+  <div class="lyric">青い日々 紫の夢 / 焦らず一つずつスイープしていく</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s7a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s7a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f7a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f7a.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="8">
+  <h2>Scene 8: 「ここが居場所」</h2>
+  <div class="lyric">ここが居場所だって知ってるから / 痛みはサイン 不安はチャンス</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s8a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s8a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_new_s8b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s8b.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f8a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f8a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f8b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f8b.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_yawara1.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_yawara1.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_yawara4.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_yawara4.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="9">
+  <h2>Scene 9: 「tap, tap, tap — 明日に続く合図」</h2>
+  <div class="lyric">tap、tap、tap——明日に続く合図</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s9a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s9a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f9a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f9a.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="section" data-scene="10">
+  <h2>Scene 10: 「勘違いしてた — でもそれでいい」</h2>
+  <div class="lyric">勘違いしてた——でもそれでいい / 物語はここで ほどけて結び直す</div>
+  <div class="row">
+    <div class="card" data-img="jj_new_s10a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_new_s10a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_f10a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_f10a.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_yawara3.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_yawara3.jpg"><div class="badge">SELECTED</div></div>
+    <div class="card" data-img="jj_sunrise.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_sunrise.jpg"><div class="badge">SELECTED</div></div>
+  </div>
+</div>
+
+<div class="counter" id="counter">0 / 10 シーン選択済み</div>
+<button class="confirm" id="confirm-btn" onclick="confirm()">この組み合わせでMVを作る</button>
+
+<script>
+const selections={};
+function pick(card){
+  const section=card.closest('.section');
+  const scene=section.dataset.scene;
+  section.querySelectorAll('.card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selections[scene]=card.dataset.img;
+  updateCounter();
+}
+function updateCounter(){
+  const n=Object.keys(selections).length;
+  document.getElementById('counter').textContent=`${n} / 10 シーン選択済み`;
+  document.getElementById('confirm-btn').style.display=n>=5?'block':'none';
+}
+function confirm(){
+  const summary=Object.entries(selections).map(([s,img])=>`Scene ${s}: ${img}`).join('\n');
+  alert('選択完了!\n\n'+summary+'\n\nこの選択をチャットに貼り付けてください。MVに組み込みます。');
+  navigator.clipboard.writeText(JSON.stringify(selections)).catch(()=>{});
+}
+</script>
+</body>
+</html>

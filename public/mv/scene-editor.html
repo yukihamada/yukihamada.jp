@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Scene Editor — それ恋じゃなく柔術でした</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:system-ui,sans-serif;padding:12px 12px 80px;}
+h1{text-align:center;font-size:1.2rem;color:#E8B64A;margin-bottom:4px;}
+p.sub{text-align:center;color:#888;font-size:.75rem;margin-bottom:16px;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px;max-width:1400px;margin:0 auto;}
+.card{border:2px solid #222;border-radius:8px;overflow:hidden;background:#1a1a1a;cursor:pointer;transition:border-color .2s;}
+.card:hover{border-color:#555;}
+.card.flagged{border-color:#E8B64A;box-shadow:0 0 12px rgba(232,182,74,.2);}
+.card .thumb{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;}
+.card .thumb img,.card .thumb video{width:100%;height:100%;object-fit:cover;}
+.card .badge{position:absolute;top:4px;right:4px;font-size:.55rem;padding:2px 6px;border-radius:4px;font-weight:700;}
+.card .badge.vid{background:rgba(232,134,58,.8);color:#fff;}
+.card .badge.img{background:rgba(80,80,80,.8);color:#ccc;}
+.card .flag{position:absolute;top:4px;left:4px;font-size:.7rem;background:#E8B64A;color:#111;padding:1px 6px;border-radius:4px;display:none;font-weight:700;}
+.card.flagged .flag{display:block;}
+.card .info{padding:8px 10px;}
+.card .time{font-family:monospace;font-size:.75rem;color:#E8B64A;}
+.card .lyric{font-size:.7rem;color:#aaa;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card .file{font-size:.6rem;color:#555;margin-top:2px;}
+.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,17,.95);border-top:1px solid #333;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;z-index:100;backdrop-filter:blur(8px);}
+.bar .count{color:#E8B64A;font-size:.85rem;}
+.bar button{background:#E8B64A;color:#111;border:none;padding:8px 20px;border-radius:8px;font-weight:700;cursor:pointer;font-size:.8rem;}
+.bar button:hover{background:#d4a03a;}
+.section-label{grid-column:1/-1;padding:8px 0 2px;border-top:1px solid #333;margin-top:8px;}
+.section-label span{font-size:.75rem;color:#E8B64A;font-weight:700;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<h1>Scene Editor</h1>
+<p class="sub">変更したいシーンをタップしてフラグを立ててください</p>
+<div class="grid" id="grid"></div>
+<div class="bar">
+  <div class="count"><span id="count">0</span> シーン選択中</div>
+  <button onclick="exportFlags()">選択をコピー</button>
+</div>
+
+<script>
+const LYRICS=[
+{t:0,x:'♪ (intro)'},{t:24.8,x:'また胸の上で息が詰まる'},{t:29,x:'離れたくない'},{t:35,x:'手首つかまれて逃げ道ない'},
+{t:40,x:'なのに笑ってる'},{t:46,x:'夜更けのメモにしがみついて'},{t:49,x:'会いたいより増えていく数字'},
+{t:52,x:'1・2・3…深く吸って'},{t:54,x:'目を開けたら世界がスロー'},{t:59,x:'依存じゃない、ポジションだ'},
+{t:62,x:'離れられないのはガードが固いから'},{t:65,x:'愛が苦しい？それ三角絞め'},{t:68,x:'恋に落ちた？ハーフのまんま'},
+{t:70,x:'壊されたい？崩されたいだけ'},{t:74,x:'ベースと重心で優しく'},{t:77,x:'それ恋じゃなくて柔術でした'},
+{t:79,x:'tap,tap,tap——もう一回'},{t:82,x:'♪ (間奏)'},{t:95,x:'朝のベランダ白い君'},
+{t:98,x:'袖口のほつれさえも愛しい'},{t:101,x:'カードの磁気が擦り切れるほど'},{t:104,x:'今日の痛みは明日の私を守る'},
+{t:107,x:'弱さも全部持ち寄って'},{t:109,x:'絡んでほどいてまた組み直す'},{t:113,x:'涙じゃなくて汗と笑い'},
+{t:116,x:'フレーム作って呼吸を守る'},{t:119,x:'執着じゃない、ディフェンスだ'},{t:122,x:'距離を置くのはスペース作るため'},
+{t:124,x:'もう無理かも？それは肩固め'},{t:126,x:'君に縛られた？襟を握っただけ'},{t:131,x:'君が怖い？自分が好きになってく'},
+{t:134,x:'マットの上で'},{t:136,x:'それ恋じゃなくて柔術でした'},{t:138,x:'tap,tap,tap——合図でほどける'},
+{t:142,x:'青い日々紫の夢'},{t:146,x:'焦らず一つずつスイープ'},{t:152,x:'世界が狭くなるほど自由に'},
+{t:157,x:'先生今日もよろしくお願いします'},{t:166,x:'右手でフレーム左で襟'},{t:169,x:'腰切って回って返して'},
+{t:172,x:'抑え込み逃げてまた笑う'},{t:174,x:'大丈夫、呼吸して'},{t:179,x:'依存じゃない、私の選択だ'},
+{t:182,x:'離れられないのは好きだけじゃない'},{t:185,x:'ここが居場所だって知ってるから'},{t:188,x:'痛みはサイン不安はチャンス'},
+{t:190,x:'愛が欲しい？まずは一本'},{t:193,x:'マットに置いた鼓動が歌う'},{t:196,x:'それ恋じゃなくて柔術でした'},
+{t:199,x:'tap,tap,tap——明日に続く'},{t:202,x:'勘違いしてた——'},{t:212,x:'でもそれでいい'},
+{t:214,x:'ほどけて結び直す'},{t:222,x:'♪'},
+];
+
+const SECTIONS=['INTRO','','','','VERSE 1','','','','PRE-CHO','','CHORUS 1','','','','','間奏','','VERSE 2','','','','CHORUS 2','','','','BRIDGE','','','','BREAKDOWN','','','','FINAL','','','','OUTRO','','',''];
+
+const MEDIA=[
+{t:'vid',src:'scene_01_v3.mp4',full:'assets/video/scene_01_v3.mp4'},
+{t:'img',src:'jj_ex05.jpg',full:'assets/images/generated/jj_ex05.jpg'},
+{t:'vid',src:'scene_02_v3.mp4',full:'assets/video/scene_02_v3.mp4'},
+{t:'img',src:'jj_ex02.jpg',full:'assets/images/generated/jj_ex02.jpg'},
+{t:'img',src:'jj_ex03.jpg',full:'assets/images/generated/jj_ex03.jpg'},
+{t:'vid',src:'scene_03_v3.mp4',full:'assets/video/scene_03_v3.mp4'},
+{t:'vid',src:'scene_04_v3.mp4',full:'assets/video/scene_04_v3.mp4'},
+{t:'img',src:'jj_new_s3a.jpg',full:'assets/images/generated/jj_new_s3a.jpg'},
+{t:'img',src:'jj_ex09.jpg',full:'assets/images/generated/jj_ex09.jpg'},
+{t:'vid',src:'scene_05.mp4',full:'assets/video/scene_05.mp4'},
+{t:'vid',src:'scene_06.mp4',full:'assets/video/scene_06.mp4'},
+{t:'img',src:'jj_ex07.jpg',full:'assets/images/generated/jj_ex07.jpg'},
+{t:'img',src:'jj_ex08.jpg',full:'assets/images/generated/jj_ex08.jpg'},
+{t:'vid',src:'scene_07.mp4',full:'assets/video/scene_07.mp4'},
+{t:'vid',src:'tap_1.mp4',full:'assets/video/tap_1.mp4'},
+{t:'img',src:'jj_comp4.jpg',full:'assets/images/generated/jj_comp4.jpg'},
+{t:'img',src:'jj_comp1.jpg',full:'assets/images/generated/jj_comp1.jpg'},
+{t:'vid',src:'scene_08.mp4',full:'assets/video/scene_08.mp4'},
+{t:'img',src:'jj_ex11.jpg',full:'assets/images/generated/jj_ex11.jpg'},
+{t:'vid',src:'scene_09.mp4',full:'assets/video/scene_09.mp4'},
+{t:'img',src:'jj_new_s6a.jpg',full:'assets/images/generated/jj_new_s6a.jpg'},
+{t:'img',src:'jj_br03.jpg',full:'assets/images/generated/jj_br03.jpg'},
+{t:'img',src:'jj_br04.jpg',full:'assets/images/generated/jj_br04.jpg'},
+{t:'img',src:'jj_br05.jpg',full:'assets/images/generated/jj_br05.jpg'},
+{t:'vid',src:'tap_2.mp4',full:'assets/video/tap_2.mp4'},
+{t:'vid',src:'scene_10.mp4',full:'assets/video/scene_10.mp4'},
+{t:'img',src:'jj_ex15.jpg',full:'assets/images/generated/jj_ex15.jpg'},
+{t:'img',src:'jj_ex16.jpg',full:'assets/images/generated/jj_ex16.jpg'},
+{t:'vid',src:'scene_11.mp4',full:'assets/video/scene_11.mp4'},
+{t:'img',src:'jj_ex17.jpg',full:'assets/images/generated/jj_ex17.jpg'},
+{t:'img',src:'jj_comp2.jpg',full:'assets/images/generated/jj_comp2.jpg'},
+{t:'img',src:'jj_comp3.jpg',full:'assets/images/generated/jj_comp3.jpg'},
+{t:'img',src:'jj_ex22.jpg',full:'assets/images/generated/jj_ex22.jpg'},
+{t:'img',src:'jj_br07.jpg',full:'assets/images/generated/jj_br07.jpg'},
+{t:'img',src:'jj_ex19.jpg',full:'assets/images/generated/jj_ex19.jpg'},
+{t:'img',src:'jj_br12.jpg',full:'assets/images/generated/jj_br12.jpg'},
+{t:'vid',src:'tap_3.mp4',full:'assets/video/tap_3.mp4'},
+{t:'img',src:'jj_br08.jpg',full:'assets/images/generated/jj_br08.jpg'},
+{t:'img',src:'jj_takeshita1.jpg',full:'assets/images/generated/jj_takeshita1.jpg'},
+{t:'img',src:'jj_br10.jpg',full:'assets/images/generated/jj_br10.jpg'},
+{t:'img',src:'jj_takeshita2.jpg',full:'assets/images/generated/jj_takeshita2.jpg'},
+];
+
+const times=[0,6,12,18,24.8,29,35,40,46,52,59,65,70,74,79,82,88,95,101,107,113,119,124,131,138,142,148,154,160,166,169,172,177,179,185,190,199,202,208,214,222];
+
+const grid=document.getElementById('grid');
+const flagged=new Set();
+
+MEDIA.forEach((m,i)=>{
+  // Section label
+  if(SECTIONS[i]){
+    const label=document.createElement('div');
+    label.className='section-label';
+    label.innerHTML=`<span>${SECTIONS[i]}</span>`;
+    grid.appendChild(label);
+  }
+
+  const card=document.createElement('div');
+  card.className='card';
+  card.dataset.idx=i;
+
+  const t=times[i]||0;
+  const min=Math.floor(t/60);
+  const sec=(t%60).toFixed(1);
+
+  let lyric='';
+  for(let j=LYRICS.length-1;j>=0;j--){
+    if(LYRICS[j].t<=t){lyric=LYRICS[j].x;break;}
+  }
+
+  const thumbHTML=m.t==='vid'
+    ?`<video src="${m.full}" muted preload="metadata"></video>`
+    :`<img src="${m.full}" loading="lazy">`;
+
+  card.innerHTML=`
+    <div class="thumb">
+      ${thumbHTML}
+      <div class="badge ${m.t}">${m.t==='vid'?'VIDEO':'IMG'}</div>
+      <div class="flag">CHANGE</div>
+    </div>
+    <div class="info">
+      <div class="time">${min}:${sec.padStart(4,'0')}</div>
+      <div class="lyric">${lyric}</div>
+      <div class="file">${m.src}</div>
+    </div>`;
+
+  card.onclick=()=>{
+    if(flagged.has(i)){flagged.delete(i);card.classList.remove('flagged');}
+    else{flagged.add(i);card.classList.add('flagged');}
+    document.getElementById('count').textContent=flagged.size;
+  };
+
+  grid.appendChild(card);
+});
+
+function exportFlags(){
+  const result=[...flagged].sort((a,b)=>a-b).map(i=>{
+    const t=times[i]||0;
+    const min=Math.floor(t/60);const sec=(t%60).toFixed(1);
+    let lyric='';
+    for(let j=LYRICS.length-1;j>=0;j--){if(LYRICS[j].t<=t){lyric=LYRICS[j].x;break;}}
+    return `#${i} [${min}:${sec}] ${lyric} → ${MEDIA[i].src}`;
+  }).join('\n');
+  navigator.clipboard.writeText(result).then(()=>alert('コピーしました!\n\n'+result));
+}
+</script>
+</body>
+</html>

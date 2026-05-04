@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Triangle Song (三角のうた) — 濱田優貴</title>
+<meta name="description" content="三角締めの全てがわかるMV。村田良蔵先生の教えを歌に。クローズドガードから三角へ。">
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/triangle.html">
+<meta property="og:title" content="Triangle Song (三角のうた) — 濱田優貴">
+<meta property="og:description" content="三角締めのやり方を、やさしく歌で伝える。師・村田良蔵の教え。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/triangle/tri_title.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://yukihamada.jp/mv/triangle.html">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0e;--accent:#4A90D9;--accent2:#7B68EE;--white:#fff;--dim:rgba(255,255,255,.5);--gold:#E8B64A;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:#fff;}
+
+/* Progress bar - triangle themed blue */
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .1s linear;}
+
+/* Scenes */
+.scene{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;overflow:hidden;z-index:1;}
+.scene.active{opacity:1;pointer-events:all;z-index:2;}
+.scene.trans-fade{transition:opacity .6s;}
+.scene.trans-cut{transition:opacity .08s;}
+.scene.trans-slide{transition:opacity .3s,transform .5s;transform:translateX(100%);}
+.scene.trans-slide.active{transform:translateX(0);}
+
+.scene-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.5) saturate(1.3);transform:scale(1);}
+.scene.active .scene-bg{animation:kenpan 6s ease-in-out forwards;}
+@keyframes kenpan{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.08) translate(-1%,-1%)}}
+.scene.active:nth-child(3n+1) .scene-bg{animation-name:kenpan2;}
+@keyframes kenpan2{0%{transform:scale(1.05) translate(1%,0)}100%{transform:scale(1) translate(-1%,1%)}}
+.scene.active:nth-child(3n+2) .scene-bg{animation-name:kenpan3;}
+@keyframes kenpan3{0%{transform:scale(1) translate(-1%,1%)}100%{transform:scale(1.06) translate(1%,-1%)}}
+.scene-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,14,.15) 0%,rgba(10,10,14,.05) 40%,rgba(10,10,14,.45) 100%);transition:background .5s;}
+.scene-overlay.vignette{background:radial-gradient(ellipse at center,rgba(10,10,14,0) 40%,rgba(10,10,14,.55) 100%);}
+.scene-content{position:relative;z-index:10;text-align:center;padding:60px 24px 160px;max-width:800px;width:100%;}
+
+/* Karaoke */
+#karaoke{position:fixed;bottom:90px;left:0;right:0;z-index:6000;text-align:center;padding:0 20px;pointer-events:none;}
+#k-main{font-size:clamp(1.3rem,4vw,2.2rem);font-weight:900;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.8),0 0 30px var(--accent);line-height:1.6;opacity:0;transform:translateY(10px);transition:opacity .15s,transform .15s;}
+#k-main.show{opacity:1;transform:translateY(0);}
+#k-main .tech{color:var(--accent);font-weight:900;}
+#k-main .step{color:var(--gold);font-weight:700;}
+
+/* Big title */
+#k-big{position:fixed;inset:0;z-index:6500;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s;padding:0 20px;}
+#k-big.show{opacity:1;}
+#k-big .text{font-size:clamp(1.8rem,7vw,4rem);font-weight:900;color:var(--accent);text-shadow:0 0 40px rgba(74,144,217,.5),0 0 80px rgba(74,144,217,.2);text-align:center;line-height:1.3;}
+
+/* Annotation - technique explanation */
+#annotation{position:fixed;bottom:55px;left:0;right:0;z-index:5900;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;padding:0 20px;}
+#annotation.show{opacity:1;}
+#annotation span{font-size:clamp(.6rem,2vw,.75rem);color:rgba(255,255,255,.4);background:rgba(0,0,0,.35);padding:3px 12px;border-radius:10px;backdrop-filter:blur(4px);}
+
+/* Step indicator */
+#step-indicator{position:fixed;top:12px;left:12px;z-index:9100;font-size:.65rem;color:var(--accent);opacity:0;transition:opacity .5s;background:rgba(0,0,0,.5);padding:4px 10px;border-radius:8px;backdrop-filter:blur(6px);}
+#step-indicator.show{opacity:1;}
+
+/* Visualizer */
+#viz{position:fixed;bottom:0;left:0;right:0;height:35px;z-index:40;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 10%;}
+.vb{width:3px;background:linear-gradient(to top,var(--accent),var(--accent2));border-radius:2px 2px 0 0;opacity:.5;}
+#cv{position:fixed;inset:0;z-index:50;pointer-events:none;}
+#fl{position:fixed;inset:0;z-index:400;pointer-events:none;opacity:0;transition:opacity .05s;}
+
+#transport{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:14px;background:rgba(0,0,0,.7);border:1px solid rgba(74,144,217,.2);border-radius:30px;padding:8px 18px;backdrop-filter:blur(10px);opacity:1;transition:opacity .5s;}
+#btn-play{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;}
+#seek-bar{width:120px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer;-webkit-appearance:none;}
+#seek-bar::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer;}
+#time-display{font-size:11px;color:var(--dim);min-width:70px;text-align:center;font-variant-numeric:tabular-nums;}
+
+/* Start overlay */
+#start-overlay{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;}
+#start-overlay .bg{position:absolute;inset:0;background:url('assets/images/generated/triangle/tri_title.jpg') center/cover;filter:brightness(.22) blur(6px);transform:scale(1.1);}
+#start-overlay .content{position:relative;z-index:2;text-align:center;}
+.so-hook{font-size:clamp(.75rem,2.2vw,.95rem);color:var(--dim);letter-spacing:.12em;margin-bottom:12px;}
+.so-title{font-size:clamp(2rem,8vw,4.5rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.2;}
+.so-sub{font-size:clamp(.7rem,1.8vw,.85rem);color:var(--dim);margin-top:16px;letter-spacing:.15em;}
+.so-credit{font-size:clamp(.6rem,1.5vw,.7rem);color:rgba(255,255,255,.3);margin-top:8px;}
+.so-play{margin-top:24px;width:60px;height:60px;border-radius:50%;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin-left:auto;margin-right:auto;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.7}}
+
+/* Sensei quote */
+#sensei-quote{position:fixed;top:15%;right:5%;z-index:5800;pointer-events:none;opacity:0;transition:opacity 1s;max-width:220px;text-align:right;}
+#sensei-quote .q{font-size:.75rem;color:rgba(255,255,255,.25);font-style:italic;line-height:1.6;}
+#sensei-quote .by{font-size:.6rem;color:rgba(74,144,217,.4);margin-top:4px;}
+
+/* Triangle shape animation */
+.triangle-shape{position:fixed;z-index:60;pointer-events:none;opacity:0;transition:opacity 1s;}
+.triangle-shape svg{width:200px;height:200px;}
+.triangle-shape.show{opacity:.15;}
+
+/* End screen */
+#end-screen{display:none;position:fixed;inset:0;z-index:9500;background:var(--bg);overflow-y:auto;}
+#end-screen .inner{max-width:600px;margin:0 auto;padding:50px 24px 100px;text-align:center;}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:20px 0;}
+.stat{text-align:center;}
+.stat .num{font-size:clamp(1.8rem,6vw,2.5rem);font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;}
+.stat .label{font-size:.65rem;color:var(--dim);margin-top:2px;}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:rgba(74,144,217,.15);border:1px solid var(--accent);border-radius:20px;color:var(--accent);text-decoration:none;font-size:.8rem;margin:4px;transition:background .2s;}
+.share-btn:hover{background:rgba(74,144,217,.3);}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- Start overlay -->
+<div id="start-overlay" onclick="startPlay()">
+  <div class="bg"></div>
+  <div class="content">
+    <div class="so-hook">三角締めのすべてが、やさしい歌になった</div>
+    <div class="so-title">三角のうた</div>
+    <div class="so-sub">Triangle Song</div>
+    <div class="so-credit">師: 村田良蔵 (Over Limit / YAWARA) × 濱田優貴</div>
+    <div class="so-play">&#9654;</div>
+  </div>
+</div>
+
+<div id="prog"></div>
+<div id="step-indicator"></div>
+<div id="sensei-quote"><div class="q" id="sq-text"></div><div class="by">-- 村田良蔵</div></div>
+<div id="scene-container"></div>
+
+<script>
+// === MEDIA with transition types ===
+const IMG='assets/images/generated/triangle/';
+const MEDIA=[
+  // Intro
+  {t:'img',src:IMG+'tri_intro_dojo.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_intro_breathe.jpg',tr:'fade'},
+  // Verse 1 - Setting up triangle from closed guard
+  {t:'img',src:IMG+'tri_v1_closedguard.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_v1_sleevegrip.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_v1_uppercut.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_v1_push_pull.jpg',tr:'fade'},
+  // Hook - Triangle entry & lock
+  {t:'img',src:IMG+'tri_hook_hip_up.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_hook_leg_over_neck.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_hook_figure4_lock.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_hook_angle_cut.jpg',tr:'fade'},
+  // Hook - Squeeze & tap
+  {t:'img',src:IMG+'tri_hook_head_pull.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_hook_sensei_wisdom.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_hook_squeeze.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_hook_tap.jpg',tr:'fade'},
+  // Verse 2 - Open guard triangle variation
+  {t:'img',src:IMG+'tri_v2_foot_on_hip.jpg',tr:'slide'},
+  {t:'img',src:IMG+'tri_v2_leg_swing.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_v2_head_control.jpg',tr:'slide'},
+  {t:'img',src:IMG+'tri_v2_no_escape.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_v2_calm_control.jpg',tr:'fade'},
+  // Outro - Philosophy
+  {t:'img',src:IMG+'tri_outro_mypath.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_outro_meditation.jpg',tr:'fade'},
+  {t:'img',src:IMG+'tri_outro_triangle_proof.jpg',tr:'cut'},
+  {t:'img',src:IMG+'tri_outro_bow.jpg',tr:'fade'},
+];
+
+const container=document.getElementById('scene-container');
+MEDIA.forEach((m,i)=>{
+  const d=document.createElement('div');
+  d.className='scene trans-'+(m.tr||'fade');
+  d.id='s-'+i;
+  d.innerHTML='<div class="scene-bg" style="background-image:url('+m.src+')"></div><div class="scene-overlay"></div><div class="scene-content"></div>';
+  container.appendChild(d);
+});
+</script>
+
+<canvas id="cv"></canvas>
+<div id="fl"></div>
+<div id="viz"></div>
+<div id="karaoke"><div id="k-main"></div></div>
+<div id="k-big"><div class="text"></div></div>
+<div id="annotation"><span id="ann-text"></span></div>
+
+<div id="transport">
+  <button id="btn-play" onclick="togglePause()">&#9654;</button>
+  <input type="range" id="seek-bar" min="0" max="169" step="0.5" value="0" oninput="audio.currentTime=this.value">
+  <div id="time-display">0:00 / 2:49</div>
+</div>
+
+<div id="end-screen">
+  <div class="inner">
+    <div style="font-size:2.5rem;font-weight:900;color:var(--accent);">OSS!</div>
+    <div style="margin-top:4px;font-size:.85rem;color:var(--dim);">三角締めマスターへの道</div>
+    <div class="stats">
+      <div class="stat"><div class="num" id="st-scenes">0</div><div class="label">シーン</div></div>
+      <div class="stat"><div class="num" id="st-steps">0</div><div class="label">テクニック</div></div>
+    </div>
+    <div style="margin:20px 0;font-size:.8rem;color:var(--dim);line-height:1.8;">
+      <strong style="color:var(--accent);">師: 村田良蔵</strong><br>
+      SJJIF世界チャンピオン / Over Limit札幌 / YAWARA原宿<br>
+      グレイシー直系黒帯 — 北海道初
+    </div>
+    <div style="margin-top:16px;">
+      <a class="share-btn" href="https://twitter.com/intent/tweet?text=%E4%B8%89%E8%A7%92%E3%81%AE%E3%81%86%E3%81%9F%20%E2%96%B3%20Triangle%20Song&url=https://yukihamada.jp/mv/triangle.html" target="_blank">X/Twitter</a>
+      <a class="share-btn" onclick="navigator.share&&navigator.share({title:'三角のうた - Triangle Song',url:'https://yukihamada.jp/mv/triangle.html'})">Share</a>
+    </div>
+    <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <a href="/mv/jiujitsu.html" style="padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.75rem;">それ恋じゃなく柔術でした</a>
+      <a href="/mv/tap.html" style="padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.75rem;">Tap, Tap, Tap</a>
+    </div>
+    <div style="margin-top:12px;font-size:.7rem;color:var(--dim);">画面タップで もう一回再生</div>
+    <a href="/mv/" style="display:inline-block;margin-top:12px;font-size:.7rem;color:var(--dim);text-decoration:none;">&larr; MV一覧</a>
+  </div>
+</div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+const AUDIO_SRC='assets/audio/triangle.mp3';
+
+// === LYRICS with technique highlighting ===
+// .tech = technique keyword (blue), .step = step indicator (gold)
+// a: annotation explaining the BJJ technique
+const L=[
+  {t:0,     h:'&#9835;'},
+
+  // [Verse 1] Close guard → triangle setup (Whisper medium: 0.0s)
+  {t:0.5,   h:'<span class="tech">クローズ</span>からの<span class="tech">三角</span>　まずは深く呼吸をして',
+            a:'closed guard = 相手を脚で挟んだ基本体勢。三角締めの起点', step:'Step 1: クローズドガード'},
+  {t:8.0,   h:'立たせないように　割らせないように',
+            a:'相手が立ち上がったりガードを開かせようとするのを防ぐ'},
+  {t:14.0,  h:'両袖をやさしく<span class="tech">包み込み</span>　<span class="step">アッパーカットの角度</span>で',
+            a:'sleeve grip = 道着の袖を掴むグリップ。三角の基本コントロール', step:'Step 2: 袖グリップ'},
+  {t:20.0,  h:'胸にそっと添えて　<span class="tech">溝落ち</span>へ導いて',
+            a:'solar plexus push = みぞおちに手を当てて相手の姿勢を崩す'},
+  {t:25.0,  h:'もう片方の手は　<span class="step">弓を引くように</span>やさしく引き寄せて',
+            a:'片手で押し、もう片手で腕を引く。押し引きで三角のスペースを作る', step:'Step 3: 押し引き'},
+
+  // [Hook] Triangle lock (Whisper medium: 36.0s)
+  {t:36.0,  h:'<span class="step">こつばんを上げて</span>　顎に寄り添って',
+            a:'hip elevation = 骨盤を上げて脚を相手の首に届かせる', step:'Step 4: 骨盤を上げる'},
+  {t:42.0,  h:'足で相手をやさしく<span class="tech">キャッチしてロック</span>する',
+            a:'triangle lock = 片脚を首に掛け、もう片脚で固定する', step:'Step 5: 三角ロック'},
+  {t:47.0,  h:'<span class="step">膝をたたんで</span>　頭を近くに招いて',
+            a:'knee pinch = 膝を締めて三角を深くする。頭を引き寄せて圧を増す'},
+  {t:51.0,  h:'<span class="tech">三角の扉</span>を　静かに閉じていく',
+            a:'triangle門が閉じる = ロックが完全になり逃げ道がなくなる瞬間'},
+
+  {t:56.0,  h:'BIG', big:'三角の扉を<br>静かに閉じていく &#9651;'},
+
+  {t:59.0,  h:'<span class="step">がいせんからないせんへ</span>　迷わずに流れ',
+            a:'外旋→内旋 = 脚の回転方向を変えてより深い三角を作る', step:'Step 6: 外旋→内旋'},
+  {t:64.0,  h:'<span class="tech">クラッチ</span>は心に秘めて　師からの学びを信じて',
+            a:'clutch = 手を組んで固定する。村田先生の教えを実践する瞬間'},
+  {t:70.0,  h:'<span class="tech">内もも</span>で包み　腰で支えながら',
+            a:'inner thigh squeeze = 内ももで首を絞める。腰で角度を維持'},
+  {t:73.0,  h:'やがて相手は　そっと<span class="tech">タップ</span>を刻むでしょう',
+            a:'tap = 参った。3回叩いて降参の合図'},
+  {t:79.0,  h:'TAP'},
+
+  // [Verse 2] Open guard triangle (Whisper medium: 82.0s)
+  {t:82.0,  h:'腰に足を添えて　<span class="step">角度をやわらかくひらき</span>',
+            a:'foot on hip = 腰に足を置いてオープンガードから三角を狙う', step:'Step 7: オープンガード'},
+  {t:87.0,  h:'<span class="step">振り上げた足</span>が　三角を描き出す',
+            a:'leg swing = 足を大きく振り上げて相手の首に掛ける'},
+  {t:93.0,  h:'頭を包んで　そっと近くに引き寄せて',
+            a:'head control = 両手で頭を抱えて三角を深くする', step:'Step 8: 頭コントロール'},
+  {t:98.0,  h:'じんわり伝わる圧は　<span class="tech">逃げ場をなくしていく</span>',
+            a:'gradually increasing pressure = じわじわと圧を高めて完全に極める'},
+  {t:104.0, h:'落ち着いた<span class="tech">コントロール</span>が　勝利への道しるべになる',
+            a:'calm control = 焦らず冷静に。コントロールが全ての基本'},
+
+  // [Outro] Philosophy (Whisper medium: 115.0s)
+  {t:115.0, h:'これが私の道　これが私の<span class="tech">技</span>'},
+  {t:120.0, h:'準備はできている　心は静かに澄んでいる'},
+  {t:126.0, h:'<span class="tech">三角</span>はやさしい証明　決まれば<span class="tech">タップ</span>',
+            a:'三角締め = 力ではなく角度とレバレッジで極める、やさしい技'},
+  {t:131.0, h:'BIG', big:'揺るぎない<br>タップなのです &#9651;'},
+  {t:140.0, h:'&#9835;'},
+];
+
+// Sensei quotes that appear during key moments
+const QUOTES=[
+  {t:14,  q:'柔術って力じゃないんです'},
+  {t:42,  q:'角度が全てだよ'},
+  {t:64,  q:'信じて、ゆっくり締めていけ'},
+  {t:98,  q:'コントロールが最優先'},
+  {t:126, q:'正しい技は、やさしく極まる'},
+];
+
+// Scene timing (synced with Whisper medium model)
+const times=[
+  0, 5,                 // Intro (dojo, breathe)
+  0.5, 8, 14, 25,      // Verse 1 (closed guard, sleeve, uppercut, push-pull)
+  36, 42, 47, 51,      // Hook part 1 (hip up, leg over neck, figure4 lock, angle cut)
+  59, 64, 70, 73,      // Hook part 2 (head pull, sensei wisdom, squeeze, tap)
+  82, 87, 93, 98, 104, // Verse 2 (foot on hip, leg swing, head control, no escape, calm)
+  115, 120, 126, 135,  // Outro (my path, meditation, proof, bow)
+];
+const SCENES=[];
+times.forEach((t,i)=>SCENES.push({start:t,el:'s-'+i}));
+
+const audio=document.getElementById('audio');
+let isPlaying=false,curScene=0,curLyric=-1,stepCount=0,sceneCount=0;
+
+// Canvas + particles
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=1+Math.random()*4;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,l:1,c,s:sz||2+Math.random()*3});}}
+
+// Triangle particle - special
+function spTri(x,y){
+  for(let i=0;i<3;i++){
+    const angle=i*Math.PI*2/3-Math.PI/2;
+    const ex=x+Math.cos(angle)*60,ey=y+Math.sin(angle)*60;
+    for(let j=0;j<5;j++){
+      const t=j/5;
+      const nx=x+(ex-x)*t,ny=y+(ey-y)*t;
+      P.push({x:nx,y:ny,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2-1,l:1.5,c:'74,144,217',s:3});
+    }
+  }
+}
+
+// Visualizer
+const vizEl=document.getElementById('viz');
+for(let i=0;i<48;i++){const b=document.createElement('div');b.className='vb';b.style.height='2px';vizEl.appendChild(b);}
+const vizBars=[...vizEl.children];
+
+let actx,anl;
+function setupA(){actx=new(AudioContext||webkitAudioContext)();anl=actx.createAnalyser();anl.fftSize=256;anl.smoothingTimeConstant=.75;const s=actx.createMediaElementSource(audio);s.connect(anl);anl.connect(actx.destination);}
+
+function flash(c,d){const f=document.getElementById('fl');f.style.background=c;f.style.opacity='.25';setTimeout(()=>f.style.opacity='0',d||100);}
+function shake(i){document.body.style.transform=`translate(${(Math.random()-.5)*i*4}px,${(Math.random()-.5)*i*3}px)`;setTimeout(()=>document.body.style.transform='',60);}
+
+let hideT;
+function showTr(){document.getElementById('transport').style.opacity='1';clearTimeout(hideT);hideT=setTimeout(()=>{if(isPlaying)document.getElementById('transport').style.opacity='0';},3000);}
+document.addEventListener('touchstart',showTr);document.addEventListener('mousemove',showTr);
+
+function startPlay(){
+  const ov=document.getElementById('start-overlay');
+  ov.style.transition='opacity .4s';ov.style.opacity='0';
+  setTimeout(()=>ov.style.display='none',400);
+  audio.src=AUDIO_SRC;setupA();audio.play();isPlaying=true;
+  document.getElementById('btn-play').textContent='\u23F8';
+  requestAnimationFrame(loop);
+  setTimeout(()=>{if(isPlaying)document.getElementById('transport').style.opacity='0';},3000);
+}
+function togglePause(){
+  if(isPlaying){audio.pause();isPlaying=false;document.getElementById('btn-play').textContent='\u25B6';}
+  else{audio.play();isPlaying=true;document.getElementById('btn-play').textContent='\u23F8';}
+}
+function fmt(s){return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+// === Lyric display ===
+function showLyric(lyric){
+  const kMain=document.getElementById('k-main');
+  const kBig=document.getElementById('k-big');
+  const ann=document.getElementById('annotation');
+  const stepEl=document.getElementById('step-indicator');
+
+  kMain.classList.remove('show');
+  kBig.classList.remove('show');
+  ann.classList.remove('show');
+
+  if(!lyric) return;
+
+  // BIG title
+  if(lyric.h==='BIG'){
+    void kBig.offsetWidth;
+    kBig.querySelector('.text').innerHTML=lyric.big;
+    kBig.classList.add('show');
+    flash('rgba(74,144,217,.2)',150);
+    spTri(innerWidth/2,innerHeight/2);
+    return;
+  }
+
+  // TAP
+  if(lyric.h==='TAP'){
+    const tapText=['tap','tap','tap...'];
+    let i=0;
+    kMain.innerHTML='';kMain.classList.add('show');
+    function nextTap(){
+      if(i>=3)return;
+      kMain.innerHTML+=(i>0?' ':'')+'<span class="tech">'+tapText[i]+'</span>';
+      flash('rgba(255,255,255,.15)',60);shake(.3);
+      sp(innerWidth*(.3+i*.2),innerHeight*.5,8,'74,144,217',3);
+      i++;setTimeout(nextTap,300);
+    }
+    nextTap();
+    return;
+  }
+
+  // Normal lyric
+  void kMain.offsetWidth;
+  kMain.innerHTML=lyric.h;
+  kMain.classList.add('show');
+
+  // Annotation
+  if(lyric.a){
+    setTimeout(()=>{
+      document.getElementById('ann-text').textContent=lyric.a;
+      ann.classList.add('show');
+    },400);
+    // Count technique steps
+    stepCount++;
+  }
+
+  // Step indicator
+  if(lyric.step){
+    stepEl.textContent=lyric.step;
+    stepEl.classList.add('show');
+    setTimeout(()=>stepEl.classList.remove('show'),4000);
+  }
+
+  // Particles on technique words
+  if(lyric.h.includes('tech')){
+    sp(innerWidth/2,innerHeight*.7,6,'74,144,217',3);
+  }
+}
+
+// === Sensei quotes ===
+function checkQuotes(t){
+  const sq=document.getElementById('sensei-quote');
+  const sqt=document.getElementById('sq-text');
+  let active=null;
+  for(const q of QUOTES){
+    if(t>=q.t&&t<q.t+8) active=q;
+  }
+  if(active){
+    sqt.textContent='「'+active.q+'」';
+    sq.style.opacity='1';
+  } else {
+    sq.style.opacity='0';
+  }
+}
+
+// === Main loop ===
+function loop(){
+  if(!isPlaying&&audio.paused){requestAnimationFrame(loop);return;}
+  const t=audio.currentTime;
+  const dur=audio.duration||170;
+
+  // Progress
+  document.getElementById('prog').style.width=(t/dur*100)+'%';
+  document.getElementById('seek-bar').value=t;
+  document.getElementById('time-display').textContent=fmt(t)+' / '+fmt(dur);
+
+  // Scenes
+  let si=0;
+  for(let i=SCENES.length-1;i>=0;i--){if(t>=SCENES[i].start){si=i;break;}}
+  if(si!==curScene){
+    const prev=document.getElementById(SCENES[curScene].el);
+    const next=document.getElementById(SCENES[si].el);
+    if(prev)prev.classList.remove('active');
+    if(next){next.classList.add('active');
+      const v=next.querySelector('video');
+      if(v){v.currentTime=0;v.play().catch(()=>{});}
+    }
+    curScene=si;sceneCount++;
+  }
+
+  // Lyrics
+  let li=-1;
+  for(let i=L.length-1;i>=0;i--){if(t>=L[i].t){li=i;break;}}
+  if(li!==curLyric){curLyric=li;showLyric(L[li]);}
+
+  // Sensei quotes
+  checkQuotes(t);
+
+  // Audio visualizer
+  if(anl){
+    const d=new Uint8Array(anl.frequencyBinCount);
+    anl.getByteFrequencyData(d);
+    vizBars.forEach((b,i)=>{
+      const v=d[Math.floor(i*d.length/vizBars.length)]||0;
+      b.style.height=Math.max(2,v/8)+'px';
+      b.style.opacity=.3+v/400;
+    });
+  }
+
+  // Particles
+  cx.clearRect(0,0,cv.width,cv.height);
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.04;p.l-=.015;
+    if(p.l<=0){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l;
+    cx.fillStyle='rgba('+p.c+','+p.l+')';
+    cx.beginPath();cx.arc(p.x,p.y,p.s,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;
+
+  // End
+  if(t>=dur-1&&dur>10){
+    showEnd();return;
+  }
+
+  requestAnimationFrame(loop);
+}
+
+function showEnd(){
+  audio.pause();isPlaying=false;
+  const es=document.getElementById('end-screen');
+  es.style.display='block';
+  // Animate stats
+  animNum('st-scenes',sceneCount);
+  animNum('st-steps',stepCount);
+
+  // Replay on tap
+  let tc=0;
+  es.addEventListener('click',()=>{tc++;if(tc>=3){es.style.display='none';audio.currentTime=0;audio.play();isPlaying=true;curScene=0;curLyric=-1;sceneCount=0;stepCount=0;requestAnimationFrame(loop);}});
+}
+function animNum(id,target){
+  const el=document.getElementById(id);
+  let c=0;const step=Math.max(1,Math.floor(target/20));
+  const iv=setInterval(()=>{c+=step;if(c>=target){c=target;clearInterval(iv);}el.textContent=c;},30);
+}
+</script>
+
+</body>
+</html>

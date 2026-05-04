@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>動画用フレーム選択 — それ恋じゃなく柔術でした</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:system-ui,sans-serif;padding:20px 20px 100px;}
+h1{text-align:center;font-size:1.4rem;color:#E8B64A;margin-bottom:4px;}
+p.sub{text-align:center;color:#888;font-size:.8rem;margin-bottom:30px;}
+.section{margin-bottom:36px;border-bottom:1px solid #222;padding-bottom:20px;}
+.section h2{font-size:.95rem;color:#E8B64A;margin-bottom:2px;}
+.section .lyric{font-size:.75rem;color:#aaa;margin-bottom:10px;font-style:italic;}
+.pair{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;}
+.start{flex-shrink:0;}
+.start img{height:160px;border-radius:8px;border:2px solid #E8B64A;}
+.start .label{font-size:.6rem;color:#E8B64A;text-align:center;margin-top:3px;}
+.arrow{font-size:1.5rem;color:#444;padding-top:60px;flex-shrink:0;}
+.options{display:flex;gap:10px;}
+.opt{cursor:pointer;border:3px solid #333;border-radius:8px;overflow:hidden;transition:border-color .3s,transform .2s;}
+.opt:hover{transform:scale(1.03);}
+.opt.selected{border-color:#E8B64A;box-shadow:0 0 15px rgba(232,182,74,.3);}
+.opt img{height:160px;display:block;}
+.opt .label{font-size:.6rem;color:#666;text-align:center;padding:3px;}
+.opt.selected .label{color:#E8B64A;}
+.tri-start{display:flex;gap:6px;}
+.tri-start .opt img{height:100px;}
+@media(max-width:700px){.pair{flex-direction:column;align-items:center;}.arrow{padding:8px 0;transform:rotate(90deg);}}
+.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,17,.95);border-top:1px solid #E8B64A;padding:12px 20px;display:flex;align-items:center;justify-content:center;gap:16px;z-index:100;backdrop-filter:blur(8px);}
+.bar .count{color:#E8B64A;font-size:.9rem;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<h1>動画用フレーム選択</h1>
+<p class="sub">START → 5秒後のEND（AかBを選択）→ Veoで動画化 ｜ 全13シーン</p>
+
+<!-- 1: 胸の上 -->
+<div class="section" data-scene="1">
+<h2>1. 「胸の上で息が詰まる」</h2>
+<div class="lyric">また胸の上で息が詰まる → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s1b.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_00a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_00a.jpg"><div class="label">A: 目を開ける</div></div>
+    <div class="opt" data-img="jj_end_00b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_00b.jpg"><div class="label">B: 目が合う</div></div>
+  </div>
+</div></div>
+
+<!-- 2: 瞑想 -->
+<div class="section" data-scene="2">
+<h2>2. 「深く吸って」</h2>
+<div class="lyric">目を閉じて呼吸 → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_ex05.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_med_a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_med_a.jpg"><div class="label">A: 目を開けて臨戦態勢</div></div>
+    <div class="opt" data-img="jj_end_med_b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_med_b.jpg"><div class="label">B: 立ち上がってストレッチ</div></div>
+  </div>
+</div></div>
+
+<!-- 3: 手首 -->
+<div class="section" data-scene="3">
+<h2>3. 「手首つかまれて」</h2>
+<div class="lyric">手首つかまれて逃げ道ない → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_f2a.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_05a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_05a.jpg"><div class="label">A: 逆転 — 彼女が掴む</div></div>
+    <div class="opt" data-img="jj_end_05b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_05b.jpg"><div class="label">B: 指が絡む</div></div>
+  </div>
+</div></div>
+
+<!-- 4: 目のアップ -->
+<div class="section" data-scene="4">
+<h2>4. 「会いたいより増えていく数字」</h2>
+<div class="lyric">目のクロースアップ → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_ex04.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_eye_a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_eye_a.jpg"><div class="label">A: 一粒の涙</div></div>
+    <div class="opt" data-img="jj_end_eye_b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_eye_b.jpg"><div class="label">B: 目が笑う</div></div>
+  </div>
+</div></div>
+
+<!-- 5: ガード★ -->
+<div class="section" data-scene="5">
+<h2>5. 「ガードが固いから」★</h2>
+<div class="lyric">離れられないのはガードが固いから → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s4b.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_09b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_09b.jpg"><div class="label">A: 離れて仰向け — 花が開く</div></div>
+    <div class="opt" data-img="jj_end_09a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_09a.jpg"><div class="label">B: スイープ — 花が回転</div></div>
+  </div>
+</div></div>
+
+<!-- 6: 三角絞め -->
+<div class="section" data-scene="6">
+<h2>6. 「愛が苦しい？ それ三角絞め」</h2>
+<div class="lyric">三角絞め → 5秒後…</div>
+<div class="pair">
+  <div class="start" style="display:flex;flex-direction:column;gap:6px;">
+    <div class="label" style="color:#E8B64A;font-size:.6rem;">START 3択:</div>
+    <div class="tri-start">
+      <div class="opt" data-img="jj_tri_v1.jpg" onclick="pickStart(this)"><img src="assets/images/generated/jj_tri_v1.jpg"><div class="label">45度</div></div>
+      <div class="opt" data-img="jj_tri_v2.jpg" onclick="pickStart(this)"><img src="assets/images/generated/jj_tri_v2.jpg"><div class="label">俯瞰</div></div>
+      <div class="opt" data-img="jj_tri_v3.jpg" onclick="pickStart(this)"><img src="assets/images/generated/jj_tri_v3.jpg"><div class="label">脚アップ</div></div>
+    </div>
+  </div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_10c.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_10c.jpg"><div class="label">A: 腕十字に移行</div></div>
+    <div class="opt" data-img="jj_end_10d.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_10d.jpg"><div class="label">B: 解放 — 笑う</div></div>
+  </div>
+</div></div>
+
+<!-- 7: tap -->
+<div class="section" data-scene="7">
+<h2>7. 「tap, tap, tap」</h2>
+<div class="lyric">tap、tap、tap — もう一回の合図 → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s9a.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_14a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_14a.jpg"><div class="label">A: 波紋が消え手を上げる</div></div>
+    <div class="opt" data-img="jj_end_14b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_14b.jpg"><div class="label">B: 手が差し伸べられる</div></div>
+  </div>
+</div></div>
+
+<!-- 8: 朝の道着 -->
+<div class="section" data-scene="8">
+<h2>8. 「朝のベランダ 白い君」</h2>
+<div class="lyric">風に揺れる道着 → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s5a.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_gi_a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_gi_a.jpg"><div class="label">A: 手が道着を取る</div></div>
+    <div class="opt" data-img="jj_end_gi_b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_gi_b.jpg"><div class="label">B: 風で道着が舞う+桜</div></div>
+  </div>
+</div></div>
+
+<!-- 9: 帯を締める -->
+<div class="section" data-scene="9">
+<h2>9. 「袖口のほつれさえも愛しい」</h2>
+<div class="lyric">鏡の前で帯を締める → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_ex12.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_belt_a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_belt_a.jpg"><div class="label">A: 鏡に自信の笑み</div></div>
+    <div class="opt" data-img="jj_end_belt_b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_belt_b.jpg"><div class="label">B: 振り返りドアへ</div></div>
+  </div>
+</div></div>
+
+<!-- 10: 青紫回廊 -->
+<div class="section" data-scene="10">
+<h2>10. 「青い日々 紫の夢」</h2>
+<div class="lyric">ベルトの色が変わる回廊 → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s7a.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_cor_a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_cor_a.jpg"><div class="label">A: 紫の奥へ — 帯に触れる</div></div>
+    <div class="opt" data-img="jj_end_cor_b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_cor_b.jpg"><div class="label">B: 白い光の出口へ</div></div>
+  </div>
+</div></div>
+
+<!-- 11: 居場所 -->
+<div class="section" data-scene="11">
+<h2>11. 「ここが居場所」</h2>
+<div class="lyric">道着を羽織って窓辺で → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s8a.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_29a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_29a.jpg"><div class="label">A: 立って窓へ歩く</div></div>
+    <div class="opt" data-img="jj_end_29b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_29b.jpg"><div class="label">B: 道着を抱きしめる</div></div>
+  </div>
+</div></div>
+
+<!-- 12: ハイタッチ -->
+<div class="section" data-scene="12">
+<h2>12. 「大丈夫、呼吸して」</h2>
+<div class="lyric">練習後のハイタッチ → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_br08.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_hi5_a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_hi5_a.jpg"><div class="label">A: グループハグ</div></div>
+    <div class="opt" data-img="jj_end_hi5_b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_hi5_b.jpg"><div class="label">B: 笑って帰る</div></div>
+  </div>
+</div></div>
+
+<!-- 13: エンディング -->
+<div class="section" data-scene="13">
+<h2>13. 「勘違いしてた — でもそれでいい」</h2>
+<div class="lyric">桜並木を歩く → 5秒後…</div>
+<div class="pair">
+  <div class="start"><img src="assets/images/generated/jj_new_s10a.jpg"><div class="label">START</div></div>
+  <div class="arrow">→</div>
+  <div class="options">
+    <div class="opt" data-img="jj_end_41a.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_41a.jpg"><div class="label">A: 歩き去る — 桜吹雪</div></div>
+    <div class="opt" data-img="jj_end_41b.jpg" onclick="pick(this)"><img src="assets/images/generated/jj_end_41b.jpg"><div class="label">B: 振り返って笑顔</div></div>
+  </div>
+</div></div>
+
+<div class="bar">
+  <div class="count"><span id="count">0</span> / 13 選択済み</div>
+</div>
+
+<script>
+const sel={};const selStart={};
+function pick(el){
+  const opts=el.closest('.options');
+  opts.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  const sec=el.closest('.section');
+  sel[sec.dataset.scene]=el.dataset.img;
+  document.getElementById('count').textContent=Object.keys(sel).length;
+}
+function pickStart(el){
+  const parent=el.closest('.tri-start');
+  parent.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  const sec=el.closest('.section');
+  selStart[sec.dataset.scene]=el.dataset.img;
+}
+</script>
+</body>
+</html>

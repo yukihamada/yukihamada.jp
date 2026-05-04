@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>制作の裏側 — それ恋じゃなく柔術でした</title>
+<meta property="og:title" content="制作の裏側 — AI x 柔術アニメの作り方">
+<meta property="og:description" content="Claude Code + Gemini + Veo + ElevenLabs。AIだけでアニメを作った全プロセスを公開。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/r_ep3_03.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:url" content="https://yukihamada.jp/anime/behind.html">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="制作の裏側 — AI x 柔術アニメの作り方">
+<meta name="twitter:description" content="AIだけでアニメを作った全プロセスとプロンプトを公開。">
+<meta name="twitter:image" content="https://yukihamada.jp/mv/assets/images/generated/r_ep3_03.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0a0a0a;--accent:#E8B64A;--dim:#666;}
+html{background:var(--bg);color:#e0e0e0;}
+body{font-family:'Noto Sans JP',sans-serif;max-width:800px;margin:0 auto;padding:20px 20px 80px;}
+
+h1{font-size:1.5rem;color:var(--accent);margin-bottom:4px;}
+.sub{color:var(--dim);font-size:.85rem;margin-bottom:24px;}
+h2{font-size:1.1rem;color:var(--accent);margin:32px 0 12px;padding-top:16px;border-top:1px solid #222;}
+h3{font-size:.95rem;color:#ccc;margin:20px 0 8px;}
+p{font-size:.88rem;line-height:1.8;color:#aaa;margin-bottom:12px;}
+.stat{display:inline-block;background:rgba(232,182,74,.08);border:1px solid rgba(232,182,74,.2);border-radius:8px;padding:6px 14px;margin:4px;font-size:.8rem;color:var(--accent);}
+
+/* Paywall */
+#paywall{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;}
+#paywall h2{font-size:1.3rem;color:var(--accent);border:none;margin:0 0 8px;}
+#paywall p{max-width:400px;}
+#paywall .price{font-size:2rem;font-weight:700;color:var(--accent);margin:16px 0;}
+#paywall .unit{font-size:.8rem;color:var(--dim);}
+#paywall button{background:var(--accent);color:#111;border:none;padding:14px 40px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:16px;}
+#paywall button:hover{background:#d4a03a;}
+#paywall .or{color:var(--dim);font-size:.75rem;margin-top:12px;}
+#paywall input{background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:8px 12px;color:#fff;font-size:.85rem;width:200px;margin-top:8px;text-align:center;}
+#paywall .err{color:#f85149;font-size:.75rem;margin-top:4px;display:none;}
+.preview-fade{position:relative;}
+.preview-fade::after{content:'';position:absolute;bottom:0;left:0;right:0;height:200px;background:linear-gradient(transparent,var(--bg));pointer-events:none;}
+
+/* Prompt blocks */
+.prompt{background:#111;border:1px solid #222;border-radius:8px;padding:12px 14px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:.75rem;line-height:1.6;color:#888;overflow-x:auto;white-space:pre-wrap;}
+.prompt .label{color:var(--accent);font-weight:700;font-size:.7rem;margin-bottom:4px;display:block;font-family:'Noto Sans JP';}
+.prompt .human{color:#58a6ff;}
+.prompt .ai{color:#8b949e;}
+.result{display:flex;gap:8px;margin:8px 0;flex-wrap:wrap;}
+.result img{height:120px;border-radius:6px;border:1px solid #333;}
+
+.tool-tag{display:inline-block;font-size:.65rem;padding:2px 8px;border-radius:10px;margin:2px;border:1px solid;}
+.tool-tag.claude{border-color:#D4813A;color:#D4813A;}
+.tool-tag.gemini{border-color:#4285f4;color:#4285f4;}
+.tool-tag.veo{border-color:#34a853;color:#34a853;}
+.tool-tag.eleven{border-color:#8b5cf6;color:#8b5cf6;}
+.tool-tag.whisper{border-color:#06b6d4;color:#06b6d4;}
+.tool-tag.fly{border-color:#8b5cf6;color:#8b5cf6;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- PAYWALL -->
+<div id="paywall">
+  <div style="font-size:2.5rem;margin-bottom:12px;">🥋</div>
+  <h2>制作の裏側</h2>
+  <p>「それ恋じゃなく柔術でした」アニメ全3話を、AIだけでどう作ったか。<br>実際のプロンプト、試行錯誤、ボツ案、全プロセスを公開。</p>
+
+  <!-- Stripe会員認証 -->
+  <div style="margin-top:24px;padding:20px;background:rgba(232,182,74,.06);border:1px solid rgba(232,182,74,.2);border-radius:12px;max-width:360px;">
+    <div style="font-size:.85rem;color:var(--accent);font-weight:700;margin-bottom:8px;">Enabler会員の方</div>
+    <div style="font-size:.75rem;color:var(--dim);margin-bottom:10px;">Stripeに登録したメールアドレスで認証</div>
+    <input id="email-input" type="email" placeholder="メールアドレス" style="width:100%;background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:10px 12px;color:#fff;font-size:.85rem;">
+    <button onclick="verifyEmail()" id="verify-btn" style="width:100%;margin-top:8px;background:var(--accent);color:#111;border:none;padding:10px;border-radius:6px;font-weight:700;cursor:pointer;font-size:.85rem;">認証する</button>
+    <div id="verify-status" style="font-size:.75rem;margin-top:6px;display:none;"></div>
+  </div>
+
+  <!-- 新規購入 -->
+  <div style="margin-top:20px;">
+    <div style="font-size:.75rem;color:var(--dim);margin-bottom:8px;">まだ会員じゃない方</div>
+    <div class="price">980<span class="unit">円/月</span></div>
+    <div style="font-size:.7rem;color:var(--dim);margin-bottom:8px;">Enablerファンクラブ — 全プロダクト+制作裏側にアクセス</div>
+    <button onclick="window.open('https://buy.stripe.com/aFacN503FcQq4VGblmefC3z','_blank')" style="background:var(--accent);color:#111;border:none;padding:12px 32px;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;">会員になる</button>
+  </div>
+
+  <!-- コード認証 -->
+  <div style="margin-top:20px;">
+    <div style="font-size:.7rem;color:var(--dim);margin-bottom:6px;">アクセスコードをお持ちの方</div>
+    <div style="display:flex;gap:6px;justify-content:center;">
+      <input id="code-input" type="text" placeholder="コード" style="background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:8px 12px;color:#fff;font-size:.8rem;width:160px;text-align:center;">
+      <button onclick="checkCode()" style="background:transparent;border:1px solid var(--accent);color:var(--accent);padding:8px 16px;border-radius:6px;font-size:.8rem;cursor:pointer;">認証</button>
+    </div>
+    <div class="err" id="err" style="display:none;color:#f85149;font-size:.7rem;margin-top:4px;">コードが違います</div>
+  </div>
+
+  <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+    <a href="/anime/ep1.html" style="color:var(--dim);font-size:.7rem;text-decoration:none;padding:6px 12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;">Anime</a>
+    <a href="/mv/jiujitsu.html" style="color:var(--dim);font-size:.7rem;text-decoration:none;padding:6px 12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;">Music Video</a>
+    <a href="/anime/" style="color:var(--dim);font-size:.7rem;text-decoration:none;padding:6px 12px;border:1px solid rgba(255,255,255,.1);border-radius:6px;">Episode Index</a>
+  </div>
+</div>
+
+<!-- CONTENT (hidden behind paywall) -->
+<div id="content" style="display:none;">
+
+<h1>制作の裏側</h1>
+<div class="sub">「それ恋じゃなく柔術でした」— AIアニメの作り方</div>
+
+<div>
+<span class="stat">画像 100枚+</span>
+<span class="stat">動画 16本 (Veo)</span>
+<span class="stat">声 49セリフ</span>
+<span class="stat">制作時間 ~8時間</span>
+<span class="stat">人間のコード 0行</span>
+</div>
+
+<div>
+<span class="tool-tag claude">Claude Code (Opus 4.6)</span>
+<span class="tool-tag gemini">Gemini nano-banana-pro</span>
+<span class="tool-tag veo">Google Veo 3.0</span>
+<span class="tool-tag eleven">ElevenLabs Yui MAX</span>
+<span class="tool-tag whisper">OpenAI Whisper</span>
+<span class="tool-tag fly">Fly.io</span>
+</div>
+
+<h2>Phase 1: コンセプト — 「騙すアニメ」</h2>
+
+<p>最初のアイデアは「柔術アニメを作りたい」だった。でもそれだけだとつまらない。</p>
+
+<p>ブレイクスルーは「第1-2話を完全に恋愛アニメとして作り、第3話でネタバレする」という構造。これは曲「それ恋じゃなく柔術でした」のコンセプトそのもの——聴いている人自身を騙す。</p>
+
+<div class="prompt">
+<span class="label">Human → Claude Code</span>
+<span class="human">「第1話〜第3話: 完全に恋愛アニメとして作る。道着を見せない、道場を見せない。第3話でカメラが引いて全部ひっくり返す」</span>
+</div>
+
+<p>このプロンプト1つで、全体の方向性が決まった。</p>
+
+<h2>Phase 2: キャラクターデザイン — 4スタイル比較</h2>
+
+<p>同じシーン（三角絞め）を4つの画風で生成して比較した。</p>
+
+<div class="prompt">
+<span class="label">試したスタイル</span>
+A: 新海誠 水彩アニメ — レンズフレア、ボリューメトリックライト
+B: 墨絵 x ネオン — 伝統 x サイバーパンク
+C: ステンドグラス — 宝石色の光
+D: 浮世絵 x グリッチ — 江戸 x デジタル
+</div>
+
+<p>A1（新海誠スタイル）を選択。さらにA系で5バリエーション（ジブリ、京アニ、鬼滅、宝石の国）を比較して最終決定。</p>
+
+<h2>Phase 3: 恋愛偽装画像の生成</h2>
+
+<p>EP1-2の画像は「道着を見せない」「道場を見せない」制約で生成。重要なプロンプト技法:</p>
+
+<div class="prompt">
+<span class="label">EP2 壁ドン（実はテイクダウン）のプロンプト</span>
+<span class="ai">"CLASSIC KABEDON SCENE: The handsome man has one hand against
+the wall next to the girl's head. His face is close to hers.
+She looks up at him with wide eyes, blushing.
+TIGHT FRAMING — we can't see below their shoulders.
+Pure romance anime kabedon. Warm lighting. Intimate."</span>
+</div>
+
+<p>ポイントは<strong>「TIGHT FRAMING — we can't see below their shoulders」</strong>。道着を見せないための意図的なカメラワーク。</p>
+
+<div class="prompt">
+<span class="label">EP2 胸の上（実はマウント）のプロンプト</span>
+<span class="ai">"The girl lies on her back. The man is above her, his weight
+on her chest. Her hair fans out beneath her. She looks up at
+him with flushed cheeks. TIGHT CROPPING — we see only faces
+and upper bodies. This looks like a romantic bedroom scene.
+Golden warm light. Intimate, breathless."</span>
+</div>
+
+<h2>Phase 4: EP3 — THE REVEAL</h2>
+
+<p>最も重要なシーン。「カメラが引く」を3段階で演出:</p>
+
+<div class="prompt">
+<span class="label">段階1: わずかな違和感</span>
+<span class="ai">"Same kabedon-like scene as before — but this time shot
+SLIGHTLY WIDER. We can see a tiny bit more... the edge of
+what looks like a white collar... a mat on the floor?
+Not quite clear yet."</span>
+</div>
+
+<div class="prompt">
+<span class="label">段階2: もっと引く</span>
+<span class="ai">"WIDER SHOT. Now we can see: they're both wearing WHITE
+clothing with thick collars. The wall behind them is padded.
+The floor is a mat."</span>
+</div>
+
+<div class="prompt">
+<span class="label">段階3: 全貌 ★THE REVEAL</span>
+<span class="ai">"FULL WIDE SHOT REVEAL: The romantic scene is actually a BJJ
+technique. They're in a DOJO — YAWARA sky dojo with panoramic
+windows and Tokyo skyline. Both wearing full BJJ GIS.
+His 'kabedon' is actually a COLLAR DRAG.
+Her 'blush' is exertion."</span>
+</div>
+
+<h2>Phase 5: 声 — ElevenLabs試行錯誤</h2>
+
+<p>最初の声は「気持ちがこもってない」とフィードバック。8パターンを比較試聴:</p>
+
+<div class="prompt">
+<span class="label">テストした設定</span>
+Yui (stability 0.15, style 0.8)  — 感情強め
+Yui (stability 0.2, style 1.0)   — 感情MAX ← 採用
+EIKO — 大人っぽすぎた
+Kyoko — 自然だけど弱い
+Lily — 英語訛りが出た
+Jessica — 明るすぎた
+</div>
+
+<p>最終的に<strong>Yui MAX（stability 0.2, style 1.0）</strong>を採用。stabilityを下げると声に「揺らぎ」が出て感情的になる。</p>
+
+<h3>セリフ設計のルール</h3>
+<p>EP1-2では「柔術」「道着」「先生」「道場」を一切使わない。代わりに:</p>
+
+<div class="prompt">
+<span class="label">禁止ワード → 代替</span>
+柔術 → (言わない)
+道着 → 「白い服」
+道場 → 「あの場所」「あの部屋」
+先生 → 「あの人」
+マット → 「床」
+タップ → (EP3まで封印)
+</div>
+
+<h2>Phase 6: 動画 — Veo 2 → Veo 3</h2>
+
+<p>最初はVeo 2.0で生成。「わざとらしい」とフィードバック。Veo 3.0で再生成したら動きが自然に。</p>
+
+<div class="prompt">
+<span class="label">Veo 3.0 プロンプト例（EP1冒頭）</span>
+<span class="ai">"Anime girl lying with her face against someone's chest.
+She slowly, naturally opens her eyes. Soft breathing.
+Warm golden light shifts subtly.
+Very gentle, intimate movement. No exaggerated motion."</span>
+</div>
+
+<p>「No exaggerated motion」が重要。AIは動きを大きくしがちなので、明示的に抑える。</p>
+
+<h2>Phase 7: 隠し要素</h2>
+
+<p>SNS拡散のために仕込んだイースターエッグ:</p>
+
+<ul style="font-size:.85rem;color:#aaa;line-height:2;padding-left:20px;">
+<li>3回タップ → 隠しメッセージ（全エピソード）</li>
+<li>深夜0-4時 → タイトルが変わる</li>
+<li>EP2で「恋」の文字を選択 → 「本当に恋？」</li>
+<li>EP3から1話に戻る → 「2周目 — 今なら見える」</li>
+<li>EP3最後で30秒放置 → 美咲の独白+声が自動再生</li>
+<li>コナミコマンド(↑↑↓↓←→←→BA) → 制作クレジット</li>
+<li>ソースコード → 各話に美咲からのメッセージ</li>
+</ul>
+
+<h2>数字でまとめ</h2>
+
+<table style="width:100%;font-size:.8rem;border-collapse:collapse;margin:16px 0;">
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">AI画像生成</td><td style="color:#fff;">100枚+ (Gemini nano-banana-pro)</td></tr>
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">AI動画生成</td><td style="color:#fff;">16本 (Veo 2.0 + 3.0)</td></tr>
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">AI音声生成</td><td style="color:#fff;">49セリフ (ElevenLabs Yui)</td></tr>
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">スタイル比較</td><td style="color:#fff;">9パターン</td></tr>
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">声の比較</td><td style="color:#fff;">8パターン x 2セリフ</td></tr>
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">人間が書いたコード</td><td style="color:#fff;">0行</td></tr>
+<tr style="border-bottom:1px solid #333;"><td style="padding:6px;color:var(--dim);">デプロイ回数</td><td style="color:#fff;">30回+</td></tr>
+<tr><td style="padding:6px;color:var(--dim);">総制作時間</td><td style="color:#fff;">約8時間（1日）</td></tr>
+</table>
+
+<p>全てのコードはClaude Code（Opus 4.6, 1Mコンテキスト）が書いた。人間がやったのは「何を作るか」の指示と、出来上がったものの選択だけ。</p>
+
+<h2>実際の指示プロンプト — 全記録</h2>
+
+<p>以下は、人間（濱田）がClaude Codeに出した実際の指示。編集なし。これだけで全てが作られた。</p>
+
+<h3>1. MV制作フェーズ</h3>
+
+<div class="prompt">
+<span class="label">🧑 画像のスタイル決め</span>
+<span class="human">"画像だけど、ナノバナナで作ってほしいんだけど、どんな画像がいいかっていうのを考えて、4パターンくらい作ってほしいです。写真よりアニメの方がいいんじゃないかなと思ってるんだけど、AIでしか出せないような美しい表現をどんな感じがあるのか、ベストプラクティス探して、それでちょっと何パターンか作ってみせて、比較させてください"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 Claude Codeの対応</span>
+<span class="ai">→ 4スタイル生成（新海誠水彩 / 墨絵×ネオン / ステンドグラス / 浮世絵×グリッチ）
+→ さらにA系5バリエーション（ジブリ / 京アニ / 鬼滅 / 宝石の国）
+→ 比較ページを自動生成してデプロイ</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 スタイル選択</span>
+<span class="human">"A1にしましょう。どんな絵がいいか考えて教えて。柔術か恋愛かわからない絵を描いてほしい。シーンごとにどんな感じ描くのが一番みんなが見たくなるか考えてそれぞれ何パターンかください"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 キャラ設定</span>
+<span class="human">"主人公は女性でお願いします"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 道場の指定</span>
+<span class="human">"yawara jiu-jitsu academy と Sweep jiu-jitsu academyの画像みてそこの場所にしてください道場ね"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 道着の指定</span>
+<span class="human">"道着はこれにしてください。黒道着に右胸にY、左胸に赤でSWEEP"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 先生の指定</span>
+<span class="human">"先生今日もよろしくお願いしますのところの先生はこの村田良造なので変えてください" [村田良蔵の画像検索結果を添付]</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 シーンの追加要望</span>
+<span class="human">"海外の大会でワンマッチで勝つシーンとか、出稽古に行って教えるとか、アプリでJiuFlowを使っているシーンとか、ヨガをみんなでやってたり、ハワイの海の目の前の芝生で柔術をやってたり"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 タップシーンへのこだわり</span>
+<span class="human">"タップタップタップって言ってるところは交差しているところ、相手にタップしているところにしてほしい"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 三角絞めの精度</span>
+<span class="human">"三角締めの画像を探してそれを参考にやってみてください"</span>
+</div>
+
+<h3>2. 動画生成フェーズ</h3>
+
+<div class="prompt">
+<span class="label">🧑 Veo 2 → Veo 3</span>
+<span class="human">"最初の方の動画が、なんかわざとらしいので、VEO3でもう一回作ってみてください"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 対応</span>
+<span class="ai">→ Veo 2.0で生成した最初の4シーンをVeo 3.0で再生成
+→ 動きがより自然に
+→ ファイルサイズも小さく</span>
+</div>
+
+<h3>3. MV改善フェーズ</h3>
+
+<div class="prompt">
+<span class="label">🧑 改善要望</span>
+<span class="human">"今の動画を改善したいのでアイデアを具体的に欲しいです"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 提案した改善8項目</span>
+<span class="ai">A. 歌詞テロップの色分け（柔術ワード=ゴールド）
+B. シーン切り替えバリエーション（フェード/カット/フラッシュ/スライド）
+C. 冒頭のフック（「恋愛ソング？柔術ソング？」）
+D. 柔術用語の注釈
+E. 3回の「それ恋じゃなくて柔術でした」の演出差
+F. 動画シーン追加
+G. ビート同期強化
+H. スタート画面改善</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 返事</span>
+<span class="human">"全部やって"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 追加機能</span>
+<span class="human">"終わった後もうちょっとなんかかっこよくしたいですね。他なんかこれ入れたら超面白いんじゃないかってものあるかな"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 提案した7機能</span>
+<span class="ai">1. エンドスタッツ（シーン数/用語数/tap回数）
+2. 柔術用語クイズ
+3. 3回タップでリプレイ
+4. 恋愛モード/柔術モード切替ボタン
+5. インタラクティブtap
+6. 帯プログレスバー
+7. 先生の一言（ランダム名言）</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 返事</span>
+<span class="human">"全部お願い"</span>
+</div>
+
+<h3>4. アニメ制作フェーズ</h3>
+
+<div class="prompt">
+<span class="label">🧑 アニメ化の要望</span>
+<span class="human">"このキャラクターで柔術のアニメを作りたいんだけどどんな構成であったら大ヒットアニメになるか考えてください"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 最初の提案 → リジェクト</span>
+<span class="ai">最初はメタ構造（3層レイヤー、制作過程を見せる）を提案。</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 厳しいフィードバック要求</span>
+<span class="human">"これで本当にみんな見たくなるかな。ちょっと厳しめのフィードバックちょうだい"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 自己批判</span>
+<span class="ai">「メタ構造は制作者のエゴ」「小説を書いている設定が邪魔」「OL失恋は弱い」と自分で批判。
+→ 「第1-2話を完全に恋愛アニメとして作り、第3話でネタバレ」に方向転換。</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 決定的な指摘</span>
+<span class="human">"でも柔術って書いちゃってるけどいいの？1話、2話の中には柔術は入れないんじゃないの？"</span>
+</div>
+
+<p>この一言で、タイトル・OGP・セリフから「柔術」「道着」「先生」「道場」を全てEP1-2から削除。代わりに「ある場所」「白い服」「あの人」と呼ぶルールが確立した。</p>
+
+<div class="prompt">
+<span class="label">🧑 セリフのクオリティ</span>
+<span class="human">"声はちょっとあんまり良くないなぁ。気持ちがこもってない。一番何がいいか調べてもう一度作り直してほしいです"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 対応</span>
+<span class="ai">→ 8パターン（4声優 × 2設定）を比較生成
+→ 比較試聴ページを作成</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 選択</span>
+<span class="human">"Yui MAX"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🧑 最終指示</span>
+<span class="human">"一番ヒットする形にして"</span>
+</div>
+
+<h3>5. 隠し要素</h3>
+
+<div class="prompt">
+<span class="label">🧑</span>
+<span class="human">"隠しで何か入れるとかなんか面白いしかけないかな"</span>
+</div>
+
+<div class="prompt">
+<span class="label">🤖 → 🧑</span>
+<span class="ai">7つの隠し要素を提案（3タップ、深夜モード、コナミコマンド、30秒シーン等）</span>
+<span class="human">"全部お願い"</span>
+</div>
+
+<h3>6. 収益化</h3>
+
+<div class="prompt">
+<span class="label">🧑</span>
+<span class="human">"今日やった全てのことを、これを有料コンテンツにしたいです。980円。会員になると制作の裏側が見れます。今日僕が指示したプロンプトがどんなものかというのを全部書いてください"</span>
+</div>
+
+<p>→ それがこのページ。</p>
+
+<h2>人間が出した指示の特徴</h2>
+
+<p>全プロセスを振り返ると、人間の指示にはパターンがある:</p>
+
+<ol style="font-size:.85rem;color:#aaa;line-height:2.2;padding-left:20px;">
+<li><strong>方向を決める</strong>（「A1にしましょう」「主人公は女性」「Yui MAX」）</li>
+<li><strong>具体的な知識を注入する</strong>（「YAWARA/SWEEP」「村田良蔵」「三角絞めの画像探して」）</li>
+<li><strong>品質に妥協しない</strong>（「わざとらしい」「気持ちがこもってない」「厳しめのフィードバックちょうだい」）</li>
+<li><strong>盲点を指摘する</strong>（「柔術って書いちゃってるけどいいの？」「声と曲分けてやった？」）</li>
+<li><strong>全部やらせる</strong>（「全部やって」「全部お願い」「英語版全部作ってね」）</li>
+</ol>
+
+<p>人間がコードを1行も書いていないのは事実。でも「何を作るか」「何がダメか」「どこを妥協しないか」を決めているのは全て人間。AIは実行力。人間は判断力。その組み合わせが、8時間でアニメ3話を作った。</p>
+
+<div style="text-align:center;margin-top:40px;padding:20px;background:rgba(232,182,74,.05);border:1px solid rgba(232,182,74,.15);border-radius:12px;">
+  <div style="font-size:1.5rem;color:var(--accent);font-weight:700;">tap, tap, tap</div>
+  <div style="color:var(--dim);font-size:.8rem;margin-top:4px;">これは終わりじゃない。もう一回の合図。</div>
+  <a href="/anime/ep1.html" style="display:inline-block;margin-top:12px;color:var(--accent);font-size:.85rem;text-decoration:none;">← アニメを見る</a>
+</div>
+
+</div><!-- /content -->
+
+<script>
+const CODES=['enabler2026','bjj980','taptaptap','misaki'];
+
+function unlock(){
+  document.getElementById('paywall').style.display='none';
+  document.getElementById('content').style.display='block';
+  sessionStorage.setItem('behind_access','1');
+}
+
+// Stripe email verification
+async function verifyEmail(){
+  const email=document.getElementById('email-input').value.trim();
+  if(!email){return;}
+  const btn=document.getElementById('verify-btn');
+  const status=document.getElementById('verify-status');
+  btn.textContent='確認中...';btn.disabled=true;
+  status.style.display='block';status.style.color='var(--dim)';
+  status.textContent='Stripeで確認しています...';
+
+  try{
+    const res=await fetch('/api/fanclub/verify',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email})
+    });
+    const data=await res.json();
+
+    if(data.pro){
+      status.style.color='#3fb950';
+      status.textContent='認証成功！ Enabler会員確認済み。';
+      localStorage.setItem('enabler_email',email);
+      setTimeout(unlock,800);
+    } else if(data.customer_id){
+      status.style.color='var(--accent)';
+      status.textContent='アカウントは見つかりましたが、有効なサブスクリプションがありません。';
+      btn.textContent='認証する';btn.disabled=false;
+    } else {
+      status.style.color='#f85149';
+      status.textContent='このメールアドレスの会員が見つかりません。';
+      btn.textContent='認証する';btn.disabled=false;
+    }
+  }catch(e){
+    status.style.color='#f85149';
+    status.textContent='通信エラー。もう一度お試しください。';
+    btn.textContent='認証する';btn.disabled=false;
+  }
+}
+
+// Enter key for email
+document.getElementById('email-input')?.addEventListener('keydown',e=>{if(e.key==='Enter')verifyEmail();});
+
+// Code check
+function checkCode(){
+  const code=document.getElementById('code-input').value.trim().toLowerCase();
+  if(CODES.includes(code)){unlock();}
+  else{document.getElementById('err').style.display='block';}
+}
+
+// Auto-unlock if previously verified
+if(sessionStorage.getItem('behind_access'))unlock();
+
+// URL param
+const params=new URLSearchParams(location.search);
+if(params.get('code')&&CODES.includes(params.get('code')))unlock();
+
+// Auto-fill email if saved
+const savedEmail=localStorage.getItem('enabler_email');
+if(savedEmail){
+  const emailInput=document.getElementById('email-input');
+  if(emailInput)emailInput.value=savedEmail;
+}
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>ANIME — 濱田優貴</title>
+<meta property="og:title" content="ANIME — 濱田優貴">
+<meta property="og:description" content="恋愛アニメだと思って見てください。第3話で全部ひっくり返ります。AIだけで作ったアニメシリーズ。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/r_ep2_04.jpg">
+<meta property="og:url" content="https://yukihamada.jp/anime/">
+<meta property="og:type" content="website">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ANIME — 恋愛アニメだと思って見てください。">
+<meta name="twitter:image" content="https://yukihamada.jp/mv/assets/images/generated/r_ep2_04.jpg">
+<meta name="theme-color" content="#080808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#080808;--accent:#E8B64A;--dim:rgba(255,255,255,.3);}
+html{background:var(--bg);color:#fff;-webkit-overflow-scrolling:touch;}
+body{font-family:'Noto Sans JP',sans-serif;overflow-x:hidden;}
+
+/* Hero */
+.hero{position:relative;height:100vh;height:100svh;overflow:hidden;cursor:pointer;}
+.hero .bg{position:absolute;inset:-5%;background-size:cover;background-position:center;animation:drift 25s ease-in-out infinite alternate;}
+@keyframes drift{0%{transform:scale(1.08) translate(0,0)}100%{transform:scale(1) translate(-1%,-1%)}}
+.hero .overlay{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%,rgba(8,8,8,.2) 0%,rgba(8,8,8,.85) 70%);}
+.hero .content{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 20px;}
+.hero .warning{font-size:.65rem;color:rgba(255,255,255,.25);letter-spacing:.15em;margin-bottom:16px;padding:4px 12px;border:1px solid rgba(255,255,255,.08);border-radius:20px;}
+.hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(1.8rem,6vw,3.5rem);font-weight:700;color:#fff;line-height:1.3;text-shadow:0 0 60px rgba(232,182,74,.15);}
+.hero h1 em{color:var(--accent);font-style:normal;}
+.hero .sub{font-size:clamp(.75rem,2vw,.9rem);color:var(--dim);margin-top:16px;line-height:1.7;}
+.hero .play-btn{margin-top:28px;width:56px;height:56px;border-radius:50%;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;color:var(--accent);font-size:1.2rem;animation:pulse 2s infinite;transition:background .2s;}
+.hero .play-btn:hover{background:rgba(232,182,74,.15);}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.06);opacity:.7}}
+.hero .scroll-hint{position:absolute;bottom:20px;color:rgba(255,255,255,.15);font-size:.65rem;}
+
+/* Episodes */
+.episodes{max-width:900px;margin:0 auto;padding:0 16px;}
+.ep-section{margin-bottom:20px;}
+.ep-section h2{font-size:.7rem;color:var(--accent);letter-spacing:.3em;text-transform:uppercase;padding:40px 0 16px;text-align:center;}
+
+.ep-card{display:flex;gap:16px;background:#0e0e0e;border:1px solid #1a1a1a;border-radius:14px;overflow:hidden;transition:border-color .3s,transform .2s;cursor:pointer;text-decoration:none;color:#fff;-webkit-tap-highlight-color:transparent;}
+.ep-card:hover{border-color:rgba(232,182,74,.3);transform:translateY(-2px);}
+.ep-card .thumb{width:clamp(120px,30vw,200px);flex-shrink:0;position:relative;overflow:hidden;}
+.ep-card .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.ep-card:hover .thumb img{transform:scale(1.05);}
+.ep-card .thumb .badge{position:absolute;top:8px;left:8px;font-size:.55rem;padding:2px 8px;border-radius:6px;font-weight:700;}
+.ep-card .thumb .badge.new{background:var(--accent);color:#111;}
+.ep-card .thumb .badge.soon{background:rgba(255,255,255,.1);color:var(--dim);}
+.ep-card .info{padding:16px 16px 16px 0;display:flex;flex-direction:column;justify-content:center;flex:1;min-height:120px;}
+.ep-card .ep-num{font-size:.6rem;color:var(--accent);letter-spacing:.2em;margin-bottom:4px;}
+.ep-card .ep-title{font-family:'Noto Serif JP',serif;font-size:clamp(1rem,3vw,1.3rem);font-weight:700;margin-bottom:6px;line-height:1.3;}
+.ep-card .ep-desc{font-size:clamp(.72rem,2vw,.82rem);color:rgba(255,255,255,.4);line-height:1.6;}
+.ep-card .ep-meta{margin-top:auto;padding-top:8px;font-size:.6rem;color:var(--dim);display:flex;gap:8px;}
+.ep-card+.ep-card{margin-top:12px;}
+
+/* Locked card */
+.ep-card.locked{opacity:.5;pointer-events:none;}
+.ep-card.locked .thumb img{filter:blur(4px);}
+
+/* Stats */
+.stats-bar{display:flex;justify-content:center;gap:clamp(16px,4vw,32px);padding:32px 16px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat .num{font-size:clamp(1.5rem,5vw,2rem);font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;}
+.stat .label{font-size:.6rem;color:var(--dim);margin-top:2px;letter-spacing:.05em;}
+
+/* Making-of banner */
+.making{max-width:900px;margin:20px auto;padding:0 16px;}
+.making-card{background:linear-gradient(135deg,rgba(232,182,74,.06),rgba(232,182,74,.02));border:1px solid rgba(232,182,74,.15);border-radius:14px;padding:24px;text-align:center;}
+.making-card h3{font-size:.9rem;color:var(--accent);margin-bottom:6px;}
+.making-card p{font-size:.75rem;color:var(--dim);line-height:1.7;margin-bottom:12px;}
+.making-card a{display:inline-block;padding:8px 24px;border:1px solid var(--accent);border-radius:8px;color:var(--accent);text-decoration:none;font-size:.8rem;transition:background .2s;}
+.making-card a:hover{background:rgba(232,182,74,.1);}
+
+/* Next project */
+.next-project{max-width:900px;margin:20px auto 0;padding:0 16px;}
+.next-card{position:relative;border-radius:14px;overflow:hidden;height:clamp(180px,30vh,260px);cursor:pointer;text-decoration:none;display:block;}
+.next-card .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.25);transition:filter .5s,transform .5s;}
+.next-card:hover .bg{filter:brightness(.35);transform:scale(1.02);}
+.next-card .overlay{position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,8,.8) 0%,rgba(8,8,8,.1) 50%);}
+.next-card .text{position:absolute;bottom:20px;left:20px;right:20px;z-index:2;}
+.next-card .tag{font-size:.55rem;color:var(--accent);letter-spacing:.2em;text-transform:uppercase;}
+.next-card h3{font-family:'Noto Serif JP',serif;font-size:clamp(1.2rem,4vw,1.8rem);color:#fff;margin-top:4px;}
+.next-card p{font-size:.75rem;color:var(--dim);margin-top:4px;}
+
+/* Footer */
+.footer{text-align:center;padding:40px 16px 60px;font-size:.65rem;color:rgba(255,255,255,.15);}
+.footer a{color:var(--accent);text-decoration:none;margin:0 8px;}
+
+/* Canvas */
+#cv{position:fixed;inset:0;z-index:50;pointer-events:none;}
+
+@media(max-width:500px){
+  .ep-card{flex-direction:column;}
+  .ep-card .thumb{width:100%;height:160px;}
+  .ep-card .info{padding:12px 16px 16px;}
+}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero" onclick="location.href='/anime/ep1.html'">
+  <div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep2_04.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="warning">恋愛アニメだと思って見てください</div>
+    <h1>第3話で、<br><em>全部ひっくり返る</em>。</h1>
+    <div class="sub">AIだけで作ったアニメシリーズ<br>画像 · 動画 · 声 · コード — 全てAI生成</div>
+    <div class="play-btn">▶</div>
+  </div>
+  <div class="scroll-hint">▼ EPISODES</div>
+</div>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat"><div class="num">3</div><div class="label">EPISODES</div></div>
+  <div class="stat"><div class="num">100+</div><div class="label">AI IMAGES</div></div>
+  <div class="stat"><div class="num">16</div><div class="label">AI VIDEOS</div></div>
+  <div class="stat"><div class="num">49</div><div class="label">VOICE LINES</div></div>
+  <div class="stat"><div class="num">7</div><div class="label">EASTER EGGS</div></div>
+</div>
+
+<!-- Episodes -->
+<div class="episodes">
+  <div class="ep-section">
+    <h2>Season 1 — それ恋じゃなく____でした</h2>
+
+    <a class="ep-card" href="/anime/ep1.html">
+      <div class="thumb">
+        <img src="/mv/assets/images/generated/r_ep1_05.jpg" loading="lazy" alt="">
+        <div class="badge new">NEW</div>
+      </div>
+      <div class="info">
+        <div class="ep-num">EPISODE 01</div>
+        <div class="ep-title">ある場所</div>
+        <div class="ep-desc">失恋した金曜の夜。友達に連れられた原宿のビル8階に、彼女の人生を変える場所があった。</div>
+        <div class="ep-meta"><span>8 scenes</span><span>Voice: JP / EN</span></div>
+      </div>
+    </a>
+
+    <a class="ep-card" href="/anime/ep2.html">
+      <div class="thumb">
+        <img src="/mv/assets/images/generated/r_ep2_02.jpg" loading="lazy" alt="">
+        <div class="badge new">NEW</div>
+      </div>
+      <div class="info">
+        <div class="ep-num">EPISODE 02</div>
+        <div class="ep-title">距離</div>
+        <div class="ep-desc">壁ドン。手首を握られる。顔が近い。胸の上で息が詰まる。——これ、恋だよね？</div>
+        <div class="ep-meta"><span>8 scenes</span><span>Voice: JP / EN</span></div>
+      </div>
+    </a>
+
+    <a class="ep-card" href="/anime/ep3.html">
+      <div class="thumb">
+        <img src="/mv/assets/images/generated/r_ep3_07.jpg" loading="lazy" alt="">
+        <div class="badge new">NEW</div>
+      </div>
+      <div class="info">
+        <div class="ep-num">EPISODE 03</div>
+        <div class="ep-title">正体</div>
+        <div class="ep-desc">——あれ？ 私、今何着てる？ ここ、どこだっけ？<br>⚠ 第1話・第2話を先に見てください。</div>
+        <div class="ep-meta"><span>10 scenes</span><span>Voice: JP / EN</span><span>🔍 7 easter eggs</span></div>
+      </div>
+    </a>
+  </div>
+
+  <!-- MV -->
+  <div class="ep-section">
+    <h2>Music Video</h2>
+
+    <a class="ep-card" href="/mv/jiujitsu.html">
+      <div class="thumb">
+        <img src="/mv/assets/images/generated/jj_new_s1b.jpg" loading="lazy" alt="">
+      </div>
+      <div class="info">
+        <div class="ep-num">MUSIC VIDEO</div>
+        <div class="ep-title">それ恋じゃなく柔術でした</div>
+        <div class="ep-desc">48シーン・16動画・帯プログレスバー・恋愛/柔術モード切替・インタラクティブtap</div>
+        <div class="ep-meta"><span>4:18</span><span>48 scenes</span><span>Interactive</span></div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- Making-of -->
+<div class="making">
+  <div class="making-card">
+    <h3>🔧 制作の裏側</h3>
+    <p>Claude Code + Gemini + Veo 3 + ElevenLabs<br>全プロンプト・試行錯誤・ボツ案を公開</p>
+    <a href="/anime/behind.html">裏側を見る (会員限定)</a>
+  </div>
+</div>
+
+<!-- Next Project -->
+<div class="next-project">
+  <a class="next-card" href="/anime/concept.html">
+    <div class="bg" style="background-image:url('/anime/assets/concept_poster.jpg')"></div>
+    <div class="overlay"></div>
+    <div class="text">
+      <div class="tag">Coming Soon</div>
+      <h3>20プロダクト、社員ゼロ。</h3>
+      <p>AIエージェントを従えた一人の開発者の物語</p>
+    </div>
+  </a>
+</div>
+
+<!-- Footer -->
+<div class="footer">
+  <a href="/mv/">Music</a>
+  <a href="/">Home</a>
+  <a href="https://twitter.com/yukihamada" target="_blank">X</a>
+  <div style="margin-top:8px;">Made with AI, directed by a human.</div>
+</div>
+
+<canvas id="cv"></canvas>
+<script>
+// Particles
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}rsz();addEventListener('resize',rsz);
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=.3+Math.random()*2;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.2,l:1,c,s:sz||1+Math.random()*1.5});}}
+let f=0;
+function draw(){requestAnimationFrame(draw);f++;cx.clearRect(0,0,cv.width,cv.height);
+if(f%60===0)sp(Math.random()*innerWidth,-5,1,'232,182,74',1);
+for(let i=P.length-1;i>=0;i--){const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.005;p.l-=.005;if(p.l<=0){P.splice(i,1);continue;}cx.globalAlpha=p.l*.3;cx.fillStyle=`rgba(${p.c},${p.l})`;cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();}cx.globalAlpha=1;}
+draw();
+
+// Hover particles on cards
+document.querySelectorAll('.ep-card,.next-card').forEach(c=>{
+  c.addEventListener('mouseenter',()=>{const r=c.getBoundingClientRect();sp(r.x+r.width/2,r.y+r.height/2,5,'232,182,74',2);});
+});
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

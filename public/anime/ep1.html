@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<!--
+  ねぇ、ソースコード見てるの？
+  ……ちょっとだけ教えてあげる。
+  この話、恋愛だと思ってるでしょ？
+  …………ふふ。最後まで見てね。
+-->
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>第1話「ある場所」</title>
+<meta property="og:title" content="第1話「ある場所」">
+<meta property="og:description" content="失恋した金曜の夜。友達に連れられた原宿のビル8階に、彼女の人生を変える場所があった。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/r_ep1_05.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:url" content="https://yukihamada.jp/anime/ep1.html">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0a0808">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#080808;--accent:#E8B64A;--dim:rgba(255,255,255,.3);--serif:'Noto Serif JP',serif;--sans:'Noto Sans JP',sans-serif;}
+html{background:var(--bg);color:#fff;-webkit-overflow-scrolling:touch;}
+body{font-family:var(--sans);overflow-x:hidden;}
+
+/* Progress bar */
+#progress{position:fixed;top:0;left:0;height:2px;width:0%;background:var(--accent);z-index:1000;transition:width .1s;}
+
+/* Episode counter */
+#ep-indicator{position:fixed;top:12px;right:12px;z-index:900;font-size:.6rem;color:rgba(255,255,255,.2);letter-spacing:.1em;font-family:var(--sans);}
+
+/* Language toggle */
+.lang-toggle{position:fixed;top:12px;left:12px;z-index:900;font-size:.6rem;color:rgba(255,255,255,.25);text-decoration:none;background:rgba(0,0,0,.3);padding:3px 8px;border-radius:6px;backdrop-filter:blur(4px);}
+
+/* ─── SCENES ─── */
+.scene{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.scene .bg{position:absolute;inset:-8%;background-size:cover;background-position:center;filter:brightness(.2);transition:filter 1.2s,transform 8s ease-out;transform:scale(1.05);}
+.scene.visible .bg{filter:brightness(.35);transform:scale(1);}
+.scene .overlay{position:absolute;inset:0;}
+/* Overlay directions */
+.scene.L .overlay{background:linear-gradient(90deg,rgba(8,8,8,.88) 0%,rgba(8,8,8,.15) 65%);}
+.scene.R .overlay{background:linear-gradient(270deg,rgba(8,8,8,.88) 0%,rgba(8,8,8,.15) 65%);}
+.scene.C .overlay{background:linear-gradient(0deg,rgba(8,8,8,.7) 0%,rgba(8,8,8,.03) 35%,rgba(8,8,8,.55) 100%);}
+
+/* Content */
+.content{position:relative;z-index:2;max-width:520px;padding:24px 20px;opacity:0;transform:translateY(40px);transition:opacity 1s .15s,transform 1s .15s;}
+.scene.visible .content{opacity:1;transform:translateY(0);}
+.scene.L .content{margin-right:auto;margin-left:max(5%,env(safe-area-inset-left));}
+.scene.R .content{margin-left:auto;margin-right:max(5%,env(safe-area-inset-right));text-align:right;}
+.scene.C .content{text-align:center;max-width:600px;margin:0 auto;}
+
+/* Typography */
+.n{font-family:var(--serif);font-size:clamp(.88rem,2.5vw,1.08rem);color:rgba(255,255,255,.65);line-height:2.1;margin-bottom:10px;}
+.t{font-family:var(--serif);font-size:clamp(.82rem,2.2vw,.98rem);color:rgba(255,255,255,.35);font-style:italic;line-height:2;margin:8px 0;}
+.t.hi{color:rgba(232,182,74,.5);font-size:clamp(.9rem,2.6vw,1.1rem);}
+.sfx{font-size:clamp(1.3rem,4.5vw,2.2rem);font-weight:900;color:var(--accent);opacity:.2;margin:6px 0;letter-spacing:.1em;}
+
+/* Voice button */
+.vb{display:inline-flex;align-items:center;gap:5px;padding:5px 14px;background:rgba(232,182,74,.08);border:1px solid rgba(232,182,74,.25);border-radius:20px;cursor:pointer;color:var(--accent);font-size:.65rem;margin-top:10px;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.vb:hover,.vb:active{background:rgba(232,182,74,.2);transform:scale(1.02);}
+.vb.playing{background:rgba(232,182,74,.2);border-color:var(--accent);}
+.vb::before{content:'▶';font-size:.5rem;}
+.vb.playing::before{content:'■';}
+
+/* Divider */
+.div{text-align:center;padding:clamp(24px,6vh,40px) 20px;color:var(--dim);font-size:.7rem;letter-spacing:.3em;font-family:var(--serif);}
+
+/* Full image */
+.fi{width:100%;max-height:56vh;object-fit:cover;display:block;opacity:0;transform:scale(1.02);transition:opacity 1.2s,transform 1.2s;}
+.fi.visible{opacity:1;transform:scale(1);}
+
+/* Title scene */
+.title{height:100vh;height:100svh;}
+.title .content{text-align:center;max-width:600px;margin:0 auto;}
+.ep-n{font-size:.7rem;color:var(--accent);letter-spacing:.5em;text-transform:uppercase;}
+.ep-t{font-family:var(--serif);font-size:clamp(2.5rem,9vw,5rem);font-weight:700;color:var(--accent);line-height:1.15;margin:10px 0;text-shadow:0 0 60px rgba(232,182,74,.2);}
+.ep-s{color:var(--dim);font-size:.8rem;margin-top:20px;animation:fade-pulse 2.5s infinite;}
+@keyframes fade-pulse{0%,100%{opacity:.5}50%{opacity:.2}}
+
+/* Next episode card */
+.next{text-align:center;padding:clamp(40px,8vh,60px) 20px clamp(60px,10vh,80px);}
+.next a{display:inline-block;padding:14px 32px;background:rgba(232,182,74,.1);border:1px solid rgba(232,182,74,.3);border-radius:10px;color:var(--accent);text-decoration:none;font-size:.9rem;font-weight:700;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.next a:hover,.next a:active{background:rgba(232,182,74,.2);transform:translateY(-2px);}
+
+/* Canvas + flash */
+#cv{position:fixed;inset:0;z-index:100;pointer-events:none;}
+#fl{position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0;transition:opacity .08s;}
+
+/* Mobile adjustments */
+@media(max-width:600px){
+  .scene.L .content,.scene.R .content{margin-left:16px;margin-right:16px;text-align:left;max-width:none;}
+  .content{padding:20px 16px;}
+  .fi{max-height:40vh;}
+}
+@media(min-width:1200px){
+  .content{max-width:580px;}
+  .scene.L .content{margin-left:10%;}
+  .scene.R .content{margin-right:10%;}
+}
+/* Mute toggle */
+#mute-toggle{position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:950;font-size:.6rem;color:rgba(255,255,255,.35);background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);padding:4px 12px;border-radius:16px;cursor:pointer;backdrop-filter:blur(4px);-webkit-tap-highlight-color:transparent;transition:all .2s;}
+#mute-toggle:hover{background:rgba(0,0,0,.7);color:rgba(255,255,255,.5);}
+#mute-toggle.muted{color:rgba(255,100,100,.5);border-color:rgba(255,100,100,.15);}
+
+/* Email gate */
+.email-gate{max-width:400px;margin:0 auto;padding:24px;background:rgba(232,182,74,.04);border:1px solid rgba(232,182,74,.2);border-radius:14px;text-align:center;}
+.email-gate h3{font-family:var(--serif);font-size:1rem;color:var(--accent);margin-bottom:6px;}
+.email-gate p{font-size:.75rem;color:var(--dim);margin-bottom:14px;}
+.email-gate input[type=email]{width:100%;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;color:#fff;font-size:.85rem;outline:none;margin-bottom:10px;}
+.email-gate input[type=email]:focus{border-color:var(--accent);}
+.email-gate button{width:100%;padding:11px;background:var(--accent);border:none;border-radius:8px;color:#000;font-size:.8rem;font-weight:700;cursor:pointer;transition:all .2s;}
+.email-gate button:hover{opacity:.9;transform:translateY(-1px);}
+.email-gate .gate-skip{font-size:.6rem;color:rgba(255,255,255,.15);margin-top:8px;cursor:pointer;}
+
+/* EP2 preview teaser */
+.ep-preview{max-width:400px;margin:20px auto 0;text-align:center;position:relative;overflow:hidden;border-radius:12px;}
+.ep-preview img{width:100%;height:140px;object-fit:cover;filter:blur(8px) brightness(.4);display:block;}
+.ep-preview .ep-preview-text{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;font-family:var(--serif);font-size:clamp(.78rem,2.2vw,.92rem);color:rgba(255,255,255,.5);font-style:italic;line-height:1.8;text-align:center;}
+
+/* Reduce motion */
+@media(prefers-reduced-motion:reduce){
+  .scene .bg{transition:filter .5s;}.content{transition:opacity .4s;}
+}
+
+/* Feature 1: Typewriter */
+.typewriter{overflow:hidden;display:inline;}
+.typewriter .char{opacity:0;transition:opacity .05s;}
+.typewriter .char.show{opacity:1;}
+
+/* Feature 2: Heartbeat monitor */
+#heartbeat{position:fixed;bottom:80px;right:12px;z-index:800;opacity:.3;width:100px;pointer-events:none;}
+#hb-svg{width:100%;height:30px;}
+#hb-bpm{font-size:.5rem;color:rgba(232,182,74,.5);text-align:center;font-family:var(--sans);letter-spacing:.1em;}
+
+/* Feature 3: Choice buttons */
+.choice-btn{padding:12px 28px;border:1px solid var(--accent);border-radius:8px;background:transparent;color:var(--accent);cursor:pointer;font-size:.85rem;font-family:var(--serif);transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.choice-btn:hover{background:rgba(232,182,74,.15);}
+
+/* Feature 4: Truth reveal */
+.truth-overlay{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .5s;}
+.truth-overlay span{font-family:var(--serif);font-size:clamp(.7rem,2vw,.85rem);color:rgba(232,182,74,.08);letter-spacing:.2em;}
+.truth-overlay.show{opacity:1;}
+</style>
+<link rel="prefetch" href="/anime/ep2.html">
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="ep-indicator">EP 01 / 03</div>
+<div id="mute-toggle" onclick="toggleMute()">&#9834; auto-voice ON</div>
+<a href="/anime/ep1-en.html" class="lang-toggle">EN</a>
+
+<!-- TITLE -->
+<div class="scene C title">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_01.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <div class="ep-n">Episode 01</div>
+  <div class="ep-t">ある場所</div>
+  <div class="ep-s">▼</div>
+</div>
+</div>
+
+<!-- HOOK: Flash-forward teaser -->
+<div class="scene C" style="min-height:60vh;">
+<div class="overlay" style="background:var(--bg);"></div>
+<div class="content" style="text-align:center;">
+  <p class="t hi" style="font-size:clamp(1rem,3vw,1.3rem);line-height:2.4;">胸の上で、息が詰まった。<br>恋だと思った。<br><br>——違った。</p>
+</div>
+</div>
+
+<!-- 1: カフェで失恋 -->
+<div class="scene L" data-voice="v2_ep1_01" data-bpm="72" data-ambient="rain">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_01.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="n">金曜の夜。渋谷のカフェ。</p>
+  <p class="t">3年分の思い出が、スマホの通知1個で消えた。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_01')">声を聴く</div>
+</div>
+</div>
+
+<!-- 2: 雨の渋谷 -->
+<div class="scene R" data-voice="v2_ep1_03" data-bpm="72" data-ambient="rain">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_02.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="t">雨の渋谷って、失恋のために作られた街だと思う。</p>
+  <p class="n">傘を差しながら、ユカに電話した。</p>
+  <p class="t">ユカ、聞いて。終わった。全部。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_03')">声を聴く</div>
+</div>
+</div>
+
+<div class="div">— 翌朝 —</div>
+
+<!-- 3: ビル前 -->
+<img class="fi" src="/mv/assets/images/generated/r_ep1_03.jpg" loading="lazy" alt="">
+<div class="scene L" data-voice="v2_ep1_06" data-bpm="85" data-ambient="indoor">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_03.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="t">原宿にこんなビルあったっけ。</p>
+  <p class="t">8階……。何があるの、8階に。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_06')">声を聴く</div>
+</div>
+</div>
+
+<!-- 4: エレベーター -->
+<div class="scene C" data-voice="v2_ep1_07" data-bpm="85" data-ambient="indoor">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_04.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="t">エレベーターの中で3回、帰ろうと思った。</p>
+  <p class="n">6…… 7…… 8。</p>
+  <div class="sfx">チン</div>
+  <div class="vb" onclick="play(this,'v2_ep1_07')">声を聴く</div>
+</div>
+</div>
+
+<!-- 5: 天空の部屋 ★ -->
+<img class="fi" src="/mv/assets/images/generated/r_ep1_05.jpg" loading="lazy" alt="">
+<div class="scene C" data-voice="v2_ep1_09" data-bpm="95" data-ambient="indoor" data-truth="...ここは道場だ">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_05.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="t" style="font-size:clamp(1.1rem,3.5vw,1.5rem);">……は？</p>
+  <p class="n">窓の向こうに空が広がってて、<br>床が白くて、光が溢れてて。</p>
+  <p class="t">なにここ。東京が、全部見える。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_09')">声を聴く</div>
+</div>
+</div>
+
+<!-- 6: 「彼」 -->
+<div class="scene L" data-voice="v2_ep1_11" data-bpm="95" data-ambient="indoor" data-truth="...この人は先生だ">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_06.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="n">振り向いたら、目が合った。</p>
+  <p class="t">笑ってた。<br>なんであんなに自然に笑えるんだろう。</p>
+  <p class="n">「よろしくお願いします」って言われた。</p>
+  <p class="t">……何を？</p>
+  <div class="vb" onclick="play(this,'v2_ep1_11')">声を聴く</div>
+</div>
+</div>
+
+<!-- 7: 白い服 -->
+<div class="scene R" data-voice="v2_ep1_15" data-bpm="95" data-ambient="indoor" data-truth="...これは道着だ">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_08.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="n">白い服を渡された。<br>「着替えて」って。</p>
+  <p class="t">鏡に映った自分が、<br>昨日までと違う人みたい。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_15')">声を聴く</div>
+</div>
+</div>
+
+<!-- Choice moment -->
+<div class="scene C choice-scene" style="min-height:50vh;">
+<div class="overlay" style="background:var(--bg)"></div>
+<div class="content" style="text-align:center;">
+  <p class="t" style="font-size:clamp(.9rem,2.5vw,1.1rem);">白い服を渡された。</p>
+  <p class="n" style="margin:16px 0;">これ、着る？</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <button class="choice-btn" onclick="choose(this,'着た。何かが変わる予感がした。')">着る</button>
+    <button class="choice-btn" onclick="choose(this,'……でも、彼女は着た。')">帰る</button>
+  </div>
+  <p class="choice-result t hi" style="margin-top:16px;display:none;"></p>
+</div>
+</div>
+
+<div class="div">— — —</div>
+
+<!-- 8: 倒される -->
+<div class="scene C" data-voice="v2_ep1_17" data-bpm="120" data-ambient="intense" data-truth="...これはマウントだ">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_05.jpg');filter:brightness(.12)"></div>
+<div class="overlay"></div>
+<div class="content">
+  <div class="sfx">ドサッ</div>
+  <p class="n">3秒で床に倒された。<br>何が起きたか全然わからない。</p>
+  <p class="t">誰かの体重が、胸の上にある。<br>動けない。息ができない。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_17')">声を聴く</div>
+</div>
+</div>
+
+<!-- 9: 覚醒 ★ -->
+<div class="scene C" data-fx="awaken" data-voice="v2_ep1_18" data-bpm="120" data-ambient="intense">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_05.jpg');filter:brightness(.15)"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="t hi" style="font-size:clamp(1rem,3.2vw,1.4rem);">
+    苦しい。<br><br>……のに。<br><br>昨日の夜より、<br>ずっと生きてる。
+  </p>
+  <div class="vb" onclick="play(this,'v2_ep1_18')">声を聴く</div>
+</div>
+</div>
+
+<div class="div">— 帰り道 —</div>
+
+<!-- 10: 竹下通り -->
+<img class="fi" src="/mv/assets/images/generated/r_ep1_03.jpg" loading="lazy" alt="">
+<div class="scene L" data-voice="v2_ep1_21" data-bpm="80" data-ambient="calm">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_03.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+  <p class="n">帰り道、首のあたりが熱い。<br>さっき誰かに触られた場所。</p>
+  <p class="t">ボロボロなのに、笑ってる。なんで？</p>
+  <p class="t hi">明日も行きたい。<br>なんでかわかんないけど、行きたい。</p>
+  <div class="vb" onclick="play(this,'v2_ep1_21')">声を聴く</div>
+</div>
+</div>
+
+<!-- END -->
+<div class="div" style="padding-top:clamp(30px,6vh,50px);">第1話「ある場所」 — 終</div>
+
+<!-- EP2 Preview Teaser -->
+<div class="ep-preview">
+  <img src="/mv/assets/images/generated/r_ep2_02.jpg" loading="lazy" alt="">
+  <div class="ep-preview-text">次回 — 壁に押し付けられた。<br>逃げ場がない。でも——</div>
+</div>
+
+<!-- Next Episode CTA (primary) -->
+<div class="next" id="ep-next">
+  <a href="/anime/ep2.html" style="display:inline-block;padding:16px 40px;background:var(--accent);color:#080808;border-radius:10px;text-decoration:none;font-size:1rem;font-weight:700;transition:all .2s;">第2話「距離」へ →</a>
+  <div style="margin-top:20px;max-width:320px;margin-left:auto;margin-right:auto;">
+    <div style="font-size:.65rem;color:rgba(255,255,255,.2);margin-bottom:8px;">更新通知を受け取る（任意）</div>
+    <div style="display:flex;gap:6px;">
+      <input type="email" id="gate-email" placeholder="your@email.com" style="flex:1;padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:6px;color:#fff;font-size:.8rem;outline:none;">
+      <button onclick="submitGate()" style="padding:8px 14px;background:rgba(232,182,74,.15);border:1px solid rgba(232,182,74,.25);border-radius:6px;color:var(--accent);font-size:.7rem;cursor:pointer;">登録</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cross Navigation -->
+<div style="max-width:500px;margin:30px auto;padding:0 20px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <a href="/mv/jiujitsu.html" style="display:block;padding:14px;background:rgba(212,118,74,.08);border:1px solid rgba(212,118,74,.2);border-radius:10px;text-decoration:none;text-align:center;transition:all .2s;">
+      <div style="font-size:.65rem;color:rgba(255,255,255,.35);">MUSIC VIDEO</div>
+      <div style="font-size:.8rem;color:#D4764A;margin-top:4px;">それ恋じゃなく柔術でした</div>
+    </a>
+    <a href="/anime/" style="display:block;padding:14px;background:rgba(232,182,74,.05);border:1px solid rgba(232,182,74,.15);border-radius:10px;text-decoration:none;text-align:center;transition:all .2s;">
+      <div style="font-size:.65rem;color:rgba(255,255,255,.35);">ALL EPISODES</div>
+      <div style="font-size:.8rem;color:#E8B64A;margin-top:4px;">エピソード一覧</div>
+    </a>
+  </div>
+</div>
+
+<div id="heartbeat"><svg viewBox="0 0 200 60" id="hb-svg"></svg><div id="hb-bpm">72</div></div>
+
+<canvas id="cv"></canvas>
+<div id="fl"></div>
+
+<script>
+// ── Progress bar ──
+const prog=document.getElementById('progress');
+function updateProg(){
+  const h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.width=h>0?(scrollY/h*100)+'%':'0%';
+}
+addEventListener('scroll',updateProg,{passive:true});
+
+// ── Particles ──
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=.5+Math.random()*2.5;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.3,l:1,c,s:sz||1.5+Math.random()*2});}}
+function flash(c,d){const f=document.getElementById('fl');f.style.background=c;f.style.opacity='.15';setTimeout(()=>f.style.opacity='0',d||100);}
+let frame=0;
+function draw(){
+  requestAnimationFrame(draw);frame++;cx.clearRect(0,0,cv.width,cv.height);
+  if(frame%45===0)sp(Math.random()*innerWidth,-5,1,'255,220,150',1);
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.008;p.vx*=.99;p.l-=.006;
+    if(p.l<=0){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.4;cx.fillStyle=`rgba(${p.c},${p.l})`;
+    cx.shadowColor=`rgba(${p.c},.2)`;cx.shadowBlur=3;
+    cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+draw();
+
+// ── Voice (manual play) ──
+let cur=null;
+function play(el,id){
+  document.querySelectorAll('.vb').forEach(b=>{b.classList.remove('playing');});
+  if(cur){cur.pause();cur=null;}
+  cur=new Audio('/mv/assets/audio/misaki/'+id+'.mp3');
+  el.classList.add('playing');cur.play();
+  cur.onended=()=>{el.classList.remove('playing');cur=null;};
+  sp(el.getBoundingClientRect().x+el.offsetWidth/2,el.getBoundingClientRect().y,6,'232,182,74',2);
+}
+
+// ── Auto-voice on scroll ──
+let muted=localStorage.getItem('anime_mute')==='1';
+const playedVoices=new Set();
+function toggleMute(){
+  muted=!muted;
+  localStorage.setItem('anime_mute',muted?'1':'0');
+  const btn=document.getElementById('mute-toggle');
+  if(muted){btn.textContent='\u266B auto-voice OFF';btn.classList.add('muted');if(cur){cur.pause();cur=null;document.querySelectorAll('.vb').forEach(b=>b.classList.remove('playing'));}if(typeof stopAllAmbient==='function'){stopAllAmbient();ambientType=null;}}
+  else{btn.textContent='\u266B auto-voice ON';btn.classList.remove('muted');}
+}
+if(muted){const btn=document.getElementById('mute-toggle');btn.textContent='\u266B auto-voice OFF';btn.classList.add('muted');}
+function autoPlayVoice(scene){
+  const vid=scene.dataset.voice;
+  if(!vid||muted||playedVoices.has(vid))return;
+  playedVoices.add(vid);
+  setTimeout(()=>{
+    if(muted)return;
+    const vb=scene.querySelector('.vb');
+    document.querySelectorAll('.vb').forEach(b=>b.classList.remove('playing'));
+    if(cur){cur.pause();cur=null;}
+    cur=new Audio('/mv/assets/audio/misaki/'+vid+'.mp3');
+    if(vb)vb.classList.add('playing');
+    cur.play().catch(()=>{});
+    cur.onended=()=>{if(vb)vb.classList.remove('playing');cur=null;};
+    if(vb)sp(vb.getBoundingClientRect().x+vb.offsetWidth/2,vb.getBoundingClientRect().y,6,'232,182,74',2);
+  },500);
+}
+
+// ── Scroll observer with effects ──
+let sc=0;
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting&&!e.target.classList.contains('visible')){
+      e.target.classList.add('visible');sc++;
+      sp(Math.random()*innerWidth,innerHeight*.4,2,'255,220,150',1.5);
+      // Auto-voice
+      if(e.target.dataset.voice)autoPlayVoice(e.target);
+      // Special effects
+      if(e.target.dataset.fx==='awaken'){
+        flash('rgba(232,182,74,.12)',200);
+        sp(innerWidth/2,innerHeight/2,12,'232,182,74',3);
+      }
+    }
+  });
+},{threshold:.2,rootMargin:'0px 0px -10% 0px'});
+document.querySelectorAll('.scene,.fi').forEach(el=>obs.observe(el));
+
+// ── Email gate ──
+(function(){
+  if(localStorage.getItem('anime_email')){
+    document.getElementById('email-gate').innerHTML='<a href="/anime/ep2.html" style="display:inline-block;padding:14px 32px;background:rgba(232,182,74,.1);border:1px solid rgba(232,182,74,.3);border-radius:10px;color:var(--accent);text-decoration:none;font-size:.9rem;font-weight:700;">第2話「距離」へ →</a>';
+  }
+})();
+function submitGate(){
+  const email=document.getElementById('gate-email').value;
+  if(!email||!email.includes('@'))return;
+  localStorage.setItem('anime_email',email);
+  fetch('/api/newsletter',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email})}).catch(()=>{});
+  location.href='/anime/ep2.html';
+}
+document.getElementById('gate-email').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();submitGate();}});
+
+// ── 3-tap easter egg ──
+let tapC=0,tapT=null;
+document.addEventListener('click',()=>{
+  tapC++;clearTimeout(tapT);tapT=setTimeout(()=>tapC=0,600);
+  if(tapC===3){tapC=0;
+    const msg=document.createElement('div');
+    msg.style.cssText='position:fixed;bottom:15%;left:50%;transform:translateX(-50%);z-index:9999;font-family:var(--serif);font-size:clamp(.75rem,2.2vw,.95rem);color:rgba(232,182,74,.5);text-align:center;opacity:0;transition:opacity 1s;pointer-events:none;max-width:80%;';
+    const hints=['……本当に、恋だと思う？','白い服の正体、気づいた？','3回叩くのは「参った」の合図。','あの部屋の床、よく見て。'];
+    msg.textContent=hints[Math.floor(Math.random()*hints.length)];
+    document.body.appendChild(msg);
+    requestAnimationFrame(()=>msg.style.opacity='1');
+    setTimeout(()=>{msg.style.opacity='0';setTimeout(()=>msg.remove(),1000);},3000);
+    sp(innerWidth/2,innerHeight/2,8,'232,182,74',2);
+  }
+});
+
+// ── Feature 1: Typewriter effect ──
+function initTypewriter(scene){
+  scene.querySelectorAll('.n,.t').forEach(el=>{
+    if(el.dataset.typed||el.classList.contains('choice-result'))return;
+    el.dataset.typed='1';
+    const text=el.textContent;
+    el.innerHTML='';
+    el.classList.add('typewriter');
+    const chars=[];
+    for(let i=0;i<text.length;i++){
+      const s=document.createElement('span');
+      s.className='char';
+      s.textContent=text[i];
+      el.appendChild(s);
+      chars.push({el:s,ch:text[i]});
+    }
+    let idx=0;
+    function tick(){
+      if(idx>=chars.length)return;
+      chars[idx].el.classList.add('show');
+      const pause=(chars[idx].ch==='\u2026')?400:30;
+      idx++;
+      setTimeout(tick,pause);
+    }
+    setTimeout(tick,200);
+  });
+}
+
+// ── Feature 2: Heartbeat monitor ──
+const hbSvg=document.getElementById('hb-svg');
+const hbBpmEl=document.getElementById('hb-bpm');
+let currentBpm=72,targetBpm=72,hbPhase=0;
+const hbPath=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+hbPath.setAttribute('fill','none');
+hbPath.setAttribute('stroke','rgba(232,182,74,.6)');
+hbPath.setAttribute('stroke-width','1.5');
+hbSvg.appendChild(hbPath);
+const hbPoints=new Array(200).fill(30);
+function hbTick(){
+  requestAnimationFrame(hbTick);
+  currentBpm+=(targetBpm-currentBpm)*0.02;
+  hbBpmEl.textContent=Math.round(currentBpm);
+  const speed=currentBpm/60;
+  hbPhase+=speed*0.06;
+  hbPoints.shift();
+  const beat=Math.sin(hbPhase*Math.PI*2);
+  let y=30;
+  if(beat>0.8)y=30-beat*22;
+  else if(beat<-0.5)y=30-beat*10;
+  else y=30+Math.sin(hbPhase*12)*0.5;
+  hbPoints.push(y);
+  const pts=hbPoints.map((v,i)=>i+','+v).join(' ');
+  hbPath.setAttribute('points',pts);
+}
+hbTick();
+
+// ── Feature 3: Choice moments ──
+function choose(btn,text){
+  const wrap=btn.parentElement;
+  wrap.querySelectorAll('.choice-btn').forEach(b=>{b.style.display='none';});
+  const result=wrap.parentElement.querySelector('.choice-result');
+  if(result){result.textContent=text;result.style.display='block';}
+  sp(innerWidth/2,innerHeight/2,10,'232,182,74',2.5);
+  flash('rgba(232,182,74,.08)',150);
+}
+
+// ── Feature 4: Truth reveal (long-press / double-click) ──
+document.querySelectorAll('.scene[data-truth]').forEach(scene=>{
+  const truth=scene.dataset.truth;
+  const overlay=document.createElement('div');
+  overlay.className='truth-overlay';
+  overlay.innerHTML='<span>'+truth+'</span>';
+  scene.appendChild(overlay);
+  let pressTimer=null;
+  scene.addEventListener('touchstart',()=>{pressTimer=setTimeout(()=>{overlay.classList.add('show');setTimeout(()=>overlay.classList.remove('show'),2000);},800);},{passive:true});
+  scene.addEventListener('touchend',()=>clearTimeout(pressTimer),{passive:true});
+  scene.addEventListener('touchmove',()=>clearTimeout(pressTimer),{passive:true});
+  scene.addEventListener('dblclick',(e)=>{e.preventDefault();overlay.classList.add('show');setTimeout(()=>overlay.classList.remove('show'),2000);});
+});
+
+// ── Feature 5: Ambient sound (Web Audio API) ──
+let audioCtx=null,ambientGain=null,ambientType=null;
+let noiseSource=null,noiseGain=null,oscSource=null,oscGain=null,pulseOsc=null,pulseGain=null,pulseLfo=null;
+function initAudio(){
+  if(audioCtx)return;
+  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  ambientGain=audioCtx.createGain();
+  ambientGain.gain.value=0;
+  ambientGain.connect(audioCtx.destination);
+}
+function stopAllAmbient(){
+  try{if(noiseSource){noiseSource.stop();noiseSource=null;}}catch(e){}
+  try{if(oscSource){oscSource.stop();oscSource=null;}}catch(e){}
+  try{if(pulseOsc){pulseOsc.stop();pulseOsc=null;}}catch(e){}
+  try{if(pulseLfo){pulseLfo.stop();pulseLfo=null;}}catch(e){}
+  if(noiseGain)noiseGain.disconnect();
+  if(oscGain)oscGain.disconnect();
+  if(pulseGain)pulseGain.disconnect();
+  noiseGain=null;oscGain=null;pulseGain=null;
+}
+function setAmbient(type){
+  if(!audioCtx||muted||type===ambientType)return;
+  stopAllAmbient();
+  ambientType=type;
+  if(type==='rain'){
+    const bufSize=2*audioCtx.sampleRate;
+    const buf=audioCtx.createBuffer(1,bufSize,audioCtx.sampleRate);
+    const d=buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++)d[i]=Math.random()*2-1;
+    noiseSource=audioCtx.createBufferSource();
+    noiseSource.buffer=buf;noiseSource.loop=true;
+    noiseGain=audioCtx.createGain();noiseGain.gain.value=0.03;
+    const lp=audioCtx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=800;
+    noiseSource.connect(lp);lp.connect(noiseGain);noiseGain.connect(ambientGain);
+    ambientGain.gain.setTargetAtTime(1,audioCtx.currentTime,0.5);
+    noiseSource.start();
+  }else if(type==='indoor'){
+    oscSource=audioCtx.createOscillator();oscSource.type='sine';oscSource.frequency.value=60;
+    oscGain=audioCtx.createGain();oscGain.gain.value=0.01;
+    oscSource.connect(oscGain);oscGain.connect(ambientGain);
+    ambientGain.gain.setTargetAtTime(1,audioCtx.currentTime,0.5);
+    oscSource.start();
+  }else if(type==='intense'){
+    pulseOsc=audioCtx.createOscillator();pulseOsc.type='sine';pulseOsc.frequency.value=40;
+    pulseGain=audioCtx.createGain();pulseGain.gain.value=0;
+    pulseLfo=audioCtx.createOscillator();pulseLfo.type='sine';pulseLfo.frequency.value=1.5;
+    const lfoGain=audioCtx.createGain();lfoGain.gain.value=0.02;
+    pulseLfo.connect(lfoGain);lfoGain.connect(pulseGain.gain);
+    pulseOsc.connect(pulseGain);pulseGain.connect(ambientGain);
+    ambientGain.gain.setTargetAtTime(1,audioCtx.currentTime,0.5);
+    pulseOsc.start();pulseLfo.start();
+  }else if(type==='calm'){
+    oscSource=audioCtx.createOscillator();oscSource.type='sine';oscSource.frequency.value=55;
+    oscGain=audioCtx.createGain();oscGain.gain.value=0.008;
+    oscSource.connect(oscGain);oscGain.connect(ambientGain);
+    ambientGain.gain.setTargetAtTime(1,audioCtx.currentTime,0.5);
+    oscSource.start();
+  }
+}
+document.addEventListener('click',()=>initAudio(),{once:true});
+document.addEventListener('touchstart',()=>initAudio(),{once:true});
+
+// ── Patch observer for new features ──
+const origObsCallback=obs.takeRecords;
+const obs2=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      // Typewriter
+      initTypewriter(e.target);
+      // Heartbeat BPM
+      if(e.target.dataset.bpm)targetBpm=parseInt(e.target.dataset.bpm);
+      // Ambient sound
+      if(e.target.dataset.ambient)setAmbient(e.target.dataset.ambient);
+    }
+  });
+},{threshold:.2,rootMargin:'0px 0px -10% 0px'});
+document.querySelectorAll('.scene').forEach(el=>obs2.observe(el));
+
+// ── Late night mode ──
+if(new Date().getHours()>=0&&new Date().getHours()<4){
+  document.querySelector('.ep-t').textContent='ある場所（の正体）';
+}
+
+// ── Returning from EP3 ──
+if(document.referrer.includes('ep3')||sessionStorage.getItem('seen_ep3')){
+  const h=document.createElement('div');
+  h.style.cssText='position:fixed;top:40px;left:12px;z-index:300;font-size:.55rem;color:rgba(232,182,74,.15);pointer-events:none;';
+  h.textContent='[ 2周目 — 今なら見える ]';
+  document.body.appendChild(h);
+}
+</script>
+<a href="/anime/ep1-en.html" style="position:fixed;top:12px;left:12px;z-index:9100;font-size:.65rem;color:rgba(255,255,255,.3);text-decoration:none;background:rgba(0,0,0,.4);padding:3px 8px;border-radius:8px;">EN</a><script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

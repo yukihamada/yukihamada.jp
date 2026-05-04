@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCP Server & A2A — 濱田優貴</title>
+  <meta name="description" content="yukihamada.jp はMCPサーバーです。Claude DesktopやCursorから直接、ブログ検索・プロフィール取得・AI Q&Aが使えます。">
+  <link rel="canonical" href="https://yukihamada.jp/mcp">
+  <meta property="og:title" content="MCP Server — 濱田優貴">
+  <meta property="og:description" content="yukihamada.jp はMCPサーバーです。AIエージェントから直接接続できます。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yukihamada.jp/mcp">
+  <meta property="og:image" content="https://yukihamada.jp/og-image.png">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:site_name" content="濱田優貴">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@yukihamada">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="https://enabler-analytics.fly.dev/t.js" defer></script>
+  <style>
+    .mcp-hero { padding: 72px 0 48px; text-align: center; }
+    .mcp-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(39,201,63,.1); color: #27c93f; border: 1px solid rgba(39,201,63,.25); padding: 4px 14px; border-radius: 20px; font-size: .75rem; font-weight: 600; margin-bottom: 20px; }
+    .mcp-badge::before { content: ''; width: 7px; height: 7px; background: #27c93f; border-radius: 50%; display: inline-block; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .mcp-title { font-size: clamp(1.8rem, 5vw, 2.8rem); font-weight: 700; margin: 0 0 14px; }
+    .mcp-sub { color: var(--text-muted); font-size: 1.05rem; max-width: 560px; margin: 0 auto 40px; line-height: 1.7; }
+    .mcp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 48px 0; }
+    .mcp-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+    .mcp-card h3 { font-size: .95rem; margin: 0 0 8px; }
+    .mcp-card p { color: var(--text-muted); font-size: .83rem; margin: 0; line-height: 1.6; }
+    .mcp-card .icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .section-label { font-size: .7rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 10px; }
+    .code-block { background: #0a0a0a; border: 1px solid rgba(255,255,255,.1); border-radius: 10px; padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: .8rem; line-height: 1.7; color: #d0d0d0; overflow-x: auto; position: relative; margin: 16px 0; }
+    .code-block .copy-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); color: #888; border-radius: 6px; padding: 4px 10px; font-size: .7rem; cursor: pointer; font-family: inherit; }
+    .code-block .copy-btn:hover { background: rgba(255,255,255,.15); color: #f0f0f0; }
+    .kw { color: #e8a04c; }
+    .str { color: #27c93f; }
+    .cmt { color: #555; }
+    .tools-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: .85rem; }
+    .tools-table th { text-align: left; padding: 10px 14px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
+    .tools-table td { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: top; }
+    .tools-table tr:last-child td { border-bottom: none; }
+    .tools-table td:first-child { font-family: 'JetBrains Mono', monospace; color: var(--accent); white-space: nowrap; }
+    .tools-table td:last-child { color: var(--text-muted); }
+    .example-block { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 12px 0; }
+    .example-block .label { font-size: .7rem; color: var(--text-muted); margin-bottom: 6px; }
+    .example-q { color: #e8a04c; margin-bottom: 8px; font-size: .88rem; }
+    .example-a { color: var(--text-muted); font-size: .83rem; line-height: 1.6; }
+    .tab-bar { display: flex; gap: 4px; margin-bottom: -1px; }
+    .tab-btn { padding: 8px 16px; font-size: .8rem; border: 1px solid var(--border); border-bottom: none; border-radius: 8px 8px 0 0; cursor: pointer; background: transparent; color: var(--text-muted); font-family: inherit; }
+    .tab-btn.active { background: #0a0a0a; color: #f0f0f0; border-color: rgba(255,255,255,.1); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+    .a2a-badge { background: rgba(139,92,246,.1); color: #8b5cf6; border-color: rgba(139,92,246,.25); }
+    .endpoint-row { display: flex; align-items: baseline; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.04); flex-wrap: wrap; }
+    .endpoint-row:last-child { border-bottom: none; }
+    .method-badge { font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; }
+    .method-get { background: rgba(39,201,63,.15); color: #27c93f; }
+    .method-post { background: rgba(232,160,76,.15); color: #e8a04c; }
+    .endpoint-path { font-family: 'JetBrains Mono', monospace; font-size: .83rem; color: #f0f0f0; }
+    .endpoint-desc { color: var(--text-muted); font-size: .8rem; margin-left: auto; }
+  </style>
+</head>
+<body class="force-dark">
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="nav-logo">YH</a>
+    <div class="nav-links">
+      <a href="/about">About</a>
+      <a href="/#projects">Projects</a>
+      <a href="/blog">Blog</a>
+      <a href="/mcp" class="active">API</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="container" style="max-width:800px;">
+
+    <!-- Hero -->
+    <div class="mcp-hero">
+      <div class="mcp-badge">Live · MCP + A2A 対応</div>
+      <h1 class="mcp-title">yukihamada.jp は<br>AIエージェントです</h1>
+      <p class="mcp-sub">このサイトはMCPサーバーとしても動いています。Claude DesktopやCursorからブログ検索・プロフィール取得・Q&Aをそのまま使えます。</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="#setup" class="btn btn-primary">今すぐ接続する</a>
+        <a href="#tools" class="btn" style="background:rgba(255,255,255,.06);color:#f0f0f0;">Toolsを見る</a>
+      </div>
+    </div>
+
+    <!-- Cards -->
+    <div class="mcp-grid">
+      <div class="mcp-card">
+        <div class="icon">🔍</div>
+        <h3>ブログ全文検索</h3>
+        <p>{{ posts_count }}本の記事をキーワードで横断検索。AIが文脈を理解して関連記事を返す。</p>
+      </div>
+      <div class="mcp-card">
+        <div class="icon">🤖</div>
+        <h3>RAG付きQ&A</h3>
+        <p>「Solunaとは？」「最近書いた技術記事は？」— ブログ内容を根拠に回答。</p>
+      </div>
+      <div class="mcp-card">
+        <div class="icon">🌐</div>
+        <h3>A2A対応</h3>
+        <p>Google A2A Protocolにも対応。他のAIエージェントからタスクを投げられる。</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- Setup -->
+    <section id="setup">
+      <div class="section-label">セットアップ</div>
+      <h2 style="margin-top:0;">Claude Desktopから接続する</h2>
+      <p style="color:var(--text-muted);font-size:.9rem;line-height:1.7;">設定ファイルに以下を追加するだけ。再起動すると「yukihamada」ツールが使えるようになります。</p>
+
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('mac')">macOS</button>
+        <button class="tab-btn" onclick="switchTab('win')">Windows</button>
+        <button class="tab-btn" onclick="switchTab('cursor')">Cursor</button>
+      </div>
+
+      <div id="tab-mac" class="tab-content active">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cmt">// ~/Library/Application Support/Claude/claude_desktop_config.json</span>
+{
+  <span class="kw">"mcpServers"</span>: {
+    <span class="kw">"yukihamada"</span>: {
+      <span class="kw">"url"</span>: <span class="str">"https://yukihamada.jp/mcp"</span>
+    }
+  }
+}
+        </div>
+      </div>
+
+      <div id="tab-win" class="tab-content">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cmt">// %APPDATA%\Claude\claude_desktop_config.json</span>
+{
+  <span class="kw">"mcpServers"</span>: {
+    <span class="kw">"yukihamada"</span>: {
+      <span class="kw">"url"</span>: <span class="str">"https://yukihamada.jp/mcp"</span>
+    }
+  }
+}
+        </div>
+      </div>
+
+      <div id="tab-cursor" class="tab-content">
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cmt">// ~/.cursor/mcp.json</span>
+{
+  <span class="kw">"mcpServers"</span>: {
+    <span class="kw">"yukihamada"</span>: {
+      <span class="kw">"url"</span>: <span class="str">"https://yukihamada.jp/mcp"</span>
+    }
+  }
+}
+        </div>
+      </div>
+
+      <p style="color:var(--text-muted);font-size:.8rem;margin-top:8px;">
+        DiscoveryエンドポイントURL: <code style="font-family:'JetBrains Mono',monospace;color:var(--accent);">https://yukihamada.jp/.well-known/mcp.json</code>
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Tools -->
+    <section id="tools">
+      <div class="section-label">Tools</div>
+      <h2 style="margin-top:0;">使えること</h2>
+
+      <table class="tools-table">
+        <thead>
+          <tr>
+            <th>Tool名</th>
+            <th>説明</th>
+            <th>引数</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>list_posts</td>
+            <td>全ブログ記事の一覧（タイトル・日付・スラッグ・タグ）を取得</td>
+            <td>なし</td>
+          </tr>
+          <tr>
+            <td>search_posts</td>
+            <td>キーワードでブログ記事を検索。日本語・英語どちらも可</td>
+            <td><code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;">query: string</code></td>
+          </tr>
+          <tr>
+            <td>get_post</td>
+            <td>特定記事のフルテキストを取得</td>
+            <td><code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;">slug: string</code></td>
+          </tr>
+          <tr>
+            <td>get_profile</td>
+            <td>濱田優貴のプロフィール・経歴・プロジェクト・連絡先</td>
+            <td>なし</td>
+          </tr>
+          <tr>
+            <td>ask_yuki</td>
+            <td>RAGを使ってQ&A。関連記事を自動で引いて回答</td>
+            <td><code style="font-family:'JetBrains Mono',monospace;font-size:.75rem;">question: string</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Examples -->
+    <section id="examples">
+      <div class="section-label">使用例</div>
+      <h2 style="margin-top:0;">こんな使い方ができます</h2>
+
+      <div class="example-block">
+        <div class="label">Claude Desktop で「Yukiの柔術記事を探して」</div>
+        <div class="example-q">→ search_posts("柔術") を実行</div>
+        <div class="example-a">「柔術とコーディングの共通点」「JiuFlowを作った理由」「柔術道場DX」など関連記事を返す</div>
+      </div>
+
+      <div class="example-block">
+        <div class="label">Cursor で「このコードについてYukiの視点でレビューして」</div>
+        <div class="example-q">→ get_profile() でYukiの技術スタックと価値観を取得 → コンテキストに追加してレビュー</div>
+        <div class="example-a">「Rustでシンプルに書き直せる」「KISSの原則に従って」などYukiらしいフィードバック</div>
+      </div>
+
+      <div class="example-block">
+        <div class="label">他のAIエージェントから「Solunaとは何か？」</div>
+        <div class="example-q">→ ask_yuki("Solunaについて教えて") を実行</div>
+        <div class="example-a">ブログ記事・Aboutページの内容をRAGで引いて、北海道弟子屈のSolunaについて詳しく回答</div>
+      </div>
+
+      <div class="example-block">
+        <div class="label">「最新記事の内容を要約してSlackに貼って」（エージェントワークフロー）</div>
+        <div class="example-q">→ list_posts() で最新スラッグを取得 → get_post(slug) で全文取得 → 要約 → Slack送信</div>
+        <div class="example-a">ブログ更新を自動でチームに共有するワークフローが組める</div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Raw API -->
+    <section id="api">
+      <div class="section-label">Raw API</div>
+      <h2 style="margin-top:0;">直接呼ぶ場合</h2>
+
+      <p style="color:var(--text-muted);font-size:.9rem;line-height:1.7;">MCPクライアントなしでも、JSON-RPC 2.0 で直接 <code style="font-family:'JetBrains Mono',monospace;color:var(--accent);">POST /mcp</code> を叩けます。</p>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cmt"># ブログを検索する</span>
+curl -s -X POST https://yukihamada.jp/mcp \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "jsonrpc": "2.0", "id": 1,
+    "method": "tools/call",
+    "params": {
+      "name": "search_posts",
+      "arguments": {"query": "AI 自動化"}
+    }
+  }'</span>
+      </div>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cmt"># 利用可能なToolsを一覧表示</span>
+curl -s -X POST https://yukihamada.jp/mcp \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{"jsonrpc": "2.0", "id": 1, "method": "tools/list"}'</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- A2A -->
+    <section id="a2a">
+      <div class="mcp-badge a2a-badge" style="margin-bottom:16px;">A2A Protocol (Google)</div>
+      <h2 style="margin-top:0;">Agent-to-Agent</h2>
+      <p style="color:var(--text-muted);font-size:.9rem;line-height:1.7;">
+        Google の <a href="https://google.github.io/A2A" target="_blank" rel="noopener" style="color:var(--accent);">A2A Protocol</a> にも対応しています。
+        他のAIエージェントやオーケストレーターから、このサイトのAIにタスクを投げることができます。
+      </p>
+
+      <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;">
+        <div class="endpoint-row">
+          <span class="method-badge method-get">GET</span>
+          <span class="endpoint-path">/.well-known/agent.json</span>
+          <span class="endpoint-desc">Agent Card（capabilities, skills定義）</span>
+        </div>
+        <div class="endpoint-row">
+          <span class="method-badge method-post">POST</span>
+          <span class="endpoint-path">/a2a</span>
+          <span class="endpoint-desc">タスク送信・実行</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cmt"># A2A タスク送信の例</span>
+curl -s -X POST https://yukihamada.jp/a2a \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "id": "task-001",
+    "message": {
+      "role": "user",
+      "parts": [{"type": "text", "text": "Solunaの予約方法を教えてください"}]
+    }
+  }'</span>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CTA -->
+    <section style="text-align:center;padding:40px 0 60px;">
+      <h2>試してみる</h2>
+      <p style="color:var(--text-muted);margin-bottom:28px;">右下の 💬 ボタンからも直接Q&Aできます。</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="mailto:mail@yukihamada.jp" class="btn btn-primary">フィードバックを送る</a>
+        <a href="https://github.com/yukihamada" target="_blank" rel="noopener" class="btn" style="background:rgba(255,255,255,.06);color:#f0f0f0;">GitHub</a>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span class="footer-prompt">yuki@enabler ~$<span class="cursor"></span></span>
+    <div class="footer-links">
+      <a href="/blog">Blog</a>
+      <a href="/about">About</a>
+      <a href="https://x.com/yukihamada" target="_blank" rel="noopener">&#120143;</a>
+      <a href="/feed.xml">RSS</a>
+    </div>
+    <p class="footer-muted">&copy; 2026 Yuki Hamada</p>
+  </div>
+</footer>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+function copyCode(btn) {
+  var block = btn.parentElement;
+  var text = block.innerText.replace('Copy\n', '').replace('Copied!\n', '');
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+  });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>20プロダクト、社員ゼロ。 — コンセプトアート</title>
+<meta property="og:title" content="20プロダクト、社員ゼロ。">
+<meta property="og:description" content="AIエージェントを従えた一人の開発者が、20のプロダクトを同時に動かす近未来アニメ。">
+<meta property="og:image" content="https://yukihamada.jp/anime/assets/concept_poster.jpg">
+<meta property="og:url" content="https://yukihamada.jp/anime/concept.html">
+<meta property="og:type" content="website">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="20プロダクト、社員ゼロ。">
+<meta name="twitter:description" content="AIエージェントを従えた一人の開発者の物語。">
+<meta name="twitter:image" content="https://yukihamada.jp/anime/assets/concept_poster.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#060606;--accent:#E8B64A;--dim:rgba(255,255,255,.3);}
+html{background:var(--bg);color:#fff;-webkit-overflow-scrolling:touch;}
+body{font-family:'Noto Sans JP',sans-serif;overflow-x:hidden;}
+
+.hero{position:relative;height:100vh;height:100svh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.hero .bg{position:absolute;inset:-5%;background:url('assets/concept_poster.jpg') center/cover;filter:brightness(.2);animation:drift 20s ease-in-out infinite alternate;}
+@keyframes drift{0%{transform:scale(1.05) translate(0,0)}100%{transform:scale(1) translate(-1%,-1%)}}
+.hero .overlay{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(6,6,6,.3) 0%,rgba(6,6,6,.8) 80%);}
+.hero .content{position:relative;z-index:2;text-align:center;padding:0 20px;}
+.hero .tag{font-size:clamp(.65rem,2vw,.8rem);color:var(--accent);letter-spacing:.4em;text-transform:uppercase;}
+.hero h1{font-family:'Noto Serif JP',serif;font-size:clamp(2.2rem,8vw,5rem);font-weight:700;color:#fff;line-height:1.15;margin:12px 0;text-shadow:0 0 60px rgba(232,182,74,.2);}
+.hero h1 span{color:var(--accent);}
+.hero .sub{color:var(--dim);font-size:clamp(.75rem,2vw,.9rem);margin-top:8px;}
+.hero .scroll{position:absolute;bottom:24px;color:var(--dim);font-size:.7rem;animation:bob 2s infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* Sections */
+.section{position:relative;min-height:90vh;min-height:90svh;display:flex;align-items:center;overflow:hidden;}
+.section .bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.2);transition:filter 1.2s,transform 6s ease-out;transform:scale(1.04);}
+.section.visible .bg{filter:brightness(.3);transform:scale(1);}
+.section .overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,6,6,.85) 0%,rgba(6,6,6,.15) 60%);}
+.section.right .overlay{background:linear-gradient(270deg,rgba(6,6,6,.85) 0%,rgba(6,6,6,.15) 60%);}
+.section.center .overlay{background:linear-gradient(0deg,rgba(6,6,6,.7) 0%,rgba(6,6,6,.03) 35%,rgba(6,6,6,.55) 100%);}
+.section .text{position:relative;z-index:2;max-width:500px;padding:30px 24px;opacity:0;transform:translateY(35px);transition:opacity 1s .1s,transform 1s .1s;}
+.section.visible .text{opacity:1;transform:translateY(0);}
+.section .text{margin-left:max(5%,16px);}
+.section.right .text{margin-left:auto;margin-right:max(5%,16px);text-align:right;}
+.section.center .text{text-align:center;max-width:650px;margin:0 auto;}
+
+.section h2{font-size:clamp(1.2rem,4vw,1.8rem);font-weight:700;color:var(--accent);margin-bottom:8px;line-height:1.3;}
+.section p{font-size:clamp(.82rem,2.3vw,.95rem);color:rgba(255,255,255,.55);line-height:1.9;margin-bottom:8px;}
+.section .role{font-size:.7rem;color:var(--accent);letter-spacing:.15em;margin-bottom:4px;text-transform:uppercase;}
+.section .quote{font-family:'Noto Serif JP',serif;font-size:clamp(.9rem,2.5vw,1.1rem);color:rgba(255,255,255,.4);font-style:italic;margin-top:8px;line-height:1.8;}
+
+/* Full image */
+.fi{width:100%;max-height:60vh;object-fit:cover;display:block;opacity:0;transition:opacity 1.2s,transform 1s;transform:scale(1.02);}
+.fi.visible{opacity:1;transform:scale(1);}
+
+/* Characters grid */
+.chars{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;padding:20px;max-width:1200px;margin:0 auto;}
+.char-card{position:relative;border-radius:12px;overflow:hidden;aspect-ratio:16/10;cursor:pointer;}
+.char-card img{width:100%;height:100%;object-fit:cover;transition:transform .5s;}
+.char-card:hover img{transform:scale(1.05);}
+.char-card .info{position:absolute;bottom:0;left:0;right:0;padding:12px 14px;background:linear-gradient(transparent,rgba(0,0,0,.8));}
+.char-card .name{font-size:.9rem;font-weight:700;color:var(--accent);}
+.char-card .desc{font-size:.7rem;color:rgba(255,255,255,.5);margin-top:2px;}
+
+.divider{text-align:center;padding:clamp(30px,6vh,50px) 20px;color:var(--dim);font-size:.7rem;letter-spacing:.3em;}
+
+/* CTA */
+.cta{text-align:center;padding:50px 20px 80px;}
+.cta a{display:inline-block;padding:14px 32px;background:rgba(232,182,74,.12);border:1px solid var(--accent);border-radius:10px;color:var(--accent);text-decoration:none;font-size:.9rem;font-weight:700;margin:4px;transition:all .2s;}
+.cta a:hover{background:rgba(232,182,74,.25);transform:translateY(-2px);}
+
+@media(max-width:600px){
+  .section .text{margin:0 16px;max-width:none;}
+  .section.right .text{margin:0 16px;text-align:left;}
+  .chars{grid-template-columns:1fr;padding:12px;}
+}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="bg"></div>
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="tag">Concept Art</div>
+    <h1><span>20</span>プロダクト、<br>社員<span>ゼロ</span>。</h1>
+    <div class="sub">AIエージェントを従えた一人の開発者の物語</div>
+  </div>
+  <div class="scroll">▼</div>
+</div>
+
+<!-- 主人公 -->
+<div class="section">
+  <div class="bg" style="background-image:url('assets/concept_yuki.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="role">Protagonist</div>
+    <h2>ユキ</h2>
+    <p>原宿のワンルーム。一台のターミナル。<br>20のプロダクトを一人で動かす開発者。</p>
+    <p>社員はゼロ。でも、チームはいる。</p>
+    <div class="quote">「claude と打てば、世界が動く」</div>
+  </div>
+</div>
+
+<!-- エージェント召喚 -->
+<img class="fi" src="assets/concept_agents.jpg" loading="lazy" alt="">
+<div class="section center">
+  <div class="bg" style="background-image:url('assets/concept_agents.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <h2>6人のAIエージェント</h2>
+    <p>ターミナルにコマンドを打つと、光の中から現れる。<br>設計、デプロイ、デバッグ、レビュー、記憶、探索——<br>それぞれの専門を持つ6人が、彼のチームだ。</p>
+  </div>
+</div>
+
+<div class="divider">— THE AGENTS —</div>
+
+<!-- Characters Grid -->
+<div class="chars">
+  <div class="char-card"><img src="assets/concept_opus.jpg" loading="lazy"><div class="info"><div class="name">Opus — 参謀</div><div class="desc">金色の光。設計し、考え、最適解を導く知性。</div></div></div>
+  <div class="char-card"><img src="assets/concept_deploy.jpg" loading="lazy"><div class="info"><div class="name">Deploy — 突撃</div><div class="desc">ロケット少年。「もう出そうぜ！」が口癖。</div></div></div>
+  <div class="char-card"><img src="assets/concept_debug.jpg" loading="lazy"><div class="info"><div class="name">Debug — 探偵</div><div class="desc">シアンの光。スタックトレースから真実を追う。</div></div></div>
+  <div class="char-card"><img src="assets/concept_review.jpg" loading="lazy"><div class="info"><div class="name">Review — 門番</div><div class="desc">赤い光。「これじゃ出せない」が信条。妥協しない。</div></div></div>
+  <div class="char-card"><img src="assets/concept_memory.jpg" loading="lazy"><div class="info"><div class="name">Memory — 賢者</div><div class="desc">紫の光。lessons.mdに刻まれた全ての教訓を覚えている。</div></div></div>
+  <div class="char-card"><img src="assets/concept_scout.jpg" loading="lazy"><div class="info"><div class="name">Scout — 斥候</div><div class="desc">緑の光。コードベースを走り回り、全てを見つける。</div></div></div>
+</div>
+
+<div class="divider">— SCENES —</div>
+
+<!-- バトルシーン -->
+<img class="fi" src="assets/concept_battle.jpg" loading="lazy" alt="">
+<div class="section center">
+  <div class="bg" style="background-image:url('assets/concept_battle.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <h2>5プロダクト同時デプロイ</h2>
+    <p>Deployが空を飛び、Debugが赤いバグを追い、<br>Reviewが不良コードを斬り、Scoutが戦場を俯瞰し、<br>Memoryが教訓を読み上げ、Opusが全てを指揮する。</p>
+    <p>開発は、戦闘だ。</p>
+  </div>
+</div>
+
+<!-- 静寂 -->
+<div class="section right">
+  <div class="bg" style="background-image:url('assets/concept_quiet.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <h2>一人の夜</h2>
+    <p>エージェントが消えた後の部屋は、静かだ。<br>東京の夜景と、コーヒーの湯気と、<br>ユーザーからの「ありがとう」の通知。</p>
+    <div class="quote">「20プロダクト動いてる。社員ゼロ。<br>……寂しいかって？ 全然。」</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <div style="font-size:1.5rem;color:var(--accent);font-weight:700;margin-bottom:8px;">Coming Soon</div>
+  <div style="font-size:.8rem;color:var(--dim);margin-bottom:20px;">第1話「claude と打て」制作中</div>
+  <a href="/anime/ep1.html">柔術アニメを見る</a>
+  <a href="/mv/jiujitsu.html">MVを聴く</a>
+</div>
+
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:.15,rootMargin:'0px 0px -10% 0px'});
+document.querySelectorAll('.section,.fi').forEach(el=>obs.observe(el));
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

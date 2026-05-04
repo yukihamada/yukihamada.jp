@@ -2,6 +2,7 @@
 <html lang="ja" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- ── Primary ── -->
@@ -418,6 +419,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
   background:rgba(212,168,70,.2);border-radius:2px;z-index:3;
 }
 .phone-mock img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.phone-mock .sc-slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease;}
+.phone-mock .sc-slide.active{opacity:1;}
 .phone-mock-ph{
   width:100%;height:100%;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -814,6 +817,7 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
 /* ── HIDDEN ────────────────────────── */
 .hidden{display:none!important;}
 </style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
 </head>
 <body>
 
@@ -880,8 +884,10 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       </div>
     </div>
     <div class="phone-wrap">
-      <div class="phone-mock">
-        <video src="assets/videos/pasha.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div class="phone-mock" id="phone-pasha">
+        <img class="sc-slide active" src="assets/images/screenshots/pasha_site.png" alt="pasha.run">
+        <img class="sc-slide" src="assets/images/screenshots/pasha.jpg" alt="パシャ OCR画面">
+        <img class="sc-slide" src="assets/images/screenshots/pasha_list.jpg" alt="パシャ レシート一覧">
       </div>
     </div>
   </div>
@@ -904,15 +910,17 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       <div class="app-cta">
         <div class="app-qr" id="qr-pon"></div>
         <div class="app-dl">
-          <span class="app-dl-url">banto.work</span>
-          <a class="app-dl-btn" href="https://banto.work" target="_blank">▼ 今すぐ試す</a>
+          <span class="app-dl-url">pasha.run/pon</span>
+          <a class="app-dl-btn" href="https://pasha.run/pon" target="_blank">▼ 今すぐ試す</a>
           <span class="app-dl-hint">QRをスキャン or タップ</span>
         </div>
       </div>
     </div>
     <div class="phone-wrap">
-      <div class="phone-mock">
-        <video src="assets/videos/pon.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div class="phone-mock" id="phone-pon">
+        <img class="sc-slide active" src="assets/images/screenshots/pon_site.png" alt="pasha.run/pon">
+        <img class="sc-slide" src="assets/images/screenshots/pon.jpg" alt="ポン 契約画面">
+        <img class="sc-slide" src="assets/images/screenshots/pon_create.jpg" alt="ポン 契約作成">
       </div>
     </div>
   </div>
@@ -935,15 +943,17 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       <div class="app-cta">
         <div class="app-qr" id="qr-kagi"></div>
         <div class="app-dl">
-          <span class="app-dl-url">kagi.app</span>
-          <a class="app-dl-btn" href="#" target="_blank">▼ 詳細を見る</a>
+          <span class="app-dl-url">pasha.run/kacha</span>
+          <a class="app-dl-btn" href="https://pasha.run/kacha" target="_blank">▼ 詳細を見る</a>
           <span class="app-dl-hint">QRをスキャン or タップ</span>
         </div>
       </div>
     </div>
     <div class="phone-wrap">
-      <div class="phone-mock">
-        <video src="assets/videos/kagi.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div class="phone-mock" id="phone-kagi">
+        <img class="sc-slide active" src="assets/images/screenshots/kagi_site.png" alt="pasha.run/kacha">
+        <img class="sc-slide" src="assets/images/screenshots/kagi.jpg" alt="KAGI ホーム">
+        <img class="sc-slide" src="assets/images/screenshots/kagi_home.jpg" alt="KAGI デバイス管理">
       </div>
     </div>
   </div>
@@ -966,15 +976,16 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       <div class="app-cta">
         <div class="app-qr" id="qr-koe"></div>
         <div class="app-dl">
-          <span class="app-dl-url">koe.live/app</span>
-          <a class="app-dl-btn" href="https://koe.live/app" target="_blank">▼ 無料でDL</a>
+          <span class="app-dl-url">app.koe.live</span>
+          <a class="app-dl-btn" href="https://app.koe.live" target="_blank">▼ 無料でDL</a>
           <span class="app-dl-hint">QRをスキャン or タップ</span>
         </div>
       </div>
     </div>
     <div class="phone-wrap">
-      <div class="phone-mock" style="width:200px;height:140px;border-radius:12px;">
-        <video src="assets/videos/koe.mp4" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;"></video>
+      <div class="phone-mock" id="phone-koe" style="width:200px;height:140px;border-radius:12px;">
+        <img class="sc-slide active" src="assets/images/screenshots/koe_site.png" alt="app.koe.live">
+        <img class="sc-slide" src="assets/images/screenshots/koe.jpg" alt="Koe 音声入力">
       </div>
     </div>
   </div>
@@ -1012,9 +1023,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       </div>
       <div class="sc-phone-wrap">
         <div class="sc-phone" id="sc-jiuflow-phone">
-          <img class="sc-slide active" src="assets/images/screenshots/jiuflow.jpg" alt="">
-          <img class="sc-slide" src="assets/images/generated/jiuflow_v2_1.jpg" alt="">
-          <img class="sc-slide" src="assets/images/generated/jiuflow_1.jpg" alt="">
+          <img class="sc-slide active" src="assets/images/screenshots/jiuflow_site.png" alt="jiuflow.art">
+          <img class="sc-slide" src="assets/images/screenshots/jiuflow.jpg" alt="">
         </div>
       </div>
       <div class="sc-cta-col">
@@ -1047,9 +1057,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       </div>
       <div class="sc-phone-wrap">
         <div class="sc-phone" id="sc-elio-phone">
-          <img class="sc-slide active" src="assets/images/screenshots/elio.jpg" alt="">
-          <img class="sc-slide" src="assets/images/generated/elio_v2_1.jpg" alt="">
-          <img class="sc-slide" src="assets/images/generated/elio_2.jpg" alt="">
+          <img class="sc-slide active" src="assets/images/screenshots/elio_site.png" alt="elio.love">
+          <img class="sc-slide" src="assets/images/screenshots/elio.jpg" alt="">
         </div>
       </div>
       <div class="sc-cta-col">
@@ -1082,9 +1091,8 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
       </div>
       <div class="sc-phone-wrap">
         <div class="sc-phone" style="border-radius:50%;width:200px;height:200px;border-color:rgba(200,144,240,.3);box-shadow:0 0 60px rgba(200,144,240,.25);" id="sc-soluna-phone">
-          <img class="sc-slide active" src="assets/images/generated/soluna_v2_1.jpg" alt="">
-          <img class="sc-slide" src="assets/images/generated/soluna_2.jpg" alt="">
-          <img class="sc-slide" src="assets/images/generated/soluna_v2_2.jpg" alt="">
+          <img class="sc-slide active" src="assets/images/screenshots/soluna_site.png" alt="solun.art">
+          <img class="sc-slide" src="assets/images/generated/soluna_v2_1.jpg" alt="">
         </div>
       </div>
       <div class="sc-cta-col">
@@ -1113,12 +1121,27 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
 
 <!-- ── OUTRO ── -->
 <div class="scene" id="sc-outro">
-  <div class="scene-bg" style="background-image:url('assets/images/generated/outro_v2_1.jpg'),url('assets/images/generated/outro_1.jpg')"></div>
+  <div class="scene-bg" id="outro-bg" style="background-image:url('assets/images/generated/outro_v2_1.jpg'),url('assets/images/generated/outro_1.jpg')"></div>
   <div class="scene-overlay"></div>
-  <div class="scene-content">
+  <div class="scene-content" style="padding-top:40px;">
     <div class="s-eyebrow">— さあ 一緒にやろうぜ —</div>
-    <div class="s-headline" style="font-size:clamp(2rem,6vw,4rem)">Tap, Tap, Tap<br><span style="font-size:.55em;color:var(--gold-l)">全部、ここにある</span></div>
-    <div class="outro-grid" id="outro-qrs"></div>
+    <!-- Dynamic product showcase -->
+    <div id="outro-product" style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+      <div id="outro-icon" style="font-size:3.5rem;line-height:1;transition:transform .3s;"></div>
+      <div id="outro-name" style="font-family:'Playfair Display',serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:900;color:var(--gold-l);transition:opacity .3s;"></div>
+      <div id="outro-desc" style="font-size:14px;color:rgba(232,220,200,.6);max-width:400px;text-align:center;line-height:1.6;transition:opacity .3s;"></div>
+      <div style="display:flex;align-items:center;gap:16px;margin-top:8px;">
+        <div id="outro-phone" style="width:120px;height:240px;border-radius:20px;border:2px solid rgba(212,168,70,.25);overflow:hidden;background:#0a0a0a;box-shadow:0 0 40px rgba(0,0,0,.8),0 0 15px rgba(212,168,70,.1);position:relative;transition:opacity .4s;">
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+          <div id="outro-qr" style="width:80px;height:80px;background:#fff;border-radius:8px;padding:4px;display:flex;align-items:center;justify-content:center;"></div>
+          <a id="outro-url" href="#" target="_blank" style="font-size:11px;letter-spacing:.1em;color:var(--gold);opacity:.8;text-decoration:none;"></a>
+          <a id="outro-btn" href="#" target="_blank" style="display:block;width:130px;background:linear-gradient(135deg,rgba(212,168,70,.25),rgba(212,168,70,.1));border:1px solid var(--gold);color:var(--gold-l);font-size:11px;font-weight:700;padding:10px 12px;border-radius:6px;text-align:center;text-decoration:none;transition:all .2s;"></a>
+        </div>
+      </div>
+    </div>
+    <!-- Fallback QR grid for final moment -->
+    <div class="outro-grid" id="outro-qrs" style="display:none;"></div>
   </div>
 </div>
 
@@ -1147,9 +1170,9 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
     </p>
     <div class="end-apps-grid">
       <a class="end-app-card" href="https://pasha.run" target="_blank"><span class="icon">📸</span><span class="name">パシャ</span><span class="url">pasha.run</span></a>
-      <a class="end-app-card" href="https://banto.work" target="_blank"><span class="icon">📝</span><span class="name">ポン</span><span class="url">banto.work</span></a>
-      <a class="end-app-card" href="https://kagi.app" target="_blank"><span class="icon">🔑</span><span class="name">KAGI</span><span class="url">kagi.app</span></a>
-      <a class="end-app-card" href="https://koe.live/app" target="_blank"><span class="icon">🎙</span><span class="name">Koe</span><span class="url">koe.live/app</span></a>
+      <a class="end-app-card" href="https://pasha.run/pon" target="_blank"><span class="icon">📝</span><span class="name">ポン</span><span class="url">pasha.run/pon</span></a>
+      <a class="end-app-card" href="https://pasha.run/kacha" target="_blank"><span class="icon">🔑</span><span class="name">KAGI</span><span class="url">pasha.run/kacha</span></a>
+      <a class="end-app-card" href="https://app.koe.live" target="_blank"><span class="icon">🎙</span><span class="name">Koe</span><span class="url">app.koe.live</span></a>
       <a class="end-app-card" href="https://jiuflow.art" target="_blank"><span class="icon">🥋</span><span class="name">JiuFlow</span><span class="url">jiuflow.art</span></a>
       <a class="end-app-card" href="https://elio.love" target="_blank"><span class="icon">🤖</span><span class="name">Elio</span><span class="url">elio.love</span></a>
       <a class="end-app-card" href="https://solun.art" target="_blank"><span class="icon">🎵</span><span class="name">SOLUNA</span><span class="url">solun.art</span></a>
@@ -1396,9 +1419,19 @@ const L_EN=[
 
 let currentLang = 'ja';
 function getLyrics() { return currentLang === 'en' ? L_EN : L; }
+const TAP_AUDIO = { ja: 'assets/anthem.wav', en: 'assets/anthem_en.wav' };
+let audioBuffersMap = {};
 function toggleLang() {
   currentLang = currentLang === 'ja' ? 'en' : 'ja';
   document.getElementById('lang-label').textContent = currentLang === 'ja' ? '🇯🇵 JA' : '🇺🇸 EN';
+  // Swap audio source
+  const audioEl = document.getElementById('audio');
+  if (!audioEl) return;
+  const wasPlaying = !audioEl.paused;
+  const curTime = audioEl.currentTime;
+  audioEl.src = TAP_AUDIO[currentLang];
+  audioEl.currentTime = curTime;
+  if (wasPlaying) audioEl.play();
 }
 
 // scene id per section
@@ -1406,12 +1439,12 @@ const SCENE={intro:'sc-intro',pasha:'sc-pasha',pon:'sc-pon',kagi:'sc-kagi',pre:'
 
 // app data per section
 const APPS={
-  pasha:  {icon:'📸',iconBg:'linear-gradient(135deg,#3a1a05,#6a3010)',name:'パシャ',sub:'RECEIPT AI · 確定申告',tags:[['無料',true],['AI OCR'],['iOS']],desc:'撮るだけ3秒。AIが日付・金額・店名を読み取り。確定申告が怖くなくなる。',url:'https://pasha.run',btn:'▼ 無料でDL'},
-  pon:    {icon:'📝',iconBg:'linear-gradient(135deg,#051a0d,#0a3020)',name:'ポン',sub:'DIGITAL CONTRACT · 電子署名',tags:[['無料',true],['ハンコ不要'],['iOS/Web']],desc:'契約書を送ってタップで署名。これだけ。ハンコも郵送もいらない。',url:'https://banto.work',btn:'▼ 今すぐ試す'},
-  kagi:   {icon:'🔑',iconBg:'linear-gradient(135deg,#050d1a,#0a1530)',name:'KAGI',sub:'SMART HOME · Airbnb',tags:[['毎日使用中',true],['スマートロック'],['24/7']],desc:'鍵・照明・空調・Airbnb対応をスマホ一台に。深夜も布団から1秒。',url:'#',btn:'▼ 詳細を見る'},
-  pre:    {icon:'🎙',iconBg:'linear-gradient(135deg,#0d051a,#1a0a30)',name:'Koe',sub:'VOICE INPUT · Mac/iOS',tags:[['無料',true],['音声入力'],['Mac/iOS']],desc:'自転車でも走りながらでも声でテキスト化。この曲もKoeで生まれた。',url:'https://koe.live/app',btn:'▼ 無料でDL'},
+  pasha:  {icon:'📸',iconBg:'linear-gradient(135deg,#3a1a05,#6a3010)',name:'パシャ',sub:'RECEIPT AI · 確定申告',tags:[['無料',true],['AI OCR'],['iOS']],desc:'撮るだけ3秒。AIが日付・金額・店名を読み取り。確定申告が怖くなくなる。',url:'https://pasha.run',btn:'▼ 無料でDL',imgs:['assets/images/screenshots/pasha_site.png','assets/images/screenshots/pasha.jpg','assets/images/screenshots/pasha_list.jpg']},
+  pon:    {icon:'📝',iconBg:'linear-gradient(135deg,#051a0d,#0a3020)',name:'ポン',sub:'DIGITAL CONTRACT · 電子署名',tags:[['無料',true],['ハンコ不要'],['iOS/Web']],desc:'契約書を送ってタップで署名。これだけ。ハンコも郵送もいらない。',url:'https://pasha.run/pon',btn:'▼ 今すぐ試す',imgs:['assets/images/screenshots/pon_site.png','assets/images/screenshots/pon.jpg','assets/images/screenshots/pon_create.jpg']},
+  kagi:   {icon:'🔑',iconBg:'linear-gradient(135deg,#050d1a,#0a1530)',name:'KAGI',sub:'SMART HOME · Airbnb',tags:[['毎日使用中',true],['スマートロック'],['24/7']],desc:'鍵・照明・空調・Airbnb対応をスマホ一台に。深夜も布団から1秒。',url:'https://pasha.run/kacha',btn:'▼ 詳細を見る',imgs:['assets/images/screenshots/kagi_site.png','assets/images/screenshots/kagi.jpg','assets/images/screenshots/kagi_home.jpg']},
+  pre:    {icon:'🎙',iconBg:'linear-gradient(135deg,#0d051a,#1a0a30)',name:'Koe',sub:'VOICE INPUT · Mac/iOS',tags:[['無料',true],['音声入力'],['Mac/iOS']],desc:'自転車でも走りながらでも声でテキスト化。この曲もKoeで生まれた。',url:'https://app.koe.live',btn:'▼ 無料でDL',imgs:['assets/images/screenshots/koe_site.png','assets/images/screenshots/koe.jpg']},
   jiuflow:{icon:'🥋',iconBg:'linear-gradient(135deg,#1a1000,#302000)',name:'JiuFlow',sub:'BJJ · 世界3位',tags:[['世界3位',true],['10フロー'],['試合分析']],desc:'10のフローチャートで最短勝利。1.5年で青帯・ワールドマスター3位。',url:'https://jiuflow.art',btn:'▼ フローを見る',video:'assets/videos/jiuflow.mp4'},
-  elio:   {icon:'🤖',iconBg:'linear-gradient(135deg,#0a0a1f,#151530)',name:'Elio',sub:'LOCAL AI · 完全無料',tags:[['完全無料',true],['オフライン動作'],['iOS'],['年内に超賢くなる']],desc:'機内でも無人島でも使える。ローカル動作で通信不要・完全プライベート。今は少し遅いけど年内には超賢くなる。',url:'https://elio.love',btn:'▼ 無料でDL'},
+  elio:   {icon:'🤖',iconBg:'linear-gradient(135deg,#0a0a1f,#151530)',name:'Elio',sub:'LOCAL AI · 完全無料',tags:[['完全無料',true],['オフライン動作'],['iOS'],['年内に超賢くなる']],desc:'機内でも無人島でも使える。ローカル動作で通信不要・完全プライベート。今は少し遅いけど年内には超賢くなる。',url:'https://elio.love',btn:'▼ 無料でDL',imgs:['assets/images/screenshots/elio_site.png','assets/images/screenshots/elio.jpg']},
   teai:   {icon:'🧠',iconBg:'linear-gradient(135deg,#001a0d,#002a15)',name:'teai.io',sub:'ALL AI IN ONE',tags:[['無料で試せる',true],['Claude/Gemini/GPT'],['ブラウザで動く']],desc:'Claude・Gemini・GPTを全部ひとつで。AIを道具にする人間でいたい。',url:'https://teai.io',btn:'▼ 今すぐ使う'},
   soluna: {icon:'🎵',iconBg:'linear-gradient(135deg,#150a25,#251040)',name:'SOLUNA',sub:'FESTIVAL SPEAKER · Hardware',tags:[['COIN $65',true],['完全同期'],['フェス対応']],desc:'1台は記憶、100台はオーケストラ。群衆を楽器にするデバイス。',url:'https://solun.art',btn:'▼ プロジェクトを見る'},
 };
@@ -1564,12 +1597,18 @@ function onBeat(energy){
   }
 }
 
+let flashTimer=null;
 function doFlash(alpha=0.3){
   const f=document.getElementById('flash');
+  clearTimeout(flashTimer);
   f.style.opacity=alpha;
   f.classList.remove('flash-go');
   void f.offsetWidth;
   f.classList.add('flash-go');
+  flashTimer=setTimeout(()=>{
+    f.style.opacity='';
+    f.classList.remove('flash-go');
+  }, 400);
 }
 
 function spawnCameraFlash(){
@@ -1726,6 +1765,9 @@ function updateBeatBars(){/* replaced */}
 // ════════════════════════════════════════════════
 // LYRIC DISPLAY  —  char by char
 // ════════════════════════════════════════════════
+// Map outro lyrics to product indices
+const OUTRO_LYRIC_MAP={'パシャ':0,'Pasha':0,'ポン':1,'Pon':1,'KAGI':2,'Koe':3,'Voice':3,'JiuFlow':4,'Elio':5,'Soluna':6};
+
 function showLyric(idx){
   if(idx<0||idx>=L.length) return;
   curIdx=idx;
@@ -1737,6 +1779,25 @@ function showLyric(idx){
   animateKaraoke(cur.x);
 
   if(cur.s!==curSection) switchSection(cur.s);
+
+  // Outro product sync
+  if(cur.s==='outro'){
+    const txt=cur.x;
+    let matched=false;
+    for(const [kw,pi] of Object.entries(OUTRO_LYRIC_MAP)){
+      if(txt.includes(kw)){
+        document.getElementById('outro-product').style.display='';
+        document.getElementById('outro-qrs').style.display='none';
+        showOutroProduct(pi);
+        matched=true;
+        break;
+      }
+    }
+    if(!matched && txt==='♪'){
+      // Final note — show full QR grid
+      showOutroGrid();
+    }
+  }
 }
 
 function animateKaraoke(text){
@@ -1808,7 +1869,7 @@ function switchSection(s){
 
   // start carousel for new active scene if applicable
   if(next){
-    const phone = next.querySelector('[id$="-phone"]');
+    const phone = next.querySelector('[id$="-phone"],[id^="phone-"]');
     if(phone) startCarousel(phone.id);
   }
 
@@ -1826,6 +1887,13 @@ function switchSection(s){
   if(s==='chorus'){
     doFlash(0.4);
     spawnGoldParticles(255);
+  }
+
+  // outro: reset product showcase
+  if(s==='outro'){
+    curOutroProduct=-1;
+    document.getElementById('outro-product').style.display='';
+    document.getElementById('outro-qrs').style.display='none';
   }
 
   // showcase scenes: hide ALL overlays (spotlight, grain, EQ, scope, particles, peek)
@@ -1885,11 +1953,25 @@ function showSpotlight(s){
   const tags=document.getElementById('sp-tags');
   tags.innerHTML=app.tags.map(([t,live])=>`<span class="sp-tag${live?' sp-tag-live':''}">${t}</span>`).join('');
 
-  // video
+  // video or screenshot slideshow
   const sv=document.getElementById('sp-video');
+  clearInterval(sv._slideTimer);
   if(app.video){
     sv.innerHTML=`<video src="${app.video}" autoplay loop muted playsinline style="width:100%;height:100%;object-fit:cover;" onclick="event.stopPropagation()"></video>`;
     sv.style.cursor='default';
+  } else if(app.imgs && app.imgs.length){
+    sv.style.cursor='default';
+    sv.onclick=null;
+    const imgs=app.imgs;
+    let si=0;
+    sv.innerHTML=`<img src="${imgs[0]}" style="width:100%;height:100%;object-fit:cover;transition:opacity .5s;">`;
+    if(imgs.length>1){
+      sv._slideTimer=setInterval(()=>{
+        si=(si+1)%imgs.length;
+        const img=sv.querySelector('img');
+        if(img){img.style.opacity='0';setTimeout(()=>{img.src=imgs[si];img.style.opacity='1';},300);}
+      },2000);
+    }
   } else {
     sv.innerHTML=`<div class="sp-vph"><span class="sp-vph-icon">▶</span>tap to load</div>`;
     sv.style.cursor='pointer';
@@ -1981,9 +2063,9 @@ drawParticles();
 // ════════════════════════════════════════════════
 const QR_DATA={
   pasha:   {url:'https://pasha.run',    label:'パシャ',  sub:'pasha.run'},
-  pon:     {url:'https://banto.work',   label:'ポン',    sub:'banto.work'},
-  kagi:    {url:'https://kagi.app',     label:'KAGI',    sub:'kagi.app'},
-  koe:     {url:'https://koe.live/app', label:'Koe',     sub:'koe.live/app'},
+  pon:     {url:'https://pasha.run/pon',   label:'ポン',    sub:'pasha.run/pon'},
+  kagi:    {url:'https://pasha.run/kacha', label:'KAGI',  sub:'pasha.run/kacha'},
+  koe:     {url:'https://app.koe.live', label:'Koe',     sub:'app.koe.live'},
   jiuflow: {url:'https://jiuflow.art',  label:'JiuFlow', sub:'jiuflow.art'},
   elio:    {url:'https://elio.love',    label:'Elio',    sub:'elio.love'},
   teai:    {url:'https://teai.io',      label:'teai.io', sub:'teai.io'},
@@ -2018,6 +2100,90 @@ function buildOutroQRs(){
 }
 
 // ════════════════════════════════════════════════
+// OUTRO PRODUCT SYNC
+// ════════════════════════════════════════════════
+const OUTRO_PRODUCTS=[
+  {key:'pasha', icon:'📸',name:'パシャ',desc:'撮るだけ3秒。AIが読み取り、確定申告が終わる。',
+   img:'assets/images/screenshots/pasha_site.png',bg:'assets/images/generated/pasha_v2_1.jpg',
+   url:'https://pasha.run',sub:'pasha.run',btn:'▼ 無料でDL'},
+  {key:'pon',   icon:'📝',name:'ポン',desc:'送ってタップで署名。ハンコも郵送もいらない。',
+   img:'assets/images/screenshots/pon_site.png',bg:'assets/images/generated/pon_v2_1.jpg',
+   url:'https://pasha.run/pon',sub:'pasha.run/pon',btn:'▼ 今すぐ試す'},
+  {key:'kagi',  icon:'🔑',name:'KAGI',desc:'鍵・照明・空調、布団から1秒でリモート操作。',
+   img:'assets/images/screenshots/kagi_site.png',bg:'assets/images/generated/kagi_v2_2.jpg',
+   url:'https://pasha.run/kacha',sub:'pasha.run/kacha',btn:'▼ 詳細を見る'},
+  {key:'koe',   icon:'🎙',name:'Koe',desc:'走りながらでも声でテキスト化。この曲もKoeで生まれた。',
+   img:'assets/images/screenshots/koe_site.png',bg:'assets/images/generated/koe_v2_1.jpg',
+   url:'https://app.koe.live',sub:'app.koe.live',btn:'▼ 無料でDL'},
+  {key:'jiuflow',icon:'🥋',name:'JiuFlow',desc:'負けパターンをフローチャートに。青帯・世界3位。',
+   img:'assets/images/screenshots/jiuflow_site.png',bg:'assets/images/generated/jiuflow_v2_1.jpg',
+   url:'https://jiuflow.art',sub:'jiuflow.art',btn:'▼ フローを見る'},
+  {key:'elio',  icon:'🤖',name:'Elio',desc:'機内でも無人島でも動く。完全無料・完全プライベート。',
+   img:'assets/images/screenshots/elio_site.png',bg:'assets/images/generated/elio_v2_1.jpg',
+   url:'https://elio.love',sub:'elio.love',btn:'▼ 今すぐ試す'},
+  {key:'soluna', icon:'🎵',name:'SOLUNA',desc:'10,000台が同時に鳴る夜。群衆が楽器になる。',
+   img:'assets/images/screenshots/soluna_site.png',bg:'assets/images/generated/soluna_v2_1.jpg',
+   url:'https://solun.art',sub:'solun.art',btn:'▼ プロジェクトへ'},
+];
+let outroQRCache={};
+let curOutroProduct=-1;
+
+function showOutroProduct(idx){
+  if(idx===curOutroProduct||idx<0||idx>=OUTRO_PRODUCTS.length) return;
+  curOutroProduct=idx;
+  const p=OUTRO_PRODUCTS[idx];
+
+  // update bg
+  const bg=document.getElementById('outro-bg');
+  if(bg) bg.style.backgroundImage=`url('${p.bg}'),url('assets/images/generated/outro_1.jpg')`;
+
+  // update card
+  const iconEl=document.getElementById('outro-icon');
+  const nameEl=document.getElementById('outro-name');
+  const descEl=document.getElementById('outro-desc');
+  const phoneEl=document.getElementById('outro-phone');
+  const urlEl=document.getElementById('outro-url');
+  const btnEl=document.getElementById('outro-btn');
+  const qrEl=document.getElementById('outro-qr');
+
+  // animate out then in
+  iconEl.style.transform='scale(0.5)';
+  nameEl.style.opacity='0';
+  descEl.style.opacity='0';
+  phoneEl.style.opacity='0';
+
+  setTimeout(()=>{
+    iconEl.textContent=p.icon;
+    iconEl.style.transform='scale(1)';
+    nameEl.textContent=p.name;
+    nameEl.style.opacity='1';
+    descEl.textContent=p.desc;
+    descEl.style.opacity='1';
+    phoneEl.innerHTML=`<img src="${p.img}" style="width:100%;height:100%;object-fit:cover;">`;
+    phoneEl.style.opacity='1';
+    urlEl.textContent=p.sub;
+    urlEl.href=p.url;
+    btnEl.textContent=p.btn;
+    btnEl.href=p.url;
+
+    // QR (cached)
+    qrEl.innerHTML='';
+    if(!outroQRCache[p.key]){
+      try{new QRCode(qrEl,{text:p.url,width:72,height:72,colorDark:'#000',colorLight:'#fff',correctLevel:QRCode.CorrectLevel.M});
+        outroQRCache[p.key]=qrEl.innerHTML;
+      }catch(e){}
+    } else { qrEl.innerHTML=outroQRCache[p.key]; }
+  },150);
+}
+
+function showOutroGrid(){
+  curOutroProduct=-1;
+  document.getElementById('outro-product').style.display='none';
+  const grid=document.getElementById('outro-qrs');
+  grid.style.display='';
+}
+
+// ════════════════════════════════════════════════
 // PAUSE
 // ════════════════════════════════════════════════
 function togglePause(){
@@ -2029,7 +2195,7 @@ function togglePause(){
 }
 
 // ── CAROUSEL ──────────────────────────────────────
-const carouselIds = ['sc-jiuflow-phone','sc-elio-phone','sc-soluna-phone'];
+const carouselIds = ['phone-pasha','phone-pon','phone-kagi','phone-koe','sc-jiuflow-phone','sc-elio-phone','sc-soluna-phone'];
 const carouselTimers = {};
 
 function startCarousel(phoneId){
@@ -2054,28 +2220,11 @@ function stopCarousel(phoneId){
   });
 }
 
-// audio ended → show end screen, then auto-navigate to next song
+// audio ended → show end screen only (no auto-navigate)
 audio.addEventListener('ended',()=>{
   isPlaying=false;
   setTimeout(()=>{
     document.getElementById('end-screen').classList.add('show');
-    // Auto-navigate to Hack,Hack,Hack after 8 seconds
-    let countdown = 8;
-    const nextEl = document.getElementById('next-song-timer');
-    if(nextEl){
-      nextEl.style.display='block';
-      nextEl.textContent='次の曲: Hack, Hack, Hack — '+countdown+'秒後に再生';
-      const iv = setInterval(()=>{
-        countdown--;
-        if(countdown<=0){
-          clearInterval(iv);
-          window.location.href='/mv/hack.html';
-        } else {
-          nextEl.textContent='次の曲: Hack, Hack, Hack — '+countdown+'秒後に再生';
-        }
-      },1000);
-      nextEl.onclick=()=>{clearInterval(iv);window.location.href='/mv/hack.html';};
-    }
   }, 1500);
 });
 
@@ -2372,5 +2521,10 @@ init();
   </div>
 </div>
 
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
 </body>
 </html>

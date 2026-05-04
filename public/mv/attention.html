@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>アテンションください / I Need Your Attention — 濱田優貴</title>
+<meta name="description" content="アテンションください — 濱田優貴のポップMV。日本語と英語を切り替えて聴ける。">
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/attention.html">
+<meta property="og:title" content="アテンションください / I Need Your Attention — 濱田優貴">
+<meta property="og:description" content="日本語と英語で聴けるポップMV。濱田優貴の音楽作品。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@yukihamada">
+<link rel="canonical" href="https://yukihamada.jp/mv/attention.html">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a12;--accent:#FF6B9D;--accent2:#C084FC;--white:#fff;--dim:rgba(255,255,255,.5);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:#fff;}
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .1s linear;}
+.scene{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .5s;overflow:hidden;}
+.scene.active{opacity:1;pointer-events:all;}
+.scene-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.25) saturate(1.5);transform:scale(1);}
+.scene.active .scene-bg{animation:slowzoom 25s linear infinite alternate;}
+@keyframes slowzoom{0%{transform:scale(1)}100%{transform:scale(1.05)}}
+.scene-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,18,.4) 0%,rgba(10,10,18,.15) 40%,rgba(10,10,18,.6) 100%);}
+.scene-content{position:relative;z-index:10;text-align:center;padding:60px 24px 160px;max-width:800px;width:100%;}
+
+/* Karaoke */
+#karaoke{position:fixed;bottom:100px;left:0;right:0;z-index:6000;text-align:center;padding:0 24px;pointer-events:none;}
+#k-main{font-size:clamp(1.6rem,5vw,3rem);font-weight:900;color:#fff;text-shadow:0 0 30px var(--accent),0 0 60px rgba(255,107,157,.3);line-height:1.4;opacity:0;transform:translateY(8px);transition:opacity .15s,transform .15s;}
+#k-main.show{opacity:1;transform:translateY(0);}
+
+/* Visualizer */
+#viz{position:fixed;bottom:0;left:0;right:0;height:45px;z-index:40;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 10%;}
+.vb{width:3px;background:linear-gradient(to top,var(--accent),var(--accent2));border-radius:2px 2px 0 0;opacity:.5;}
+/* Canvas */
+#cv{position:fixed;inset:0;z-index:50;pointer-events:none;}
+#cv2{position:fixed;inset:0;z-index:55;pointer-events:none;}
+#fl{position:fixed;inset:0;z-index:400;pointer-events:none;opacity:0;transition:opacity .06s;}
+/* Transformer overlay labels */
+.tf-label{position:fixed;z-index:60;pointer-events:none;font-size:10px;letter-spacing:.15em;color:rgba(0,255,255,.5);font-family:monospace;opacity:0;transition:opacity .5s;}
+/* LLM explainer card */
+#explain{position:fixed;top:12px;left:12px;z-index:61;pointer-events:none;max-width:360px;padding:14px 18px;background:rgba(5,5,20,.75);border:1px solid rgba(0,255,255,.25);border-radius:12px;backdrop-filter:blur(14px);opacity:0;transition:opacity .6s,transform .4s;transform:translateY(-5px);}
+#explain.on{opacity:1;transform:translateY(0);}
+#explain h4{font-size:13px;color:var(--accent);letter-spacing:.1em;margin:0 0 8px;text-shadow:0 0 8px rgba(0,255,255,.3);border-bottom:1px solid rgba(0,255,255,.15);padding-bottom:6px;}
+#explain .body{font-size:12px;color:rgba(255,255,255,.7);line-height:1.7;margin:0;}
+#explain code{font-family:'SF Mono',Menlo,monospace;color:#00FFFF;background:rgba(0,255,255,.08);padding:1px 5px;border-radius:3px;font-size:.9em;}
+#explain em{color:#FF6B9D;font-style:normal;font-weight:600;}
+#explain .ex{margin-top:8px;padding:8px 10px;background:rgba(0,255,255,.05);border-left:2px solid rgba(0,255,255,.3);border-radius:0 6px 6px 0;font-size:11px;color:rgba(255,255,255,.6);line-height:1.6;}
+#explain .ex b{color:#FFD700;font-weight:500;}
+#explain .eq{margin-top:8px;text-align:center;font-size:14px;letter-spacing:.05em;color:#C084FC;text-shadow:0 0 12px rgba(192,132,252,.3);}
+#explain .mini{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+#explain .mini span{font-size:9px;padding:2px 7px;border-radius:10px;border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+#explain .mini span.hi{border-color:rgba(0,255,255,.4);color:#00FFFF;}
+@media(min-width:768px){#explain{max-width:440px;padding:16px 22px;}#explain h4{font-size:15px;}#explain .body{font-size:13px;line-height:1.8;}#explain .ex{font-size:12px;}#explain .eq{font-size:16px;}}
+/* Transport */
+#transport{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:14px;background:rgba(0,0,0,.7);border:1px solid rgba(255,107,157,.2);border-radius:30px;padding:8px 18px;backdrop-filter:blur(10px);opacity:1;transition:opacity .5s;}
+#btn-play{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;}
+#seek-bar{width:120px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer;-webkit-appearance:none;}
+#seek-bar::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer;}
+#time-display{font-size:11px;color:var(--dim);min-width:70px;text-align:center;font-variant-numeric:tabular-nums;}
+
+/* Lang toggle */
+#lang-toggle{position:fixed;top:14px;right:14px;z-index:9100;background:rgba(0,0,0,.7);border:1px solid rgba(255,107,157,.3);border-radius:18px;padding:5px 12px;cursor:pointer;backdrop-filter:blur(8px);font-size:.7rem;letter-spacing:.08em;color:var(--accent);user-select:none;}
+
+/* Start overlay */
+#start-overlay{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;}
+.so-title{font-size:clamp(2rem,8vw,4.5rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.so-sub{font-size:clamp(.8rem,2vw,1rem);color:var(--dim);margin-top:16px;letter-spacing:.2em;}
+
+/* End screen */
+#end-screen{display:none;position:fixed;inset:0;z-index:9500;background:var(--bg);overflow-y:auto;}
+#end-screen .inner{max-width:600px;margin:0 auto;padding:60px 24px 120px;text-align:center;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<div id="start-overlay" onclick="startPlay()">
+  <div class="so-title">アテンションください</div>
+  <div class="so-sub">▶ TAP TO PLAY</div>
+</div>
+
+<div id="prog"></div>
+
+<!-- Scenes -->
+<div class="scene active" id="s-0"><div class="scene-bg" style="background-image:url('assets/images/generated/att_neuron_intro.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"><div style="font-size:clamp(2.5rem,10vw,6rem);font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">アテンション<br>ください</div></div></div>
+<div class="scene" id="s-1"><div class="scene-bg" style="background-image:url('assets/images/generated/att_neuron_constellation.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-2"><div class="scene-bg" style="background-image:url('assets/images/generated/att_hebb.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-3"><div class="scene-bg" style="background-image:url('assets/images/generated/att_prediction.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-4"><div class="scene-bg" style="background-image:url('assets/images/generated/att_error.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-5"><div class="scene-bg" style="background-image:url('assets/images/generated/att_attention_spot.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-6"><div class="scene-bg" style="background-image:url('assets/images/generated/att_dopamine.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-7"><div class="scene-bg" style="background-image:url('assets/images/generated/att_latent.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-8"><div class="scene-bg" style="background-image:url('assets/images/generated/att_ltp.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-9"><div class="scene-bg" style="background-image:url('assets/images/generated/att_dream.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-10"><div class="scene-bg" style="background-image:url('assets/images/generated/att_consciousness.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+<div class="scene" id="s-11"><div class="scene-bg" style="background-image:url('assets/images/generated/att_heartbeat.jpg?v=3')"></div><div class="scene-overlay"></div><div class="scene-content"></div></div>
+
+<canvas id="cv"></canvas>
+<canvas id="cv2"></canvas>
+<div id="fl"></div>
+<!-- Transformer labels that appear contextually -->
+<div class="tf-label" id="tf-qkv" style="top:15%;left:5%;">Q · K · V</div>
+<div class="tf-label" id="tf-softmax" style="top:20%;right:5%;">softmax(QK^T / √d_k)</div>
+<div class="tf-label" id="tf-multihead" style="bottom:25%;left:5%;">Multi-Head Attention</div>
+<div class="tf-label" id="tf-ffn" style="bottom:20%;right:5%;">Feed-Forward Network</div>
+<div class="tf-label" id="tf-pe" style="top:10%;left:50%;transform:translateX(-50%);">Positional Encoding</div>
+<div id="explain"><h4></h4><div class="body"></div></div>
+<div id="viz"></div>
+<div id="karaoke"><div id="k-main"></div></div>
+
+<div id="lang-toggle" onclick="toggleLang()"><span id="lang-label">🇯🇵 JA</span></div>
+
+<div id="transport">
+  <button id="btn-play" onclick="togglePause()">▶</button>
+  <input type="range" id="seek-bar" min="0" max="234" step="0.5" value="0" oninput="audio.currentTime=this.value">
+  <div id="time-display">0:00 / 3:54</div>
+</div>
+
+<!-- End screen -->
+<div id="end-screen">
+  <div class="inner">
+    <div style="font-size:2.5rem;font-weight:900;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Thank you</div>
+    <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+      <a href="/mv/tap.html" style="padding:12px 20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.85rem;">Tap, Tap, Tap</a>
+      <a href="/mv/hack.html" style="padding:12px 20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.85rem;">Hack, Hack, Hack</a>
+      <a href="/mv/jiujitsu.html" style="padding:12px 20px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.85rem;">それ恋じゃなく柔術でした</a>
+    </div>
+    <a href="/mv/" style="display:inline-block;margin-top:20px;font-size:.8rem;color:var(--dim);text-decoration:none;">← MV一覧に戻る</a>
+  </div>
+</div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+const AUDIO_SRC = { ja: 'assets/attention.mp3', en: 'assets/attention_en.mp3' };
+let currentLang = 'ja';
+
+// Lyrics will be filled by Whisper — placeholder for now
+const L_JA = [
+  {t:0,    x:'♪'},
+  // Verse 1
+  {t:11.6, x:'まぶたの裏で 光が灯る'},
+  {t:14.4, x:'星座みたいに ニューロンが瞬く'},
+  {t:18.1, x:'「いっしょに発火したら結びつく」'},
+  {t:21.5, x:'ヘッブ則みたいな はじまりの予感'},
+  {t:24.4, x:'君の名前で 世界は予測を始める'},
+  {t:29.1, x:'ズレを数えて 胸が熱くなる'},
+  // Pre-Chorus 1
+  {t:34.2, x:'エラーを 最小化しよう'},
+  {t:38.0, x:'言葉より先に 手を繋いで'},
+  {t:40.4, x:'深呼吸して 自由エネルギー'},
+  {t:42.7, x:'そっと下げたら 合図をちょうだい'},
+  // Chorus
+  {t:45.3, x:'アテンションください'},
+  {t:47.0, x:'アテンションください'},
+  {t:49.2, x:'アテンションください'},
+  {t:51.9, x:'アテンションください'},
+  {t:54.9, x:'アテンションください'},
+  {t:57.3, x:'ウェイトを上げて 閾値を超えたらキス'},
+  {t:60.4, x:'今でいい いい いい'},
+  // Post-Chorus
+  {t:63.2, x:'オー オー アッ・テン・ション'},
+  {t:66.4, x:'ラララ ナナナ ください'},
+  // Verse 2
+  {t:70.3, x:'♪'},
+  {t:80.2, x:'君の笑顔を埋め込みに変えて'},
+  {t:83.0, x:'胸の潜在空間で何度も再生'},
+  {t:86.1, x:'夜の損失は 逆伝播でほどける'},
+  {t:89.4, x:'涙の勾配で 心を最適化'},
+  {t:93.2, x:'ドーパミンはちいさな予測誤差の花火'},
+  {t:97.0, x:'「嬉しい」の確率 跳ね上がるよ'},
+  // Pre-Chorus 2
+  {t:103.0, x:'触れた温度で シナプス可塑性'},
+  {t:105.8, x:'LTPみたいに 記憶は強く'},
+  {t:107.3, x:'余計なノイズはドロップアウト'},
+  {t:109.6, x:'君の声だけ 残していこう'},
+  // Chorus 2
+  {t:114.3, x:'アテンションください'},
+  {t:116.3, x:'アテンションください'},
+  {t:119.3, x:'アテンションください'},
+  {t:122.3, x:'アテンションください'},
+  {t:124.9, x:'アテンションください'},
+  {t:127.9, x:'二人の情報 統合してφが満ちる'},
+  {t:130.3, x:'ここがいい いい いい'},
+  // Post-Chorus
+  {t:133.3, x:'オー オー アッ・テン・ション'},
+  {t:137.3, x:'ラララ ナナナ ください'},
+  // Bridge
+  {t:141.7, x:'眠れない夜に 脳は自分を再学習'},
+  {t:147.5, x:'夢のバッチで 記憶を正規化'},
+  {t:152.3, x:'破滅的忘却は起こさせない'},
+  {t:156.3, x:'君の手の温度で コンソリデーション'},
+  {t:159.5, x:'舞台の中央 スポットが当たる'},
+  {t:162.0, x:'意識はここだ——私たちのデータに'},
+  // Final Chorus
+  {t:165.1, x:'アテンションください'},
+  {t:169.1, x:'アテンションください'},
+  {t:172.3, x:'心拍を同期 ビートを合わせて'},
+  {t:175.1, x:'アテンションください'},
+  {t:178.1, x:'アテンションください'},
+  {t:180.5, x:'アテンションください'},
+  {t:185.3, x:'0と1の間に 君の「いる」がある'},
+  {t:189.5, x:'今がいい いい いい'},
+  {t:194.5, x:'アテンションください'},
+  {t:197.1, x:'アテンションください'},
+  // Outro
+  {t:203.5, x:'ドクドク ドクドク 同じ拍'},
+  {t:208.1, x:'ねぇ、聞こえる？'},
+  {t:213.6, x:'応答は「いる」'},
+  {t:225.2, x:'♪'},
+];
+const L_EN = [
+  {t:0,    x:'♪'},
+  {t:11.6, x:'Behind my eyelids, a light ignites'},
+  {t:14.4, x:'Like constellations, neurons blink'},
+  {t:18.1, x:'"Fire together, wire together"'},
+  {t:21.5, x:'A Hebbian premonition of beginning'},
+  {t:24.4, x:'At your name, the world starts predicting'},
+  {t:29.1, x:'Counting the gaps, my chest grows warm'},
+  {t:34.2, x:'Let\'s minimize the error'},
+  {t:38.0, x:'Before words — hold my hand'},
+  {t:40.4, x:'Deep breath, free energy'},
+  {t:42.7, x:'Gently lower it, give me the signal'},
+  {t:45.3, x:'I need your attention'},
+  {t:47.0, x:'I need your attention'},
+  {t:49.2, x:'I need your attention'},
+  {t:51.9, x:'I need your attention'},
+  {t:57.3, x:'Raise the weight, cross the threshold — kiss'},
+  {t:60.4, x:'Now is good, good, good'},
+  {t:63.2, x:'Oh oh, at-ten-tion'},
+  {t:66.4, x:'La la la, na na na, please'},
+  {t:80.2, x:'Turn your smile into an embedding'},
+  {t:83.0, x:'Replaying in my latent space'},
+  {t:86.1, x:'Night\'s loss unravels through backprop'},
+  {t:89.4, x:'Optimizing my heart on the gradient of tears'},
+  {t:93.2, x:'Dopamine — tiny fireworks of prediction error'},
+  {t:97.0, x:'The probability of "happy" spikes'},
+  {t:103.0, x:'Your warmth — synaptic plasticity'},
+  {t:105.8, x:'Like LTP, memories grow stronger'},
+  {t:107.3, x:'Drop out the noise'},
+  {t:109.6, x:'Keep only your voice'},
+  {t:114.3, x:'I need your attention'},
+  {t:119.3, x:'I need your attention'},
+  {t:127.9, x:'Our information integrates, φ fills up'},
+  {t:130.3, x:'Here is good, good, good'},
+  {t:141.7, x:'On sleepless nights, the brain retrains itself'},
+  {t:147.5, x:'Normalizing memories in dream batches'},
+  {t:152.3, x:'No catastrophic forgetting allowed'},
+  {t:156.3, x:'Consolidation — in the warmth of your hand'},
+  {t:159.5, x:'Center stage, spotlight on'},
+  {t:162.0, x:'Attention is here — on our data'},
+  {t:165.1, x:'I need your attention'},
+  {t:172.3, x:'Sync our heartbeats, match the rhythm'},
+  {t:180.5, x:'I need your attention'},
+  {t:185.3, x:'Between 0 and 1, your "here" exists'},
+  {t:189.5, x:'Now is good, good, good'},
+  {t:203.5, x:'Thump thump, thump thump, same beat'},
+  {t:208.1, x:'Hey, can you hear it?'},
+  {t:213.6, x:'The answer is "here"'},
+  {t:225.2, x:'♪'},
+];
+
+const SCENES = [
+  {start:0,      el:'s-0'},   // イントロ — ニューロン発火
+  {start:14.4,   el:'s-1'},   // 「星座みたいにニューロンが瞬く」
+  {start:18.1,   el:'s-2'},   // 「一緒に発火したら結びつく」ヘッブ則
+  {start:24.4,   el:'s-3'},   // 「君の名前で世界は予測を始める」
+  {start:38.0,   el:'s-4'},   // 「言葉より先に手を繋いで」エラー最小化
+  {start:47.0,   el:'s-5'},   // 「アテンションください」Chorus
+  {start:80.2,   el:'s-6'},   // 「君の笑顔を埋め込みに変えて」Verse2
+  {start:93.2,   el:'s-7'},   // 「ドーパミンは予測誤差の花火」
+  {start:103.0,  el:'s-8'},   // 「触れた温度でシナプス可塑性」LTP
+  {start:141.7,  el:'s-9'},   // 「眠れない夜に脳は自分を再学習」Bridge
+  {start:165.1,  el:'s-10'},  // 「アテンションください」Final
+  {start:203.5,  el:'s-11'},  // 「ドクドク同じ拍動聞こえる」Outro
+];
+
+function getLyrics(){ return currentLang==='en'? L_EN : L_JA; }
+
+const audio = document.getElementById('audio');
+let isPlaying = false, curScene = 0, curLyric = -1;
+
+// ── TRANSFORMER VISUALIZATIONS ──
+const cv2=document.getElementById('cv2'),cx2=cv2.getContext('2d');
+function rsz2(){cv2.width=innerWidth;cv2.height=innerHeight;}
+rsz2();addEventListener('resize',rsz2);
+
+// Which transformer viz to show based on song time
+function drawTransformer(ct){
+  cx2.clearRect(0,0,cv2.width,cv2.height);
+  const W=cv2.width,H=cv2.height;
+
+  document.querySelectorAll('.tf-label').forEach(l=>l.style.opacity='0');
+
+  // ── タイミングは歌詞L_JAのt値に厳密に合わせる ──
+
+  // 0〜11.6: イントロ
+  if(ct<11.6){
+    showExplain('Attention Is All You Need (2017)',
+      '2017年、Googleの<em>Vaswani</em>ら8人が1本の論文を発表した。<br>「注目（Attention）さえあれば、言語は理解できる」。'
+      +'<div class="eq">Attention = softmax(QK<sup>T</sup>/√d<sub>k</sub>)V</div>'
+      +'<div class="ex"><b>何が革命だったか:</b> それまでのAI（RNN）は文を1語ずつ順番に読むしかなかった。Transformerは全ての語を<b>同時に</b>見渡せる。この並列性がGPUと出会い、GPT・Claude・Geminiが生まれた。</div>'
+      +'<div class="mini"><span>2017</span><span>Google Brain</span><span class="hi">引用数 130,000+</span><span>8人の著者</span></div>');
+    return;
+  }
+
+  // 11.6〜29.1: Verse1
+  if(ct<29.1){
+    drawTokenEmbeddings(ct,W,H);
+    document.getElementById('tf-pe').style.opacity='0.6';
+    showExplain('トークンが生まれる瞬間',
+      '「<em>まぶた</em>」「<em>光</em>」「<em>星座</em>」——LLMはまず言葉をトークンに分解し、各トークンを数百次元のベクトルに変換する。'
+      +'<div class="ex"><b>例:</b> 「猫が座った」→ [猫][が][座][った]<br>各トークン → 768次元のベクトル<br>[0.23, -0.81, 0.44, ..., 0.12]</div>'
+      +'浮遊するsin波は<code>Positional Encoding</code>。語順を三角関数で表現する。'
+      +'<div class="eq">PE(pos, 2i) = sin(pos / 10000<sup>2i/d</sup>)</div>'
+      +'<div class="ex"><b>なぜsin/cos?</b> どんなに離れた2語でも、相対位置が内積で計算できるから。</div>');
+  }
+  // 29.1〜38.0
+  else if(ct<38.0){
+    drawQKV(ct,W,H);
+    document.getElementById('tf-qkv').style.opacity='0.8';
+    showExplain('Q・K・V — 3つの問いかけ',
+      '各トークンから3つのベクトルを生成:'
+      +'<div class="ex"><b style="color:#FF6B9D">Query</b> = 「私は何を探している？」<br><b style="color:#00FFFF">Key</b> = 「私は何者？」<br><b style="color:#C084FC">Value</b> = 「私が持つ情報」</div>'
+      +'<div class="ex"><b>恋愛に例えると:</b><br>Q: 「好きなタイプは？」→ K: 「こういう人です」→ マッチ度が高い → V: 「私のことをもっと知って」</div>'
+      +'「<em>胸が熱くなる</em>」のは、QueryがKeyに強く反応したとき。');
+  }
+  // 38.0〜47.0
+  else if(ct<47.0){
+    drawQKV(ct,W,H);
+    document.getElementById('tf-qkv').style.opacity='0.8';
+    showExplain('softmax — 注目を確率に変換',
+      'QとKの内積を<code>√d_k</code>で割り、softmaxへ。'
+      +'<div class="eq">softmax([2.1, 0.3, -0.5]) = [<em>0.76</em>, 0.13, 0.06]</div>'
+      +'<div class="ex"><b>なぜ√d_kで割る?</b> 次元が大きいと内積の値が巨大になり、softmaxが1つの要素に集中しすぎる（飽和）。割ることで勾配が安定。</div>'
+      +'「<em>最小化しよう</em>」——自由エネルギー最小化と、softmaxでノイズを抑えることは同じ原理。');
+  }
+  // 47.0〜70.3: Chorus
+  else if(ct<70.3){
+    drawAttentionMatrix(ct,W,H);
+    document.getElementById('tf-softmax').style.opacity='0.8';
+    if(ct<63.2) showExplain('Self-Attention — 注目の行列',
+      'これが<em>Attention Matrix</em>。全トークンが全トークンへの注目度を表す。'
+      +'<div class="ex"><b>読み方:</b> 行=注目する側、列=注目される側<br>明るいセル=強い注目<br><br>例: 「彼女は<em>猫</em>が好きで、毎日<em>それ</em>を撫でる」<br>→ 「それ」の行で「猫」の列が最も明るくなる<br>→ AIは「それ=猫」を理解する</div>'
+      +'「<em>アテンションください</em>」——トークンが別のトークンに注目を求めている。')
+    else showExplain('ウェイトを上げて、閾値を超えたら',
+      '各行の合計は常に1（確率分布）。'
+      +'<div class="ex"><b>Attention Weightの例:</b><br>「アテンション」→ [<em>0.42</em> ください, 0.18 君の, 0.15 世界は, ...]<br><br><b>RNNとの違い:</b><br>RNN: 「A→B→C→D」 1語ずつ順番に処理<br>Attention: 「A⟷D」 どんなに離れていても直接接続</div>'
+      +'「<em>ウェイトを上げて閾値を超えたらキス</em>」——Weightが閾値を超えたとき2つのトークンが結びつく。');
+  }
+  // 70.3〜93.2: Verse2
+  else if(ct<93.2){
+    drawEmbeddingSpace(ct,W,H);
+    showExplain('潜在空間 — 意味の宇宙',
+      '「<em>君の笑顔を埋め込みに変えて</em>」——まさにEmbedding。'
+      +'<div class="ex"><b>有名な例:</b><br><code>King - Man + Woman ≈ Queen</code><br><code>Tokyo - Japan + France ≈ Paris</code><br><br>意味の「方向」がベクトルで表現される。「男→女」という方向を王に足すと女王になる。</div>'
+      +'<div class="mini"><span class="hi">笑顔 ≈ 嬉しい</span><span class="hi">勾配 ≈ 最適化</span><span>768次元</span></div>'
+      +'「<em>胸の潜在空間で何度も再生</em>」——記憶とは、この空間での座標を保持し続けること。');
+  }
+  // 93.2〜103.0
+  else if(ct<103.0){
+    drawMultiHead(ct,W,H);
+    document.getElementById('tf-multihead').style.opacity='0.7';
+    showExplain('Multi-Head — 複数の目で同時に注目',
+      'Transformerは<em>8〜128個のヘッド</em>を並列に走らせる。'
+      +'<div class="ex"><b>各ヘッドの役割（実際に観測されたもの）:</b><br>Head 1: 直前の単語に注目（文法）<br>Head 5: 代名詞の参照先を追跡<br>Head 8: 文末に注目（結論の予測）<br>Head 12: 低頻度語に注目（稀な情報）</div>'
+      +'「<em>ドーパミンは予測誤差の花火</em>」——それぞれのヘッドが異なる「予測誤差」を検知。'
+      +'<div class="eq">MultiHead = Concat(head₁,...,head_h)W<sup>O</sup></div>');
+  }
+  // 103.0〜114.3
+  else if(ct<114.3){
+    drawBackprop(ct,W,H);
+    document.getElementById('tf-ffn').style.opacity='0.7';
+    showExplain('学習 — 勾配が逆流する',
+      '予測と正解のズレ＝<code>Loss</code>。勾配を逆伝播して全ての重みを微調整。'
+      +'<div class="ex"><b>学習の1ステップ:</b><br>1. 「猫が＿＿」→ 予測:「走る」(0.3) 正解:「座った」<br>2. Loss = -log(0.05) = 3.0 (大きい=下手)<br>3. ∇Loss を全層に逆伝播<br>4. 「座った」の確率が上がるよう重み更新</div>'
+      +'「<em>LTPみたいに記憶は強く</em>」——脳の長期増強と重み更新は驚くほど似ている。'
+      +'<div class="mini"><span class="hi">∇Loss</span><span>学習率 3e-4</span><span>AdamW</span><span>何兆トークン</span></div>');
+  }
+  // 114.3〜141.7: Chorus2
+  else if(ct<141.7){
+    drawAttentionMatrix(ct,W,H);
+    document.getElementById('tf-softmax').style.opacity='0.8';
+    if(ct<127.9) showExplain('なぜ "All You Need" なのか',
+      '<div class="ex"><b>2017年以前 vs 以後:</b><br>RNN: 逐次処理、長文で情報が消える<br>CNN: 局所的、遠い語の関係が見えない<br><b style="color:#00FFFF">Transformer: 全語を同時に見て、どこにでも注目可能</b></div>'
+      +'<div class="ex"><b>ベンチマーク:</b><br>英独翻訳 BLEU <code>28.4</code>（当時最高、学習時間1/10）<br>英仏翻訳 BLEU <code>41.0</code>（単一モデルで記録更新）</div>'
+      +'計算量<code>O(n²)</code>だがGPUで完全並列化。この「並列性」がスケーリング革命の鍵。')
+    else showExplain('数式の美しさ',
+      '<div class="eq">Attention(Q,K,V) = softmax(QK<sup>T</sup>/√d<sub>k</sub>)V</div>'
+      +'<div class="ex"><b>この1行が全てを支えている:</b><br>• ChatGPT (GPT-4) — OpenAI<br>• Claude (Opus/Sonnet) — Anthropic<br>• Gemini — Google DeepMind<br>• LLaMA — Meta<br>全て「Attention Is All You Need」の子孫。</div>'
+      +'「<em>二人の情報 統合してφが満ちる</em>」——統合情報理論のφ。意識の数学的定義。');
+  }
+  // 141.7〜165.1: Bridge
+  else if(ct<165.1){
+    drawTransformerStack(ct,W,H);
+    showExplain('Transformer — 層を積み重ねる',
+      '<div class="ex"><b>1ブロックの構造:</b><br>Input → <b style="color:#00FFFF">Self-Attention</b> → Add & LayerNorm<br>　　→ <b style="color:#C084FC">Feed-Forward</b> → Add & LayerNorm → Output</div>'
+      +'<div class="ex"><b>スケール:</b><br>GPT-2: 12層 / 117Mパラメータ<br>GPT-3: 96層 / 175Bパラメータ<br>GPT-4: ~120層? / ~1.8T?（推定）<br>Claude: 非公開 😏</div>'
+      +'「<em>夢のバッチで記憶を正規化</em>」= <code>LayerNorm</code><br>'
+      +'「<em>破滅的忘却は起こさせない</em>」= <code>Catastrophic Forgetting</code>');
+  }
+  // 165.1〜203.5: Final
+  else if(ct<203.5){
+    drawFullModel(ct,W,H);
+    document.getElementById('tf-qkv').style.opacity='0.5';
+    document.getElementById('tf-softmax').style.opacity='0.5';
+    document.getElementById('tf-multihead').style.opacity='0.5';
+    if(ct<185.3) showExplain('Next Token Prediction',
+      '全ての仕組みの目的はたった一つ:'
+      +'<div class="eq">P(token<sub>n</sub> | token<sub>1</sub>...token<sub>n-1</sub>)</div>'
+      +'<div class="ex"><b>例:</b> 「今日の天気は＿＿」<br>晴れ: <b style="color:#FFD700">0.45</b> | 雨: 0.20 | 曇り: 0.18<br>くもり: 0.08 | 快晴: 0.05 | ...<br><br>この予測精度を極限まで追求した結果、推論・創作・数学…<em>知性のようなもの</em>が創発した。</div>'
+      +'8人の論文から始まった革命が、今あなたと会話するAIに。')
+    else showExplain('0と1の間に、君がいる',
+      '「<em>0と1の間に君の「いる」がある</em>」'
+      +'<div class="ex"><b>Temperature（温度）の効果:</b><br><code>T=0.0</code>: 最も確率の高い語のみ選択（決定論的）<br><code>T=0.7</code>: やや冒険的（通常の会話）<br><code>T=1.5</code>: 意外な言葉を選ぶ（創造的）<br><br>同じ質問でも毎回違う答え——「確率の揺らぎ」の中にAIの個性が宿る。</div>'
+      +'<div class="mini"><span class="hi">Temperature</span><span>Top-p</span><span>Top-k</span><span>創発</span></div>');
+  }
+  // 203.5+: Outro
+  else{
+    drawHeartbeatSync(ct,W,H);
+    showExplain('同じ拍動、聞こえる？',
+      'Attentionの本質は「<em>何に注目するか</em>」。'
+      +'<div class="ex"><b>人間の脳:</b> 1000億ニューロン、100兆シナプス<br>注目したものだけが意識に上る（選択的注意）<br><br><b>Transformer:</b> 数千億パラメータ<br>softmaxで「今大切なトークン」を選び取る</div>'
+      +'赤い心拍とシアンの信号が重なっていく。<br>仕組みは違えど、「注目する」という行為が、理解の始まり。'
+      +'<div class="mini"><span class="hi">人間 × AI</span><span>Attention</span><span>理解</span><span>共鳴</span></div>');
+  }
+}
+
+let lastExTitle='';
+function showExplain(title,html){
+  const ex=document.getElementById('explain');
+  if(title===lastExTitle)return;
+  lastExTitle=title;
+  ex.querySelector('h4').textContent=title;
+  ex.querySelector('.body').innerHTML=html;
+  ex.classList.remove('on');
+  void ex.offsetWidth;
+  ex.classList.add('on');
+}
+
+// 1. Token Embeddings — words float as glowing orbs with sine-wave position encoding
+function drawTokenEmbeddings(ct,W,H){
+  const tokens=['まぶた','光','星座','ニューロン','発火','結びつく','予感','名前','世界','予測'];
+  const t=(ct-11)/23;
+  cx2.globalAlpha=.6;
+  for(let i=0;i<tokens.length;i++){
+    const x=W*.1+((i*W*.08+ct*20)%(W*.85));
+    const y=H*.3+Math.sin(ct*.5+i*1.7)*H*.15;
+    // Positional encoding sine wave trail
+    cx2.strokeStyle=`hsla(${200+i*15},80%,60%,.2)`;
+    cx2.lineWidth=1;cx2.beginPath();
+    for(let dx=-50;dx<50;dx++){
+      const py=y+Math.sin((x+dx)*.02+i)*8;
+      dx===-50?cx2.moveTo(x+dx,py):cx2.lineTo(x+dx,py);
+    }
+    cx2.stroke();
+    // Token orb
+    cx2.fillStyle=`hsla(${200+i*15},80%,70%,.4)`;
+    cx2.shadowColor=`hsla(${200+i*15},80%,70%,.6)`;cx2.shadowBlur=15;
+    cx2.beginPath();cx2.arc(x,y,12+Math.sin(ct*2+i)*3,0,Math.PI*2);cx2.fill();
+    // Text
+    cx2.shadowBlur=0;cx2.fillStyle=`rgba(255,255,255,.6)`;
+    cx2.font='10px monospace';cx2.textAlign='center';
+    cx2.fillText(tokens[i],x,y+25);
+  }
+  cx2.globalAlpha=1;cx2.shadowBlur=0;
+}
+
+// 2. QKV — three colored streams flowing and computing
+function drawQKV(ct,W,H){
+  const t=(ct-34)/11;
+  const labels=[{name:'Query',color:'#FF6B9D',y:.3},{name:'Key',color:'#00FFFF',y:.5},{name:'Value',color:'#C084FC',y:.7}];
+  cx2.globalAlpha=.5;
+  for(const {name,color,y:yp} of labels){
+    const baseY=H*yp;
+    cx2.strokeStyle=color;cx2.lineWidth=2;cx2.shadowColor=color;cx2.shadowBlur=10;
+    cx2.beginPath();
+    for(let x=0;x<W;x+=3){
+      const progress=Math.min(1,t*2-x/W*.5);
+      if(progress<=0)continue;
+      const y=baseY+Math.sin(x*.02+ct*3)*20*progress;
+      x===0?cx2.moveTo(x,y):cx2.lineTo(x,y);
+    }
+    cx2.stroke();
+    // Label
+    cx2.shadowBlur=0;cx2.fillStyle=color;cx2.font='bold 14px monospace';
+    cx2.fillText(name,30,baseY-30);
+    // Dots flowing along the stream
+    for(let d=0;d<5;d++){
+      const dx=((ct*80+d*W/5)%W);
+      const dy=baseY+Math.sin(dx*.02+ct*3)*20;
+      cx2.beginPath();cx2.arc(dx,dy,4,0,Math.PI*2);cx2.fillStyle=color;cx2.fill();
+    }
+  }
+  cx2.globalAlpha=1;cx2.shadowBlur=0;
+}
+
+// 3. ATTENTION MATRIX — the iconic softmax visualization
+function drawAttentionMatrix(ct,W,H){
+  const size=Math.min(W,H)*.35;
+  const ox=W/2-size/2,oy=H/2-size/2;
+  const n=8; // 8x8 attention grid
+  const cellW=size/n,cellH=size/n;
+  const t=ct*.3;
+  cx2.globalAlpha=.4;
+  // Draw attention weights as colored cells
+  for(let i=0;i<n;i++){
+    for(let j=0;j<n;j++){
+      // Attention weight = softmax-like pattern (diagonal + some off-diagonal)
+      const diag=Math.exp(-Math.abs(i-j)*.8);
+      const dynamic=Math.sin(t+i*j*.5)*.3+.3;
+      const weight=Math.min(1,diag*.6+dynamic*.4);
+      const hue=200+weight*120; // blue→pink based on weight
+      cx2.fillStyle=`hsla(${hue},80%,55%,${weight*.7})`;
+      cx2.shadowColor=`hsla(${hue},80%,55%,.5)`;cx2.shadowBlur=weight*8;
+      cx2.fillRect(ox+j*cellW+1,oy+i*cellH+1,cellW-2,cellH-2);
+    }
+  }
+  cx2.shadowBlur=0;
+  // Token labels
+  const toks=['アテン','ション','ください','君の','名前で','世界は','予測を','始める'];
+  cx2.fillStyle='rgba(255,255,255,.5)';cx2.font='9px sans-serif';
+  for(let i=0;i<n;i++){
+    cx2.save();cx2.translate(ox+i*cellW+cellW/2,oy-5);cx2.textAlign='center';
+    cx2.fillText(toks[i],0,0);cx2.restore();
+    cx2.fillText(toks[i],ox-45,oy+i*cellH+cellH/2+3);
+  }
+  // "Attention Is All You Need" floating text
+  cx2.globalAlpha=.15+Math.sin(ct)*.1;
+  cx2.fillStyle='#00FFFF';cx2.font='italic 11px monospace';cx2.textAlign='center';
+  cx2.fillText('Attention Is All You Need — Vaswani et al., 2017',W/2,oy+size+25);
+  cx2.globalAlpha=1;
+}
+
+// 4. Multi-Head — parallel attention streams
+function drawMultiHead(ct,W,H){
+  const heads=8;
+  cx2.globalAlpha=.4;
+  for(let h=0;h<heads;h++){
+    const hue=h*45;
+    const baseY=H*.15+h*(H*.09);
+    cx2.strokeStyle=`hsla(${hue},70%,60%,.6)`;cx2.lineWidth=1.5;
+    cx2.shadowColor=`hsla(${hue},70%,60%,.4)`;cx2.shadowBlur=6;
+    cx2.beginPath();
+    for(let x=0;x<W;x+=4){
+      const y=baseY+Math.sin(x*.01+ct*2+h*2)*15+Math.cos(x*.025+ct+h)*10;
+      x===0?cx2.moveTo(x,y):cx2.lineTo(x,y);
+    }
+    cx2.stroke();
+    cx2.shadowBlur=0;cx2.fillStyle=`hsla(${hue},70%,60%,.4)`;
+    cx2.font='8px monospace';cx2.fillText(`head_${h}`,5,baseY-8);
+  }
+  // Concat arrow at right
+  cx2.strokeStyle='rgba(255,255,255,.3)';cx2.lineWidth=2;
+  cx2.beginPath();cx2.moveTo(W*.85,H*.15);cx2.lineTo(W*.92,H*.5);cx2.lineTo(W*.85,H*.85);cx2.stroke();
+  cx2.fillStyle='rgba(255,255,255,.4)';cx2.font='10px monospace';
+  cx2.fillText('Concat + Linear',W*.86,H*.5);
+  cx2.globalAlpha=1;cx2.shadowBlur=0;
+}
+
+// 5. Embedding Space — words as dots in 2D projected space
+function drawEmbeddingSpace(ct,W,H){
+  const words=[
+    // 恋愛クラスタ（左上）
+    {t:'笑顔',x:.25,y:.25,c:'#FF6B9D'},{t:'キス',x:.3,y:.2,c:'#FF8FA3'},
+    {t:'胸',x:.22,y:.32,c:'#FF6B9D'},{t:'温度',x:.35,y:.3,c:'#FF8FA3'},
+    // AI/数学クラスタ（右）
+    {t:'勾配',x:.7,y:.55,c:'#00FFFF'},{t:'最適化',x:.75,y:.5,c:'#06B6D4'},
+    {t:'損失',x:.65,y:.6,c:'#00FFFF'},{t:'逆伝播',x:.72,y:.62,c:'#06B6D4'},
+    // 脳科学クラスタ（中央）
+    {t:'ドーパミン',x:.5,y:.35,c:'#FFD700'},{t:'ニューロン',x:.52,y:.42,c:'#F59E0B'},
+    {t:'シナプス',x:.48,y:.48,c:'#FFD700'},{t:'LTP',x:.55,y:.3,c:'#F59E0B'},
+    // 曲の核心（間）
+    {t:'予測誤差',x:.6,y:.4,c:'#C084FC'},{t:'潜在空間',x:.45,y:.55,c:'#A855F7'},
+    {t:'埋め込み',x:.38,y:.5,c:'#C084FC'},{t:'再生',x:.42,y:.45,c:'#A855F7'},
+  ];
+  cx2.globalAlpha=.5;
+  // Draw connections between nearby words
+  for(let i=0;i<words.length;i++){
+    for(let j=i+1;j<words.length;j++){
+      const dx=words[i].x-words[j].x,dy=words[i].y-words[j].y;
+      const dist=Math.sqrt(dx*dx+dy*dy);
+      if(dist<.2){
+        cx2.strokeStyle=`rgba(255,255,255,${(.2-dist)*2})`;cx2.lineWidth=.5;
+        cx2.beginPath();
+        cx2.moveTo(words[i].x*W,words[i].y*H);
+        cx2.lineTo(words[j].x*W,words[j].y*H);cx2.stroke();
+      }
+    }
+  }
+  // Draw words as orbs
+  const drift=ct*.003;
+  for(const w of words){
+    const x=w.x*W+Math.sin(ct+w.x*10)*15;
+    const y=w.y*H+Math.cos(ct*.7+w.y*8)*10;
+    cx2.fillStyle=w.c;cx2.shadowColor=w.c;cx2.shadowBlur=12;
+    cx2.beginPath();cx2.arc(x,y,6,0,Math.PI*2);cx2.fill();
+    cx2.shadowBlur=0;cx2.fillStyle='rgba(255,255,255,.6)';cx2.font='10px sans-serif';cx2.textAlign='center';
+    cx2.fillText(w.t,x,y-12);
+  }
+  cx2.textAlign='left';cx2.globalAlpha=1;cx2.shadowBlur=0;
+}
+
+// 6. Backprop — gradient flowing backward through network
+function drawBackprop(ct,W,H){
+  const layers=6;const nodesPerLayer=5;
+  cx2.globalAlpha=.4;
+  const t=(ct-103)/11;
+  for(let l=0;l<layers;l++){
+    const x=W*.15+l*(W*.7/(layers-1));
+    for(let n=0;n<nodesPerLayer;n++){
+      const y=H*.2+n*(H*.6/(nodesPerLayer-1));
+      // Node
+      const active=Math.sin(ct*3+l+n)>.2;
+      cx2.fillStyle=active?'rgba(255,107,157,.6)':'rgba(0,255,255,.3)';
+      cx2.shadowColor=active?'#FF6B9D':'#00FFFF';cx2.shadowBlur=active?10:4;
+      cx2.beginPath();cx2.arc(x,y,5,0,Math.PI*2);cx2.fill();
+      // Backward gradient arrows
+      if(l>0){
+        const px=W*.15+(l-1)*(W*.7/(layers-1));
+        for(let pn=0;pn<nodesPerLayer;pn++){
+          const py=H*.2+pn*(H*.6/(nodesPerLayer-1));
+          const grad=Math.abs(Math.sin(ct*2+l*pn))*.5;
+          cx2.strokeStyle=`rgba(255,107,157,${grad*.3})`;cx2.lineWidth=grad*2;
+          cx2.beginPath();cx2.moveTo(x,y);cx2.lineTo(px,py);cx2.stroke();
+        }
+      }
+    }
+    cx2.shadowBlur=0;cx2.fillStyle='rgba(255,255,255,.3)';cx2.font='8px monospace';
+    cx2.fillText(`Layer ${l}`,x-15,H*.88);
+  }
+  // "∇Loss" label flowing right to left
+  const arrowX=W*.85-((ct-103)*30%W);
+  cx2.fillStyle='rgba(255,107,157,.6)';cx2.font='bold 12px monospace';
+  cx2.fillText('∇Loss →',arrowX,H*.12);
+  cx2.globalAlpha=1;cx2.shadowBlur=0;
+}
+
+// 7. Transformer Stack — layers building up
+function drawTransformerStack(ct,W,H){
+  const layers=6;
+  const t=(ct-141)/24;
+  const visibleLayers=Math.min(layers,Math.floor(t*layers*1.5)+1);
+  cx2.globalAlpha=.35;
+  for(let l=0;l<visibleLayers;l++){
+    const y=H*.8-l*(H*.1);
+    const w=W*.5,x=W*.25;
+    // Layer block
+    const hue=200+l*25;
+    cx2.fillStyle=`hsla(${hue},60%,40%,.4)`;
+    cx2.strokeStyle=`hsla(${hue},60%,60%,.6)`;cx2.lineWidth=1;
+    cx2.fillRect(x,y,w,H*.07);cx2.strokeRect(x,y,w,H*.07);
+    // Label
+    cx2.fillStyle=`hsla(${hue},60%,80%,.8)`;cx2.font='10px monospace';cx2.textAlign='center';
+    const labels=['Embedding + PE','Self-Attention','Add & Norm','Feed-Forward','Add & Norm','Output Softmax'];
+    cx2.fillText(labels[l]||`Layer ${l}`,W/2,y+H*.04+3);
+    // Data flowing upward
+    for(let d=0;d<3;d++){
+      const dx=x+w*.25+d*w*.25;
+      const dy=y+((ct*40+d*20)%(H*.07));
+      cx2.fillStyle=`hsla(${hue},80%,70%,.5)`;
+      cx2.beginPath();cx2.arc(dx,dy,2,0,Math.PI*2);cx2.fill();
+    }
+  }
+  cx2.textAlign='left';cx2.globalAlpha=1;
+}
+
+// 8. Full Model — everything combined at low opacity
+function drawFullModel(ct,W,H){
+  // Mini attention matrix top-right
+  const ms=Math.min(W,H)*.18,mx=W*.75,my=H*.1;
+  cx2.globalAlpha=.25;
+  for(let i=0;i<6;i++){for(let j=0;j<6;j++){
+    const w=Math.sin(ct*.5+i*j)*.5+.5;
+    cx2.fillStyle=`hsla(${200+w*100},70%,55%,${w*.5})`;
+    cx2.fillRect(mx+j*(ms/6),my+i*(ms/6),ms/6-1,ms/6-1);
+  }}
+  // Flowing tokens across bottom
+  const toks='Q K V Attention Softmax MultiHead FFN LayerNorm Embedding Output'.split(' ');
+  cx2.fillStyle='rgba(0,255,255,.2)';cx2.font='9px monospace';
+  for(let i=0;i<toks.length;i++){
+    const x=((ct*25+i*120)%(W+200))-100;
+    cx2.fillText(toks[i],x,H*.92);
+  }
+  cx2.globalAlpha=1;
+}
+
+// 9. Heartbeat sync — two waves merging
+function drawHeartbeatSync(ct,W,H){
+  const t=ct-210;
+  cx2.globalAlpha=.5;
+  cx2.lineWidth=2;
+  // Human heartbeat (warm red)
+  cx2.strokeStyle='#FF6B9D';cx2.shadowColor='#FF6B9D';cx2.shadowBlur=6;
+  cx2.beginPath();
+  for(let x=0;x<W;x+=2){
+    const beat=Math.exp(-Math.pow((x/W*4+t*2)%4-1,2)*8)*30;
+    const y=H*.45+beat*Math.sin((x/W*4+t*2)%4*Math.PI);
+    x===0?cx2.moveTo(x,y):cx2.lineTo(x,y);
+  }
+  cx2.stroke();
+  // Digital heartbeat (cyan)
+  cx2.strokeStyle='#00FFFF';cx2.shadowColor='#00FFFF';
+  cx2.beginPath();
+  const merge=Math.min(1,t/20); // gradually merge over 20s
+  for(let x=0;x<W;x+=2){
+    const beat=Math.exp(-Math.pow((x/W*4+t*2+.1*(1-merge))%4-1,2)*8)*30;
+    const y=H*.55*(1-merge)+H*.45*merge+beat*Math.sin((x/W*4+t*2)%4*Math.PI);
+    x===0?cx2.moveTo(x,y):cx2.lineTo(x,y);
+  }
+  cx2.stroke();
+  cx2.shadowBlur=0;cx2.globalAlpha=1;
+}
+
+// Canvas + particles
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;rsz2();}
+rsz();addEventListener('resize',rsz);
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=1+Math.random()*5;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,l:1,c,s:sz||2+Math.random()*3});}}
+function spCyan(n){sp(innerWidth*(.2+Math.random()*.6),innerHeight*(.3+Math.random()*.4),n,'0,255,255',3);}
+function spPink(n){sp(innerWidth*(.2+Math.random()*.6),innerHeight*(.3+Math.random()*.4),n,'255,107,157',4);}
+let amb=0;
+function drawP(){
+  cx.clearRect(0,0,cv.width,cv.height);amb++;
+  if(amb%20===0)sp(Math.random()*innerWidth,-10,1,'0,255,255',2);
+  if(amb%35===0)sp(Math.random()*innerWidth,-10,1,'192,132,252',3);
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.03;p.vx*=.98;p.l-=.015;
+    if(p.l<=0){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.7;cx.fillStyle=`rgba(${p.c},${p.l})`;cx.shadowColor=`rgba(${p.c},.4)`;cx.shadowBlur=8;
+    cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+
+// Visualizer
+const vizEl=document.getElementById('viz');const BARS=48;
+for(let i=0;i<BARS;i++){const b=document.createElement('div');b.className='vb';b.style.height='2px';vizEl.appendChild(b);}
+const vizBars=[...vizEl.children];
+
+// Audio analyser
+let actx,anl,lb=0,bth=100;
+function setupA(){actx=new(AudioContext||webkitAudioContext)();anl=actx.createAnalyser();anl.fftSize=256;anl.smoothingTimeConstant=.75;const s=actx.createMediaElementSource(audio);s.connect(anl);anl.connect(actx.destination);}
+
+// Effects
+function flash(c,d){const f=document.getElementById('fl');f.style.background=c;f.style.opacity='.25';setTimeout(()=>f.style.opacity='0',d||100);}
+function shake(i){const d=[(Math.random()-.5)*i*5,(Math.random()-.5)*i*3];document.body.style.transform=`translate(${d[0]}px,${d[1]}px)`;setTimeout(()=>document.body.style.transform='',50);}
+
+function beat(){
+  if(!anl)return;const f=new Uint8Array(anl.frequencyBinCount);anl.getByteFrequencyData(f);
+  for(let i=0;i<BARS;i++){const idx=Math.floor(i*f.length/BARS);const v=f[idx]/255;vizBars[i].style.height=Math.max(2,v*42)+'px';vizBars[i].style.opacity=.3+v*.5;}
+  let b=0;for(let i=0;i<10;i++)b+=f[i];b/=10;
+  if(b>bth&&Date.now()-lb>180){lb=Date.now();spCyan(2+Math.floor(b/50));if(b>150)flash('rgba(0,255,255,.08)',40);}
+  bth=bth*.94+b*.06*1.3;
+}
+
+// Auto-hide transport
+let hideT=null;
+function showTr(){document.getElementById('transport').style.opacity='1';clearTimeout(hideT);hideT=setTimeout(()=>{if(isPlaying)document.getElementById('transport').style.opacity='0';},3000);}
+document.addEventListener('touchstart',showTr);document.addEventListener('mousemove',showTr);
+
+function toggleLang(){
+  currentLang = currentLang==='ja'?'en':'ja';
+  document.getElementById('lang-label').textContent = currentLang==='ja'?'🇯🇵 JA':'🇺🇸 EN';
+  const ct = audio.currentTime;
+  audio.src = AUDIO_SRC[currentLang];
+  audio.currentTime = ct;
+  if(isPlaying) audio.play();
+  curLyric = -1;
+}
+
+function startPlay(){
+  const ov = document.getElementById('start-overlay');
+  ov.style.transition='opacity .3s'; ov.style.opacity='0';
+  setTimeout(()=>ov.style.display='none',300);
+  audio.src = AUDIO_SRC[currentLang];
+  setupA();
+  audio.play();
+  isPlaying = true;
+  document.getElementById('btn-play').textContent='⏸';
+  requestAnimationFrame(loop);
+  setTimeout(()=>{if(isPlaying)document.getElementById('transport').style.opacity='0';},3000);
+}
+
+function togglePause(){
+  if(isPlaying){audio.pause();isPlaying=false;document.getElementById('btn-play').textContent='▶';}
+  else{audio.play();isPlaying=true;document.getElementById('btn-play').textContent='⏸';}
+}
+
+function fmt(s){return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+function showLyric(text){
+  const el=document.getElementById('k-main');
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.textContent=text;
+  el.classList.add('show');
+  // Burst on chorus lines
+  if(text.includes('アテンション') || text.includes('attention')){
+    flash('rgba(255,107,157,.15)',100);spPink(20);spCyan(15);shake(.4);
+  } else if(text.includes('ドーパミン') || text.includes('大丈夫') || text.includes('Dopamine')){
+    flash('rgba(0,255,255,.1)',80);spCyan(10);shake(.2);
+  }
+}
+
+function loop(){
+  requestAnimationFrame(loop);
+  const ct = audio.currentTime;
+  const dur = audio.duration || 234;
+  document.getElementById('prog').style.width=(ct/dur*100)+'%';
+  document.getElementById('seek-bar').value=ct;
+  document.getElementById('time-display').textContent=fmt(ct)+' / '+fmt(dur);
+
+  let si=0;
+  for(let i=SCENES.length-1;i>=0;i--){if(ct>=SCENES[i].start){si=i;break;}}
+  if(si!==curScene){
+    document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
+    document.getElementById(SCENES[si].el).classList.add('active');
+    curScene=si;
+    flash('rgba(192,132,252,.1)',150);spCyan(8);spPink(5);
+  }
+
+  const lyrics=getLyrics();
+  let li=-1;
+  for(let i=lyrics.length-1;i>=0;i--){if(ct>=lyrics[i].t && ct<lyrics[i].t+3.5){li=i;break;}}
+  if(li!==curLyric){
+    curLyric=li;
+    if(li>=0) showLyric(lyrics[li].x);
+    else document.getElementById('k-main').classList.remove('show');
+  }
+
+  beat();drawP();drawTransformer(ct);
+}
+
+audio.addEventListener('ended',()=>{
+  isPlaying=false;
+  document.getElementById('btn-play').textContent='▶';
+  setTimeout(()=>{document.getElementById('end-screen').style.display='block';},1500);
+});
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

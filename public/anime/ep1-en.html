@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<!--
+  Hey, peeking at the source code?
+
+  ...I'll tell you just a little.
+
+  You think this is a love story, right?
+
+
+
+
+  ......heh.
+
+  Watch till the end.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Episode 1 "A Place"</title>
+<meta property="og:title" content="Episode 1 &quot;A Place&quot;">
+<meta property="og:description" content="A Friday night after a breakup. On the 8th floor of a building in Harajuku, brought there by a friend, was a place that would change her life.">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/r_ep1_05.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta property="og:url" content="https://yukihamada.jp/anime/ep1-en.html">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#080808;--accent:#E8B64A;--dim:rgba(255,255,255,.35);}
+html{background:var(--bg);color:#fff;scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;}
+
+.scene{position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.scene .bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.25);transition:filter 1s;}
+.scene.visible .bg{filter:brightness(.35);}
+.scene .overlay{position:absolute;inset:0;}
+.scene.left .overlay{background:linear-gradient(90deg,rgba(8,8,8,.85) 0%,rgba(8,8,8,.2) 70%);}
+.scene.right .overlay{background:linear-gradient(270deg,rgba(8,8,8,.85) 0%,rgba(8,8,8,.2) 70%);}
+.scene.center .overlay{background:linear-gradient(0deg,rgba(8,8,8,.75) 0%,rgba(8,8,8,.05) 40%,rgba(8,8,8,.6) 100%);}
+.scene.full .overlay{background:none;}
+
+.content{position:relative;z-index:2;max-width:550px;padding:30px 24px;opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s;}
+.scene.visible .content{opacity:1;transform:translateY(0);}
+.scene.left .content{margin-right:auto;margin-left:5%;}
+.scene.right .content{margin-left:auto;margin-right:5%;text-align:right;}
+.scene.center .content{text-align:center;max-width:650px;margin:0 auto;}
+
+.voice-btn{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(232,182,74,.1);border:1px solid rgba(232,182,74,.3);border-radius:16px;cursor:pointer;color:var(--accent);font-size:.65rem;margin-top:8px;transition:background .2s;}
+.voice-btn:hover{background:rgba(232,182,74,.2);}
+.voice-btn.playing{background:rgba(232,182,74,.25);}
+
+p.narration{font-family:'Noto Serif JP',serif;font-size:clamp(.9rem,2.5vw,1.1rem);color:rgba(255,255,255,.7);line-height:2;margin-bottom:12px;}
+p.thought{font-family:'Noto Serif JP',serif;font-size:clamp(.85rem,2.3vw,1rem);color:rgba(255,255,255,.4);font-style:italic;line-height:1.9;margin:10px 0;}
+p.thought.accent{color:rgba(232,182,74,.5);font-size:clamp(.95rem,2.8vw,1.15rem);}
+.sfx{font-size:clamp(1.5rem,5vw,2.5rem);font-weight:900;color:var(--accent);opacity:.25;margin:8px 0;}
+.divider{text-align:center;padding:30px;color:var(--dim);font-size:.7rem;letter-spacing:.3em;}
+
+/* Title */
+.title-scene{height:100vh;}
+.title-scene .content{text-align:center;max-width:600px;margin:0 auto;}
+.ep-num{font-size:.75rem;color:var(--accent);letter-spacing:.4em;}
+.ep-title{font-family:'Noto Serif JP',serif;font-size:clamp(2.2rem,8vw,4.5rem);font-weight:700;color:var(--accent);line-height:1.2;margin:8px 0;}
+.ep-sub{color:var(--dim);font-size:.85rem;margin-top:12px;}
+
+/* Full image */
+.full-img{width:100%;display:block;opacity:0;transition:opacity 1s;}
+.full-img.visible{opacity:1;}
+
+/* Next ep */
+.next{text-align:center;padding:50px 20px 80px;}
+.next a{display:inline-block;padding:14px 30px;background:rgba(232,182,74,.12);border:1px solid var(--accent);border-radius:8px;color:var(--accent);text-decoration:none;font-size:.9rem;transition:background .2s;}
+.next a:hover{background:rgba(232,182,74,.25);}
+
+/* Language toggle */
+.lang-toggle{position:fixed;top:12px;right:12px;z-index:500;font-size:.7rem;color:var(--dim);text-decoration:none;padding:4px 10px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(8,8,8,.6);backdrop-filter:blur(4px);transition:color .2s,border-color .2s;}
+.lang-toggle:hover{color:var(--accent);border-color:rgba(232,182,74,.4);}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<a class="lang-toggle" href="/anime/ep1.html">JP</a>
+
+<!-- TITLE -->
+<div class="scene center title-scene">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_01.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<div class="ep-num">EPISODE 01</div>
+<div class="ep-title">A Place</div>
+<div class="ep-sub" style="margin-top:20px;">&#9660;</div>
+</div>
+</div>
+
+<!-- Scene 1: Breakup at the cafe -->
+<div class="scene left" data-voice="en_ep1_01">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_01.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="narration">Friday night. A cafe in Shibuya.</p>
+<p class="thought">Three years of memories, erased by a single phone notification.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_01')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 2: Rainy Shibuya -->
+<div class="scene right" data-voice="en_ep1_02">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_02.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="thought">Shibuya in the rain feels like a city built for heartbreak.</p>
+<p class="narration">I called Yuka while holding my umbrella.</p>
+<p class="thought">Yuka, listen. It's over. All of it.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_03')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 3: Next morning, in front of the building -->
+<div class="divider">--- The Next Morning ---</div>
+<img class="full-img" src="/mv/assets/images/generated/r_ep1_03.jpg" alt="">
+<div class="scene left">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_03.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="thought">Was this building always here in Harajuku?</p>
+<p class="thought">The 8th floor... What's on the 8th floor?</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_06')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 4: Elevator -->
+<div class="scene center">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_04.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="thought">In the elevator, I wanted to turn back three times.</p>
+<p class="narration">6... 7... 8.</p>
+<div class="sfx">Ding</div>
+<div class="voice-btn" onclick="playV(this,'en_ep1_07')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 5: The door opens -- the sky room -->
+<img class="full-img" src="/mv/assets/images/generated/r_ep1_05.jpg" alt="">
+<div class="scene center">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_05.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="thought" style="font-size:clamp(1.1rem,3vw,1.4rem);">...What?</p>
+<p class="narration">The sky stretched beyond the windows, the floor was white, light flooded everything.</p>
+<p class="thought">What is this place? I can see all of Tokyo.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_09')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 6: Meeting "him" -->
+<div class="scene left">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_06.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="narration">I turned around, and our eyes met.</p>
+<p class="thought">He was smiling. How can someone smile so naturally?</p>
+<p class="narration">"Nice to meet you," he said.</p>
+<p class="thought">...For what?</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_11')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 7: Changing clothes -->
+<div class="scene right">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_08.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="narration">I was given white clothes. "Change into these," they said.</p>
+<p class="thought">The person in the mirror looked like someone different from yesterday.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_15')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 8: First experience -- taken down -->
+<div class="divider">--- --- ---</div>
+<div class="scene center">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_05.jpg');filter:brightness(.15)"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="sfx">THUD</p>
+<p class="narration">I was on the floor in three seconds.<br>I had no idea what just happened.</p>
+<p class="thought">Someone's weight is on my chest.<br>I can't move. I can't breathe.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_17')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 9: Awakening -->
+<div class="scene center">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_05.jpg');filter:brightness(.2)"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="thought accent">It hurts.<br><br>...And yet.<br><br>I feel more alive than I did last night.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_18')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- Scene 10: On the way home -->
+<div class="divider">--- On the Way Home ---</div>
+<img class="full-img" src="/mv/assets/images/generated/r_ep1_03.jpg" alt="">
+<div class="scene left">
+<div class="bg" style="background-image:url('/mv/assets/images/generated/r_ep1_03.jpg')"></div>
+<div class="overlay"></div>
+<div class="content">
+<p class="narration">On the way home, the back of my neck is burning.<br>Right where someone touched me.</p>
+<p class="thought">I'm a wreck, but I'm smiling. Why?</p>
+<p class="thought accent">I want to go back tomorrow.<br>I don't know why, but I want to go back.</p>
+<div class="voice-btn" onclick="playV(this,'en_ep1_21')">&#9654; Listen</div>
+</div>
+</div>
+
+<!-- END -->
+<div class="divider" style="padding:40px;">Episode 1 "A Place" --- End</div>
+<div class="next">
+<a href="/anime/ep2-en.html">Episode 2 "Distance" &#8594;</a>
+</div>
+
+<canvas id="cv" style="position:fixed;inset:0;z-index:100;pointer-events:none;"></canvas>
+<div id="fl" style="position:fixed;inset:0;z-index:200;pointer-events:none;opacity:0;transition:opacity .08s;"></div>
+
+<script>
+// Particles
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}rsz();addEventListener('resize',rsz);
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=.5+Math.random()*3;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-.5,l:1,c,s:sz||1.5+Math.random()*2});}}
+function flash(c,d){const f=document.getElementById('fl');f.style.background=c;f.style.opacity='.2';setTimeout(()=>f.style.opacity='0',d||100);}
+
+// Ambient particles
+let frame=0;
+function drawLoop(){
+  requestAnimationFrame(drawLoop);frame++;
+  cx.clearRect(0,0,cv.width,cv.height);
+  // Ambient floating dust
+  if(frame%40===0)sp(Math.random()*innerWidth,-5,1,'255,220,150',1.5);
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.01;p.vx*=.99;p.l-=.008;
+    if(p.l<=0){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.5;cx.fillStyle=`rgba(${p.c},${p.l})`;
+    cx.shadowColor=`rgba(${p.c},.3)`;cx.shadowBlur=4;
+    cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+drawLoop();
+
+// === HIDDEN: 3-tap easter egg ===
+let tapC=0,tapT=null;
+document.addEventListener('click',()=>{
+  tapC++;clearTimeout(tapT);
+  tapT=setTimeout(()=>tapC=0,600);
+  if(tapC===3){
+    tapC=0;
+    const msg=document.createElement('div');
+    msg.style.cssText='position:fixed;bottom:20%;left:50%;transform:translateX(-50%);z-index:9999;font-family:"Noto Serif JP",serif;font-size:clamp(.8rem,2.5vw,1rem);color:rgba(232,182,74,.6);text-align:center;opacity:0;transition:opacity 1s;pointer-events:none;';
+    const hints=['...Are you sure it\'s love?','Did you notice what the white clothes really are?','Three taps is the sign for "I submit."','Look at the white clothes again.'];
+    msg.textContent=hints[Math.floor(Math.random()*hints.length)];
+    document.body.appendChild(msg);
+    requestAnimationFrame(()=>msg.style.opacity='1');
+    setTimeout(()=>{msg.style.opacity='0';setTimeout(()=>msg.remove(),1000);},3000);
+    sp(innerWidth/2,innerHeight/2,10,'232,182,74',2);
+  }
+});
+
+// === HIDDEN: Late-night mode (0-4 AM) ===
+const hour=new Date().getHours();
+if(hour>=0&&hour<4){
+  document.querySelector('.ep-title').textContent='A Place (Its True Nature)';
+  // Add subtle hint overlay on all images
+  document.querySelectorAll('.scene .bg').forEach(bg=>{
+    bg.style.filter+=' sepia(.3)';
+  });
+}
+
+// === HIDDEN: For those who came back from EP3 ===
+if(document.referrer.includes('ep3')||sessionStorage.getItem('seen_ep3')){
+  // Overlay a faint hint
+  const hint=document.createElement('div');
+  hint.style.cssText='position:fixed;top:10px;left:10px;z-index:300;font-size:.6rem;color:rgba(232,182,74,.15);pointer-events:none;font-family:monospace;';
+  hint.textContent='[ 2nd viewing -- now you can see it ]';
+  document.body.appendChild(hint);
+}
+
+// Voice
+let cur=null;
+function playV(el,id){
+  document.querySelectorAll('.voice-btn').forEach(b=>b.classList.remove('playing'));
+  if(cur)cur.pause();
+  cur=new Audio('/mv/assets/audio/misaki/'+id+'.mp3');
+  el.classList.add('playing');cur.play();
+  cur.onended=()=>el.classList.remove('playing');
+  // Burst particles on play
+  const rect=el.getBoundingClientRect();
+  sp(rect.x+rect.width/2,rect.y,8,'232,182,74',2);
+}
+
+// Scroll observer with effects
+let sceneCount=0;
+const obs=new IntersectionObserver(e=>{e.forEach(x=>{
+  if(x.isIntersecting&&!x.target.classList.contains('visible')){
+    x.target.classList.add('visible');
+    sceneCount++;
+    // Flash on key scenes
+    if(sceneCount===5)flash('rgba(255,255,255,.1)',200); // Sky room
+    if(sceneCount===8)flash('rgba(232,182,74,.08)',150); // Taken down
+    if(sceneCount===9){flash('rgba(232,182,74,.12)',200);sp(innerWidth/2,innerHeight/2,15,'232,182,74',3);} // Awakening
+    // Ambient particles on every scene
+    sp(Math.random()*innerWidth,innerHeight*.3,3,'255,220,150',2);
+  }
+});},{threshold:.2});
+document.querySelectorAll('.scene,.full-img').forEach(el=>obs.observe(el));
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

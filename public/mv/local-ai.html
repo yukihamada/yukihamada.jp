@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>LOCAL AI — The Revolution</title>
+<meta name="description" content="Install AI on your Mac with 1 command. Zero API costs. Claude Code runs fully local.">
+<meta property="og:title" content="LOCAL AI — The Revolution">
+<meta property="og:description" content="2x faster than Ollama. Safer than cloud. bash setup.sh">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0d1117;--fg:#c9d1d9;--cyan:#58a6ff;--green:#3fb950;--yellow:#e3b341;--red:#f85149;--purple:#bc8cff;--pink:#f778ba;--dim:#484f58;--border:#30363d;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:'JetBrains Mono',monospace;}
+#chrome{position:fixed;top:0;left:0;right:0;height:36px;background:#161b22;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 14px;z-index:200;}
+.dot{width:12px;height:12px;border-radius:50%;margin-right:7px;cursor:pointer;}
+.dot.r{background:var(--red);}.dot.y{background:var(--yellow);}.dot.g{background:var(--green);}
+#chrome .title{flex:1;text-align:center;font-size:12px;color:var(--dim);}
+#term{position:fixed;top:36px;bottom:100px;left:0;right:0;overflow:hidden;padding:20px;font-size:14px;line-height:1.8;transition:opacity .4s;}
+#output{white-space:pre-wrap;word-break:break-all;}
+.cmd{color:#fff;font-weight:700;}.out{color:var(--fg);}.green{color:var(--green);}.cyan{color:var(--cyan);}.yellow{color:var(--yellow);}.red{color:var(--red);}.pink{color:var(--pink);}.purple{color:var(--purple);}.dim{color:var(--dim);font-size:12px;}
+.big{font-size:16px;font-weight:700;color:var(--cyan);margin:10px 0 4px;}
+.typing{border-right:2px solid var(--cyan);animation:blink .5s step-end infinite;}
+@keyframes blink{50%{border-color:transparent}}
+#imageOverlay{position:fixed;top:36px;bottom:100px;left:0;right:0;z-index:150;display:none;align-items:center;justify-content:center;background:rgba(13,17,23,0.92);flex-direction:column;gap:12px;}
+#imageOverlay img,#imageOverlay video{max-width:85%;max-height:70%;border-radius:8px;box-shadow:0 0 60px rgba(88,166,255,0.2);object-fit:contain;}
+#imageOverlay .caption{color:var(--cyan);font-size:12px;text-align:center;}
+#claudeMock{position:fixed;top:36px;bottom:100px;left:0;right:0;z-index:160;display:none;background:var(--bg);padding:20px;font-size:13px;line-height:1.7;overflow:hidden;}
+#claudeMock .header{color:var(--purple);font-size:11px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+#claudeMock .prompt-line{color:var(--cyan);font-weight:700;margin:8px 0;}
+#claudeMock .tool{color:var(--purple);margin:4px 0;font-size:12px;}
+#claudeMock .response{color:var(--fg);margin:4px 0;}
+#claudeMock .typing-cursor{border-right:2px solid var(--cyan);animation:blink .5s step-end infinite;}
+#subtitle{position:fixed;bottom:56px;left:0;right:0;height:44px;background:rgba(22,27,34,0.97);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--cyan);font-weight:700;z-index:200;text-align:center;padding:0 20px;}
+#bottom{position:fixed;bottom:0;left:0;right:0;height:56px;background:#0d1117;display:flex;align-items:center;padding:0 16px;gap:12px;z-index:200;border-top:1px solid var(--border);}
+.btn{background:var(--cyan);color:#0d1117;border:none;padding:6px 16px;border-radius:4px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn:hover{opacity:0.8;}
+#bottom .progress{flex:1;height:4px;background:var(--border);border-radius:2px;overflow:hidden;cursor:pointer;}
+#bottom .progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),var(--green));width:0%;transition:width 0.3s;}
+#bottom .time{font-size:11px;color:var(--dim);min-width:80px;text-align:right;}
+#bottom .section{font-size:11px;color:var(--purple);min-width:90px;}
+/* Language switcher */
+#langSwitch{position:fixed;top:8px;right:14px;z-index:300;display:flex;gap:4px;}
+#langSwitch a{color:var(--dim);font-size:11px;text-decoration:none;padding:2px 8px;border:1px solid var(--border);border-radius:3px;}
+#langSwitch a.active{color:var(--cyan);border-color:var(--cyan);}
+#langSwitch a:hover{color:var(--cyan);}
+/* End screen */
+#endScreen{position:fixed;inset:0;z-index:300;background:rgba(13,17,23,0.97);display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;}
+#endScreen .logo{color:var(--cyan);font-size:14px;line-height:1.3;}
+#endScreen h2{color:var(--fg);font-size:22px;}
+#endScreen .install-box{background:#161b22;border:1px solid var(--border);border-radius:8px;padding:16px 24px;font-size:13px;max-width:500px;width:100%;}
+#endScreen .install-box .step{color:var(--green);margin:4px 0;}
+#endScreen .install-box .url{color:var(--cyan);font-size:11px;}
+#endScreen .btn-row{display:flex;gap:12px;margin-top:8px;}
+#endScreen .btn-big{background:var(--green);color:#0d1117;border:none;padding:12px 32px;border-radius:6px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;}
+#endScreen .btn-big:hover{transform:scale(1.05);}
+#endScreen .btn-outline{background:transparent;color:var(--cyan);border:1px solid var(--cyan);padding:12px 32px;border-radius:6px;font-family:inherit;font-size:14px;cursor:pointer;text-decoration:none;}
+#endScreen .btn-outline:hover{background:var(--cyan);color:#0d1117;}
+#endScreen .other-tracks{margin-top:20px;text-align:center;}
+#endScreen .other-tracks h3{color:var(--dim);font-size:12px;margin-bottom:12px;letter-spacing:0.1em;}
+#endScreen .track-list{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+#endScreen .track-list a{color:var(--dim);font-size:11px;text-decoration:none;padding:6px 14px;border:1px solid var(--border);border-radius:4px;}
+#endScreen .track-list a:hover{color:var(--cyan);border-color:var(--cyan);}
+/* Start */
+#start{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .5s;}
+#start .logo{color:var(--cyan);font-size:clamp(12px,3vw,18px);line-height:1.4;margin-bottom:16px;}
+#start h1{color:var(--fg);font-size:clamp(18px,4vw,28px);margin-bottom:8px;}
+#start .desc{color:var(--dim);font-size:14px;max-width:520px;text-align:center;line-height:2;margin-bottom:32px;}
+#start .desc b{color:var(--green);}.start .desc s{color:var(--red);opacity:0.5;}
+#start .play{color:var(--green);font-size:18px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+@media(max-width:600px){#term{font-size:11px;padding:12px;}#subtitle{font-size:12px;}#claudeMock{font-size:11px;}}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<div id="langSwitch"><a href="ja.html">JP</a><a href="index.html" class="active">EN</a></div>
+
+<div id="start" onclick="go()">
+<pre class="logo">  ╦  ╔═╗╔═╗╔═╗╦    ╔═╗╦
+  ║  ║ ║║  ╠═╣║    ╠═╣║
+  ╩═╝╚═╝╚═╝╩ ╩╩═╝  ╩ ╩╩</pre>
+<h1>LOCAL AI — The Revolution</h1>
+<div class="desc">
+  <s>Claude API $100+/mo</s> → <b>$0</b><br>
+  <s>Ollama 30 tok/s</s> → <b>60 tok/s (2x faster)</b><br>
+  <s>Code sent to cloud</s> → <b>Fully local</b><br>
+  <b>16GB M2 Air → 128GB M5 Max</b> all supported
+</div>
+<div class="play">[ ▶ TAP TO PLAY ]</div>
+</div>
+
+<div id="chrome"><div class="dot r" onclick="cmdStop()"></div><div class="dot y"></div><div class="dot g"></div><div class="title">Terminal — ~/local-claude</div></div>
+<div id="term"><div id="output"></div></div>
+<div id="claudeMock"></div>
+<div id="imageOverlay"><img id="overlayImg" src="" style="display:none"><video id="overlayVid" src="" muted autoplay loop playsinline style="display:none"></video><div class="caption" id="overlayCaption"></div></div>
+<div id="subtitle"></div>
+
+<div id="endScreen">
+  <pre class="logo">  ╦  ╔═╗╔═╗╔═╗╦    ╔═╗╦
+  ║  ║ ║║  ╠═╣║    ╠═╣║
+  ╩═╝╚═╝╚═╝╩ ╩╩═╝  ╩ ╩╩</pre>
+  <h2>Get Started Now</h2>
+  <div class="install-box">
+    <div class="step">$ git clone https://github.com/yukihamada/local-claude</div>
+    <div class="step">$ cd local-claude && bash setup.sh</div>
+    <div class="url">Auto-detects RAM. Works on 16GB M2 Air to 128GB M5 Max.</div>
+  </div>
+  <div class="install-box" style="font-size:11px;margin-top:8px;">
+    <div style="color:var(--cyan);margin-bottom:4px;">RAM Auto-Detection:</div>
+    <div style="color:var(--dim);">16GB → 4B  ·  24GB → 9B  ·  32GB → 35B  ·  64GB → 35B+9B  ·  96GB → 122B  ·  128GB → 122B+35B+VL</div>
+  </div>
+  <div class="btn-row">
+    <a class="btn-big" href="https://github.com/yukihamada/local-claude" target="_blank">★ View on GitHub</a>
+    <button class="btn-outline" onclick="replayMV()">↻ Replay</button>
+  </div>
+  <div class="other-tracks">
+    <h3>OTHER TRACKS</h3>
+    <div class="track-list">
+      <a href="ja.html">日本語版</a>
+      <a href="https://yukihamada.jp/mv/claude-code.html">Claude Code</a>
+      <a href="https://yukihamada.jp/mv/hack.html">Hack</a>
+      <a href="https://yukihamada.jp/mv/tap.html">Tap</a>
+      <a href="https://yukihamada.jp/mv/attention.html">Attention</a>
+      <a href="https://yukihamada.jp/mv/jiujitsu.html">Jiujitsu</a>
+    </div>
+  </div>
+</div>
+
+<div id="bottom">
+  <button class="btn" id="playBtn" onclick="togglePlay()">▶</button>
+  <div class="section" id="sectionLabel">--</div>
+  <div class="progress" onclick="seek(event)"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="time" id="timeLabel">0:00 / 1:58</div>
+</div>
+
+<audio id="audio" preload="auto"><source src="assets/local-ai/track_en.mp3" type="audio/mpeg"></audio>
+
+<script>
+const audio=document.getElementById('audio'), DURATION=118;
+const out=document.getElementById('output'), subEl=document.getElementById('subtitle');
+const claudeMock=document.getElementById('claudeMock'), endScreen=document.getElementById('endScreen');
+const imgOverlay=document.getElementById('imageOverlay');
+let curLine=-1, playing=false, imageTimer=null;
+
+function showClaude(config){
+  hideAll(); claudeMock.style.display='block'; document.getElementById('term').style.opacity='0';
+  claudeMock.innerHTML=`<div class="header">╭───────────────────────────────────────────────╮
+│  Claude Code   (local-ai · Qwen3.5-122B)    │
+│  Model: local  ·  60 tok/s  ·  tool_use: on │
+╰───────────────────────────────────────────────╯</div>`;
+  let d=0;
+  for(const s of config.steps){
+    setTimeout(()=>{
+      if(s.type==='prompt') claudeMock.innerHTML+=`<div class="prompt-line">❯ ${s.text}</div>`;
+      else if(s.type==='tool') claudeMock.innerHTML+=`<div class="tool">  ⏵ ${s.text}</div>`;
+      else if(s.type==='output') claudeMock.innerHTML+=`<div class="response">${s.text}</div>`;
+      else if(s.type==='typing'){
+        const el=document.createElement('div');el.className='response typing-cursor';claudeMock.appendChild(el);
+        let i=0;const txt=s.text,spd=Math.max(6,800/txt.length);
+        (function tc(){if(i<txt.length){el.textContent=txt.substring(0,++i);claudeMock.scrollTop=claudeMock.scrollHeight;setTimeout(tc,spd);}else el.classList.remove('typing-cursor');})();
+      }
+      claudeMock.scrollTop=claudeMock.scrollHeight;
+    },d); d+=s.delay||800;
+  }
+}
+function hideClaude(){claudeMock.style.display='none';document.getElementById('term').style.opacity='1';}
+
+// TIMELINE — synced to Whisper EN timestamps
+const LINES=[
+// 0:00 Why LOCAL AI
+{t:0,    type:'big',  text:'Why LOCAL AI?'},
+{t:0,    sub:'MLX — Apple\'s own AI engine, hits the GPU directly'},
+{t:2,    type:'red',  text:'  ✗ Cloud APIs — $100+/mo, code sent to servers'},
+{t:3.5,  type:'red',  text:'  ✗ Ollama — slow (30 tok/s), no Claude Code support'},
+{t:5.4,  sub:'Massive models: 122B params, 4-bit compressed, 40GB'},
+{t:5.5,  type:'red',  text:'  ✗ LM Studio — no Anthropic protocol support'},
+{t:8,    type:'out',  text:''},
+{t:8.5,  type:'green',text:'  ✓ LOCAL AI'},
+{t:9,    type:'green',text:'    MLX native — 2x faster than Ollama'},
+{t:10,   type:'green',text:'    Full Anthropic protocol compatibility'},
+{t:10.9, sub:'Rust proxy between Claude Code and MLX — blazing fast'},
+{t:11.5, type:'green',text:'    tool_use support — auto command execution'},
+{t:13,   type:'green',text:'    Image understanding + generation + video'},
+{t:14.9, sub:'Everything solved: fast, free, secure, fully functional'},
+{t:15,   type:'green',text:'    $0/month. Works offline.'},
+
+// 0:20 Install
+{t:20,   type:'big',  text:'Step 1: Install'},
+{t:20,   sub:'One command. Everything else is automatic.'},
+{t:21.5, type:'cmd',  text:'$ bash setup.sh'},
+{t:23,   type:'cyan', text:'   Local Claude Code Setup'},
+{t:24,   type:'out',  text:'  [1/6] Homebrew & Python ...'},
+{t:24.5, type:'out',  text:'  [2/6] MLX-LM ...'},
+{t:25,   type:'green',text:'    installed'},
+{t:25.5, type:'out',  text:'  [3/6] Qwen3.5-122B ████████████ 100%'},
+{t:23.5, type:'out',  text:'  Detecting RAM...'},
+{t:24,   type:'green',text:'  128GB detected → Tier: Ultimate'},
+{t:24.5, type:'dim',  text:'    16GB→4B  24GB→9B  32GB→35B  64GB→35B+9B  128GB→122B+35B'},
+{t:24.5, sub:'Auto-detects your RAM. Works on any Mac 16GB+'},
+{t:25.5, type:'green',text:'  Setup complete!'},
+{t:22.8, sub:'Done in five minutes'},
+
+// 0:27 Start
+{t:27,   type:'big',  text:'Step 2: Start'},
+{t:27,   sub:'The power of four simultaneous AI engines'},
+{t:28.5, type:'cmd',  text:'$ ~/ai.sh start'},
+{t:29.5, type:'cyan', text:'  ╦  ╔═╗╔═╗╔═╗╦    ╔═╗╦'},
+{t:29.8, type:'cyan', text:'  ║  ║ ║║  ╠═╣║    ╠═╣║'},
+{t:30.1, type:'cyan', text:'  ╩═╝╚═╝╚═╝╩ ╩╩═╝  ╩ ╩╩'},
+
+{t:30.9, sub:'Main brain — code, design, and deep analysis'},
+{t:31,   type:'green',text:'  ● LLM 122B (Sonnet)  :5000   60 tok/s'},
+{t:33.2, sub:'Light edition for the simple stuff — 4x faster'},
+{t:33.5, type:'green',text:'  ● LLM 35B  (Haiku)   :5001  116 tok/s'},
+{t:35,   type:'green',text:'  ● Vision 8B          :5002'},
+{t:36.6, sub:'Vision AI — understands images and screenshots'},
+{t:37.5, type:'green',text:'  ● Proxy (Rust)       :4001  262ms'},
+{t:39,   type:'green',text:'  Ready!'},
+{t:41.8, sub:'Ultra high-speed link between Claude Code and MLX'},
+
+// 0:42 Claude Code
+{t:42,   type:'big',  text:'Step 3: Claude Code'},
+{t:44.7, sub:'Same UI as the original. Only difference: it\'s free.'},
+{t:45,   type:'cmd',  text:'$ cld'},
+{t:47,   claude:{steps:[
+  {type:'prompt', text:'List files and explain what this project does', delay:0},
+  {type:'tool', text:'Bash  ls -la', delay:1200},
+  {type:'output', text:'  README.md  setup.sh  anthropic_proxy.py  proxy-rs/', delay:800},
+  {type:'tool', text:'Read  README.md', delay:1000},
+  {type:'typing', text:'This project runs Claude Code locally on Apple Silicon using MLX. It serves Qwen3.5-122B through an Anthropic-compatible proxy, enabling full tool_use support with zero API costs. Includes image understanding, image generation (FLUX), and video generation (Wan 2.1).', delay:1200},
+]}},
+{t:48.2, sub:'Swift toggle — cld for local, clc for cloud. One letter.'},
+{t:52.2, sub:'Just prompt in natural language. The AI approaches the files.'},
+{t:56.3, sub:'It triggers Read, tools automatically'},
+
+// 1:00 Code gen
+{t:58.8, hideClaude:true},
+{t:59,   claude:{steps:[
+  {type:'prompt', text:'Write a Python quicksort', delay:0},
+  {type:'typing', text:'def quicksort(arr):\n    if len(arr) <= 1:\n        return arr\n    pivot = arr[len(arr) // 2]\n    left = [x for x in arr if x < pivot]\n    mid  = [x for x in arr if x == pivot]\n    right= [x for x in arr if x > pivot]\n    return quicksort(left) + mid + quicksort(right)', delay:600},
+]}},
+{t:62.1, sub:'tool_use is live — full auto execution, just like the original'},
+
+// 1:07 Benchmark
+{t:67,   hideClaude:true},
+{t:67.2, type:'big',  text:'The MLX Edge'},
+{t:67.2, sub:'Optimized: same model, same machine — but tuned for MLX'},
+{t:68.5, type:'out',  text:'  ┌──────────────────────────────────────────┐'},
+{t:69,   type:'red',  text:'  │  Ollama (default)     30 tok/s        │'},
+{t:69.5, type:'yellow',text:'  │  Ollama (tuned)       42 tok/s        │'},
+{t:70,   type:'green',text:'  │  LOCAL AI (MLX)       60 tok/s   x2   │'},
+{t:70.5, type:'cyan', text:'  │  LOCAL AI (Haiku)    116 tok/s   x4   │'},
+{t:71,   type:'out',  text:'  ├──────────────────────────────────────────┤'},
+{t:71.5, type:'red',  text:'  │  Python proxy        584ms            │'},
+{t:72,   type:'green',text:'  │  Rust proxy          262ms     -55%   │'},
+{t:72.5, type:'out',  text:'  └──────────────────────────────────────────┘'},
+
+// 1:20 Images
+{t:79.7, sub:'Same model, same machine — but tuned for MLX'},
+{t:82.6, sub:'From prompt to photo in 17 seconds'},
+{t:83,   type:'big',  text:'Image Generation'},
+{t:84,   type:'cmd',  text:'$ ~/ai.sh img "cyberpunk Tokyo at night, neon, rain"'},
+{t:85.5, type:'green',text:'  ● cyberpunk_tokyo.png  (17s)'},
+{t:86,   img:'assets/local-ai/cyberpunk_tokyo.png', caption:'Cyberpunk Tokyo — generated locally in 17 seconds'},
+{t:86,   sub:'Midjourney-level realism. Zero cost.'},
+
+{t:89.9, sub:'Starting visual, zero cost'},
+{t:90,   img:'assets/local-ai/fuji_sunrise.png', caption:'Mount Fuji sunrise — photorealistic, local generation'},
+
+{t:91.5, img:'assets/local-ai/cat_beach.png', caption:'Cat with sunglasses — depth of field, golden hour'},
+
+// 1:34 Video
+{t:94.3, type:'big',  text:'Video Generation'},
+{t:94.3, sub:'Wan 2.1 — text to cinematic video'},
+{t:95.5, type:'cmd',  text:'$ ~/ai.sh vid "samurai on a cliff, sunset, wind"'},
+{t:96.5, type:'green',text:'  ● samurai_video.mp4'},
+{t:97,   vid:'assets/local-ai/samurai_video.mp4', caption:'Text-to-video — fully local, cinematic quality'},
+{t:97.3, sub:'Cinematic quality from your desk. Your Mac transforms.'},
+
+// 1:40 Summary
+{t:100.6,type:'big',  text:'The Complete Package'},
+{t:100.6,sub:'Claude Code compatible + tool_use + image + video gen'},
+{t:102,  type:'green',text:'  ✓ Text generation   122B, 60 tok/s'},
+{t:102.9,sub:'If you have a Mac, you can start today'},
+{t:103,  type:'green',text:'  ✓ Fast mode         35B, 116 tok/s'},
+{t:103.5,type:'green',text:'  ✓ Image gen         FLUX, 17s/image'},
+{t:104,  type:'green',text:'  ✓ Video gen         Wan 2.1, 10min'},
+{t:104.5,type:'green',text:'  ✓ tool_use          auto execution'},
+{t:105,  type:'green',text:'  ✓ Monthly cost      $0'},
+{t:105.2,sub:'Just copy and paste these three lines'},
+
+{t:107,  type:'out',  text:''},
+{t:107.5,type:'cmd',  text:'$ git clone https://github.com/yukihamada/local-claude'},
+{t:109,  type:'cmd',  text:'$ bash setup.sh'},
+{t:109.2,sub:'All in one. All local. All free.'},
+
+{t:111,  type:'cyan', text:'  github.com/yukihamada/local-claude'},
+{t:111.6,sub:'If you love it, leave a star ★'},
+{t:114,  showEnd:true},
+];
+
+// ENGINE (same as JA version)
+function go(){document.getElementById('start').style.opacity='0';setTimeout(()=>document.getElementById('start').style.display='none',500);audio.play();playing=true;document.getElementById('playBtn').textContent='⏸';requestAnimationFrame(loop);}
+function togglePlay(){if(!playing&&audio.paused){go();return;}if(audio.paused){audio.play();playing=true;document.getElementById('playBtn').textContent='⏸';requestAnimationFrame(loop);}else{audio.pause();playing=false;document.getElementById('playBtn').textContent='▶';}}
+function cmdStop(){audio.pause();audio.currentTime=0;playing=false;curLine=-1;out.innerHTML='';subEl.textContent='';hideAll();document.getElementById('playBtn').textContent='▶';document.getElementById('progressFill').style.width='0%';endScreen.style.display='none';}
+function replayMV(){endScreen.style.display='none';cmdStop();go();}
+function seek(e){const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*DURATION;out.innerHTML='';curLine=-1;hideAll();endScreen.style.display='none';const t=audio.currentTime;for(let i=0;i<LINES.length;i++){if(LINES[i].t<=t){processLine(LINES[i],true);curLine=i;}}if(!playing){playing=true;audio.play();document.getElementById('playBtn').textContent='⏸';requestAnimationFrame(loop);}}
+function hideAll(){imgOverlay.style.display='none';document.getElementById('overlayVid').pause();claudeMock.style.display='none';document.getElementById('term').style.opacity='1';if(imageTimer){clearTimeout(imageTimer);imageTimer=null;}}
+function processLine(l,inst){
+  if(l.type)addLine(l,inst);if(l.sub!==undefined)subEl.textContent=l.sub;
+  if(l.img){hideAll();const i=document.getElementById('overlayImg');i.src=l.img;i.style.display='block';document.getElementById('overlayVid').style.display='none';document.getElementById('overlayCaption').textContent=l.caption||'';imgOverlay.style.display='flex';imageTimer=setTimeout(hideAll,4000);}
+  if(l.vid){hideAll();const v=document.getElementById('overlayVid');v.src=l.vid;v.style.display='block';document.getElementById('overlayImg').style.display='none';document.getElementById('overlayCaption').textContent=l.caption||'';imgOverlay.style.display='flex';v.play();imageTimer=setTimeout(hideAll,5000);}
+  if(l.claude&&!inst)showClaude(l.claude);if(l.hideClaude)hideClaude();if(l.showEnd)endScreen.style.display='flex';
+}
+function addLine(l,inst){const d=document.createElement('div');d.className=l.type==='big'?'big':(l.type||'out');if(l.type==='big'){d.textContent=l.text;out.appendChild(d);scroll();return;}if(!inst&&['cmd','green','cyan'].includes(l.type)){d.textContent='';d.classList.add('typing');out.appendChild(d);scroll();const t=l.text;let i=0;const s=Math.max(8,Math.min(30,1000/t.length));(function tc(){if(i<t.length){d.textContent=t.substring(0,++i);scroll();setTimeout(tc,s);}else d.classList.remove('typing');})();}else{d.textContent=l.text;out.appendChild(d);scroll();}}
+function scroll(){while(out.children.length>50)out.removeChild(out.firstChild);document.getElementById('term').scrollTop=document.getElementById('term').scrollHeight;}
+function fmt(s){return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+function loop(){if(!playing)return;requestAnimationFrame(loop);const ct=audio.currentTime;if(ct>=DURATION||audio.ended){playing=false;document.getElementById('playBtn').textContent='▶';endScreen.style.display='flex';return;}document.getElementById('progressFill').style.width=(ct/DURATION*100)+'%';document.getElementById('timeLabel').textContent=fmt(ct)+' / '+fmt(DURATION);let sec='--';if(ct<20)sec='WHY LOCAL AI';else if(ct<27)sec='INSTALL';else if(ct<42)sec='START';else if(ct<67)sec='CLAUDE CODE';else if(ct<80)sec='BENCHMARK';else if(ct<94)sec='IMAGES';else if(ct<101)sec='VIDEO';else sec='GET STARTED';document.getElementById('sectionLabel').textContent=sec;for(let i=curLine+1;i<LINES.length;i++){if(ct>=LINES[i].t){processLine(LINES[i],false);curLine=i;}else break;}}
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

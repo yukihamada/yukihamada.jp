@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>遊び人計画 — 濱田優貴｜俺が住むものは、俺が作る</title>
+<meta name="description" content="SOLUNA・PON・KAGI——住む場所も、俺が作る。サラリーマン1,000万・起業家3,000〜7,000万・遊び人1億。稼いで、旅に出よう。">
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/soluna.html">
+<meta property="og:title" content="遊び人計画｜俺が住むものは、俺が作る — 濱田優貴">
+<meta property="og:description" content="サラリーマン1,000万・起業家3,000〜7,000万・遊び人1億。SOLUNAで住んで、PONで契約して、KAGIで管理して、旅に出よう。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/ogp.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@yukihamada"><meta name="twitter:creator" content="@yukihamada">
+<link rel="canonical" href="https://yukihamada.jp/mv/soluna.html">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MusicVideoObject",
+  "name": "遊び人計画",
+  "description": "SOLUNA・PON・KAGI——住む場所も、俺が作る。稼いで、旅に出よう。",
+  "url": "https://yukihamada.jp/mv/soluna.html",
+  "thumbnailUrl": "https://yukihamada.jp/mv/assets/ogp.png",
+  "author": {
+    "@type": "Person",
+    "name": "濱田優貴",
+    "alternateName": "Yuki Hamada",
+    "url": "https://yukihamada.jp",
+    "sameAs": ["https://twitter.com/yukihamada","https://github.com/yukihamada"]
+  },
+  "keywords": "SOLUNA,PON,KAGI,不動産,スマートホーム,電子契約,デジタルノマド,財務自由,濱田優貴"
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#050510;
+  --sol:#FFB800;
+  --sol-l:#FFD84A;
+  --luna:#A0BEFF;
+  --mint:#34D399;
+  --cream:#EEF4FF;
+  --dim:rgba(238,244,255,.35);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);
+  font-family:'Noto Sans JP',sans-serif;color:var(--cream);}
+
+/* Progress bar */
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,#3b63e8,var(--sol),var(--sol-l));
+  z-index:9999;box-shadow:0 0 8px var(--sol);transition:width .1s linear;}
+
+/* Scenes */
+.sc{position:fixed;inset:0;opacity:0;transition:opacity .7s ease;overflow:hidden;}
+.sc.on{opacity:1;}
+.sc-bg{
+  position:absolute;inset:-4%;
+  background-size:cover;background-position:center;
+}
+.sc.on .sc-bg{animation:kb 28s ease-in-out infinite alternate;}
+@keyframes kb{
+  0%  {transform:scale(1)   translateX(0)   translateY(0);}
+  100%{transform:scale(1.07) translateX(-.6%) translateY(-.4%);}
+}
+.sc::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    rgba(5,5,16,.4) 0%,
+    transparent 30%,
+    rgba(5,5,16,.55) 100%);
+}
+
+/* Canvas */
+canvas{position:fixed;inset:0;z-index:50;pointer-events:none;}
+
+/* Flash / ring effects */
+#fl{position:fixed;inset:0;z-index:400;pointer-events:none;opacity:0;transition:opacity .08s;}
+#ring{position:fixed;top:50%;left:50%;z-index:45;pointer-events:none;border-radius:50%;
+  border:2px solid var(--sol);opacity:0;transform:translate(-50%,-50%);width:0;height:0;}
+
+/* Karaoke — main lyric */
+#kk{position:fixed;bottom:75px;left:0;right:0;z-index:6000;text-align:center;padding:0 16px;pointer-events:none;}
+#km{
+  font-size:clamp(1.5rem,5.2vw,2.9rem);font-weight:900;color:#fff;line-height:1.45;opacity:0;
+  text-shadow:0 3px 14px rgba(255,184,0,.55),0 0 45px rgba(160,190,255,.2),3px 3px 0 rgba(5,5,16,.92);
+  transform:translateY(12px) scale(.9);
+  transition:all .15s cubic-bezier(.34,1.56,.64,1);
+}
+#km.on{opacity:1;transform:translateY(0) scale(1);}
+#km.big{font-size:clamp(1.9rem,7vw,4rem);color:var(--sol-l);}
+#km.pop{animation:kp .35s cubic-bezier(.34,1.56,.64,1);}
+@keyframes kp{0%{transform:scale(1)}40%{transform:scale(1.11)}100%{transform:scale(1)}}
+
+/* Previous lyric (fades above) */
+#kp{
+  position:fixed;bottom:133px;left:0;right:0;z-index:5999;text-align:center;
+  padding:0 16px;pointer-events:none;
+  font-size:clamp(.85rem,2.2vw,1.2rem);font-weight:400;
+  color:rgba(238,244,255,.2);transition:opacity .35s;opacity:0;
+}
+#kp.on{opacity:1;}
+
+/* Visualizer */
+#viz{
+  position:fixed;bottom:0;left:0;right:0;height:50px;z-index:40;pointer-events:none;
+  display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 10%;
+}
+.vb{width:3px;background:linear-gradient(to top,#2563EB,var(--sol));
+  border-radius:2px 2px 0 0;opacity:.4;transition:height .05s linear;}
+
+/* Transport */
+#tr{
+  position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:9000;
+  display:flex;align-items:center;gap:10px;
+  background:rgba(5,5,20,.93);border:1px solid rgba(160,190,255,.12);
+  border-radius:26px;padding:5px 14px;backdrop-filter:blur(14px);
+  opacity:1;transition:opacity .5s;
+}
+#bp{
+  width:34px;height:34px;border-radius:50%;
+  background:linear-gradient(135deg,#2563EB,var(--sol));
+  border:none;cursor:pointer;color:#fff;font-size:12px;
+  display:flex;align-items:center;justify-content:center;
+}
+#sk{width:90px;height:3px;background:rgba(238,244,255,.1);border-radius:2px;-webkit-appearance:none;}
+#sk::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--sol);}
+#td{font-size:9px;color:rgba(238,244,255,.35);min-width:60px;text-align:center;font-variant-numeric:tabular-nums;}
+
+/* Start screen */
+#st{
+  position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.st-moon{font-size:clamp(3rem,10vw,5rem);margin-bottom:10px;filter:drop-shadow(0 0 36px rgba(160,190,255,.7));}
+.st-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(2rem,9vw,4.8rem);font-weight:900;
+  background:linear-gradient(135deg,var(--luna) 0%,var(--sol-l) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.st-sub{font-size:clamp(.75rem,2.2vw,.95rem);color:var(--dim);margin-top:10px;letter-spacing:.2em;}
+.st-tap{margin-top:22px;font-size:clamp(.65rem,1.8vw,.8rem);color:rgba(238,244,255,.28);
+  letter-spacing:.4em;animation:br 2.2s ease-in-out infinite;}
+@keyframes br{0%,100%{opacity:.28}50%{opacity:.75}}
+
+/* End screen */
+#en{display:none;position:fixed;inset:0;z-index:9500;background:rgba(5,5,16,.97);overflow-y:auto;}
+.ei{max-width:520px;margin:0 auto;padding:52px 20px 100px;text-align:center;}
+.ei-title{
+  font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:900;
+  background:linear-gradient(135deg,var(--luna),var(--sol-l));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.ei-sub{margin-top:8px;font-size:.85rem;color:var(--dim);}
+.ei-products{margin-top:24px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.ei-prod{
+  padding:16px 8px;background:rgba(238,244,255,.03);
+  border:1px solid rgba(238,244,255,.07);border-radius:10px;
+  text-decoration:none;color:var(--cream);font-size:.75rem;
+  transition:all .2s;
+}
+.ei-prod:hover{border-color:rgba(255,184,0,.35);background:rgba(255,184,0,.05);}
+.ei-prod-icon{font-size:1.6rem;display:block;margin-bottom:5px;}
+.ei-prod-name{font-weight:700;font-size:.8rem;}
+.ei-prod-url{font-size:.6rem;color:var(--dim);margin-top:2px;}
+.ei-songs{margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+.ei-song{
+  padding:7px 14px;background:rgba(238,244,255,.03);border:1px solid rgba(238,244,255,.07);
+  border-radius:6px;text-decoration:none;color:var(--dim);font-size:.72rem;transition:all .2s;
+}
+.ei-song:hover{color:var(--cream);border-color:rgba(238,244,255,.2);}
+.ei-back{display:inline-block;margin-top:14px;font-size:.7rem;color:rgba(238,244,255,.2);text-decoration:none;}
+.ei-back:hover{color:var(--dim);}
+
+/* ── LYRICS PANEL ──────────────────────────────────── */
+#lp{
+  position:fixed;right:0;top:0;bottom:0;
+  width:min(360px,100vw);z-index:7000;
+  background:rgba(5,5,20,.88);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);
+  border-left:1px solid rgba(160,190,255,.1);
+  transform:translateX(100%);transition:transform .38s cubic-bezier(.4,0,.2,1);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+#lp.open{transform:translateX(0);}
+
+.lp-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px;
+  background:rgba(5,5,20,.96);
+  border-bottom:1px solid rgba(160,190,255,.08);
+  flex-shrink:0;
+}
+.lp-head-title{font-size:.6rem;letter-spacing:.4em;color:var(--dim);text-transform:uppercase;}
+.lp-close{
+  background:none;border:none;cursor:pointer;
+  color:rgba(238,244,255,.3);font-size:1.1rem;line-height:1;padding:4px;
+  transition:color .2s;
+}
+.lp-close:hover{color:var(--cream);}
+
+.lp-body{flex:1;overflow-y:auto;padding:16px 20px 100px;scroll-behavior:smooth;}
+.lp-body::-webkit-scrollbar{width:3px;}
+.lp-body::-webkit-scrollbar-track{background:transparent;}
+.lp-body::-webkit-scrollbar-thumb{background:rgba(160,190,255,.2);border-radius:2px;}
+
+.lp-sec{
+  font-size:.5rem;letter-spacing:.45em;color:rgba(160,190,255,.3);
+  text-transform:uppercase;margin:22px 0 8px;
+}
+.lp-line{
+  font-size:.9rem;line-height:1.9;
+  color:rgba(238,244,255,.3);
+  padding:1px 0 1px 10px;
+  border-left:2px solid transparent;
+  transition:color .2s, border-color .2s, font-size .15s;
+  cursor:default;
+}
+.lp-line.active{
+  color:var(--sol-l);
+  border-left-color:var(--sol);
+  font-weight:700;
+  font-size:.98rem;
+}
+.lp-line.prev{color:rgba(238,244,255,.5);}
+
+/* Lyrics toggle button in transport */
+#lyb{
+  background:none;border:1px solid rgba(160,190,255,.2);
+  border-radius:6px;cursor:pointer;
+  color:rgba(238,244,255,.4);font-size:.6rem;font-weight:700;
+  letter-spacing:.12em;padding:4px 9px;
+  transition:all .2s;white-space:nowrap;
+}
+#lyb.on{color:var(--sol-l);border-color:rgba(255,184,0,.4);}
+#lyb:hover{color:var(--cream);border-color:rgba(238,244,255,.35);}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- ── START SCREEN ────────────────────────────────── -->
+<div id="st" onclick="go()">
+  <div class="st-moon">🌙</div>
+  <div class="st-title">遊び人計画</div>
+  <div class="st-sub">俺が住むものは、俺が作る</div>
+  <div class="st-tap">▶ TAP TO PLAY</div>
+</div>
+
+<div id="prog"></div>
+<canvas id="cv"></canvas>
+<div id="fl"></div>
+<div id="ring"></div>
+
+<!-- ── SCENES ──────────────────────────────────────────── -->
+<div class="sc on" id="s0"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s0_moon.jpg')"></div></div>
+<div class="sc"    id="s1"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s1_property.jpg')"></div></div>
+<div class="sc"    id="s2"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s2_pon.jpg')"></div></div>
+<div class="sc"    id="s3"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s3_kagi.jpg')"></div></div>
+<div class="sc"    id="s4"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s4_beach.jpg')"></div></div>
+<div class="sc"    id="s5"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s5_cafe.jpg')"></div></div>
+<div class="sc"    id="s6"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s6_dashboard.jpg')"></div></div>
+<div class="sc"    id="s7"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s7_surf.jpg')"></div></div>
+<div class="sc"    id="s8"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s8_buildings.jpg')"></div></div>
+<div class="sc"    id="s9"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s9_salary.jpg')"></div></div>
+<div class="sc"   id="s10"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s10_startup.jpg')"></div></div>
+<div class="sc"   id="s11"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s11_sunset.jpg')"></div></div>
+<div class="sc"   id="s12"><div class="sc-bg" style="background-image:url('assets/images/generated/soluna_s12_outro.jpg')"></div></div>
+
+<!-- ── UI ─────────────────────────────────────────── -->
+<div id="viz"></div>
+<div id="kp"></div>
+<div id="kk"><div id="km"></div></div>
+
+<div id="tr">
+  <button id="bp" onclick="tog()">▶</button>
+  <input type="range" id="sk" min="0" max="245" step=".5" value="0">
+  <div id="td">0:00 / 4:05</div>
+  <button id="lyb" onclick="toggleLyrics()">歌詞</button>
+</div>
+
+<!-- ── LYRICS PANEL ───────────────────────────────── -->
+<div id="lp">
+  <div class="lp-head">
+    <span class="lp-head-title">Lyrics — 遊び人計画</span>
+    <button class="lp-close" onclick="toggleLyrics()">✕</button>
+  </div>
+  <div class="lp-body" id="lpb">
+    <div class="lp-sec">Intro</div>
+    <div class="lp-line" id="ll0">4月</div>
+    <div class="lp-line" id="ll1">SOLUNAを見つけた</div>
+    <div class="lp-line" id="ll2">PONでサインした</div>
+    <div class="lp-line" id="ll3">KAGIを設置した</div>
+    <div class="lp-line" id="ll4">さあ旅に出よう</div>
+
+    <div class="lp-sec">Verse 1</div>
+    <div class="lp-line" id="ll5">不動産、難しいなんて嘘だった</div>
+    <div class="lp-line" id="ll6">SOLUNAのアプリ開けば物件一覧</div>
+    <div class="lp-line" id="ll7">気に入った部屋、PONで30秒契約</div>
+    <div class="lp-line" id="ll8">紙の書類なんて、もう要らない</div>
+    <div class="lp-line" id="ll9">KAGIを玄関につけて スマートホーム完成</div>
+    <div class="lp-line" id="ll10">スマホで解錠、スマホで照明</div>
+    <div class="lp-line" id="ll11">エアコンも遠隔操作</div>
+    <div class="lp-line" id="ll12">俺はもうビーチで仕事してる</div>
+
+    <div class="lp-sec">Chorus</div>
+    <div class="lp-line" id="ll13">稼いで、旅に出よう</div>
+    <div class="lp-line" id="ll14">SOLUNA LIFE</div>
+    <div class="lp-line" id="ll15">君の家も貸し出して</div>
+    <div class="lp-line" id="ll16">お金を育てよう</div>
+    <div class="lp-line" id="ll17">サラリーマンなら 1,000万</div>
+    <div class="lp-line" id="ll18">起業家なら 3,000〜7,000万</div>
+    <div class="lp-line" id="ll19">遊び人目指すなら 1億</div>
+    <div class="lp-line" id="ll20">俺が住むものは、俺が作る</div>
+
+    <div class="lp-sec">Verse 2</div>
+    <div class="lp-line" id="ll21">留守の間もKAGIが管理してる</div>
+    <div class="lp-line" id="ll22">ゲストが来たら自動でチェックイン</div>
+    <div class="lp-line" id="ll23">収益通知がスマホに飛んでくる</div>
+    <div class="lp-line" id="ll24">俺はその頃、バリ島でサーフィン</div>
+    <div class="lp-line" id="ll25">一つ物件、次は二つ、三つ</div>
+    <div class="lp-line" id="ll26">複利の法則、不動産でも同じ</div>
+    <div class="lp-line" id="ll27">PONで契約、KAGIで管理</div>
+    <div class="lp-line" id="ll28">SOLUNAのエコシステム 全部つながる</div>
+
+    <div class="lp-sec">Bridge</div>
+    <div class="lp-line" id="ll29">Level 1 — サラリーマン</div>
+    <div class="lp-line" id="ll30">副業で不動産 年収プラス1,000万</div>
+    <div class="lp-line" id="ll31">週末だけ動けば 自由が手に入る</div>
+    <div class="lp-line" id="ll32">Level 2 — 起業家</div>
+    <div class="lp-line" id="ll33">物件を増やして 事業も拡大</div>
+    <div class="lp-line" id="ll34">3,000万〜7,000万 自分で天井決める</div>
+    <div class="lp-line" id="ll35">Level 3 — 遊び人</div>
+    <div class="lp-line" id="ll36">1億の世界は 仕事が遊びになる</div>
+    <div class="lp-line" id="ll37">世界を旅しながら 資産が増えていく</div>
+
+    <div class="lp-sec">Final Chorus</div>
+    <div class="lp-line" id="ll38">稼いで、旅に出よう</div>
+    <div class="lp-line" id="ll39">SOLUNA LIFE</div>
+    <div class="lp-line" id="ll40">君の家も貸し出して</div>
+    <div class="lp-line" id="ll41">お金を育てよう</div>
+    <div class="lp-line" id="ll42">サラリーマンなら 1,000万</div>
+    <div class="lp-line" id="ll43">起業家なら 3,000〜7,000万</div>
+    <div class="lp-line" id="ll44">遊び人目指すなら 1億</div>
+    <div class="lp-line" id="ll45">俺が住むものは、俺が作る</div>
+
+    <div class="lp-sec">Outro</div>
+    <div class="lp-line" id="ll46">Tap, Tap, Tap — アプリ作った</div>
+    <div class="lp-line" id="ll47">Hack, Hack, Hack — ハードも作った</div>
+    <div class="lp-line" id="ll48">SOLUNA, PON, KAGI —</div>
+    <div class="lp-line" id="ll49">住む場所も、俺が作る</div>
+    <div class="lp-line" id="ll50">俺が使うものは、俺が作る</div>
+    <div class="lp-line" id="ll51">俺が住むものは、俺が作る</div>
+  </div>
+</div>
+
+<!-- ── END SCREEN ─────────────────────────────────── -->
+<div id="en"><div class="ei">
+  <div class="ei-title">SOLUNA LIFE</div>
+  <div class="ei-sub">俺が住むものは、俺が作る。</div>
+  <div class="ei-products">
+    <a class="ei-prod" href="https://solun.art" target="_blank">
+      <span class="ei-prod-icon">🌙</span>
+      <div class="ei-prod-name">SOLUNA</div>
+      <div class="ei-prod-url">solun.art</div>
+    </a>
+    <a class="ei-prod" href="https://ponsign.jp" target="_blank">
+      <span class="ei-prod-icon">✍️</span>
+      <div class="ei-prod-name">PON</div>
+      <div class="ei-prod-url">ponsign.jp</div>
+    </a>
+    <a class="ei-prod" href="https://kagi.app" target="_blank">
+      <span class="ei-prod-icon">🔑</span>
+      <div class="ei-prod-name">KAGI</div>
+      <div class="ei-prod-url">kagi.app</div>
+    </a>
+  </div>
+  <div style="margin-top:20px;font-size:.7rem;color:var(--dim);">他の曲も聴く</div>
+  <div class="ei-songs">
+    <a class="ei-song" href="/mv/tap.html">Tap, Tap, Tap</a>
+    <a class="ei-song" href="/mv/hack.html">Hack, Hack, Hack</a>
+    <a class="ei-song" href="/mv/attention.html">アテンション</a>
+    <a class="ei-song" href="/mv/jiujitsu.html">柔術でした</a>
+    <a class="ei-song" href="/mv/musubinaosu.html">結び直す朝</a>
+  </div>
+  <a class="ei-back" href="/mv/">← MV一覧</a>
+</div></div>
+
+<audio id="au" preload="auto"></audio>
+
+<script>
+// ── SCENE DATA ──────────────────────────────────────────
+// t = seconds from song start, id = scene element id
+const SC=[
+  {t:0,   id:'s0'},   // 月夜 — イントロ
+  {t:18,  id:'s1'},   // 東京/SOLUNA物件 — Verse1
+  {t:28,  id:'s2'},   // PON 契約
+  {t:38,  id:'s3'},   // KAGI スマートホーム
+  {t:50,  id:'s4'},   // ビーチ — Chorus1 🌊
+  {t:72,  id:'s5'},   // ノマドカフェ
+  {t:82,  id:'s6'},   // 収益ダッシュボード 💰
+  {t:94,  id:'s3'},   // KAGI管理 — Verse2
+  {t:109, id:'s7'},   // バリ島サーフィン 🏄
+  {t:119, id:'s8'},   // 複数物件/複利
+  {t:134, id:'s9'},   // Bridge Level1 サラリーマン
+  {t:148, id:'s10'},  // Level2 起業家
+  {t:163, id:'s11'},  // Level3 遊び人 🌅
+  {t:177, id:'s4'},   // Final Chorus — ビーチ戻る
+  {t:210, id:'s11'},  // Outro 夕日
+  {t:226, id:'s12'},  // Outro 3製品
+];
+
+// ── LYRIC DATA ──────────────────────────────────────────
+// t = trigger time (sec), x = text, f = effect
+// f: '' = normal, 'p' = pop, 'B' = big burst, 'g' = gold/green flash
+const L=[
+  // ─── Intro ─────────────────────────────────────────
+  {t:0.5,  x:'4月',f:'g'},
+  {t:4.0,  x:'SOLUNAを見つけた',f:''},
+  {t:8.5,  x:'PONでサインした',f:'p'},
+  {t:13.0, x:'KAGIを設置した',f:'p'},
+  {t:17.5, x:'さあ旅に出よう',f:'B'},
+  // ─── Verse 1 ───────────────────────────────────────
+  {t:20.5, x:'不動産、難しいなんて嘘だった',f:''},
+  {t:25.0, x:'SOLUNAのアプリ開けば物件一覧',f:''},
+  {t:29.5, x:'気に入った部屋、PONで30秒契約',f:'p'},
+  {t:34.0, x:'紙の書類なんて、もう要らない',f:''},
+  {t:38.5, x:'KAGIを玄関につけて スマートホーム完成',f:''},
+  {t:43.5, x:'スマホで解錠、スマホで照明',f:'p'},
+  {t:47.5, x:'エアコンも遠隔操作',f:''},
+  {t:50.5, x:'俺はもうビーチで仕事してる',f:'B'},
+  // ─── Chorus 1 ★ ────────────────────────────────────
+  {t:56.0, x:'稼いで、旅に出よう',f:'B'},
+  {t:60.5, x:'SOLUNA LIFE',f:'B'},
+  {t:64.0, x:'君の家も貸し出して',f:'g'},
+  {t:68.0, x:'お金を育てよう',f:'p'},
+  {t:72.5, x:'サラリーマンなら 1,000万',f:'g'},
+  {t:77.5, x:'起業家なら 3,000〜7,000万',f:'B'},
+  {t:83.0, x:'遊び人目指すなら 1億',f:'B'},
+  {t:88.5, x:'俺が住むものは、俺が作る',f:'B'},
+  // ─── Verse 2 ───────────────────────────────────────
+  {t:94.5, x:'留守の間もKAGIが管理してる',f:''},
+  {t:99.5, x:'ゲストが来たら自動でチェックイン',f:'p'},
+  {t:104.5,x:'収益通知がスマホに飛んでくる',f:'g'},
+  {t:109.5,x:'俺はその頃、バリ島でサーフィン',f:'B'},
+  {t:115.5,x:'一つ物件、次は二つ、三つ',f:''},
+  {t:120.5,x:'複利の法則、不動産でも同じ',f:'g'},
+  {t:125.5,x:'PONで契約、KAGIで管理',f:'p'},
+  {t:130.0,x:'SOLUNAのエコシステム 全部つながる',f:'B'},
+  // ─── Bridge ────────────────────────────────────────
+  {t:135.0,x:'Level 1 — サラリーマン',f:'g'},
+  {t:139.5,x:'副業で不動産 年収プラス1,000万',f:''},
+  {t:144.5,x:'週末だけ動けば 自由が手に入る',f:'p'},
+  {t:149.5,x:'Level 2 — 起業家',f:'g'},
+  {t:153.5,x:'物件を増やして 事業も拡大',f:''},
+  {t:158.5,x:'3,000万〜7,000万 自分で天井決める',f:'B'},
+  {t:164.0,x:'Level 3 — 遊び人',f:'B'},
+  {t:168.5,x:'1億の世界は 仕事が遊びになる',f:'B'},
+  {t:173.5,x:'世界を旅しながら 資産が増えていく',f:'g'},
+  // ─── Final Chorus ★★ ───────────────────────────────
+  {t:178.5,x:'稼いで、旅に出よう',f:'B'},
+  {t:183.0,x:'SOLUNA LIFE',f:'B'},
+  {t:186.5,x:'君の家も貸し出して',f:'g'},
+  {t:190.5,x:'お金を育てよう',f:'p'},
+  {t:195.0,x:'サラリーマンなら 1,000万',f:'g'},
+  {t:200.0,x:'起業家なら 3,000〜7,000万',f:'B'},
+  {t:205.5,x:'遊び人目指すなら 1億',f:'B'},
+  {t:210.5,x:'俺が住むものは、俺が作る',f:'B'},
+  // ─── Outro ─────────────────────────────────────────
+  {t:216.0,x:'Tap, Tap, Tap — アプリ作った',f:'g'},
+  {t:220.5,x:'Hack, Hack, Hack — ハードも作った',f:'g'},
+  {t:225.0,x:'SOLUNA, PON, KAGI —',f:'B'},
+  {t:229.0,x:'住む場所も、俺が作る',f:'B'},
+  {t:234.0,x:'俺が使うものは、俺が作る',f:'B'},
+  {t:239.0,x:'俺が住むものは、俺が作る',f:'B'},
+  {t:244.5,x:'♪',f:''},
+];
+
+// ── CANVAS PARTICLE SYSTEM ──────────────────────────────
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+
+// Particle spawners
+function sp(x,y,n,col,sz){
+  for(let i=0;i<n;i++){
+    const a=Math.random()*Math.PI*2,v=.8+Math.random()*4.5;
+    P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1.8,l:1,c:col,s:sz||1.5+Math.random()*3});
+  }
+}
+// Gold sparks (sol)
+function spG(n){sp(innerWidth*(.2+Math.random()*.6),innerHeight*(.15+Math.random()*.6),n,'255,184,0',3);}
+// Moon-blue (luna)
+function spL(n){sp(innerWidth*(.2+Math.random()*.6),innerHeight*(.2+Math.random()*.5),n,'160,190,255',3);}
+// Money mint
+function spM(n){sp(innerWidth*(.3+Math.random()*.4),innerHeight*(.3+Math.random()*.4),n,'52,211,153',2.5);}
+
+// Stars — 140 persistent twinkling points
+const STARS=[];
+for(let i=0;i<140;i++){
+  STARS.push({
+    x:Math.random(),y:Math.random(),
+    s:.4+Math.random()*1.4,
+    p:Math.random()*Math.PI*2,
+    sp:.006+Math.random()*.014
+  });
+}
+
+let amb=0;
+function drawP(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  amb++;
+
+  // Twinkling stars
+  for(const s of STARS){
+    const bri=.15+.55*(Math.sin(s.p+amb*s.sp)*Math.sin(s.p*.72+amb*s.sp*.8)+1)*.5;
+    cx.globalAlpha=bri;
+    cx.fillStyle='rgba(200,215,255,1)';
+    cx.beginPath();cx.arc(s.x*cv.width,s.y*cv.height,s.s,0,Math.PI*2);cx.fill();
+  }
+
+  // Dynamic burst particles
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];
+    p.x+=p.vx;p.y+=p.vy;p.vy+=.055;p.vx*=.97;p.l-=.019;
+    if(p.l<=0||p.y>cv.height+12){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.72;
+    cx.fillStyle=`rgba(${p.c},${p.l})`;
+    cx.shadowColor=`rgba(${p.c},.5)`;cx.shadowBlur=5;
+    cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+
+// ── EFFECTS ────────────────────────────────────────────
+function flash(c,d){
+  const f=document.getElementById('fl');
+  f.style.background=c;f.style.opacity='.22';
+  setTimeout(()=>f.style.opacity='0',d||100);
+}
+function ring(){
+  const r=document.getElementById('ring');
+  r.style.transition='none';r.style.width='0';r.style.height='0';r.style.opacity='.5';
+  requestAnimationFrame(()=>{
+    r.style.transition='all .85s ease-out';
+    r.style.width='400px';r.style.height='400px';r.style.opacity='0';
+  });
+}
+function shake(i){
+  const d=[(Math.random()-.5)*i*5,(Math.random()-.5)*i*3];
+  document.body.style.transform=`translate(${d[0]}px,${d[1]}px)`;
+  setTimeout(()=>document.body.style.transform='',50);
+}
+
+// ── LYRIC DISPLAY ──────────────────────────────────────
+let prevText='';
+function showL(text,fx){
+  const km=document.getElementById('km'),kp=document.getElementById('kp');
+  if(prevText&&prevText!=='♪'){kp.textContent=prevText;kp.classList.add('on');}
+  else kp.classList.remove('on');
+  setTimeout(()=>kp.classList.remove('on'),2400);
+  prevText=text;
+  km.classList.remove('on','pop','big');void km.offsetWidth;
+  km.textContent=text;km.classList.add('on');
+  if(fx==='p'){km.classList.add('pop');shake(.3);spL(10);}
+  if(fx==='B'){km.classList.add('pop','big');flash('rgba(255,184,0,.2)',110);spG(38);spL(16);ring();shake(.7);}
+  if(fx==='g'){km.classList.add('pop');flash('rgba(52,211,153,.14)',85);spM(18);spG(9);shake(.25);}
+}
+
+// ── SCENE SWITCHER ─────────────────────────────────────
+let cs=-1;
+function swSc(i){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.getElementById(SC[i].id).classList.add('on');
+  cs=i;
+  flash('rgba(160,190,255,.07)',220);spL(4);
+}
+
+// ── BEAT / VISUALIZER ──────────────────────────────────
+let actx,anl,lb=0,bth=100;
+const vizEl=document.getElementById('viz');
+const BARS=48;
+for(let i=0;i<BARS;i++){const b=document.createElement('div');b.className='vb';b.style.height='2px';vizEl.appendChild(b);}
+const vizBars=[...vizEl.children];
+
+function setupA(){
+  actx=new(AudioContext||webkitAudioContext)();
+  anl=actx.createAnalyser();anl.fftSize=256;anl.smoothingTimeConstant=.78;
+  const s=actx.createMediaElementSource(au);s.connect(anl);anl.connect(actx.destination);
+}
+function beat(){
+  if(!anl)return;
+  const f=new Uint8Array(anl.frequencyBinCount);anl.getByteFrequencyData(f);
+  for(let i=0;i<BARS;i++){
+    const v=f[Math.floor(i*f.length/BARS)]/255;
+    vizBars[i].style.height=Math.max(2,v*44)+'px';
+    vizBars[i].style.opacity=.22+v*.52;
+  }
+  let b=0;for(let i=0;i<10;i++)b+=f[i];b/=10;
+  if(b>bth&&Date.now()-lb>165){lb=Date.now();spG(2+Math.floor(b/55));if(b>145)flash('rgba(255,184,0,.07)',45);}
+  bth=bth*.94+b*.06*1.32;
+}
+
+// ── DEMO TIMER (音源なし時のフォールバック) ────────────────
+// demoMode=true のとき au.currentTime の代わりに performance タイマーを使う
+let demoMode=false,demoOffset=0,demoStartAt=null;
+const DEMO_DURATION=245;
+
+function demoTime(){
+  if(!on) return demoOffset;
+  return Math.min(demoOffset+(performance.now()-demoStartAt)/1000, DEMO_DURATION);
+}
+function startDemo(){
+  if(demoMode) return;
+  demoMode=true; demoOffset=0; demoStartAt=performance.now();
+}
+
+// ── MAIN LOOP ──────────────────────────────────────────
+let on=false,cl=-1;
+function fmt(s){return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+function lp(){
+  requestAnimationFrame(lp);
+  const t = demoMode ? demoTime() : au.currentTime;
+  const d = demoMode ? DEMO_DURATION : (au.duration||DEMO_DURATION);
+  document.getElementById('prog').style.width=(t/d*100)+'%';
+  document.getElementById('sk').value=t;
+  document.getElementById('td').textContent=fmt(t)+' / '+fmt(d);
+
+  // Scene switching
+  let si=0;
+  for(let i=SC.length-1;i>=0;i--){if(t>=SC[i].t){si=i;break;}}
+  if(si!==cs)swSc(si);
+
+  // Lyric display (4.5s window per line)
+  let li=-1;
+  for(let i=L.length-1;i>=0;i--){if(t>=L[i].t&&t<L[i].t+4.5){li=i;break;}}
+  if(li!==cl){
+    cl=li;
+    if(li>=0)showL(L[li].x,L[li].f);
+    else document.getElementById('km').classList.remove('on');
+    updateLyricsPanel(li);
+  }
+
+  // デモ終了判定
+  if(demoMode && t>=DEMO_DURATION){
+    on=false; demoOffset=0; demoStartAt=null;
+    document.getElementById('bp').textContent='▶';
+    setTimeout(()=>document.getElementById('en').style.display='block',1600);
+    return;
+  }
+
+  beat();drawP();
+}
+
+// ── LYRICS PANEL ──────────────────────────────────────
+let lyricsOpen=false, prevLi=-1;
+
+function toggleLyrics(){
+  lyricsOpen=!lyricsOpen;
+  document.getElementById('lp').classList.toggle('open',lyricsOpen);
+  document.getElementById('lyb').classList.toggle('on',lyricsOpen);
+  // スクロールを現在行に合わせる
+  if(lyricsOpen && prevLi>=0) scrollToLine(prevLi);
+}
+
+function scrollToLine(i){
+  const el=document.getElementById('ll'+i);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function updateLyricsPanel(li){
+  if(li===prevLi) return;
+  // 前の行を prev スタイルに
+  if(prevLi>=0){
+    const prev=document.getElementById('ll'+prevLi);
+    if(prev){prev.classList.remove('active');prev.classList.add('prev');}
+    // 2行前をリセット
+    const older=document.getElementById('ll'+(prevLi-1));
+    if(older) older.classList.remove('prev');
+  }
+  prevLi=li;
+  if(li<0) return;
+  const el=document.getElementById('ll'+li);
+  if(!el) return;
+  el.classList.remove('prev');
+  el.classList.add('active');
+  if(lyricsOpen) scrollToLine(li);
+}
+
+// ── CONTROLS ───────────────────────────────────────────
+let hideTimer=null;
+function showTr(){
+  document.getElementById('tr').style.opacity='1';
+  clearTimeout(hideTimer);
+  hideTimer=setTimeout(()=>{if(on)document.getElementById('tr').style.opacity='0';},3200);
+}
+document.addEventListener('touchstart',showTr);
+document.addEventListener('mousemove',showTr);
+
+// シークバー: デモ時はオフセット調整
+document.getElementById('sk').addEventListener('input',function(){
+  if(demoMode){demoOffset=parseFloat(this.value);demoStartAt=performance.now();}
+  else{au.currentTime=parseFloat(this.value);}
+});
+
+function go(){
+  const o=document.getElementById('st');
+  o.style.transition='opacity .5s';o.style.opacity='0';
+  setTimeout(()=>o.style.display='none',500);
+  au.src='assets/soluna.mp3';
+  // 音源エラー時はデモモードで動かす
+  au.addEventListener('error',startDemo,{once:true});
+  try{setupA();}catch(e){}
+  au.play().catch(startDemo);
+  on=true;
+  document.getElementById('bp').textContent='⏸';
+  requestAnimationFrame(lp);
+  setTimeout(()=>{if(on)document.getElementById('tr').style.opacity='0';},3500);
+}
+function tog(){
+  if(demoMode){
+    if(on){on=false;demoOffset=demoTime();demoStartAt=null;document.getElementById('bp').textContent='▶';}
+    else{on=true;demoStartAt=performance.now();document.getElementById('bp').textContent='⏸';}
+    return;
+  }
+  if(on){au.pause();on=false;document.getElementById('bp').textContent='▶';}
+  else{au.play();on=true;document.getElementById('bp').textContent='⏸';}
+}
+au.addEventListener('ended',()=>{
+  on=false;document.getElementById('bp').textContent='▶';
+  setTimeout(()=>document.getElementById('en').style.display='block',1600);
+});
+</script>
+
+<!-- ── SITE NAV ─────────────────────────────────────── -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(5,5,20,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

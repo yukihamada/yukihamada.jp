@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Timeline Editor — それ恋じゃなく柔術でした</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:system-ui,sans-serif;padding:0;}
+.top{position:sticky;top:0;z-index:100;background:#111;border-bottom:1px solid #333;padding:12px 16px;}
+.top h1{font-size:1rem;color:#E8B64A;}
+.controls{display:flex;gap:10px;align-items:center;margin-top:8px;}
+.controls button{background:#E8B64A;color:#111;border:none;padding:6px 16px;border-radius:6px;cursor:pointer;font-weight:700;font-size:.8rem;}
+.controls button:hover{background:#d4a03a;}
+#time-display{font-family:monospace;font-size:1.2rem;color:#E8B64A;min-width:80px;}
+#seek{flex:1;height:4px;-webkit-appearance:none;background:#333;border-radius:2px;cursor:pointer;}
+#seek::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#E8B64A;}
+
+/* Timeline */
+.timeline{padding:16px;overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.75rem;}
+th{text-align:left;padding:6px 8px;color:#888;border-bottom:1px solid #333;position:sticky;top:80px;background:#111;z-index:10;}
+td{padding:5px 8px;border-bottom:1px solid #1a1a1a;vertical-align:middle;}
+tr.active{background:rgba(232,182,74,.1);}
+tr:hover{background:rgba(255,255,255,.03);}
+.t{font-family:monospace;color:#E8B64A;white-space:nowrap;min-width:50px;}
+.lyric{color:#ccc;max-width:280px;}
+.media-cell{display:flex;align-items:center;gap:6px;}
+.media-cell img,.media-cell video{height:50px;border-radius:4px;border:1px solid #333;}
+.type-badge{font-size:.6rem;padding:1px 5px;border-radius:4px;font-weight:700;}
+.type-badge.vid{background:rgba(232,134,58,.2);color:#E8B64A;border:1px solid rgba(232,134,58,.3);}
+.type-badge.img{background:rgba(100,100,100,.2);color:#888;border:1px solid rgba(100,100,100,.3);}
+.section-header td{background:#1a1a1a;color:#E8B64A;font-weight:700;font-size:.8rem;border-bottom:2px solid #E8B64A;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<div class="top">
+  <h1>Timeline — それ恋じゃなく柔術でした</h1>
+  <div class="controls">
+    <button id="btn-play" onclick="togglePlay()">▶ Play</button>
+    <span id="time-display">0:00</span>
+    <input type="range" id="seek" min="0" max="258" step="0.5" value="0" oninput="seekTo(this.value)">
+    <span style="color:#888;font-size:.75rem;" id="dur">4:18</span>
+  </div>
+</div>
+
+<div class="timeline">
+<table>
+<thead>
+<tr><th>Time</th><th>歌詞</th><th>メディア</th><th>Type</th><th>ファイル</th></tr>
+</thead>
+<tbody id="tbody"></tbody>
+</table>
+</div>
+
+<audio id="audio" src="assets/jiujitsu.mp3" preload="auto"></audio>
+
+<script>
+// Whisper-synced lyrics
+const LYRICS=[
+{t:0,    x:'♪ (intro)'},
+{t:24.8, x:'また胸の上で 息が詰まる'},
+{t:29.0, x:'離れたくない でも正直ちょっと苦しい'},
+{t:35.0, x:'手首つかまれて 逃げ道ない'},
+{t:40.0, x:'なのに笑ってる 私もおかしい'},
+{t:46.0, x:'夜更けのメモにしがみついて'},
+{t:49.0, x:'「会いたい」より増えていく数字'},
+{t:52.0, x:'1・2・3… 深く吸って'},
+{t:54.0, x:'目を開けたら 世界がスローになる'},
+{t:59.0, x:'依存じゃない、ポジションだ'},
+{t:62.0, x:'離れられないのはガードが固いから'},
+{t:65.0, x:'愛が苦しい？ それ三角絞め'},
+{t:68.0, x:'恋に落ちた？ いやハーフのまんま'},
+{t:70.0, x:'壊されたい？ ううん崩されたいだけ'},
+{t:74.0, x:'ベースと重心で優しく'},
+{t:77.0, x:'それ、恋じゃなくて柔術でした'},
+{t:79.0, x:'tap、tap、tap——もう一回の合図'},
+{t:82.0, x:'♪ (間奏)'},
+{t:95.0, x:'朝のベランダ 風に揺れる白い君'},
+{t:98.0, x:'袖口のほつれさえも愛しい'},
+{t:101.0,x:'カードの磁気が擦り切れるほど通って'},
+{t:104.0,x:'今日の痛みは 明日の私を守る'},
+{t:107.0,x:'弱さも全部持ち寄って'},
+{t:109.0,x:'絡んで ほどいて また組み直す'},
+{t:113.0,x:'涙じゃなくて汗と笑い'},
+{t:116.0,x:'フレーム作って呼吸を守る'},
+{t:119.0,x:'執着じゃない、ディフェンスだ'},
+{t:122.0,x:'距離を置くのはスペース作るため'},
+{t:124.0,x:'「もう無理かも」？ それは肩固め'},
+{t:126.0,x:'君に縛られた？ いや襟を握っただけ'},
+{t:131.0,x:'君が怖い？ ううん自分が好きになってく'},
+{t:134.0,x:'マットの上で'},
+{t:136.0,x:'それ、恋じゃなくて柔術でした'},
+{t:138.0,x:'tap、tap、tap——合図でほどける'},
+{t:142.0,x:'青い日々 紫の夢'},
+{t:146.0,x:'焦らず一つずつスイープしていく'},
+{t:152.0,x:'世界が狭くなるほど自由になる'},
+{t:157.0,x:'先生 今日もよろしくお願いします'},
+{t:166.0,x:'右手でフレーム 左で襟'},
+{t:169.0,x:'腰切って 回って 返して 立ち上がる'},
+{t:172.0,x:'抑え込み 逃げて また笑う'},
+{t:174.0,x:'「大丈夫、呼吸して」——それだけで強くなる'},
+{t:179.0,x:'依存じゃない、私の選択だ'},
+{t:182.0,x:'離れられないのは"好き"だけじゃない'},
+{t:185.0,x:'ここが居場所だって知ってるから'},
+{t:188.0,x:'痛みはサイン 不安はチャンス'},
+{t:190.0,x:'愛が欲しい？ うん、でもまずは一本'},
+{t:193.0,x:'マットに置いた鼓動が歌う'},
+{t:196.0,x:'それ、恋じゃなくて柔術でした'},
+{t:199.0,x:'tap、tap、tap——明日に続く合図'},
+{t:202.0,x:'勘違いしてた——'},
+{t:212.0,x:'でもそれでいい'},
+{t:214.0,x:'物語はここで ほどけて結び直す'},
+{t:222.0,x:'♪'},
+{t:248.0,x:'(end)'},
+];
+
+// Media timeline — synced to lyrics
+const MEDIA=[
+// section, time, type, file, description
+['INTRO',      0,    'vid','scene_01.mp4','胸の上 → 目を開ける'],
+['',           6,    'img','jj_ex05.jpg','瞑想'],
+['',           12,   'vid','scene_02.mp4','瞑想 → 立ち上がる'],
+['',           18,   'img','jj_ex02.jpg','顔が近い'],
+['VERSE 1',    24.8, 'img','jj_ex03.jpg','サイドコントロール'],
+['',           29,   'vid','scene_03.mp4','壁ドン → 逆転'],
+['',           35,   'vid','scene_04.mp4','目 → 涙'],
+['',           40,   'img','jj_new_s3a.jpg','タップの光'],
+['PRE-CHO',    46,   'img','jj_ex09.jpg','腕を撫でるタップ'],
+['',           52,   'vid','scene_05.mp4','俯瞰 → 花が開く'],
+['CHORUS 1',   59,   'vid','scene_06.mp4','三角 → 腕十字'],
+['',           65,   'img','jj_ex07.jpg','オープンガード'],
+['',           70,   'img','jj_ex08.jpg','足のアップ'],
+['',           74,   'vid','scene_07.mp4','tap → 手が差し伸べ'],
+['',           79,   'img','jj_new_s9a.jpg','タップ波紋'],
+['間奏',       82,   'img','jj_br01.jpg','座禅'],
+['',           88,   'img','jj_br02.jpg','ストレッチ'],
+['VERSE 2',    95,   'vid','scene_08.mp4','道着 → 手が取る'],
+['',           101,  'img','jj_ex11.jpg','ベッドから道着へ'],
+['',           107,  'vid','scene_09.mp4','帯 → 笑み'],
+['',           113,  'img','jj_new_s6a.jpg','絡んでほどいて'],
+['CHORUS 2',   119,  'img','jj_br03.jpg','アームバー'],
+['',           124,  'img','jj_br04.jpg','スイープ'],
+['',           131,  'img','jj_br05.jpg','襟を掴む'],
+['',           136,  'img','jj_br06.jpg','ローリング'],
+['BRIDGE',     142,  'vid','scene_10.mp4','青紫回廊 → 奥へ'],
+['',           148,  'img','jj_ex15.jpg','リボン'],
+['',           154,  'img','jj_ex16.jpg','先生に礼'],
+['',           160,  'vid','scene_11.mp4','居場所 → 窓へ'],
+['BREAKDOWN',  166,  'img','jj_ex17.jpg','ヒップエスケープ'],
+['',           169,  'img','jj_ex18.jpg','立ち上がる'],
+['',           172,  'vid','scene_12.mp4','ハイタッチ → ハグ'],
+['',           177,  'img','jj_ex22.jpg','全員の輪'],
+['FINAL',      179,  'img','jj_br07.jpg','窓辺に立つ'],
+['',           185,  'img','jj_ex19.jpg','空の道場'],
+['',           190,  'img','jj_br12.jpg','拳バンプ'],
+['',           196,  'img','jj_yawara3.jpg','夕焼けの礼'],
+['OUTRO',      202,  'img','jj_br08.jpg','ハイタッチ仲間'],
+['',           208,  'img','jj_br09.jpg','原宿の帰り道'],
+['',           214,  'img','jj_br10.jpg','道着を畳む'],
+['',           222,  'vid','scene_13.mp4','桜並木 → 歩き去る'],
+];
+
+// Build table
+const tbody=document.getElementById('tbody');
+let lastSection='';
+MEDIA.forEach((m,i)=>{
+  const [sec,time,type,file,desc]=m;
+  // Section header
+  if(sec && sec!==lastSection){
+    const hr=document.createElement('tr');
+    hr.className='section-header';
+    hr.innerHTML=`<td colspan="5">${sec}</td>`;
+    tbody.appendChild(hr);
+    lastSection=sec;
+  }
+  const tr=document.createElement('tr');
+  tr.dataset.time=time;
+  tr.id='row-'+i;
+  const min=Math.floor(time/60);
+  const s=(time%60).toFixed(1);
+  const path=type==='vid'?'assets/video/'+file:'assets/images/generated/'+file;
+  const thumb=type==='vid'
+    ?`<video src="${path}" muted preload="metadata" style="height:50px;border-radius:4px;border:1px solid #333;"></video>`
+    :`<img src="${path}" style="height:50px;border-radius:4px;border:1px solid #333;">`;
+  const badge=type==='vid'?'<span class="type-badge vid">VIDEO</span>':'<span class="type-badge img">IMG</span>';
+
+  // Find matching lyric
+  let lyric='';
+  for(let j=LYRICS.length-1;j>=0;j--){
+    if(LYRICS[j].t<=time){lyric=LYRICS[j].x;break;}
+  }
+
+  tr.innerHTML=`<td class="t">${min}:${s.padStart(4,'0')}</td><td class="lyric">${lyric}</td><td class="media-cell">${thumb} ${desc}</td><td>${badge}</td><td style="color:#555;font-size:.65rem;">${file}</td>`;
+  tr.style.cursor='pointer';
+  tr.onclick=()=>seekTo(time);
+  tbody.appendChild(tr);
+});
+
+// Audio
+const audio=document.getElementById('audio');
+let playing=false;
+function togglePlay(){
+  if(playing){audio.pause();playing=false;document.getElementById('btn-play').textContent='▶ Play';}
+  else{audio.play();playing=true;document.getElementById('btn-play').textContent='⏸ Pause';raf();}
+}
+function seekTo(t){audio.currentTime=parseFloat(t);document.getElementById('seek').value=t;updateHighlight();}
+function fmt(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0');}
+function updateHighlight(){
+  const ct=audio.currentTime;
+  document.getElementById('time-display').textContent=fmt(ct);
+  document.getElementById('seek').value=ct;
+  // Highlight current row
+  let activeIdx=0;
+  for(let i=MEDIA.length-1;i>=0;i--){
+    if(ct>=MEDIA[i][1]){activeIdx=i;break;}
+  }
+  document.querySelectorAll('#tbody tr').forEach(r=>r.classList.remove('active'));
+  const row=document.getElementById('row-'+activeIdx);
+  if(row){row.classList.add('active');}
+}
+function raf(){
+  if(!playing)return;
+  updateHighlight();
+  requestAnimationFrame(raf);
+}
+audio.addEventListener('ended',()=>{playing=false;document.getElementById('btn-play').textContent='▶ Play';});
+</script>
+</body>
+</html>

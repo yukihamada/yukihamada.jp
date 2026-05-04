@@ -2,6 +2,7 @@
 <html lang="ja" prefix="og: https://ogp.me/ns#">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <!-- Primary -->
@@ -655,6 +656,7 @@ body.pre-edm .k-main {
   50%{opacity:1;width:250px;}
 }
 </style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
 </head>
 <body>
 
@@ -1111,13 +1113,22 @@ const L_EN = [
 let currentLang = 'ja';
 function getLyrics() { return currentLang === 'en' ? L_EN : L; }
 
+const AUDIO_FILES = { ja: 'assets/hack.wav', en: 'assets/hack_en.wav' };
+let audioBuffers = {};
+
 function toggleLang() {
   currentLang = currentLang === 'ja' ? 'en' : 'ja';
   document.getElementById('lang-label').textContent = currentLang === 'ja' ? '🇯🇵 JA' : '🇺🇸 EN';
-  // Force lyric refresh
   currentLyric = -1;
-  // TODO: swap audio source when EN vocal track is ready
-  // For now, same instrumental plays, only lyrics change
+  // Swap audio source
+  if (audioEl) {
+    const ct = audioEl.currentTime;
+    const wasPlaying = isPlaying;
+    if (wasPlaying) audioEl.pause();
+    audioEl.src = AUDIO_FILES[currentLang];
+    audioEl.currentTime = ct;
+    if (wasPlaying) audioEl.play().catch(()=>{});
+  }
 }
 
 // ── STATE ─────────────────────────────────────────────
@@ -1166,69 +1177,59 @@ function buildSolunaDots() {
   }
 }
 
-// ── AUDIO SETUP ───────────────────────────────────────
-async function loadAudio() {
-  try {
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 1024;
-    analyser.smoothingTimeConstant = 0.75;
-    analyser.connect(audioCtx.destination);
+// ── AUDIO SETUP (audio element + Web Audio analyser) ──
+let audioEl;
 
-    const res = await fetch('assets/hack.wav');
-    if (!res.ok) throw new Error('fetch failed: ' + res.status);
-    const buf = await res.arrayBuffer();
-    audioBuffer = await audioCtx.decodeAudioData(buf);
-  } catch(e) {
-    console.error('Audio load error:', e);
-    // Fallback: show error on overlay
-    const overlay = document.getElementById('start-overlay');
-    if (overlay) {
-      overlay.style.display = 'flex';
-      overlay.style.opacity = '1';
-      overlay.querySelector('.so-sub').textContent = '音声読込エラー。タップしてリトライ';
-      overlay.onclick = () => { overlay.onclick = null; startExperience(); };
-    }
-    throw e;
-  }
+async function loadAudio() {
+  audioEl = document.createElement('audio');
+  audioEl.preload = 'auto';
+  audioEl.src = AUDIO_FILES[currentLang];
+  document.body.appendChild(audioEl);
+
+  // Connect to Web Audio for visualizer
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 1024;
+  analyser.smoothingTimeConstant = 0.75;
+  const src = audioCtx.createMediaElementSource(audioEl);
+  src.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  audioEl.addEventListener('ended', () => {
+    isPlaying = false;
+    document.getElementById('btn-play').textContent = '▶';
+    setTimeout(showEndScreen, 1500);
+  });
 }
 
 function playFrom(offset) {
-  if (source) { try { source.stop(); } catch(e){} }
-  source = audioCtx.createBufferSource();
-  source.buffer = audioBuffer;
-  source.connect(analyser);
-  source.start(0, offset);
-  startTime = audioCtx.currentTime - offset;
-  startOffset = offset;
+  if (!audioEl) return;
+  audioEl.currentTime = offset;
+  audioEl.play().catch(e => console.log('play:', e));
   isPlaying = true;
   document.getElementById('btn-play').textContent = '⏸';
-  source.onended = () => {
-    if (isPlaying) {
-      isPlaying = false;
-      document.getElementById('btn-play').textContent = '▶';
-      // Show end screen after brief pause
-      setTimeout(showEndScreen, 1500);
-    }
-  };
 }
 
 function togglePlay() {
-  if (!audioCtx) return;
+  if (!audioEl) return;
   if (isPlaying) {
-    startOffset = audioCtx.currentTime - startTime;
-    source.stop();
+    audioEl.pause();
     isPlaying = false;
     document.getElementById('btn-play').textContent = '▶';
     stopStrobe();
   } else {
-    playFrom(startOffset);
+    audioEl.play().catch(e => console.log('play:', e));
+    isPlaying = true;
+    document.getElementById('btn-play').textContent = '⏸';
   }
 }
 
 function seekTo(val) {
-  startOffset = parseFloat(val);
-  if (isPlaying) playFrom(startOffset);
+  if (audioEl) audioEl.currentTime = parseFloat(val);
+}
+
+function getCurrentTime() {
+  return audioEl ? audioEl.currentTime : 0;
 }
 
 // ── EDM DROP ──────────────────────────────────────────
@@ -1482,7 +1483,7 @@ function loop() {
   analyser.getByteTimeDomainData(wave);
 
   // current time
-  const ct = audioCtx.currentTime - startTime;
+  const ct = getCurrentTime();
   const pct = Math.min(ct/TOTAL,1);
   document.getElementById('prog').style.width = (pct*100)+'%';
   document.getElementById('seek-bar').value = ct;
@@ -1592,5 +1593,9 @@ async function startExperience() {
   }
 }
 </script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
 </body>
 </html>

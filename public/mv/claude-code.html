@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>claude code — CLI Anthem</title>
+<meta name="description" content="Claude Codeの使い方を歌にした。ターミナルで全部やれ。">
+<meta property="og:title" content="claude code — CLI Anthem">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/cc_terminal.jpg">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#1a1a1a;--fg:#e0e0e0;--cyan:#E8863A;--green:#3fb950;--pink:#f778ba;--yellow:#E8863A;--red:#f85149;--purple:#D4813A;--dim:#666;--orange:#E8863A;--orange2:#D4813A;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font-family:'JetBrains Mono',monospace;}
+
+/* Terminal chrome */
+#chrome{position:fixed;top:0;left:0;right:0;height:32px;background:#161b22;border-bottom:1px solid #30363d;display:flex;align-items:center;padding:0 12px;z-index:100;}
+.dot{width:10px;height:10px;border-radius:50%;margin-right:6px;}
+.dot.r{background:var(--red);}.dot.y{background:var(--yellow);}.dot.g{background:var(--green);}
+#chrome .title{margin-left:12px;font-size:11px;color:var(--dim);flex:1;text-align:center;}
+
+/* Main terminal area */
+#term{position:fixed;top:32px;bottom:60px;left:0;right:0;overflow:hidden;padding:16px;font-size:13px;line-height:1.7;}
+
+/* Logo ASCII art — centered top */
+#logo{position:fixed;top:36px;left:50%;transform:translateX(-50%);font-size:11px;line-height:1.35;color:var(--orange);opacity:.4;white-space:pre;z-index:10;transition:transform .3s,opacity .3s;text-align:left;}
+#logo .ver{color:var(--dim);font-size:10px;}
+#logo .path{color:var(--green);font-size:10px;}
+
+/* Lyrics display - typed in terminal */
+#output{white-space:pre-wrap;word-break:break-all;}
+.prompt{color:var(--orange);}
+.cmd{color:#fff;}.comment{color:var(--dim);font-style:italic;}
+.highlight{color:var(--orange);}
+.warn{color:#F59E0B;}
+.err{color:var(--red);}
+.pink{color:#F59E0B;}.purple{color:var(--orange2);}
+.bold{font-weight:700;}
+.typing{border-right:2px solid var(--orange);animation:blink .6s step-end infinite;}
+@keyframes blink{50%{border-color:transparent}}
+
+/* Status bar */
+#status{position:fixed;bottom:28px;left:0;right:0;height:32px;background:#161b22;border-top:1px solid #30363d;display:flex;align-items:center;padding:0 12px;font-size:10px;z-index:100;}
+#status .left{color:var(--orange);flex:1;}
+#status .mid{color:var(--dim);flex:1;text-align:center;}
+#status .right{color:var(--orange2);flex:1;text-align:right;}
+
+/* Seek bar */
+#seekbar{position:fixed;bottom:0;left:0;right:0;height:28px;background:#0d1117;display:flex;align-items:center;padding:0 12px;gap:8px;z-index:100;}
+#seekbar input{flex:1;height:3px;-webkit-appearance:none;background:#30363d;border-radius:2px;cursor:pointer;}
+#seekbar input::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--orange);cursor:pointer;}
+#seekbar .time{font-size:9px;color:var(--dim);min-width:40px;}
+
+/* Visualizer bars at very bottom */
+#viz{position:fixed;bottom:28px;left:0;right:0;height:30px;display:flex;align-items:flex-end;justify-content:center;gap:1px;padding:0 5%;pointer-events:none;z-index:99;opacity:.3;}
+.vb{width:2px;background:var(--cyan);border-radius:1px 1px 0 0;}
+
+/* Particles canvas */
+#cv{position:fixed;inset:0;z-index:50;pointer-events:none;}
+
+/* Start overlay */
+#start{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:opacity .4s;}
+#start pre{color:var(--orange);font-size:clamp(10px,2.5vw,14px);line-height:1.3;text-align:left;margin-bottom:20px;display:inline-block;}
+#start .sub{color:var(--dim);font-size:12px;letter-spacing:.15em;}
+#start .play-hint{margin-top:20px;color:var(--green);font-size:14px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+@media(max-width:600px){#term{font-size:11px;padding:10px;}#logo{font-size:7px;}}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- Start screen -->
+<div id="start" onclick="go()">
+<pre>
+▐▛███▜▌   <span style="color:var(--fg)">Claude Code v2.1.85</span>
+▝▜█████▛▘  <span style="color:var(--dim)">Opus 4.6 (1M context) · Claude Max</span>
+  ▘▘ ▝▝    <span style="color:var(--green)">~/workspace</span>
+</pre>
+<div class="sub">CLI ANTHEM — TERMINAL MUSIC VIDEO</div>
+<div class="play-hint">[ CLICK TO EXECUTE ]</div>
+</div>
+
+<!-- Terminal chrome -->
+<div id="chrome">
+  <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+  <div class="title">claude — ~/workspace</div>
+</div>
+
+<!-- ASCII logo (dances with beat) -->
+<div id="logo"><span id="logo-art">▐▛███▜▌   </span><span class="ver">Claude Code v2.1.85</span>
+<span id="logo-art2">▝▜█████▛▘  </span><span class="ver">Opus 4.6 (1M context) · Claude Max</span>
+<span id="logo-art3">  ▘▘ ▝▝    </span><span class="path">~/workspace</span></div>
+
+<!-- Terminal output -->
+<div id="term"><div id="output"></div></div>
+
+<!-- Visualizer -->
+<div id="viz"></div>
+
+<!-- Status bar -->
+<div id="status">
+  <div class="left">NORMAL</div>
+  <div class="mid" id="s-section">--</div>
+  <div class="right" id="s-info">claude code v2.1.85</div>
+</div>
+
+<!-- Seek -->
+<div id="seekbar">
+  <span class="time" id="t-cur">0:00</span>
+  <input type="range" id="seek" min="0" max="150" step=".1" value="0">
+  <span class="time" id="t-dur">0:00</span>
+</div>
+
+<canvas id="cv"></canvas>
+<audio id="audio" preload="auto"></audio>
+
+<script>
+const audio=document.getElementById('audio');
+const out=document.getElementById('output');
+const logo=document.getElementById('logo');
+let playing=false,curLine=-1;
+
+// Logo dance — the full character bounces/shifts
+const LOGO_POSES=[
+  {art:['▐▛███▜▌   ','▝▜█████▛▘  ','  ▘▘ ▝▝    '], path:'~/workspace'},
+  {art:[' ▐▛███▜▌  ','▝▜█████▛▘  ',' ▘▘ ▝▝     '], path:'~/workspace/src'},
+  {art:['▐▛███▜▌   ',' ▝▜█████▛▘ ','  ▘▘ ▝▝    '], path:'~/workspace/deploy'},
+  {art:['  ▐▛███▜▌ ','▝▜█████▛▘  ','   ▘▘ ▝▝   '], path:'~/workspace/test'},
+  {art:['▐▛███▜▌   ','▝▜█████▛▘  ',' ▘▘  ▝▝    '], path:'~/workspace/fix'},
+  {art:[' ▐▛███▜▌  ',' ▝▜█████▛▘ ','  ▘▘ ▝▝    '], path:'~/workspace/ship'},
+];
+const LOGO_MSGS=[
+  'Claude Code v2.1.85','Thinking...','Writing code...','Running tests...',
+  'Deploying...','All tests passed!','3 agents spawned','fly deploy ✓',
+  'Opus 4.6 (1M context)','847 tool calls','LGTM 🚀','Zero bugs found',
+];
+let logoFrame=0;
+
+// Lyrics with timestamps — from Whisper
+const L=[
+// Intro
+{t:0,    type:'sys',  text:'Claude Code v2.1.85 · Opus 4.6 (1M context) · Claude Max'},
+{t:0.5,  type:'sys',  text:'~/workspace ready. Let\'s go.'},
+{t:1.0,  type:'cmd',  text:'c-l-a-u-d-e たった6文字の魔法'},
+{t:4.9,  type:'cmd',  text:'ブラウザは閉じろ ターミナルが戦場'},
+{t:9.9,  type:'run',  text:'$ echo "全部コマンドラインでやれ"'},
+{t:12.5, type:'lyric',text:'たったその一言で 始まるレボリューション'},
+
+// Verse 1 — tech stack
+{t:19.5, type:'hr',   text:'─── VERSE 1: TECH STACK ───'},
+{t:20.4, type:'lyric',text:'Python? JS? 悪くないけど'},
+{t:23.0, type:'warn', text:'時代を裂くなら Rust か Go!'},
+{t:24.7, type:'high', text:'俺の推しなら 断然 Rust'},
+{t:27.4, type:'lyric',text:'コンパイル待ちでも 堅牢さで勝つ'},
+{t:30.0, type:'run',  text:'$ fly deploy --remote-only'},
+{t:31.0, type:'green',text:'  ✓ デプロイ先なら迷わず Fly.io'},
+{t:32.6, type:'lyric',text:'一度設定したら「次も覚えとけよ」'},
+{t:35.7, type:'high', text:'その一言で AIは覚醒'},
+{t:38.1, type:'lyric',text:'何度でも叩き込め 最高の錬成'},
+
+// Verse 2 — 無茶振り
+{t:41.5, type:'hr',   text:'─── VERSE 2: 無茶振り ───'},
+{t:42.6, type:'err',  text:'AIがビビって「2週間かかる」？'},
+{t:45.3, type:'warn', text:'笑わせるな 無茶振りで突き刺さる！'},
+{t:48.0, type:'run',  text:'$ # いいからやれとエンター叩け'},
+{t:50.3, type:'green',text:'  ✓ 走らせてみりゃ 20分で終わるぜ'},
+{t:53.1, type:'lyric',text:'ブラウザ開く隙なんて 与えるな'},
+{t:57.6, type:'high', text:'CLI縛りで 限界を超えろ'},
+
+// Chorus 1
+{t:61.0, type:'hr',   text:'═══ CHORUS ═══'},
+{t:62.4, type:'pink', text:'走らせろ 並列で! マルチエージェント!'},
+{t:65.3, type:'pink', text:'LINEにTelegram つなげばパーフェクト!'},
+{t:67.8, type:'pink', text:'一人ぼっちの部屋が 巨大なチーム'},
+{t:70.4, type:'cmd',  text:'Claude Code 止まるな 駆け抜けろストリーム!'},
+{t:73.4, type:'run',  text:'$ echo "全部CLIでやれ" 唱え続けろ'},
+{t:77.5, type:'high', text:'不可能を可能にする コードを刻め!'},
+
+// Verse 3 — プロダクト
+{t:81.0, type:'hr',   text:'─── VERSE 3: PRODUCT ───'},
+{t:82.5, type:'lyric',text:'動いただけじゃ まだまだ甘い'},
+{t:84.9, type:'lyric',text:'プロダクトの深淵 覗きたい？'},
+{t:87.3, type:'run',  text:'$ claude "セキュリティの穴 全部塞げ"'},
+{t:89.5, type:'warn', text:'「もっと良くするには？ アイデアを出せ」'},
+{t:92.5, type:'lyric',text:'ガンガン問いつめろ 遠慮はいらない'},
+{t:96.9, type:'high', text:'本物のコード以外 認めやしない'},
+
+// Chorus 2
+{t:101.0,type:'hr',   text:'═══ CHORUS 2 ═══'},
+{t:102.4,type:'pink', text:'走らせろ 並列で! マルチエージェント!'},
+{t:105.3,type:'pink', text:'LINEにTelegram つなげばパーフェクト!'},
+{t:107.8,type:'pink', text:'一人ぼっちの部屋が 巨大なチーム'},
+{t:110.4,type:'cmd',  text:'Claude Code 止まるな 駆け抜けろストリーム!'},
+{t:113.3,type:'run',  text:'$ echo "全部CLIでやれ" 唱え続けろ'},
+{t:117.4,type:'high', text:'不可能を可能にする コードを刻め!'},
+
+// Outro
+{t:121.0,type:'hr',   text:'─── OUTRO ───'},
+{t:122.6,type:'warn', text:'無茶を言え 限界を超えろ'},
+{t:127.6,type:'lyric',text:'ターミナルの中 俺たちがルール'},
+{t:132.6,type:'cmd',  text:'c-l-a-u-d-e'},
+{t:135.5,type:'high', text:'たった20分で 世界を変えろ'},
+{t:138.1,type:'pink', text:'コマンドラインで 全てを支配しろ!'},
+
+{t:143.0,type:'sys',  text:'Process exited with code 0. 🎤'},
+{t:145.0,type:'run',  text:'$ _'},
+];
+
+// Terminal context lines (background code activity)
+const CTX=[
+  {t:2,  text:'  Compiling nanobot-core v0.8.2',cls:'dim'},
+  {t:3,  text:'  Compiling nanobot-fly v0.3.1',cls:'dim'},
+  {t:5,  text:'    Finished `release` in 42.3s',cls:'green'},
+  {t:15, text:'  ⎿  Added 280 lines, removed 292 lines',cls:'dim'},
+  {t:17, text:'  ⎿  Fixed 3 security vulnerabilities',cls:'green'},
+  {t:25, text:'  cargo build --release --target aarch64-unknown-linux-musl',cls:'dim'},
+  {t:33, text:'  ✓ Deployed to fly.io (nrt) in 18.4s',cls:'green'},
+  {t:40, text:'  Agent: fly-deployer → "chatweb-ai をデプロイ"',cls:'purple'},
+  {t:43, text:'  Agent: ts-builder → "banto のテスト実行"',cls:'purple'},
+  {t:46, text:'  Agent: code-reviewer → "PR #142 レビュー"',cls:'purple'},
+  {t:55, text:'  ⎿  3 agents completed in parallel (12.1s)',cls:'green'},
+  {t:60, text:'  Memory saved: feedback_cli_only.md',cls:'dim'},
+  {t:75, text:'  ⎿  git commit -m "feat: multi-agent pipeline"',cls:'dim'},
+  {t:85, text:'  Running security audit...',cls:'dim'},
+  {t:88, text:'  ⎿  0 critical, 2 medium, 5 low',cls:'warn'},
+  {t:94, text:'  ⎿  Auto-fixed 2 medium issues',cls:'green'},
+  {t:100,text:'  lessons.md updated: +3 entries',cls:'dim'},
+  {t:115,text:'  ⎿  All tests passed (142/142)',cls:'green'},
+  {t:125,text:'  Session: 847 tool calls, 23 agents spawned',cls:'dim'},
+  {t:130,text:'  ~/workspace $ _',cls:'green'},
+];
+
+// Visualizer
+const vizEl=document.getElementById('viz');
+for(let i=0;i<64;i++){const b=document.createElement('div');b.className='vb';b.style.height='1px';vizEl.appendChild(b);}
+const vizBars=[...vizEl.children];
+
+// Canvas
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+const P=[];
+function sp(x,y,n,c){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=1+Math.random()*4;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,l:1,c,s:1.5+Math.random()*2});}}
+
+// Audio analyser
+let actx,anl,lastBeat=0;
+function setupAudio(){
+  actx=new(AudioContext||webkitAudioContext)();
+  anl=actx.createAnalyser();anl.fftSize=256;anl.smoothingTimeConstant=.7;
+  const src=actx.createMediaElementSource(audio);
+  src.connect(anl);anl.connect(actx.destination);
+}
+
+function go(){
+  const ov=document.getElementById('start');
+  ov.style.opacity='0';setTimeout(()=>ov.style.display='none',400);
+  audio.src='assets/claude_code_anthem.wav';
+  setupAudio();
+  audio.play();playing=true;
+  requestAnimationFrame(loop);
+}
+
+// Typing effect state
+let typingQueue=[], typingEl=null, typingIdx=0, typingTimer=null;
+
+function addLine(line){
+  // Create the line element
+  const div=document.createElement('div');
+  let prefix='', cls='';
+  switch(line.type){
+    case 'sys':   prefix='[system] '; cls='comment'; break;
+    case 'cmd':   prefix='❯ '; cls='cmd bold'; break;
+    case 'run':   prefix=''; cls='green'; break;
+    case 'lyric': prefix='  '; cls=''; break;
+    case 'high':  prefix='  ★ '; cls='highlight bold'; break;
+    case 'pink':  prefix='  ♫ '; cls='pink bold'; break;
+    case 'warn':  prefix='  ⚠ '; cls='warn'; break;
+    case 'err':   prefix='  ✗ '; cls='err bold'; break;
+    case 'hr':    div.className='dim';div.textContent=line.text;out.appendChild(div);scrollTerm();return;
+    case 'green': prefix=''; cls='green'; break;
+    case 'purple':prefix=''; cls='purple'; break;
+  }
+  div.className=cls;
+  // Type effect for lyrics/cmd
+  if(['cmd','lyric','high','pink','warn','err'].includes(line.type)){
+    div.textContent=prefix;
+    div.classList.add('typing');
+    out.appendChild(div);
+    scrollTerm();
+    // Type character by character
+    const txt=line.text;
+    let i=0;
+    const speed=Math.max(15, Math.min(50, 2000/txt.length));
+    function typeChar(){
+      if(i<txt.length){
+        div.textContent=prefix+txt.substring(0,i+1);
+        i++;
+        scrollTerm();
+        setTimeout(typeChar, speed);
+      } else {
+        div.classList.remove('typing');
+      }
+    }
+    typeChar();
+  } else {
+    div.textContent=prefix+line.text;
+    out.appendChild(div);
+    scrollTerm();
+  }
+}
+
+function addCtx(line){
+  const div=document.createElement('div');
+  div.className=line.cls||'dim';
+  div.style.fontSize='11px';
+  div.style.opacity='.45';
+  div.textContent=line.text;
+  out.appendChild(div);
+  scrollTerm();
+}
+
+function scrollTerm(){
+  const term=document.getElementById('term');
+  // Keep only last ~40 lines visible
+  while(out.children.length>45){out.removeChild(out.firstChild);}
+  term.scrollTop=term.scrollHeight;
+}
+
+let curCtx=-1;
+function fmt(s){return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+function loop(){
+  requestAnimationFrame(loop);
+  const ct=audio.currentTime;
+  const dur=audio.duration||150;
+
+  // Seek bar
+  document.getElementById('seek').value=ct;
+  document.getElementById('seek').max=dur;
+  document.getElementById('t-cur').textContent=fmt(ct);
+  document.getElementById('t-dur').textContent=fmt(dur);
+
+  // Section display
+  let sec='--';
+  if(ct<20) sec='INTRO';
+  else if(ct<42) sec='VERSE 1';
+  else if(ct<61) sec='VERSE 2';
+  else if(ct<81) sec='CHORUS';
+  else if(ct<101) sec='VERSE 3';
+  else if(ct<121) sec='CHORUS 2';
+  else sec='OUTRO';
+  document.getElementById('s-section').textContent=sec;
+
+  // Lyrics
+  for(let i=curLine+1;i<L.length;i++){
+    if(ct>=L[i].t){addLine(L[i]);curLine=i;}
+    else break;
+  }
+
+  // Context lines
+  for(let i=curCtx+1;i<CTX.length;i++){
+    if(ct>=CTX[i].t){addCtx(CTX[i]);curCtx=i;}
+    else break;
+  }
+
+  // Beat detection + visualizer
+  if(anl){
+    const freq=new Uint8Array(anl.frequencyBinCount);
+    anl.getByteFrequencyData(freq);
+    // Viz bars
+    for(let i=0;i<64;i++){
+      const idx=Math.floor(i*freq.length/64);
+      const v=freq[idx]/255;
+      vizBars[i].style.height=Math.max(1,v*28)+'px';
+      vizBars[i].style.background=v>.7?'#F59E0B':v>.4?'var(--orange)':'var(--dim)';
+    }
+    // Bass beat
+    let bass=0;for(let i=0;i<8;i++)bass+=freq[i];bass/=8;
+    if(bass>130&&Date.now()-lastBeat>200){
+      lastBeat=Date.now();
+      // Logo dance — full character with status
+      logoFrame=(logoFrame+1)%LOGO_POSES.length;
+      const pose=LOGO_POSES[logoFrame];
+      const msg=LOGO_MSGS[Math.floor(Math.random()*LOGO_MSGS.length)];
+      logo.innerHTML=
+        `<span id="logo-art">${pose.art[0]}</span><span class="ver">${msg}</span>\n`+
+        `<span id="logo-art2">${pose.art[1]}</span><span class="ver">Opus 4.6 (1M context) · Claude Max</span>\n`+
+        `<span id="logo-art3">${pose.art[2]}</span><span class="path">${pose.path}</span>`;
+      logo.style.opacity=.3+bass/500;
+      logo.style.transform=`translateX(-50%) scale(${1+bass/800}) rotate(${(Math.random()-.5)*2}deg)`;
+      // Particles
+      sp(Math.random()*innerWidth,Math.random()*innerHeight*.6,2+Math.floor(bass/60),'232,134,58');
+      if(bass>180) sp(Math.random()*innerWidth,Math.random()*innerHeight*.6,3,'245,158,11');
+    }
+  }
+
+  // Particles
+  cx.clearRect(0,0,cv.width,cv.height);
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.02;p.vx*=.99;p.l-=.012;
+    if(p.l<=0){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.5;
+    cx.fillStyle=`rgba(${p.c},${p.l})`;
+    cx.shadowColor=`rgba(${p.c},.3)`;cx.shadowBlur=6;
+    cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+
+// Seek
+document.getElementById('seek').addEventListener('input',e=>{
+  audio.currentTime=parseFloat(e.target.value);
+  // Reset displayed lines
+  out.innerHTML='';curLine=-1;curCtx=-1;
+  const ct=audio.currentTime;
+  // Replay all lines up to current time
+  for(let i=0;i<L.length;i++){
+    if(L[i].t<=ct){
+      const div=document.createElement('div');
+      let prefix='',cls='';
+      switch(L[i].type){
+        case 'sys':prefix='[system] ';cls='comment';break;
+        case 'cmd':prefix='❯ ';cls='cmd bold';break;
+        case 'run':prefix='';cls='green';break;
+        case 'lyric':prefix='  ';cls='';break;
+        case 'high':prefix='  ★ ';cls='highlight bold';break;
+        case 'pink':prefix='  ♫ ';cls='pink bold';break;
+        case 'warn':prefix='  ⚠ ';cls='warn';break;
+        case 'err':prefix='  ✗ ';cls='err bold';break;
+        case 'hr':cls='dim';prefix='';break;
+        case 'green':cls='green';break;
+        case 'purple':cls='purple';break;
+      }
+      div.className=cls;div.textContent=prefix+L[i].text;
+      out.appendChild(div);curLine=i;
+    }
+  }
+  for(let i=0;i<CTX.length;i++){if(CTX[i].t<=ct)curCtx=i;}
+  scrollTerm();
+});
+
+audio.addEventListener('ended',()=>{
+  playing=false;
+  addLine({t:999,type:'sys',text:'Session complete. 20 minutes to change the world.'});
+  addLine({t:999,type:'sys',text:''});
+  setTimeout(()=>{
+    addLine({t:999,type:'hr',text:'═══ NEXT TRACK ═══'});
+    addLine({t:999,type:'sys',text:''});
+    const mvs=[
+      {cmd:'tap.html',      name:'Tap, Tap, Tap',           desc:'不便だと思ったら作ればいい'},
+      {cmd:'attention.html', name:'アテンションください',      desc:'Attention Is All You Need × ラブソング'},
+      {cmd:'musubinaosu.html',name:'結び直す朝',              desc:'朝の風景と犬のMV'},
+      {cmd:'jiujitsu.html',  name:'それ恋じゃなく柔術でした',   desc:'恋愛 or 柔術？ ダブルミーニングMV'},
+      {cmd:'hack.html',      name:'Hack, Hack, Hack',        desc:'全プロダクト紹介EDM'},
+      {cmd:'flow-state.html',name:'Flow State',              desc:'柔術フローチャートMV'},
+    ];
+    mvs.forEach((m,i)=>{
+      const div=document.createElement('div');
+      div.style.cursor='pointer';
+      div.style.padding='4px 0';
+      div.innerHTML=`<span style="color:var(--green)">${i+1})</span> <span style="color:var(--orange);font-weight:700">${m.name}</span> <span style="color:var(--dim)">— ${m.desc}</span>`;
+      div.addEventListener('click',()=>location.href=m.cmd);
+      div.addEventListener('mouseenter',()=>div.style.background='rgba(232,134,58,.1)');
+      div.addEventListener('mouseleave',()=>div.style.background='none');
+      out.appendChild(div);
+    });
+    scrollTerm();
+    const prompt=document.createElement('div');
+    prompt.innerHTML='<br><span style="color:var(--green)">~/workspace $</span> <span class="typing" style="color:var(--orange)">select track _</span>';
+    out.appendChild(prompt);
+    scrollTerm();
+  },1500);
+});
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

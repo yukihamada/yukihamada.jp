@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>それ恋じゃなく柔術でした — 濱田優貴</title>
+<meta name="description" content="恋だと思ったら柔術でした。世界マスター3位の実体験から生まれた曲。">
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/jiujitsu.html">
+<meta property="og:title" content="それ恋じゃなく柔術でした — 濱田優貴">
+<meta property="og:description" content="依存じゃない、ポジションだ。tap, tap, tap。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/jj_dojo.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://yukihamada.jp/mv/jiujitsu.html">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0808;--accent:#E8B64A;--accent2:#D4764A;--white:#fff;--dim:rgba(255,255,255,.5);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-family:'Noto Sans JP',sans-serif;color:#fff;}
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));z-index:9999;transition:width .1s linear;}
+
+/* Scenes — multiple transition types */
+.scene{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;overflow:hidden;z-index:1;}
+.scene.active{opacity:1;pointer-events:all;z-index:2;}
+/* Default: crossfade */
+.scene.trans-fade{transition:opacity .6s;}
+/* Cut: instant */
+.scene.trans-cut{transition:opacity .05s;}
+/* Slide from right */
+.scene.trans-slide{transition:opacity .3s,transform .5s;transform:translateX(100%);}
+.scene.trans-slide.active{transform:translateX(0);}
+
+.scene-bg{position:absolute;inset:-5%;background-size:cover;background-position:center;filter:brightness(.5) saturate(1.4);transform:scale(1);}
+.scene-bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.scene.active .scene-bg{animation:kenpan 6s ease-in-out forwards;}
+@keyframes kenpan{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.08) translate(-1%,-1%)}}
+.scene.active:nth-child(3n+1) .scene-bg{animation-name:kenpan2;}
+@keyframes kenpan2{0%{transform:scale(1.05) translate(1%,0)}100%{transform:scale(1) translate(-1%,1%)}}
+.scene.active:nth-child(3n+2) .scene-bg{animation-name:kenpan3;}
+@keyframes kenpan3{0%{transform:scale(1) translate(-1%,1%)}100%{transform:scale(1.06) translate(1%,-1%)}}
+.scene-overlay{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,8,8,.15) 0%,rgba(10,8,8,.05) 40%,rgba(10,8,8,.4) 100%);transition:background .5s;}
+/* Vignette for quiet parts */
+.scene-overlay.vignette{background:radial-gradient(ellipse at center,rgba(10,8,8,0) 40%,rgba(10,8,8,.5) 100%);}
+.scene-content{position:relative;z-index:10;text-align:center;padding:60px 24px 160px;max-width:800px;width:100%;}
+
+/* Karaoke — enhanced */
+#karaoke{position:fixed;bottom:90px;left:0;right:0;z-index:6000;text-align:center;padding:0 20px;pointer-events:none;}
+#k-main{font-size:clamp(1.4rem,4.5vw,2.5rem);font-weight:900;color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.8),0 0 30px var(--accent);line-height:1.5;opacity:0;transform:translateY(10px);transition:opacity .12s,transform .12s;}
+#k-main.show{opacity:1;transform:translateY(0);}
+#k-main .bjj{color:var(--accent);} /* 柔術ワード=ゴールド */
+/* Big title — 「それ恋じゃなくて柔術でした」用 */
+#k-big{position:fixed;inset:0;z-index:6500;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity .3s;padding:0 20px;}
+#k-big.show{opacity:1;}
+#k-big .text{font-size:clamp(2rem,8vw,4.5rem);font-weight:900;color:var(--accent);text-shadow:0 0 40px rgba(232,182,74,.5),0 0 80px rgba(232,182,74,.2);text-align:center;line-height:1.3;}
+/* Annotation — 柔術用語解説 */
+#annotation{position:fixed;bottom:55px;left:0;right:0;z-index:5900;text-align:center;pointer-events:none;opacity:0;transition:opacity .3s;padding:0 20px;}
+#annotation.show{opacity:1;}
+#annotation span{font-size:clamp(.6rem,2vw,.75rem);color:rgba(255,255,255,.35);background:rgba(0,0,0,.3);padding:2px 10px;border-radius:10px;backdrop-filter:blur(4px);}
+
+/* Visualizer */
+#viz{position:fixed;bottom:0;left:0;right:0;height:35px;z-index:40;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 10%;}
+.vb{width:3px;background:linear-gradient(to top,var(--accent),var(--accent2));border-radius:2px 2px 0 0;opacity:.5;}
+#cv{position:fixed;inset:0;z-index:50;pointer-events:none;}
+#fl{position:fixed;inset:0;z-index:400;pointer-events:none;opacity:0;transition:opacity .05s;}
+
+#transport{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:14px;background:rgba(0,0,0,.7);border:1px solid rgba(232,182,74,.2);border-radius:30px;padding:8px 18px;backdrop-filter:blur(10px);opacity:1;transition:opacity .5s;}
+#btn-play{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;cursor:pointer;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;}
+#seek-bar{width:120px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;cursor:pointer;-webkit-appearance:none;}
+#seek-bar::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);cursor:pointer;}
+#time-display{font-size:11px;color:var(--dim);min-width:70px;text-align:center;font-variant-numeric:tabular-nums;}
+
+/* Start overlay — with background image */
+#start-overlay{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;}
+#start-overlay .bg{position:absolute;inset:0;background:url('assets/images/generated/jj_new_s4b.jpg') center/cover;filter:brightness(.2) blur(8px);transform:scale(1.1);}
+#start-overlay .content{position:relative;z-index:2;text-align:center;}
+.so-hook{font-size:clamp(.8rem,2.5vw,1rem);color:var(--dim);letter-spacing:.1em;margin-bottom:12px;}
+.so-title{font-size:clamp(2rem,8vw,4.5rem);font-weight:900;color:var(--accent);line-height:1.2;}
+.so-sub{font-size:clamp(.75rem,2vw,.9rem);color:var(--dim);margin-top:20px;letter-spacing:.2em;}
+.so-play{margin-top:24px;width:60px;height:60px;border-radius:50%;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;margin-left:auto;margin-right:auto;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.08);opacity:.7}}
+
+/* Belt progress bar */
+#belt-bar{position:fixed;top:0;left:0;right:0;height:4px;z-index:10000;display:flex;}
+#belt-fill{height:100%;width:0%;transition:width .3s,background .8s;}
+
+/* Mode toggle */
+#mode-toggle{position:fixed;top:10px;right:10px;z-index:9100;background:rgba(0,0,0,.6);border:1px solid rgba(232,182,74,.3);border-radius:14px;padding:4px 10px;cursor:pointer;font-size:.6rem;color:var(--accent);backdrop-filter:blur(6px);user-select:none;letter-spacing:.05em;transition:background .2s;}
+#mode-toggle:hover{background:rgba(232,182,74,.15);}
+
+/* Interactive tap zone */
+#tap-zone{position:fixed;inset:0;z-index:7000;display:none;align-items:center;justify-content:center;pointer-events:all;cursor:pointer;}
+#tap-zone .hint{font-size:clamp(1.2rem,4vw,2rem);color:var(--accent);opacity:.6;animation:tapPulse .6s infinite;}
+@keyframes tapPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+#tap-zone .count{position:fixed;top:40%;font-size:clamp(4rem,15vw,8rem);font-weight:900;color:var(--accent);opacity:0;transition:opacity .1s;text-shadow:0 0 60px rgba(232,182,74,.5);}
+
+/* Sensei quote */
+#sensei-quote{position:fixed;top:15%;right:5%;z-index:5800;pointer-events:none;opacity:0;transition:opacity 1s;max-width:200px;text-align:right;}
+#sensei-quote .q{font-size:.75rem;color:rgba(255,255,255,.25);font-style:italic;line-height:1.6;}
+#sensei-quote .by{font-size:.6rem;color:rgba(232,182,74,.3);margin-top:4px;}
+
+/* End screen enhanced */
+#end-screen{display:none;position:fixed;inset:0;z-index:9500;background:var(--bg);overflow-y:auto;}
+#end-screen .inner{max-width:600px;margin:0 auto;padding:50px 24px 100px;text-align:center;}
+.stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:20px 0;}
+.stat{text-align:center;}
+.stat .num{font-size:clamp(1.8rem,6vw,2.5rem);font-weight:900;color:var(--accent);font-variant-numeric:tabular-nums;}
+.stat .label{font-size:.65rem;color:var(--dim);margin-top:2px;}
+.quiz{background:rgba(232,182,74,.08);border:1px solid rgba(232,182,74,.2);border-radius:12px;padding:16px;margin:20px 0;text-align:left;}
+.quiz h3{font-size:.85rem;color:var(--accent);margin-bottom:10px;}
+.quiz .opt{display:block;width:100%;text-align:left;padding:8px 12px;margin:4px 0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-size:.8rem;cursor:pointer;transition:background .2s;}
+.quiz .opt:hover{background:rgba(232,182,74,.1);}
+.quiz .opt.correct{background:rgba(63,185,80,.2);border-color:rgba(63,185,80,.5);color:#3fb950;}
+.quiz .opt.wrong{background:rgba(248,81,73,.1);border-color:rgba(248,81,73,.3);color:#f85149;}
+.quiz .result{margin-top:10px;font-size:.8rem;display:none;}
+.badge-earned{display:none;margin:16px auto;padding:10px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:20px;color:#111;font-weight:700;font-size:.85rem;}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:rgba(232,182,74,.15);border:1px solid var(--accent);border-radius:20px;color:var(--accent);text-decoration:none;font-size:.8rem;margin:4px;transition:background .2s;}
+.share-btn:hover{background:rgba(232,182,74,.3);}
+.replay-hint{margin-top:16px;font-size:.7rem;color:var(--dim);}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<!-- Start overlay with hook -->
+<div id="start-overlay" onclick="startPlay()">
+  <div class="bg"></div>
+  <div class="content">
+    <div class="so-hook">恋愛ソング？ 柔術ソング？</div>
+    <div class="so-title">それ恋じゃなく<br>柔術でした</div>
+    <div class="so-sub">🥋 tap, tap, tap</div>
+    <div class="so-play">▶</div>
+  </div>
+</div>
+
+<div id="prog" style="position:fixed;top:0;left:0;height:0;width:0;z-index:-1;"></div>
+<div id="belt-bar"><div id="belt-fill"></div></div>
+<div id="mode-toggle" onclick="toggleMode()">🥋 柔術モード</div>
+<div id="tap-zone" onclick="userTap()"><div class="hint">TAP!</div><div class="count" id="tap-count"></div></div>
+<div id="sensei-quote"><div class="q" id="sq-text"></div><div class="by">— 村田良蔵</div></div>
+<div id="scene-container"></div>
+
+<script>
+// === MEDIA with transition types ===
+// trans: 'fade'(default), 'cut'(instant for chorus), 'slide'(bridge), 'flash'(tap)
+const MEDIA=[
+// Intro (0-24s)
+{t:'vid',src:'assets/video/scene_01_v3.mp4',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_ex05.jpg',tr:'fade'},
+{t:'vid',src:'assets/video/scene_02_v3.mp4',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_ex02.jpg',tr:'fade'},
+// Verse1 (24.8-46s)
+{t:'img',src:'assets/images/generated/jj_ex03.jpg',tr:'fade'},
+{t:'vid',src:'assets/video/scene_03_v3.mp4',tr:'fade'},
+{t:'vid',src:'assets/video/scene_04_v3.mp4',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_new_s3a.jpg',tr:'fade'},
+// Pre-Chorus (46-59s)
+{t:'img',src:'assets/images/generated/jj_ex09.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_replace_09.jpg',tr:'fade'},
+// Chorus1 (59-82s) — CUT transitions
+{t:'vid',src:'assets/video/scene_06.mp4',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_ex07.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_ex08.jpg',tr:'cut'},
+{t:'vid',src:'assets/video/scene_07.mp4',tr:'cut'},
+{t:'vid',src:'assets/video/tap_1.mp4',tr:'flash'},  // tap1
+// 間奏 (82-95s)
+{t:'img',src:'assets/images/generated/jj_overseas2.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_overseas1.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_overseas_win.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_second.jpg',tr:'fade'},
+// Verse2 (95-119s)
+{t:'vid',src:'assets/video/scene_08.mp4',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_ex11.jpg',tr:'fade'},
+{t:'vid',src:'assets/video/scene_09.mp4',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_replace_20.jpg',tr:'fade'},
+// Chorus2 (119-142s) — CUT
+{t:'img',src:'assets/images/generated/jj_replace_21.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_br04.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_br05.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_replace_24.jpg',tr:'flash'},  // tap2
+// Bridge (142-166s) — SLIDE
+{t:'vid',src:'assets/video/scene_10.mp4',tr:'slide'},
+{t:'img',src:'assets/images/generated/jj_replace_26.jpg',tr:'slide'},
+{t:'img',src:'assets/images/generated/jj_app.jpg',tr:'slide'},
+{t:'img',src:'assets/images/generated/jj_ex16.jpg',tr:'slide'},
+{t:'img',src:'assets/images/generated/jj_yoga.jpg',tr:'slide'},
+{t:'vid',src:'assets/video/scene_11.mp4',tr:'slide'},
+// Breakdown (166-179s) — CUT
+{t:'img',src:'assets/images/generated/jj_ex17.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_guest1.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_comp2.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_ex22.jpg',tr:'cut'},
+// Final (179-202s) — mix
+{t:'img',src:'assets/images/generated/jj_br07.jpg',tr:'cut'},
+{t:'img',src:'assets/images/generated/jj_ex19.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_br12.jpg',tr:'cut'},
+{t:'vid',src:'assets/video/tap_3.mp4',tr:'flash'},  // tap3
+// Outro (202+) — slow fade
+{t:'img',src:'assets/images/generated/jj_guest2.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_takeshita1.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_hawaii1.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_hawaii2.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_hawaii3.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_takeshita1.jpg',tr:'fade'},
+{t:'img',src:'assets/images/generated/jj_takeshita2.jpg',tr:'fade'},
+];
+
+const container=document.getElementById('scene-container');
+MEDIA.forEach((m,i)=>{
+  const d=document.createElement('div');
+  d.className='scene trans-'+(m.tr||'fade');
+  d.id='s-'+i;
+  if(m.t==='vid'){
+    d.innerHTML='<div class="scene-bg"><video data-src="'+m.src+'" muted loop playsinline preload="none"></video></div><div class="scene-overlay"></div><div class="scene-content">'+(i===0?'<div style="font-size:clamp(2.5rem,10vw,5.5rem);font-weight:900;color:var(--accent);line-height:1.2;">それ恋じゃなく<br>柔術でした</div>':'')+'</div>';
+  } else {
+    d.innerHTML='<div class="scene-bg" style="background-image:url('+m.src+')"></div><div class="scene-overlay"></div><div class="scene-content">'+(i===0?'<div style="font-size:clamp(2.5rem,10vw,5.5rem);font-weight:900;color:var(--accent);line-height:1.2;">それ恋じゃなく<br>柔術でした</div>':'')+'</div>';
+  }
+  container.appendChild(d);
+});
+</script>
+
+<canvas id="cv"></canvas>
+<div id="fl"></div>
+<div id="viz"></div>
+<div id="karaoke"><div id="k-main"></div></div>
+<div id="k-big"><div class="text"></div></div>
+<div id="annotation"><span id="ann-text"></span></div>
+
+<div id="transport">
+  <button id="btn-play" onclick="togglePause()">▶</button>
+  <input type="range" id="seek-bar" min="0" max="258" step="0.5" value="0" oninput="audio.currentTime=this.value">
+  <div id="time-display">0:00 / 4:18</div>
+</div>
+
+<div id="end-screen">
+  <div class="inner">
+    <div style="font-size:2.5rem;font-weight:900;color:var(--accent);">🥋 OSS!</div>
+    <div style="margin-top:4px;font-size:.85rem;color:var(--dim);">あなたの柔術体験</div>
+
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat"><div class="num" id="st-scenes">0</div><div class="label">シーン体験</div></div>
+      <div class="stat"><div class="num" id="st-terms">0</div><div class="label">柔術用語</div></div>
+      <div class="stat"><div class="num" id="st-taps">0</div><div class="label">tap回数</div></div>
+      <div class="stat"><div class="num" id="st-belt">白帯</div><div class="label">到達帯</div></div>
+    </div>
+
+    <!-- Quiz -->
+    <div class="quiz" id="quiz">
+      <h3>Q: 「ガード」とは？</h3>
+      <button class="opt" onclick="answer(this,false)">立った状態で相手を掴む技</button>
+      <button class="opt" onclick="answer(this,true)">仰向けで脚を使い相手をコントロールする体勢</button>
+      <button class="opt" onclick="answer(this,false)">後ろから首を絞める技</button>
+      <div class="result" id="quiz-result"></div>
+    </div>
+    <div class="badge-earned" id="badge">🥋 青帯認定！</div>
+
+    <!-- Share -->
+    <div style="margin-top:16px;">
+      <a class="share-btn" href="https://twitter.com/intent/tweet?text=%E3%81%9D%E3%82%8C%E6%81%8B%E3%81%98%E3%82%83%E3%81%AA%E3%81%8F%E6%9F%94%E8%A1%93%E3%81%A7%E3%81%97%E3%81%9F%20%F0%9F%A5%8B%20tap%2C%20tap%2C%20tap&url=https://yukihamada.jp/mv/jiujitsu.html" target="_blank">X/Twitter</a>
+      <a class="share-btn" onclick="navigator.share&&navigator.share({title:'それ恋じゃなく柔術でした',url:'https://yukihamada.jp/mv/jiujitsu.html'})">Share</a>
+    </div>
+
+    <!-- JiuFlow v2 -->
+    <div style="margin-top:24px;padding:20px;background:rgba(232,182,74,.06);border:1px solid rgba(232,182,74,.2);border-radius:12px;text-align:left;">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="font-size:1.5rem;">🥋</div>
+        <div>
+          <div style="font-size:.95rem;font-weight:700;color:var(--accent);">JiuFlow v2 リリース</div>
+          <div style="font-size:.7rem;color:var(--dim);">柔術フローチャートアプリ</div>
+        </div>
+      </div>
+      <div style="font-size:.8rem;color:#aaa;line-height:1.7;margin-bottom:12px;">
+        この曲に出てくる技、全部アプリで学べます。<br>
+        ガード、三角絞め、スイープ、エスケープ——世界チャンピオン村田良蔵監修の235本以上の動画で、フローチャート形式で体系的に学習。<br>
+        「どの体勢から何ができるか」が一目でわかる。
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+        <span style="font-size:.6rem;padding:2px 8px;border-radius:8px;border:1px solid rgba(232,182,74,.3);color:var(--accent);">235+ 動画</span>
+        <span style="font-size:.6rem;padding:2px 8px;border-radius:8px;border:1px solid rgba(232,182,74,.3);color:var(--accent);">4K 撮影</span>
+        <span style="font-size:.6rem;padding:2px 8px;border-radius:8px;border:1px solid rgba(232,182,74,.3);color:var(--accent);">世界チャンピオン監修</span>
+        <span style="font-size:.6rem;padding:2px 8px;border-radius:8px;border:1px solid rgba(232,182,74,.3);color:var(--accent);">フローチャート</span>
+        <span style="font-size:.6rem;padding:2px 8px;border-radius:8px;border:1px solid rgba(232,182,74,.3);color:var(--accent);">3言語対応</span>
+      </div>
+      <a href="https://jiuflow.art" target="_blank" style="display:inline-block;padding:10px 24px;background:var(--accent);color:#111;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:700;">JiuFlow v2 を始める →</a>
+      <span style="font-size:.65rem;color:var(--dim);margin-left:8px;">1ヶ月無料</span>
+    </div>
+
+    <!-- Anime -->
+    <div style="margin-top:16px;padding:16px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);border-radius:12px;">
+      <div style="font-size:.85rem;font-weight:700;color:#fff;margin-bottom:6px;">🎬 アニメ「それ恋じゃなく柔術でした」</div>
+      <div style="font-size:.75rem;color:var(--dim);margin-bottom:10px;">恋愛アニメだと思って見てください。第3話で全部ひっくり返ります。</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <a href="/anime/ep1.html" style="padding:6px 14px;background:rgba(232,182,74,.1);border:1px solid rgba(232,182,74,.25);border-radius:8px;text-decoration:none;color:var(--accent);font-size:.75rem;">第1話「ある場所」</a>
+        <a href="/anime/ep2.html" style="padding:6px 14px;background:rgba(232,182,74,.1);border:1px solid rgba(232,182,74,.25);border-radius:8px;text-decoration:none;color:var(--accent);font-size:.75rem;">第2話「距離」</a>
+        <a href="/anime/ep3.html" style="padding:6px 14px;background:rgba(232,182,74,.1);border:1px solid rgba(232,182,74,.25);border-radius:8px;text-decoration:none;color:var(--accent);font-size:.75rem;">第3話「正体」</a>
+      </div>
+    </div>
+
+    <!-- Other MVs -->
+    <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <a href="/mv/tap.html" style="padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.75rem;">Tap, Tap, Tap</a>
+      <a href="/mv/attention.html" style="padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.75rem;">アテンションください</a>
+      <a href="/mv/claude-code.html" style="padding:8px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;text-decoration:none;color:#fff;font-size:.75rem;">claude code</a>
+    </div>
+    <div class="replay-hint">画面を3回タップで もう一回再生 (tap, tap, tap)</div>
+    <a href="/mv/" style="display:inline-block;margin-top:12px;font-size:.7rem;color:var(--dim);text-decoration:none;">← MV一覧</a>
+  </div>
+</div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+const AUDIO_SRC='assets/jiujitsu.mp3';
+
+// === LYRICS with BJJ word highlighting + annotations ===
+// h: html (柔術ワードをspan.bjjで囲む), a: annotation
+const L=[
+  {t:0,     h:'♪'},
+  {t:24.8,  h:'また胸の上で 息が詰まる', a:'mount = 相手の上に乗る体勢'},
+  {t:29.0,  h:'離れたくない でも正直ちょっと苦しい'},
+  {t:35.0,  h:'手首つかまれて 逃げ道ない', a:'wrist control = 手首を制御する技術'},
+  {t:40.0,  h:'なのに笑ってる 私もおかしい'},
+  {t:46.0,  h:'夜更けのメモにしがみついて'},
+  {t:49.0,  h:'「会いたい」より増えていく数字'},
+  {t:52.0,  h:'1・2・3… 深く吸って', a:'tap = 3回叩いて「参った」の合図'},
+  {t:54.0,  h:'目を開けたら 世界がスローになる'},
+  {t:59.0,  h:'依存じゃない、<span class="bjj">ポジション</span>だ', a:'position = 体勢。柔術の全ては体勢から始まる'},
+  {t:62.0,  h:'離れられないのは<span class="bjj">ガード</span>が固いから', a:'guard = 仰向けで脚を使い相手をコントロール'},
+  {t:65.0,  h:'愛が苦しい？ それ<span class="bjj">三角絞め</span>', a:'triangle choke = 脚で首を絞める技'},
+  {t:68.0,  h:'恋に落ちた？ いや<span class="bjj">ハーフ</span>のまんま', a:'half guard = 片脚だけで相手を挟む体勢'},
+  {t:70.0,  h:'壊されたい？ ううん<span class="bjj">崩されたい</span>だけ', a:'sweep = 下から相手を崩して上になる'},
+  {t:74.0,  h:'<span class="bjj">ベースと重心</span>で優しく', a:'base = 安定した土台。崩されない姿勢'},
+  {t:77.0,  h:'BIG', big:'それ、恋じゃなくて<br>柔術でした 🥋', n:1},
+  {t:79.0,  h:'TAP', tap:true},
+  {t:95.0,  h:'朝のベランダ 風に揺れる白い君', a:'gi = 道着。柔術の「制服」'},
+  {t:98.0,  h:'袖口のほつれさえも愛しい'},
+  {t:101.0, h:'カードの磁気が擦り切れるほど通って'},
+  {t:104.0, h:'今日の痛みは 明日の私を守る'},
+  {t:107.0, h:'弱さも全部持ち寄って'},
+  {t:109.0, h:'絡んで ほどいて また組み直す', a:'roll = スパーリング。絡み合って技を掛け合う'},
+  {t:113.0, h:'涙じゃなくて汗と笑い'},
+  {t:116.0, h:'<span class="bjj">フレーム</span>作って呼吸を守る', a:'frame = 腕で空間を作り圧力から身を守る'},
+  {t:119.0, h:'執着じゃない、<span class="bjj">ディフェンス</span>だ', a:'defense = 防御。攻撃より大事とされる'},
+  {t:122.0, h:'距離を置くのは<span class="bjj">スペース</span>作るため', a:'space = 隙間。エスケープの鍵'},
+  {t:124.0, h:'「もう無理かも」？ それは<span class="bjj">肩固め</span>', a:'kata-gatame = 肩と首を絞める技'},
+  {t:126.0, h:'君に縛られた？ いや<span class="bjj">襟</span>を握っただけ', a:'collar grip = 道着の襟を掴む基本グリップ'},
+  {t:131.0, h:'君が怖い？ ううん自分が好きになってく'},
+  {t:134.0, h:'マットの上で'},
+  {t:136.0, h:'BIG', big:'それ、恋じゃなくて<br>柔術でした 🥋', n:2},
+  {t:138.0, h:'TAP', tap:true},
+  {t:142.0, h:'青い日々 紫の夢', a:'blue belt → purple belt 帯の色は成長の証'},
+  {t:146.0, h:'焦らず一つずつ<span class="bjj">スイープ</span>していく', a:'sweep = 下から相手を返す技'},
+  {t:152.0, h:'世界が狭くなるほど自由になる'},
+  {t:157.0, h:'先生 今日もよろしくお願いします', a:'OSS = 柔術の挨拶。敬意と感謝'},
+  {t:166.0, h:'右手で<span class="bjj">フレーム</span> 左で<span class="bjj">襟</span>'},
+  {t:169.0, h:'腰切って 回って 返して 立ち上がる', a:'hip escape = 腰を切って逃げる基本動作'},
+  {t:172.0, h:'<span class="bjj">抑え込み</span> 逃げて また笑う'},
+  {t:174.0, h:'「大丈夫、呼吸して」——それだけで強くなる'},
+  {t:179.0, h:'依存じゃない、私の選択だ'},
+  {t:182.0, h:'離れられないのは"好き"だけじゃない'},
+  {t:185.0, h:'ここが居場所だって知ってるから'},
+  {t:188.0, h:'痛みはサイン 不安はチャンス'},
+  {t:190.0, h:'愛が欲しい？ うん、でもまずは<span class="bjj">一本</span>', a:'ippon = 一本取る。完全な勝利'},
+  {t:193.0, h:'マットに置いた鼓動が歌う'},
+  {t:196.0, h:'BIG', big:'それ、恋じゃなくて<br>柔術でした 🥋', n:3},
+  {t:199.0, h:'TAP', tap:true},
+  {t:202.0, h:'勘違いしてた——'},
+  {t:212.0, h:'でもそれでいい'},
+  {t:214.0, h:'物語はここで ほどけて結び直す'},
+  {t:248.0, h:'♪'},
+];
+
+const times=[
+  0,6,12,18,
+  24.8,29,35,40,
+  46,52,
+  59,65,70,74,79,
+  82,85,88,91,
+  95,101,107,113,
+  119,124,131,138,
+  142,148,151,154,157,160,
+  166,169,172,177,
+  179,185,190,199,
+  202,208,211,215,219,223,227,
+];
+const SCENES=[];
+times.forEach((t,i)=>SCENES.push({start:t,el:'s-'+i}));
+
+const audio=document.getElementById('audio');
+let isPlaying=false,curScene=0,curLyric=-1,bigCount=0;
+
+// Canvas + particles
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=1+Math.random()*4;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-1,l:1,c,s:sz||2+Math.random()*3});}}
+
+// Visualizer
+const vizEl=document.getElementById('viz');
+for(let i=0;i<48;i++){const b=document.createElement('div');b.className='vb';b.style.height='2px';vizEl.appendChild(b);}
+const vizBars=[...vizEl.children];
+
+let actx,anl,lb=0,bth=100;
+function setupA(){actx=new(AudioContext||webkitAudioContext)();anl=actx.createAnalyser();anl.fftSize=256;anl.smoothingTimeConstant=.75;const s=actx.createMediaElementSource(audio);s.connect(anl);anl.connect(actx.destination);}
+
+function flash(c,d){const f=document.getElementById('fl');f.style.background=c;f.style.opacity='.25';setTimeout(()=>f.style.opacity='0',d||100);}
+function shake(i){document.body.style.transform=`translate(${(Math.random()-.5)*i*4}px,${(Math.random()-.5)*i*3}px)`;setTimeout(()=>document.body.style.transform='',60);}
+
+let hideT;
+function showTr(){document.getElementById('transport').style.opacity='1';clearTimeout(hideT);hideT=setTimeout(()=>{if(isPlaying)document.getElementById('transport').style.opacity='0';},3000);}
+document.addEventListener('touchstart',showTr);document.addEventListener('mousemove',showTr);
+
+function startPlay(){
+  const ov=document.getElementById('start-overlay');
+  ov.style.transition='opacity .4s';ov.style.opacity='0';
+  setTimeout(()=>ov.style.display='none',400);
+  audio.src=AUDIO_SRC;setupA();audio.play();isPlaying=true;
+  document.getElementById('btn-play').textContent='⏸';
+  requestAnimationFrame(loop);
+  setTimeout(()=>{if(isPlaying)document.getElementById('transport').style.opacity='0';},3000);
+}
+function togglePause(){
+  if(isPlaying){audio.pause();isPlaying=false;document.getElementById('btn-play').textContent='▶';}
+  else{audio.play();isPlaying=true;document.getElementById('btn-play').textContent='⏸';}
+}
+function fmt(s){return `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+
+// === Enhanced lyric display ===
+function showLyric(lyric){
+  const kMain=document.getElementById('k-main');
+  const kBig=document.getElementById('k-big');
+  const ann=document.getElementById('annotation');
+
+  // Hide previous
+  kMain.classList.remove('show');
+  kBig.classList.remove('show');
+  ann.classList.remove('show');
+
+  if(!lyric) return;
+
+  // BIG title — 「それ恋じゃなくて柔術でした」
+  if(lyric.h==='BIG'){
+    void kBig.offsetWidth;
+    kBig.querySelector('.text').innerHTML=lyric.big;
+    kBig.classList.add('show');
+    // Different effects for each occurrence
+    if(lyric.n===1){flash('rgba(232,182,74,.2)',150);sp(innerWidth/2,innerHeight/2,20,'232,182,74',4);}
+    if(lyric.n===2){flash('rgba(255,255,255,.3)',100);shake(.6);sp(innerWidth/2,innerHeight/2,30,'232,182,74',5);sp(innerWidth/2,innerHeight/2,15,'212,118,74',3);}
+    if(lyric.n===3){/* Gentle, no flash — just the text appearing slowly */}
+    return;
+  }
+
+  // TAP — special triple flash
+  if(lyric.h==='TAP'){
+    const tapText=['tap','tap','tap——'];
+    let i=0;
+    kMain.innerHTML='';kMain.classList.add('show');
+    function nextTap(){
+      if(i>=3)return;
+      kMain.innerHTML+=(i>0?'、':'')+'<span class="bjj">'+tapText[i]+'</span>';
+      flash('rgba(255,255,255,.2)',60);shake(.3);
+      sp(innerWidth*(.3+i*.2),innerHeight*.5,8,'232,182,74',3);
+      i++;setTimeout(nextTap,280);
+    }
+    nextTap();
+    return;
+  }
+
+  // Normal lyric with BJJ highlighting
+  void kMain.offsetWidth;
+  kMain.innerHTML=lyric.h;
+  kMain.classList.add('show');
+
+  // Annotation
+  if(lyric.a){
+    setTimeout(()=>{
+      document.getElementById('ann-text').textContent=lyric.a;
+      ann.classList.add('show');
+    },400);
+  }
+
+  // Particles on certain keywords
+  if(lyric.h.includes('bjj')){sp(innerWidth/2,innerHeight*.6,6,'232,182,74',3);}
+}
+
+// === Section detection for vignette ===
+function getSection(ct){
+  if(ct<24.8) return 'intro';
+  if(ct<46) return 'verse';
+  if(ct<59) return 'pre';
+  if(ct<82) return 'chorus';
+  if(ct<95) return 'inter';
+  if(ct<119) return 'verse';
+  if(ct<142) return 'chorus';
+  if(ct<166) return 'bridge';
+  if(ct<179) return 'breakdown';
+  if(ct<202) return 'chorus';
+  return 'outro';
+}
+
+function loop(){
+  requestAnimationFrame(loop);
+  const ct=audio.currentTime,dur=audio.duration||258;
+  const progEl=document.getElementById('prog');if(progEl)progEl.style.width=(ct/dur*100)+'%';
+  document.getElementById('seek-bar').value=ct;
+  document.getElementById('seek-bar').max=dur;
+  document.getElementById('time-display').textContent=fmt(ct)+' / '+fmt(dur);
+
+  const section=getSection(ct);
+
+  // Scene switch with transition types
+  let si=0;
+  for(let i=SCENES.length-1;i>=0;i--){if(ct>=SCENES[i].start){si=i;break;}}
+  if(si!==curScene){
+    const oldScene=document.getElementById(SCENES[curScene].el);
+    const oldVid=oldScene.querySelector('video');
+    if(oldVid)oldVid.pause();
+
+    document.querySelectorAll('.scene').forEach(s=>s.classList.remove('active'));
+    const newScene=document.getElementById(SCENES[si].el);
+    newScene.classList.add('active');
+
+    // Flash transition for tap scenes
+    const tr=MEDIA[si]&&MEDIA[si].tr;
+    if(tr==='flash'){
+      flash('rgba(255,255,255,.35)',80);shake(.4);
+    } else if(tr==='cut'){
+      // small flash on cut
+      flash('rgba(232,182,74,.06)',30);
+    }
+
+    // Vignette for verse/bridge, open for chorus
+    const overlay=newScene.querySelector('.scene-overlay');
+    if(overlay){
+      if(section==='verse'||section==='bridge'||section==='outro'){
+        overlay.classList.add('vignette');
+      } else {
+        overlay.classList.remove('vignette');
+      }
+    }
+
+    const newVid=newScene.querySelector('video');
+    if(newVid){
+      if(!newVid.src&&newVid.dataset.src)newVid.src=newVid.dataset.src;
+      newVid.currentTime=0;newVid.play().catch(()=>{});
+    }
+    // Prefetch next video
+    if(si+1<SCENES.length){const ns=document.getElementById(SCENES[si+1].el);if(ns){const nv=ns.querySelector('video[data-src]');if(nv&&!nv.src){nv.src=nv.dataset.src;nv.preload='auto';}}}
+    curScene=si;
+    sp(Math.random()*innerWidth,Math.random()*innerHeight*.5,4,'232,182,74');
+  }
+
+  // Lyrics
+  let li=-1;
+  for(let i=L.length-1;i>=0;i--){if(ct>=L[i].t&&ct<L[i].t+(L[i].h==='BIG'?4:L[i].h==='TAP'?3:3.5)){li=i;break;}}
+  if(li!==curLyric){
+    curLyric=li;
+    (window.showLyric||showLyric)(li>=0?L[li]:null);
+  }
+
+  // Beat detection + visualizer + beat pulse
+  if(anl){
+    const freq=new Uint8Array(anl.frequencyBinCount);anl.getByteFrequencyData(freq);
+    for(let i=0;i<48;i++){const idx=Math.floor(i*freq.length/48);const v=freq[idx]/255;vizBars[i].style.height=Math.max(2,v*38)+'px';vizBars[i].style.opacity=.3+v*.5;}
+    let bass=0;for(let i=0;i<10;i++)bass+=freq[i];bass/=10;
+
+    // Beat pulse — image slightly scales on kick
+    if(bass>bth&&Date.now()-lb>180){
+      lb=Date.now();
+      sp(Math.random()*innerWidth,innerHeight*(.3+Math.random()*.3),1+Math.floor(bass/80),'232,182,74');
+      // Pulse the current scene bg
+      const bg=document.querySelector('.scene.active .scene-bg');
+      if(bg&&!bg.querySelector('video')){
+        bg.style.transition='transform .08s';
+        bg.style.transform=`scale(${1.02+bass/2000})`;
+        setTimeout(()=>{bg.style.transition='transform .3s';bg.style.transform='';},80);
+      }
+      if(section==='chorus'&&bass>150){
+        flash('rgba(232,182,74,.04)',25);
+      }
+    }
+    bth=bth*.93+bass*.07*1.3;
+  }
+
+  // Particles
+  cx.clearRect(0,0,cv.width,cv.height);
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];p.x+=p.vx;p.y+=p.vy;p.vy+=.03;p.vx*=.98;p.l-=.013;
+    if(p.l<=0){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.6;cx.fillStyle=`rgba(${p.c},${p.l})`;cx.shadowColor=`rgba(${p.c},.3)`;cx.shadowBlur=6;
+    cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+
+// === 6. Belt progress bar ===
+const BELT_COLORS=['#fff','#3b82f6','#8b5cf6','#92400e','#111'];
+const BELT_NAMES=['白帯','青帯','紫帯','茶帯','黒帯'];
+function updateBelt(ct,dur){
+  const pct=Math.min(100,ct/dur*100);
+  const fill=document.getElementById('belt-fill');
+  fill.style.width=pct+'%';
+  const stage=Math.min(4,Math.floor(pct/20));
+  fill.style.background=BELT_COLORS[stage];
+  return BELT_NAMES[stage];
+}
+
+// === 4. Mode toggle — love vs bjj lyrics ===
+let mode='bjj'; // 'bjj' or 'love'
+const LOVE_LYRICS={
+  59:'依存じゃない、好きなだけ',
+  62:'離れられないのは好きだから',
+  65:'愛が苦しい？ それは恋わずらい',
+  68:'恋に落ちた？ そのまま落ちて',
+  70:'壊されたい？ ううん抱きしめたいだけ',
+  74:'優しさと体温で',
+  119:'執着じゃない、好きなだけ',
+  122:'距離を置くのは気持ちの整理',
+  124:'「もう無理かも」？ それは嫉妬',
+  126:'君に縛られた？ いや手を繋いだだけ',
+};
+function toggleMode(){
+  mode=mode==='bjj'?'love':'bjj';
+  document.getElementById('mode-toggle').textContent=mode==='bjj'?'🥋 柔術モード':'💕 恋愛モード';
+  curLyric=-1; // Force lyric refresh
+}
+
+// === 5. Interactive tap ===
+let tapActive=false,tapCount=0,tapSuccess=false;
+function activateTapZone(){
+  tapActive=true;tapCount=0;tapSuccess=false;
+  document.getElementById('tap-zone').style.display='flex';
+  setTimeout(()=>{if(!tapSuccess){document.getElementById('tap-zone').style.display='none';tapActive=false;}},3000);
+}
+function userTap(){
+  if(!tapActive)return;
+  tapCount++;
+  const countEl=document.getElementById('tap-count');
+  countEl.textContent=tapCount;countEl.style.opacity='1';
+  flash('rgba(255,255,255,.25)',60);shake(.4);
+  sp(innerWidth/2,innerHeight/2,12,'232,182,74',4);
+  setTimeout(()=>countEl.style.opacity='0',300);
+  if(tapCount>=3){
+    tapSuccess=true;totalTaps++;
+    setTimeout(()=>{
+      document.getElementById('tap-zone').style.display='none';
+      tapActive=false;
+      // Special reward effect
+      for(let i=0;i<30;i++)sp(Math.random()*innerWidth,Math.random()*innerHeight,1,'232,182,74',5);
+      flash('rgba(232,182,74,.2)',200);
+    },400);
+  }
+}
+let totalTaps=0;
+
+// === 7. Sensei quotes ===
+const QUOTES=['呼吸を忘れるな','焦るな、一つずつ','力じゃない、角度だ','今日の負けは明日の勝ち','マットの上では嘘がつけない','楽しめ、それが一番強い'];
+let lastQuote=-1;
+function showSenseiQuote(){
+  let idx;do{idx=Math.floor(Math.random()*QUOTES.length);}while(idx===lastQuote);
+  lastQuote=idx;
+  document.getElementById('sq-text').textContent='「'+QUOTES[idx]+'」';
+  const el=document.getElementById('sensei-quote');
+  el.style.opacity='1';
+  setTimeout(()=>el.style.opacity='0',4000);
+}
+
+// === Replay by triple tap on end screen ===
+let endTapCount=0,endTapTimer=null;
+document.getElementById('end-screen').addEventListener('click',()=>{
+  endTapCount++;
+  if(endTapCount>=3){
+    endTapCount=0;
+    document.getElementById('end-screen').style.display='none';
+    audio.currentTime=0;audio.play();isPlaying=true;curScene=0;curLyric=-1;
+    document.getElementById('btn-play').textContent='⏸';
+    requestAnimationFrame(loop);
+  }
+  clearTimeout(endTapTimer);
+  endTapTimer=setTimeout(()=>endTapCount=0,800);
+});
+
+// === Quiz ===
+function answer(btn,correct){
+  document.querySelectorAll('.quiz .opt').forEach(o=>{o.disabled=true;o.style.pointerEvents='none';});
+  if(correct){
+    btn.classList.add('correct');
+    document.getElementById('quiz-result').textContent='正解！ あなたはもう柔術家です。';
+    document.getElementById('quiz-result').style.color='#3fb950';
+    document.getElementById('badge').style.display='inline-block';
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz .opt')[1].classList.add('correct');
+    document.getElementById('quiz-result').textContent='惜しい！ でもMVを見たから知ってるはず。';
+    document.getElementById('quiz-result').style.color='var(--accent)';
+  }
+  document.getElementById('quiz-result').style.display='block';
+}
+
+// === Count stats ===
+let bjjTermsSeen=new Set();
+
+// === Override showLyric to support mode toggle ===
+const origShowLyric=showLyric;
+// Patch into existing showLyric
+const _origShow=showLyric;
+
+// Redefine showLyric with mode support
+function showLyricV2(lyric){
+  if(!lyric){
+    document.getElementById('k-main').classList.remove('show');
+    document.getElementById('k-big').classList.remove('show');
+    document.getElementById('annotation').classList.remove('show');
+    return;
+  }
+
+  const kMain=document.getElementById('k-main');
+  const kBig=document.getElementById('k-big');
+  const ann=document.getElementById('annotation');
+  kMain.classList.remove('show');kBig.classList.remove('show');ann.classList.remove('show');
+
+  // Count BJJ terms
+  if(lyric.a)bjjTermsSeen.add(lyric.t);
+
+  // BIG
+  if(lyric.h==='BIG'){
+    void kBig.offsetWidth;
+    kBig.querySelector('.text').innerHTML=lyric.big;
+    kBig.classList.add('show');
+    if(lyric.n===1){flash('rgba(232,182,74,.2)',150);sp(innerWidth/2,innerHeight/2,20,'232,182,74',4);}
+    if(lyric.n===2){flash('rgba(255,255,255,.3)',100);shake(.6);sp(innerWidth/2,innerHeight/2,30,'232,182,74',5);}
+    if(lyric.n===3){/* gentle */}
+    return;
+  }
+
+  // TAP — activate interactive zone
+  if(lyric.h==='TAP'){
+    activateTapZone();
+    const tapText=['tap','tap','tap——'];
+    let i=0;kMain.innerHTML='';kMain.classList.add('show');
+    function nextTap(){
+      if(i>=3)return;
+      kMain.innerHTML+=(i>0?'、':'')+'<span class="bjj">'+tapText[i]+'</span>';
+      if(!tapActive)flash('rgba(255,255,255,.2)',60);
+      i++;setTimeout(nextTap,280);
+    }
+    nextTap();
+    return;
+  }
+
+  // Mode swap for chorus lyrics
+  let html=lyric.h;
+  if(mode==='love'&&LOVE_LYRICS[lyric.t]){
+    html=LOVE_LYRICS[lyric.t];
+  }
+
+  void kMain.offsetWidth;
+  kMain.innerHTML=html;kMain.classList.add('show');
+
+  if(lyric.a&&mode==='bjj'){
+    setTimeout(()=>{
+      document.getElementById('ann-text').textContent=lyric.a;
+      ann.classList.add('show');
+    },400);
+  }
+
+  if(html.includes('bjj'))sp(innerWidth/2,innerHeight*.6,6,'232,182,74',3);
+}
+
+// === Enhanced loop — add belt bar + sensei quotes ===
+const origLoop=loop;
+// We need to override the lyric part of the loop
+// Redefine loop entirely
+
+// Remove old loop, redefine
+// Actually, patch showLyric reference
+// The existing loop calls showLyric — we reassign it
+window.showLyric=showLyricV2;
+
+// Sensei quote on bridge sections
+let lastSenseiT=0;
+
+// Inject belt update + sensei into loop via interval
+setInterval(()=>{
+  if(!isPlaying)return;
+  const ct=audio.currentTime,dur=audio.duration||258;
+  const belt=updateBelt(ct,dur);
+
+  // Sensei quote during bridge/quiet
+  const sec=getSection(ct);
+  if((sec==='bridge'||sec==='inter')&&ct-lastSenseiT>12){
+    lastSenseiT=ct;showSenseiQuote();
+  }
+},200);
+
+// === End screen with stats ===
+audio.addEventListener('ended',()=>{
+  isPlaying=false;
+  document.getElementById('btn-play').textContent='▶';
+  document.getElementById('mode-toggle').style.display='none';
+
+  setTimeout(()=>{
+    const es=document.getElementById('end-screen');
+    es.style.display='block';
+
+    // Animate stats
+    const scenes=SCENES.length;
+    const terms=bjjTermsSeen.size;
+    const belt=BELT_NAMES[Math.min(4,Math.floor(100/20))];
+    animateNum('st-scenes',0,scenes,1500);
+    animateNum('st-terms',0,terms,1500);
+    animateNum('st-taps',0,totalTaps,800);
+    setTimeout(()=>document.getElementById('st-belt').textContent=belt,1600);
+  },1500);
+});
+
+function animateNum(id,from,to,ms){
+  const el=document.getElementById(id);
+  const start=Date.now();
+  function tick(){
+    const p=Math.min(1,(Date.now()-start)/ms);
+    const ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(from+(to-from)*ease);
+    if(p<1)requestAnimationFrame(tick);
+  }
+  tick();
+}
+</script>
+<script>(function(){var s=Date.now();fetch('/api/analytics/log',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,ua:navigator.userAgent})}).catch(function(){});function sd(){var d=Math.round((Date.now()-s)/1000);if(d>0&&d<3600)navigator.sendBeacon('/api/analytics/log',JSON.stringify({path:location.pathname,referrer:'',ua:navigator.userAgent,duration:d}));}document.addEventListener('visibilitychange',function(){if(document.visibilityState==='hidden')sd();});window.addEventListener('beforeunload',sd);})();</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

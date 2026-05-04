@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>美咲の声 — セリフ試聴</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:system-ui,sans-serif;padding:16px 16px 60px;}
+h1{text-align:center;font-size:1.3rem;color:#E8B64A;margin-bottom:4px;}
+p.sub{text-align:center;color:#888;font-size:.75rem;margin-bottom:20px;}
+.ep-label{color:#E8B64A;font-size:.85rem;font-weight:700;margin:20px 0 8px;padding-top:12px;border-top:1px solid #333;}
+.line{display:flex;align-items:center;gap:10px;padding:8px 12px;margin:4px 0;background:#1a1a1a;border-radius:8px;border:2px solid transparent;cursor:pointer;transition:border-color .2s;}
+.line:hover{border-color:#333;}
+.line.selected{border-color:#E8B64A;background:rgba(232,182,74,.05);}
+.line .play{width:32px;height:32px;border-radius:50%;background:#E8B64A;color:#111;border:none;cursor:pointer;font-size:12px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.line .play:hover{background:#d4a03a;}
+.line .text{font-size:.85rem;color:#ccc;flex:1;}
+.line .id{font-size:.6rem;color:#555;font-family:monospace;width:60px;flex-shrink:0;}
+.line .check{width:20px;color:#E8B64A;font-size:1rem;text-align:center;flex-shrink:0;opacity:0;}
+.line.selected .check{opacity:1;}
+.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,17,.95);border-top:1px solid #333;padding:10px 16px;display:flex;align-items:center;justify-content:center;gap:12px;z-index:100;}
+.bar span{color:#E8B64A;font-size:.85rem;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<h1>藤崎美咲 — セリフ試聴</h1>
+<p class="sub">Voice: Yui (ElevenLabs) ｜ 再生して聴いて、いいものをタップで選択</p>
+
+<div id="lines"></div>
+<div class="bar"><span id="count">0</span><span style="color:#888;font-size:.8rem;">セリフ選択中</span></div>
+
+<script>
+const LINES=[
+{ep:'EP1: 出会い',id:'ep1_01a',text:'はぁ…3年付き合って、12文字で終わりか。'},
+{id:'ep1_01b',text:'なんで金曜の夜に振るかな…'},
+{id:'ep1_02a',text:'ユカ、振られた。笑えるでしょ。'},
+{id:'ep1_02b',text:'え？原宿？明日？…なんで？'},
+{id:'ep1_03a',text:'ここ…ヨガスタジオじゃないよね？'},
+{id:'ep1_03b',text:'8階…？何があるの、8階に…'},
+{id:'ep1_04a',text:'心臓うるさい。なんでこんな緊張してるの。'},
+{id:'ep1_05a',text:'……うそ。なにここ。東京が全部見える。'},
+{id:'ep1_05b',text:'きれい…。こんな場所があったんだ。'},
+{id:'ep1_06a',text:'え…この人が先生？想像と全然違う…'},
+{id:'ep1_06b',text:'柔術って…何ですか？'},
+{id:'ep1_07a',text:'なんだろう、この服。なんかしっくりくる。'},
+{id:'ep1_07b',text:'白い帯…初心者ってことか。'},
+{ep:'EP2: 距離が縮まる',id:'ep2_01a',text:'また来ちゃった。なんでだろ。'},
+{id:'ep2_01b',text:'今日も先生いるかな…って、違うし。'},
+{id:'ep2_02a',text:'近い、近い近い…！息ができない…'},
+{id:'ep2_02b',text:'手首掴まれて…逃げられない…っ'},
+{id:'ep2_03a',text:'なんでこの人の手、こんなに温かいの。'},
+{id:'ep2_04a',text:'顔、近すぎ…。心臓聞こえちゃう。'},
+{id:'ep2_04b',text:'目、閉じちゃダメだ。でも…'},
+{id:'ep2_05a',text:'胸の上で、息が詰まる。苦しいのに、離れたくない。'},
+{id:'ep2_05b',text:'この重さ…嫌じゃない。なんで？'},
+{id:'ep2_06a',text:'昨日の夜より、ずっと息が詰まってるのに。ずっと生きてる気がする。'},
+{id:'ep2_07a',text:'ユカ聞いて。やばい。あの人やばい。'},
+{id:'ep2_07b',text:'え？恋じゃないの？じゃあ何なの？'},
+{id:'ep2_08a',text:'明日も行きたい。会いたい。…あの場所に。'},
+{ep:'EP3: ネタバレ',id:'ep3_01a',text:'今日も先生に会える。…いや違う、練習だ練習。'},
+{id:'ep3_02a',text:'あれ…？私、何着てるんだっけ。'},
+{id:'ep3_03a',text:'……あ。道着だ。ここ、道場だ。'},
+{id:'ep3_03b',text:'全部…柔術だったんだ。壁ドンも、手を握るのも、胸の上のも。'},
+{id:'ep3_04a',text:'恋だと思ってた。ずっと恋だと思ってた。'},
+{id:'ep3_04b',text:'でもこれ、恋じゃない。'},
+{id:'ep3_05a',text:'それ、恋じゃなく。柔術でした。'},
+{id:'ep3_05b',text:'あはは…なにそれ。最高じゃん。'},
+{id:'ep3_06a',text:'先生、今日もよろしくお願いします！'},
+{id:'ep3_07a',text:'タップ、タップ、タップ。もう一回、お願いします。'},
+{id:'ep3_08a',text:'明日も来る。明後日も。ずっと。だってこれ、恋より楽しいから。'},
+];
+
+let curAudio=null;const selected=new Set();
+const container=document.getElementById('lines');
+
+LINES.forEach(l=>{
+  if(l.ep){
+    const h=document.createElement('div');h.className='ep-label';h.textContent=l.ep;
+    container.appendChild(h);
+  }
+  const div=document.createElement('div');div.className='line';div.dataset.id=l.id;
+  div.innerHTML=`<button class="play" onclick="event.stopPropagation();playLine('${l.id}',this)">▶</button><div class="id">${l.id}</div><div class="text">${l.text}</div><div class="check">★</div>`;
+  div.onclick=()=>{
+    if(selected.has(l.id)){selected.delete(l.id);div.classList.remove('selected');}
+    else{selected.add(l.id);div.classList.add('selected');}
+    document.getElementById('count').textContent=selected.size;
+  };
+  container.appendChild(div);
+});
+
+function playLine(id,btn){
+  if(curAudio){curAudio.pause();document.querySelectorAll('.play').forEach(b=>b.textContent='▶');}
+  curAudio=new Audio('assets/audio/misaki/'+id+'.mp3');
+  btn.textContent='⏸';
+  curAudio.play();
+  curAudio.onended=()=>{btn.textContent='▶';};
+}
+</script>
+</body>
+</html>

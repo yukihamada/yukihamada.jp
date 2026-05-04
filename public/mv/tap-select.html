@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TAP選択 — どのタップにする？</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#111;color:#fff;font-family:system-ui,sans-serif;padding:20px 20px 60px;}
+h1{text-align:center;font-size:1.3rem;color:#E8B64A;margin-bottom:4px;}
+p.sub{text-align:center;color:#888;font-size:.8rem;margin-bottom:24px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;max-width:1200px;margin:0 auto;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
+.card{border:3px solid #333;border-radius:10px;overflow:hidden;cursor:pointer;transition:border-color .3s,transform .2s;}
+.card:hover{transform:scale(1.02);}
+.card.selected{border-color:#E8B64A;box-shadow:0 0 20px rgba(232,182,74,.3);}
+.card img{width:100%;display:block;}
+.card .info{padding:12px 14px;}
+.card h2{font-size:.9rem;color:#E8B64A;margin-bottom:4px;}
+.card p{font-size:.75rem;color:#aaa;line-height:1.5;}
+.card .when{font-size:.65rem;color:#666;margin-top:6px;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<h1>「tap, tap, tap」シーン選択</h1>
+<p class="sub">歌詞の「tap, tap, tap」の瞬間に使う画像を選んでください（複数箇所あり）</p>
+
+<div class="grid">
+
+<div class="card" onclick="this.classList.toggle('selected')">
+<img src="assets/images/generated/jj_tap_a.jpg">
+<div class="info">
+<h2>A: 腕十字で極められてタップ</h2>
+<p>彼女がアームバーで極められ、フリーハンドで相手の太ももをタップ。痛みと受容の表情。</p>
+<div class="when">使える場面: 1:19 tap,tap,tap / 2:18 tap,tap,tap</div>
+</div>
+</div>
+
+<div class="card" onclick="this.classList.toggle('selected')">
+<img src="assets/images/generated/jj_tap_b.jpg">
+<div class="info">
+<h2>B: 三角で極めて相手がタップ</h2>
+<p>彼女が三角絞めをかけ、相手が彼女の太ももをタップして降参。勝利の穏やかな笑み。</p>
+<div class="when">使える場面: 1:19 tap,tap,tap / 3:19 tap,tap,tap</div>
+</div>
+</div>
+
+<div class="card" onclick="this.classList.toggle('selected')">
+<img src="assets/images/generated/jj_tap_c.jpg">
+<div class="info">
+<h2>C: スパー後の「ありがとう」タップ</h2>
+<p>極めた後、相手の肩を優しく3回タップ。降参ではなく感謝のタップ。ダブルミーニング：参った AND 愛情。</p>
+<div class="when">使える場面: 2:18 合図でほどける / 3:19 明日に続く合図</div>
+</div>
+</div>
+
+<div class="card" onclick="this.classList.toggle('selected')">
+<img src="assets/images/generated/jj_tap_d.jpg">
+<div class="info">
+<h2>D: 手のクロースアップ — タップの瞬間</h2>
+<p>女性の手が男性の前腕をタップ。マクロ撮影。3つの金色パーティクル。BJJで最も親密な瞬間。</p>
+<div class="when">使える場面: 全ての「tap,tap,tap」/ メインビジュアル候補</div>
+</div>
+</div>
+
+<div class="card" onclick="this.classList.toggle('selected')">
+<img src="assets/images/generated/jj_tap_e.jpg">
+<div class="info">
+<h2>E: 裸絞めされてタップ</h2>
+<p>後ろから絞められ、相手の腕をタップ。穏やかな降参。街のスカイラインが背景。</p>
+<div class="when">使える場面: 1:19 もう一回の合図 / Chorus</div>
+</div>
+</div>
+
+<div class="card" onclick="this.classList.toggle('selected')">
+<img src="assets/images/generated/jj_tap_f.jpg">
+<div class="info">
+<h2>F: マットをタップ</h2>
+<p>床をパンと叩く。もう一つのタップ方法。床面のレベルから撮影。生々しく正直な瞬間。</p>
+<div class="when">使える場面: 1:19 tap,tap,tap / アウトロ</div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

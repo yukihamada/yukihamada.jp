@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: https://ogp.me/ns#">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"><link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>結び直す朝 — 濱田優貴｜何度でも始められる</title>
+<meta name="description" content="結び直す朝 — ほどけた心も、指先で結び直せる。">
+<meta property="og:type" content="music.song">
+<meta property="og:url" content="https://yukihamada.jp/mv/musubinaosu.html">
+<meta property="og:title" content="結び直す朝｜何度でも始められる — 濱田優貴">
+<meta property="og:description" content="大丈夫、そのままでいい。僕らは何度でも始められる。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/musubi_chorus1.jpg?v=3">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:site" content="@yukihamada">
+<link rel="canonical" href="https://yukihamada.jp/mv/musubinaosu.html">
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1008;--warm:#F5A623;--gold:#FFD700;--pink:#FF8FA3;--cream:#FFF8E7;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100vw;height:100vh;overflow:hidden;background:var(--bg);font-family:'Zen Maru Gothic',sans-serif;color:var(--cream);}
+#prog{position:fixed;top:0;left:0;height:3px;width:0%;background:linear-gradient(90deg,var(--warm),var(--gold),var(--pink));z-index:9999;}
+.sc{position:fixed;inset:0;opacity:0;transition:opacity .4s ease;overflow:hidden;}
+.sc.on{opacity:1;}
+.sc img{width:100%;height:100%;object-fit:cover;filter:brightness(.4) saturate(1.8);}
+.sc.on img{animation:zm 20s linear infinite alternate;}
+@keyframes zm{0%{transform:scale(1)}100%{transform:scale(1.08) translateY(-1%)}}
+.sc::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(26,16,8,.2),transparent 40%,rgba(26,16,8,.55));}
+canvas{position:fixed;inset:0;z-index:50;pointer-events:none;}
+#fl{position:fixed;inset:0;z-index:400;pointer-events:none;opacity:0;transition:opacity .06s;}
+#ring{position:fixed;top:50%;left:50%;z-index:45;pointer-events:none;border-radius:50%;border:2px solid var(--gold);opacity:0;transform:translate(-50%,-50%);width:0;height:0;}
+
+/* Karaoke — big, bold, animated */
+#kk{position:fixed;bottom:75px;left:0;right:0;z-index:6000;text-align:center;padding:0 12px;pointer-events:none;}
+#km{font-size:clamp(1.6rem,5.5vw,3rem);font-weight:900;color:#fff;line-height:1.4;opacity:0;
+  text-shadow:0 3px 15px rgba(245,166,35,.6),0 0 40px rgba(255,215,0,.3),3px 3px 0 rgba(26,16,8,.9);
+  transform:translateY(12px) scale(.9);transition:all .15s cubic-bezier(.34,1.56,.64,1);}
+#km.on{opacity:1;transform:translateY(0) scale(1);}
+#km.big{font-size:clamp(2rem,7vw,4rem);color:var(--gold);}
+#km.pop{animation:kp .35s cubic-bezier(.34,1.56,.64,1);}
+@keyframes kp{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+/* Prev lyric (fading above) */
+#kp{position:fixed;bottom:130px;left:0;right:0;z-index:5999;text-align:center;padding:0 16px;pointer-events:none;
+  font-size:clamp(.9rem,2.5vw,1.3rem);font-weight:400;color:rgba(255,248,231,.25);transition:opacity .3s;opacity:0;}
+#kp.on{opacity:1;}
+
+/* Visualizer bars */
+#viz{position:fixed;bottom:0;left:0;right:0;height:50px;z-index:40;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;gap:2px;padding:0 10%;}
+.vb{width:3px;background:linear-gradient(to top,var(--warm),var(--gold));border-radius:2px 2px 0 0;opacity:.5;transition:height .05s linear;}
+
+/* Transport — auto-hide after 3s */
+#tr{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;align-items:center;gap:10px;background:rgba(26,16,8,.9);border:1px solid rgba(245,166,35,.15);border-radius:26px;padding:5px 14px;backdrop-filter:blur(12px);
+  opacity:1;transition:opacity .5s;}
+#bp{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--warm),var(--gold));border:none;cursor:pointer;color:#1a1008;font-size:12px;display:flex;align-items:center;justify-content:center;}
+#sk{width:90px;height:3px;background:rgba(255,248,231,.12);border-radius:2px;-webkit-appearance:none;}
+#sk::-webkit-slider-thumb{-webkit-appearance:none;width:10px;height:10px;border-radius:50%;background:var(--gold);}
+#td{font-size:9px;color:rgba(255,248,231,.4);min-width:60px;text-align:center;font-variant-numeric:tabular-nums;}
+
+#st{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;}
+#en{display:none;position:fixed;inset:0;z-index:9500;background:var(--bg);overflow-y:auto;}
+.ei{max-width:560px;margin:0 auto;padding:50px 20px 100px;text-align:center;}
+.ea{padding:10px 16px;background:rgba(255,248,231,.04);border:1px solid rgba(255,248,231,.08);border-radius:8px;text-decoration:none;color:var(--cream);font-size:.8rem;}
+</style>
+  <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+
+<div id="st" onclick="go()">
+  <div style="font-size:clamp(2.2rem,9vw,5rem);font-weight:900;color:var(--gold);text-shadow:0 0 50px rgba(255,215,0,.4);">結び直す朝</div>
+  <div style="font-size:clamp(.75rem,2vw,.95rem);color:rgba(255,248,231,.4);margin-top:14px;letter-spacing:.3em;animation:br 2s ease-in-out infinite;">▶ TAP TO PLAY</div>
+</div>
+<style>@keyframes br{0%,100%{opacity:.4}50%{opacity:.9}}</style>
+
+<div id="prog"></div>
+<canvas id="cv"></canvas>
+<div id="fl"></div>
+<div id="ring"></div>
+
+<!-- 20 scenes — preload all as img for smooth transitions -->
+<div class="sc on" id="s0"><img src="assets/images/generated/musubi_v1_wake.jpg?v=3" alt=""></div>
+<div class="sc" id="s1"><img src="assets/images/generated/musubi_steam.jpg?v=3" alt=""></div>
+<div class="sc" id="s2"><img src="assets/images/generated/musubi_v1_shoes.jpg?v=4" alt=""></div>
+<div class="sc" id="s3"><img src="assets/images/generated/musubi_dog.jpg?v=2" alt=""></div>
+<div class="sc" id="s4"><img src="assets/images/generated/musubi_pre1.jpg?v=2" alt=""></div>
+<div class="sc" id="s5"><img src="assets/images/generated/musubi_breathe.jpg?v=3" alt=""></div>
+<div class="sc" id="s6"><img src="assets/images/generated/musubi_street.jpg?v=3" alt=""></div>
+<div class="sc" id="s7"><img src="assets/images/generated/musubi_chorus1.jpg?v=3" alt=""></div>
+<div class="sc" id="s8"><img src="assets/images/generated/musubi_laugh.jpg?v=3" alt=""></div>
+<div class="sc" id="s9"><img src="assets/images/generated/musubi_v2_album.jpg?v=3" alt=""></div>
+<div class="sc" id="s10"><img src="assets/images/generated/musubi_album2.jpg?v=3" alt=""></div>
+<div class="sc" id="s11"><img src="assets/images/generated/musubi_v2_table.jpg?v=3" alt=""></div>
+<div class="sc" id="s12"><img src="assets/images/generated/musubi_redmark.jpg?v=3" alt=""></div>
+<div class="sc" id="s13"><img src="assets/images/generated/musubi_bridge.jpg?v=2" alt=""></div>
+<div class="sc" id="s14"><img src="assets/images/generated/musubi_belt.jpg?v=2" alt=""></div>
+<div class="sc" id="s15"><img src="assets/images/generated/musubi_breakdown.jpg?v=2" alt=""></div>
+<div class="sc" id="s16"><img src="assets/images/generated/musubi_sweat.jpg?v=2" alt=""></div>
+<div class="sc" id="s17"><img src="assets/images/generated/musubi_final.jpg?v=2" alt=""></div>
+<div class="sc" id="s18"><img src="assets/images/generated/musubi_sunrise.jpg?v=3" alt=""></div>
+<div class="sc" id="s19"><img src="assets/images/generated/musubi_guitar.jpg?v=2" alt=""></div>
+<div class="sc" id="s20"><img src="assets/images/generated/musubi_outro.jpg?v=4" alt=""></div>
+
+<div id="viz"></div>
+<div id="kp"></div>
+<div id="kk"><div id="km"></div></div>
+
+<div id="tr">
+  <button id="bp" onclick="tog()">▶</button>
+  <input type="range" id="sk" min="0" max="251" step=".5" value="0" oninput="au.currentTime=this.value">
+  <div id="td">0:00 / 4:11</div>
+</div>
+
+<div id="en"><div class="ei">
+  <div style="font-size:2rem;font-weight:900;color:var(--gold);">大丈夫、そのままでいい</div>
+  <div style="margin-top:6px;font-size:.85rem;color:rgba(255,248,231,.4);">何度でも、始められる。</div>
+  <div style="margin-top:20px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+    <a class="ea" href="/mv/tap.html">Tap, Tap, Tap</a>
+    <a class="ea" href="/mv/hack.html">Hack, Hack, Hack</a>
+    <a class="ea" href="/mv/attention.html">アテンション</a>
+    <a class="ea" href="/mv/jiujitsu.html">柔術でした</a>
+  </div>
+  <a href="/mv/" style="display:inline-block;margin-top:16px;font-size:.75rem;color:rgba(255,248,231,.3);text-decoration:none;">← MV一覧</a>
+</div></div>
+
+<audio id="au" preload="auto"></audio>
+
+<script>
+const au=document.getElementById('au');
+let on=false,cs=-1,cl=-1;
+
+// 20 scenes matched to lyrics timing
+const SC=[
+  {t:0,el:'s0'},     // 目覚め 部屋
+  {t:10,el:'s1'},    // 湯気
+  {t:22,el:'s2'},    // 靴ひも
+  {t:33,el:'s3'},    // 犬
+  {t:39,el:'s4'},    // リビング
+  {t:46,el:'s5'},    // 深呼吸 畳
+  {t:49,el:'s6'},    // 街を歩く
+  {t:56,el:'s7'},    // 桜並木(chorus)
+  {t:70,el:'s8'},    // 笑い
+  {t:84,el:'s9'},    // アルバム
+  {t:95,el:'s10'},   // 写真クローズアップ
+  {t:106,el:'s11'},  // テーブル会議
+  {t:112,el:'s12'},  // 赤いしるし
+  {t:129,el:'s13'},  // 道場(chorus2)
+  {t:143,el:'s14'},  // 帯を結ぶ
+  {t:156,el:'s15'},  // 柔術アクション
+  {t:167,el:'s16'},  // 汗+笑顔
+  {t:180,el:'s17'},  // 朝焼け(final)
+  {t:200,el:'s18'},  // 日の出
+  {t:210,el:'s19'},  // ギター
+  {t:226,el:'s20'},  // 桜道 出発
+];
+
+// Lyrics — every line with effect type
+// fx: ''=normal, 'p'=pop, 'B'=big burst, 'g'=gold flash
+const L=[
+  {t:0.5, x:'♪',f:''},
+  {t:10.0, x:'目覚ましの前に 目が覚めて',f:''},
+  {t:16.0, x:'湯気の向こうで 今日が待ってる',f:''},
+  {t:22.0, x:'窓の外 まだ眠る街',f:''},
+  {t:27.0, x:'靴ひもをひとつ',f:'p'},
+  {t:30.0, x:'結び直す',f:'p'},
+  {t:33.0, x:'ささやかなことに救われて',f:''},
+  {t:36.0, x:'エレの足音がリビングをめぐる',f:''},
+  {t:39.0, x:'昨日の悔しさ 床に置いて',f:''},
+  {t:41.0, x:'深呼吸で 畳の匂い',f:'p'},
+  {t:46.0, x:'うまくいかない日ばかりでも',f:''},
+  {t:49.0, x:'ふとした笑い声が',f:''},
+  {t:51.0, x:'背中押す',f:'p'},
+  // Chorus 1 ★
+  {t:56.0, x:'大丈夫',f:'B'},
+  {t:58.0, x:'そのままでいい',f:'B'},
+  {t:61.0, x:'僕らは何度でも',f:'g'},
+  {t:63.0, x:'始められる',f:'B'},
+  {t:67.0, x:'ほどけた心も 指先で',f:''},
+  {t:70.0, x:'結び直せる',f:'B'},
+  {t:73.0, x:'結び直せる',f:'B'},
+  {t:76.0, x:'名前を呼べば',f:'g'},
+  {t:80.0, x:'ここに戻れる',f:'p'},
+  // Verse 2
+  {t:84.0, x:'古いアルバムをひらくたび',f:''},
+  {t:89.0, x:'ページの隅で時間が立ち止まる',f:''},
+  {t:95.0, x:'「今日は何曜日？」',f:''},
+  {t:98.0, x:'君が聞く',f:'p'},
+  {t:100.0,x:'同じ答えでも',f:''},
+  {t:103.0,x:'抱きしめたくなる',f:'p'},
+  {t:106.0,x:'小さな会議 丸いテーブル',f:''},
+  {t:109.0,x:'言葉の端っこを拾い集めて',f:''},
+  {t:112.0,x:'赤いしるしで約束をつける',f:'g'},
+  {t:114.0,x:'忘れないために 今を灯す',f:'p'},
+  {t:119.0,x:'世界は相変わらず忙しいけど',f:''},
+  {t:123.0,x:'僕らの歩幅でいい',f:''},
+  {t:126.0,x:'ゆっくりでいい',f:'p'},
+  // Chorus 2 ★
+  {t:129.0,x:'大丈夫',f:'B'},
+  {t:131.0,x:'恥じなくていい',f:'B'},
+  {t:133.0,x:'涙がこぼれても',f:'g'},
+  {t:136.0,x:'笑っていい',f:'B'},
+  {t:139.0,x:'昨日の痛みは 味方になる',f:'g'},
+  {t:143.0,x:'結び直せる',f:'B'},
+  {t:146.0,x:'結び直せる',f:'B'},
+  {t:148.0,x:'離れそうなら',f:''},
+  {t:150.0,x:'手を握ればいい',f:'p'},
+  // Bridge
+  {t:156.0,x:'負けた夜には 青い帯を',f:''},
+  {t:158.0,x:'いったんほどいて',f:'p'},
+  {t:160.0,x:'結び直す',f:'B'},
+  {t:163.0,x:'ワン・ツー ワン・ツー',f:'p'},
+  {t:165.0,x:'息を合わせ',f:''},
+  {t:167.0,x:'心の中の 波に乗る',f:'g'},
+  {t:169.0,x:'今年のページに 赤で書いた',f:''},
+  {t:172.0,x:'「何度でも挑む」',f:'B'},
+  {t:176.0,x:'「やさしく強く」',f:'B'},
+  // Final Chorus ★★
+  {t:180.0,x:'大丈夫',f:'B'},
+  {t:182.0,x:'僕らはまだ',f:'B'},
+  {t:185.0,x:'誰かの光に',f:'g'},
+  {t:188.0,x:'なれる途中',f:'B'},
+  {t:192.0,x:'手のひらの火を',f:'g'},
+  {t:195.0,x:'消さないで',f:'B'},
+  {t:198.0,x:'結び直そう',f:'B'},
+  {t:200.0,x:'結び直そう',f:'B'},
+  {t:203.0,x:'名前を呼べば',f:'g'},
+  {t:206.0,x:'ここに戻れる',f:'p'},
+  // Outro
+  {t:213.0,x:'明日の靴ひも 確かめたら',f:''},
+  {t:218.0,x:'窓の朝焼けが',f:'g'},
+  {t:222.0,x:'僕らを待ってる',f:'p'},
+  {t:226.0,x:'大丈夫',f:'B'},
+  {t:229.0,x:'そのままでいい',f:'B'},
+  {t:233.0,x:'何度でも',f:'g'},
+  {t:237.0,x:'始められる',f:'B'},
+  {t:243.0,x:'♪',f:''},
+];
+
+// ── CANVAS PARTICLES ──
+const cv=document.getElementById('cv'),cx=cv.getContext('2d');
+const P=[];
+function rsz(){cv.width=innerWidth;cv.height=innerHeight;}
+rsz();addEventListener('resize',rsz);
+
+function sp(x,y,n,c,sz){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,v=1+Math.random()*5;P.push({x,y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-2,l:1,c,s:sz||2+Math.random()*4});}}
+function spG(n){sp(innerWidth*(.2+Math.random()*.6),innerHeight*(.2+Math.random()*.6),n,'255,215,0',3);}
+function spP(n){sp(innerWidth*(.2+Math.random()*.6),innerHeight*(.3+Math.random()*.4),n,'255,143,163',4);}
+function spW(n){sp(innerWidth/2,innerHeight/2,n,'255,248,231',2);}
+// Cherry blossom petals (float down slowly)
+function spPetal(){P.push({x:Math.random()*innerWidth,y:-20,vx:(Math.random()-.5)*1.5,vy:.5+Math.random(),l:1,c:'255,180,200',s:4+Math.random()*4,petal:true});}
+
+let amb=0;
+function drawP(){
+  cx.clearRect(0,0,cv.width,cv.height);
+  amb++;
+  if(amb%8===0)spPetal(); // constant cherry blossom rain
+  if(amb%40===0)sp(Math.random()*innerWidth,-10,1,'255,215,0',2); // gold sparkle
+
+  for(let i=P.length-1;i>=0;i--){
+    const p=P[i];
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.petal){p.vx+=Math.sin(amb*.02+i)*.02;p.vy*=.999;p.l-=.003;}
+    else{p.vy+=.04;p.vx*=.98;p.l-=.018;}
+    if(p.l<=0||p.y>cv.height+20){P.splice(i,1);continue;}
+    cx.globalAlpha=p.l*.7;
+    cx.fillStyle=`rgba(${p.c},${p.l})`;
+    cx.shadowColor=`rgba(${p.c},.4)`;cx.shadowBlur=6;
+    if(p.petal){
+      cx.save();cx.translate(p.x,p.y);cx.rotate(amb*.01+i);
+      cx.fillStyle=`rgba(${p.c},${p.l*.6})`;
+      cx.beginPath();cx.ellipse(0,0,p.s,p.s*.5,0,0,Math.PI*2);cx.fill();
+      cx.restore();
+    }else{
+      cx.beginPath();cx.arc(p.x,p.y,p.s*p.l,0,Math.PI*2);cx.fill();
+    }
+  }
+  cx.globalAlpha=1;cx.shadowBlur=0;
+}
+
+// ── EFFECTS ──
+function flash(c,d){const f=document.getElementById('fl');f.style.background=c;f.style.opacity='.25';setTimeout(()=>f.style.opacity='0',d||100);}
+function ring(){const r=document.getElementById('ring');r.style.transition='none';r.style.width='0';r.style.height='0';r.style.opacity='.5';r.style.borderColor='var(--gold)';
+  requestAnimationFrame(()=>{r.style.transition='all .7s ease-out';r.style.width='350px';r.style.height='350px';r.style.opacity='0';});}
+function shake(i){const d=[(Math.random()-.5)*i*5,(Math.random()-.5)*i*3];document.body.style.transform=`translate(${d[0]}px,${d[1]}px)`;setTimeout(()=>document.body.style.transform='',50);}
+
+// ── LYRIC DISPLAY ──
+let prevText='';
+function showL(text,fx){
+  const km=document.getElementById('km'),kp=document.getElementById('kp');
+  // Show previous lyric fading above
+  if(prevText&&prevText!=='♪'){kp.textContent=prevText;kp.classList.add('on');}
+  else kp.classList.remove('on');
+  setTimeout(()=>kp.classList.remove('on'),2000);
+  prevText=text;
+
+  km.classList.remove('on','pop','big');
+  void km.offsetWidth;
+  km.textContent=text;
+  km.classList.add('on');
+
+  if(fx==='p'){km.classList.add('pop');shake(.3);spW(6);}
+  if(fx==='B'){km.classList.add('pop','big');flash('rgba(255,215,0,.2)',100);spG(30);spP(15);ring();shake(.6);}
+  if(fx==='g'){km.classList.add('pop');flash('rgba(245,166,35,.15)',80);spG(12);shake(.2);}
+}
+
+// ── SCENE ──
+function swSc(i){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.getElementById(SC[i].el).classList.add('on');
+  cs=i;flash('rgba(255,215,0,.1)',150);spG(8);
+}
+
+// ── BEAT ──
+let actx,anl,lb=0,bth=100;
+// Build visualizer bars
+const vizEl=document.getElementById('viz');
+const BARS=48;
+for(let i=0;i<BARS;i++){const b=document.createElement('div');b.className='vb';b.style.height='2px';vizEl.appendChild(b);}
+const vizBars=[...vizEl.children];
+
+function setupA(){actx=new(AudioContext||webkitAudioContext)();anl=actx.createAnalyser();anl.fftSize=256;anl.smoothingTimeConstant=.75;const s=actx.createMediaElementSource(au);s.connect(anl);anl.connect(actx.destination);}
+
+// Auto-hide transport
+let hideTimer=null;
+function showTr(){document.getElementById('tr').style.opacity='1';clearTimeout(hideTimer);hideTimer=setTimeout(()=>{if(on)document.getElementById('tr').style.opacity='0';},3000);}
+document.addEventListener('touchstart',showTr);document.addEventListener('mousemove',showTr);
+function beat(){
+  if(!anl)return;const f=new Uint8Array(anl.frequencyBinCount);anl.getByteFrequencyData(f);
+  // Visualizer bars
+  for(let i=0;i<BARS;i++){
+    const idx=Math.floor(i*f.length/BARS);
+    const v=f[idx]/255;
+    vizBars[i].style.height=Math.max(2,v*45)+'px';
+    vizBars[i].style.opacity=.3+v*.5;
+  }
+  // Beat detection
+  let b=0;for(let i=0;i<10;i++)b+=f[i];b/=10;
+  if(b>bth&&Date.now()-lb>180){lb=Date.now();spG(2+Math.floor(b/50));if(b>150)flash('rgba(255,215,0,.08)',40);}
+  bth=bth*.94+b*.06*1.3;
+}
+
+// ── LOOP ──
+function fmt(s){return`${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;}
+function lp(){
+  requestAnimationFrame(lp);
+  const t=au.currentTime,d=au.duration||253;
+  document.getElementById('prog').style.width=(t/d*100)+'%';
+  document.getElementById('sk').value=t;
+  document.getElementById('td').textContent=fmt(t)+' / '+fmt(d);
+
+  let si=0;for(let i=SC.length-1;i>=0;i--){if(t>=SC[i].t){si=i;break;}}
+  if(si!==cs)swSc(si);
+
+  let li=-1;for(let i=L.length-1;i>=0;i--){if(t>=L[i].t&&t<L[i].t+3.5){li=i;break;}}
+  if(li!==cl){cl=li;if(li>=0)showL(L[li].x,L[li].f);else document.getElementById('km').classList.remove('on');}
+
+  beat();drawP();
+}
+
+// ── CONTROLS ──
+function go(){
+  const o=document.getElementById('st');o.style.transition='opacity .4s';o.style.opacity='0';setTimeout(()=>o.style.display='none',400);
+  au.src='assets/musubinaosu.mp3';setupA();au.play();on=true;document.getElementById('bp').textContent='⏸';requestAnimationFrame(lp);
+  setTimeout(()=>{if(on)document.getElementById('tr').style.opacity='0';},3000);
+}
+function tog(){if(on){au.pause();on=false;document.getElementById('bp').textContent='▶';}else{au.play();on=true;document.getElementById('bp').textContent='⏸';}}
+au.addEventListener('ended',()=>{on=false;document.getElementById('bp').textContent='▶';setTimeout(()=>document.getElementById('en').style.display='block',1500);});
+</script>
+<!-- Site Nav -->
+<style>.sn{position:fixed;top:0;left:0;right:0;z-index:8000;display:flex;align-items:center;justify-content:center;gap:clamp(12px,3vw,20px);padding:7px 16px;background:rgba(8,8,8,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.06);opacity:0;pointer-events:none;transition:opacity .3s;font-family:system-ui,-apple-system,sans-serif;}.sn.v{opacity:1;pointer-events:all;}.sn a{color:rgba(255,255,255,.4);text-decoration:none;font-size:clamp(.6rem,1.8vw,.7rem);padding:4px 10px;border-radius:6px;transition:all .2s;white-space:nowrap;}.sn a:hover,.sn a.ac{color:#E8B64A;background:rgba(232,182,74,.1);}.sn .nl{font-weight:700;color:rgba(232,182,74,.7);font-size:clamp(.65rem,2vw,.75rem);}</style>
+<nav class="sn" id="sn"><a href="/" class="nl">YH</a><a href="/anime/">Anime</a><a href="/mv/">Music</a><a href="/blog">Blog</a></nav>
+<script>!function(){var n=document.getElementById("sn"),p=location.pathname;n.querySelectorAll("a").forEach(function(a){var h=a.getAttribute("href");if(h!=="/"&&p.indexOf(h)===0)a.classList.add("ac")});var cs=getComputedStyle(document.body);var isFixed=cs.overflow==="hidden"||cs.overflowY==="hidden";if(isFixed){setTimeout(function(){n.classList.add("v")},2500);var ht;document.addEventListener("touchstart",function(){n.classList.add("v");clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},4e3)});document.addEventListener("mousemove",function(e){if(e.clientY<50)n.classList.add("v");else{clearTimeout(ht);ht=setTimeout(function(){n.classList.remove("v")},3e3)}})}else{var sh=0;window.addEventListener("scroll",function(){var y=window.scrollY||0;if(y>80&&!sh){n.classList.add("v");sh=1}if(y<30&&sh){n.classList.remove("v");sh=0}},{passive:true});if((window.scrollY||0)>80){n.classList.add("v");sh=1}}}()</script>
+</body>
+</html>

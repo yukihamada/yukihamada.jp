@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>それ恋じゃなく柔術でした — 第1話「胸の上で息が詰まる」</title>
+<meta property="og:title" content="それ恋じゃなく柔術でした — 第1話">
+<meta property="og:description" content="OL美咲、失恋の夜。友達に連れられた天空の道場で、人生が変わる。">
+<meta property="og:image" content="https://yukihamada.jp/mv/assets/images/generated/ep1_05.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700;900&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#0a0808;--accent:#E8B64A;--dim:rgba(255,255,255,.4);}
+html{background:var(--bg);color:#fff;scroll-behavior:smooth;}
+body{font-family:'Noto Sans JP',sans-serif;min-height:100vh;}
+
+/* Title card */
+.title-card{height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.title-card .bg{position:absolute;inset:0;background:url('assets/images/generated/ep1_01.jpg') center/cover;filter:brightness(.15) blur(4px);transform:scale(1.05);}
+.title-card .content{position:relative;z-index:2;text-align:center;padding:0 20px;}
+.title-card .ep{font-size:.8rem;color:var(--accent);letter-spacing:.3em;margin-bottom:8px;}
+.title-card h1{font-family:'Noto Serif JP',serif;font-size:clamp(2rem,7vw,4rem);font-weight:700;color:var(--accent);line-height:1.3;}
+.title-card .sub{font-size:clamp(.8rem,2.5vw,1.1rem);color:var(--dim);margin-top:16px;font-family:'Noto Serif JP',serif;}
+.scroll-hint{position:absolute;bottom:30px;color:var(--dim);font-size:.75rem;animation:bob 2s infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+/* Scene panels */
+.panel{position:relative;min-height:80vh;display:flex;align-items:center;overflow:hidden;}
+.panel .bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.3);}
+.panel .overlay{position:absolute;inset:0;}
+.panel.dark .overlay{background:linear-gradient(90deg,rgba(10,8,8,.85) 0%,rgba(10,8,8,.3) 60%);}
+.panel.dark-r .overlay{background:linear-gradient(270deg,rgba(10,8,8,.85) 0%,rgba(10,8,8,.3) 60%);}
+.panel.full .overlay{background:linear-gradient(0deg,rgba(10,8,8,.7) 0%,rgba(10,8,8,.1) 40%,rgba(10,8,8,.6) 100%);}
+.panel .text{position:relative;z-index:2;max-width:500px;padding:40px;}
+.panel.dark .text{margin-left:5%;}
+.panel.dark-r .text{margin-left:auto;margin-right:5%;text-align:right;}
+.panel.full .text{margin:0 auto;text-align:center;max-width:700px;}
+
+/* Dialogue */
+.narration{font-family:'Noto Serif JP',serif;font-size:clamp(.9rem,2.5vw,1.15rem);color:rgba(255,255,255,.7);line-height:2;margin-bottom:16px;}
+.dialogue{margin:12px 0;padding:12px 16px;border-left:3px solid var(--accent);background:rgba(232,182,74,.05);border-radius:0 8px 8px 0;}
+.dialogue .name{font-size:.7rem;color:var(--accent);letter-spacing:.1em;margin-bottom:4px;}
+.dialogue .line{font-size:clamp(.95rem,2.5vw,1.1rem);color:#fff;line-height:1.7;}
+.dialogue.right{border-left:none;border-right:3px solid var(--accent);text-align:right;border-radius:8px 0 0 8px;}
+.thought{font-family:'Noto Serif JP',serif;font-size:clamp(.85rem,2.3vw,1rem);color:rgba(255,255,255,.45);font-style:italic;line-height:1.8;margin:12px 0;}
+.sfx{font-size:clamp(1.5rem,5vw,2.5rem);font-weight:900;color:var(--accent);opacity:.3;margin:8px 0;}
+
+/* Full-width image */
+.full-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;}
+
+/* Chapter divider */
+.divider{text-align:center;padding:40px 20px;color:var(--dim);font-size:.75rem;letter-spacing:.3em;}
+
+/* End card */
+.end-card{padding:60px 20px 80px;text-align:center;}
+.end-card h2{font-family:'Noto Serif JP',serif;font-size:1.5rem;color:var(--accent);}
+.end-card .next{margin-top:12px;color:var(--dim);font-size:.85rem;}
+.end-card .preview{margin-top:20px;display:inline-block;padding:12px 30px;background:rgba(232,182,74,.15);border:1px solid var(--accent);border-radius:8px;color:var(--accent);text-decoration:none;font-size:.85rem;}
+.end-card .mv-link{display:inline-block;margin-top:16px;color:var(--dim);font-size:.75rem;text-decoration:none;}
+
+/* Fade in on scroll */
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity .8s,transform .8s;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- TITLE CARD -->
+<div class="title-card">
+  <div class="bg"></div>
+  <div class="content">
+    <div class="ep">EPISODE 01</div>
+    <h1>胸の上で<br>息が詰まる</h1>
+    <div class="sub">それ恋じゃなく柔術でした</div>
+  </div>
+  <div class="scroll-hint">▼ scroll</div>
+</div>
+
+<!-- SCENE 1: 居酒屋 -->
+<div class="panel dark fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_01.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">渋谷のカウンター席。金曜の夜。<br>半分残ったビールが、蛍光灯の光を反射している。</div>
+    <div class="thought">スマホの画面が、まだ光っている。<br>「ごめん、もう会えない」<br>たった12文字。3年が、12文字で終わった。</div>
+  </div>
+</div>
+
+<!-- SCENE 2: 雨の渋谷 -->
+<div class="panel dark-r fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_02.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">傘を差しながら、ユカに電話をかけた。</div>
+    <div class="dialogue right">
+      <div class="name">美咲</div>
+      <div class="line">ユカ、振られた。笑える。金曜の夜に振られた。</div>
+    </div>
+    <div class="dialogue">
+      <div class="name">ユカ</div>
+      <div class="line">……明日、空いてる？<br>行きたいところがあるんだけど。</div>
+    </div>
+    <div class="dialogue right">
+      <div class="name">美咲</div>
+      <div class="line">……どこ？</div>
+    </div>
+    <div class="dialogue">
+      <div class="name">ユカ</div>
+      <div class="line">原宿。</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider">— 翌朝 —</div>
+
+<!-- SCENE 3: YAWARA前 -->
+<img src="assets/images/generated/ep1_03.jpg" class="full-img fade-in" alt="">
+
+<div class="panel dark fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_03.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">原宿のビルの前で、美咲は見上げた。</div>
+    <div class="thought">ユカが言ってた「元気が出る場所」って、ヨガスタジオかと思ってた。</div>
+    <div class="dialogue">
+      <div class="name">ユカ（LINE）</div>
+      <div class="line">8階まで上がって！ 受付で「体験」って言えばOK！</div>
+    </div>
+    <div class="thought">……8階？</div>
+  </div>
+</div>
+
+<!-- SCENE 4: エレベーター -->
+<div class="panel full fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_04.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">エレベーターの数字が上がっていく。<br>6… 7… 8。</div>
+    <div class="thought">鏡に映る自分は、昨日泣いた顔をしている。<br>……何しに来たんだろう。</div>
+    <div class="sfx">チン</div>
+  </div>
+</div>
+
+<!-- SCENE 5: 天空の道場 -->
+<img src="assets/images/generated/ep1_05.jpg" class="full-img fade-in" alt="">
+
+<div class="panel full fade-in" style="min-height:50vh;">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_05.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration" style="font-size:clamp(1.1rem,3vw,1.4rem);">ドアが開いた瞬間、息を飲んだ。</div>
+    <div class="narration">東京の空が、足元まで広がっていた。<br>白い床。木のパーティション。パノラマの窓。<br>朝の光が、空間を金色に染めている。</div>
+    <div class="thought">……ヨガスタジオじゃない。<br>でも、なんだろう。ここ。</div>
+    <div class="narration">白い道着を着た人たちが、マットの上で絡み合っている。<br>……絡み合っている？</div>
+  </div>
+</div>
+
+<!-- SCENE 6: 村田先生 -->
+<div class="panel dark fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_06.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="dialogue">
+      <div class="name">村田</div>
+      <div class="line">体験の方ですか？ ようこそ。<br>村田です。よろしくお願いします。</div>
+    </div>
+    <div class="thought">——え。<br>この人が、先生？<br>想像と違う。全然違う。</div>
+    <div class="dialogue right">
+      <div class="name">美咲</div>
+      <div class="line">あ、藤崎です。あの、友達に連れてこられて……<br>柔術って、何ですか？</div>
+    </div>
+    <div class="dialogue">
+      <div class="name">村田</div>
+      <div class="line">（笑って）<br>体で覚えた方が早いです。着替えましょう。</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCENE 7: 鏡の前 -->
+<div class="panel dark-r fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_07.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">更衣室の鏡の前で、黒い道着を着た。<br>白い帯を、見よう見まねで結ぶ。</div>
+    <div class="thought">……なんだろう。<br>昨日まで着ていたオフィスの服より、<br>こっちの方がしっくりくる気がする。<br><br>……気のせいか。</div>
+  </div>
+</div>
+
+<!-- SCENE 8: マットに立つ -->
+<img src="assets/images/generated/ep1_08.jpg" class="full-img fade-in" alt="">
+
+<div class="panel full fade-in" style="min-height:40vh;">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_08.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">裸足でマットに立った。<br>足の裏が、冷たくて、少し柔らかい。</div>
+    <div class="dialogue">
+      <div class="name">村田</div>
+      <div class="line">じゃあ、まず組んでみましょう。<br>力はいりません。呼吸だけ意識して。</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider">— スパーリング —</div>
+
+<!-- SCENE 9: 極められる -->
+<div class="panel dark fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_09.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="sfx">ドサッ</div>
+    <div class="narration">3秒で倒された。<br>何が起きたかわからない。<br>気づいたら、相手の体重が胸の上にある。</div>
+    <div class="thought">——息が、詰まる。<br>動けない。<br>手も、足も、全部押さえられてる。</div>
+  </div>
+</div>
+
+<!-- SCENE 10: 目の覚醒 -->
+<div class="panel full fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_10.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">マットに押し付けられた頬から、世界が横倒しに見える。<br>パノラマ窓の向こうで、東京が光っている。</div>
+    <div class="thought" style="color:rgba(232,182,74,.5);font-size:clamp(1rem,3vw,1.3rem);">——でも。<br><br>なんだろう、これ。<br><br>昨日の夜より、ずっと息が詰まってるのに。<br>昨日の夜より、ずっと——生きてる気がする。</div>
+  </div>
+</div>
+
+<!-- SCENE 11: 初めてのtap -->
+<div class="panel dark-r fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_11.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="dialogue">
+      <div class="name">練習相手</div>
+      <div class="line">大丈夫？ 苦しかったらタップしてね。<br>ここ、叩けばいいから。</div>
+    </div>
+    <div class="narration">言われるがまま、手のひらでマットを叩いた。</div>
+    <div class="sfx" style="font-size:clamp(2rem,8vw,4rem);opacity:.5;">tap, tap, tap</div>
+    <div class="thought">「参りました」の合図。<br>……生まれて初めて、負けを認めた。<br>意外と、嫌じゃなかった。</div>
+  </div>
+</div>
+
+<div class="divider">— 帰り道 —</div>
+
+<!-- SCENE 12: 竹下通り -->
+<img src="assets/images/generated/ep1_12.jpg" class="full-img fade-in" alt="">
+
+<div class="panel dark fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_12.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">竹下通りを歩きながら、首を触った。<br>さっき絞められた場所が、まだ少し熱い。</div>
+    <div class="thought">何が楽しかったんだろう。<br>ボコボコにされただけなのに。<br>全身痛いし、汗だくだし、髪ぐちゃぐちゃだし。<br><br>……なのに、笑ってる。<br>昨日の夜から、初めて笑ってる。</div>
+    <div class="narration">道着バッグが、肩に食い込む。<br>その重さが、なぜか心地いい。</div>
+  </div>
+</div>
+
+<!-- SCENE 13: 家で予約 -->
+<div class="panel dark-r fade-in">
+  <div class="bg" style="background-image:url('assets/images/generated/ep1_13.jpg')"></div>
+  <div class="overlay"></div>
+  <div class="text">
+    <div class="narration">家に帰って、シャワーを浴びて、ベッドに座った。<br>スマホを開く。</div>
+    <div class="thought">昨日までは、彼のLINEを何度も見返していた。<br>今日は、違う画面を見ている。</div>
+    <div class="narration">「YAWARA — 明日のクラス」<br>予約ボタンに指を乗せた。</div>
+    <div class="thought" style="color:var(--accent);font-size:clamp(1rem,3vw,1.2rem);">——もう一回、あの場所に行きたい。<br><br>胸の上で息が詰まるあの感覚を、<br>もう一回、味わいたい。</div>
+    <div class="sfx">tap</div>
+    <div class="narration" style="text-align:center;margin-top:20px;">予約完了。</div>
+  </div>
+</div>
+
+<!-- END CARD -->
+<div class="end-card">
+  <div style="font-size:3rem;margin-bottom:12px;">🥋</div>
+  <h2>第1話「胸の上で息が詰まる」</h2>
+  <div class="next" style="margin-top:16px;">次回 — 第2話「手首つかまれて」</div>
+  <div class="next" style="font-size:.75rem;color:var(--dim);">初めてのスパーリング。負けて、負けて、負けて。<br>でも帰り道、なぜかまた笑っている。</div>
+  <div style="margin-top:24px;">
+    <a href="/mv/jiujitsu.html" class="preview">🎵 MV「それ恋じゃなく柔術でした」を聴く</a>
+  </div>
+  <div style="margin-top:12px;">
+    <a href="https://twitter.com/intent/tweet?text=%E3%80%8C%E3%81%9D%E3%82%8C%E6%81%8B%E3%81%98%E3%82%83%E3%81%AA%E3%81%8F%E6%9F%94%E8%A1%93%E3%81%A7%E3%81%97%E3%81%9F%E3%80%8D%E7%AC%AC1%E8%A9%B1%20%F0%9F%A5%8B&url=https://yukihamada.jp/mv/anime-ep1.html" target="_blank" style="color:var(--accent);font-size:.8rem;text-decoration:none;">Share on X</a>
+  </div>
+  <a href="/mv/" class="mv-link">← MV一覧</a>
+</div>
+
+<script>
+// Scroll fade-in
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:.15});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
