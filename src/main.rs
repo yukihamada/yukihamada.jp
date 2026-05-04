@@ -651,6 +651,10 @@ async fn redirect_root() -> Redirect {
     Redirect::permanent("/")
 }
 
+async fn redirect_terminal() -> Redirect {
+    Redirect::permanent("/#terminal")
+}
+
 async fn about() -> impl IntoResponse {
     Html(AboutTemplate.render().unwrap_or_default())
 }
@@ -5606,6 +5610,7 @@ async fn main() {
         .route("/ja", get(redirect_root))
         .route("/en", get(redirect_root))
         .route("/about", get(about))
+        .route("/terminal", get(redirect_terminal))
         .route("/soluna", get(soluna_page))
         .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
