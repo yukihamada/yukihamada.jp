@@ -20,7 +20,6 @@
   <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="濱田優貴 / Yuki Hamada — Enabler CEO · ex-Mercari CPO · Builder">
   <meta property="og:locale" content="ja_JP">
-  <meta property="og:locale:alternate" content="en_US">
   <meta property="og:site_name" content="濱田優貴 / Yuki Hamada">
 
   <!-- Twitter / X Card -->
@@ -32,10 +31,7 @@
   <meta name="twitter:image" content="https://yukihamada.jp/og-image.jpg">
   <meta name="twitter:image:alt" content="濱田優貴 / Yuki Hamada">
 
-  <!-- Preconnect / perf hints -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="dns-prefetch" href="https://enabler-analytics.fly.dev">
+  <!-- Icons / manifest -->
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="/favicon-16x16.png" sizes="16x16" type="image/png">
@@ -43,14 +39,17 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" sizes="192x192" href="/favicon-192.png">
   <link rel="icon" sizes="512x512" href="/favicon-512.png">
+  <link rel="manifest" href="/manifest.webmanifest">
   <meta name="theme-color" content="#080810">
   <meta name="msapplication-TileColor" content="#080810">
   <meta name="msapplication-TileImage" content="/favicon-192.png">
-  <link rel="alternate" type="application/rss+xml" title="RSS" href="/feed.xml">
-  <link rel="manifest" href="/manifest.webmanifest">
+  <!-- RSS -->
+  <link rel="alternate" type="application/rss+xml" title="濱田優貴 ブログ" href="/feed.xml">
+  <!-- Perf hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin="anonymous">
+  <link rel="dns-prefetch" href="https://enabler-analytics.fly.dev">
+  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin="anonymous" type="font/woff2">
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   [
@@ -105,7 +104,7 @@
       "url": "https://yukihamada.jp",
       "name": "濱田優貴 / Yuki Hamada",
       "description": "濱田優貴の公式サイト。Enabler CEO、元メルカリCPO。SOLUNA・JiuFlow・Koe・パシャを開発。",
-      "inLanguage": ["ja", "en"],
+      "inLanguage": "ja",
       "author": { "@id": "https://yukihamada.jp/#person" },
       "potentialAction": {
         "@type": "SearchAction",
@@ -117,8 +116,11 @@
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://yukihamada.jp/" },
-        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://yukihamada.jp/blog" }
+        { "@type": "ListItem", "position": 1, "name": "Home",     "item": "https://yukihamada.jp/" },
+        { "@type": "ListItem", "position": 2, "name": "About",    "item": "https://yukihamada.jp/about" },
+        { "@type": "ListItem", "position": 3, "name": "Blog",     "item": "https://yukihamada.jp/blog" },
+        { "@type": "ListItem", "position": 4, "name": "Projects", "item": "https://yukihamada.jp/projects" },
+        { "@type": "ListItem", "position": 5, "name": "Contact",  "item": "https://yukihamada.jp/contact" }
       ]
     }
   ]

@@ -651,9 +651,22 @@ async fn redirect_root() -> Redirect {
     Redirect::permanent("/")
 }
 
-async fn redirect_terminal() -> Redirect {
-    Redirect::permanent("/#terminal")
-}
+async fn redirect_terminal() -> Redirect { Redirect::permanent("/#terminal") }
+async fn redirect_projects() -> Redirect { Redirect::permanent("/#projects") }
+async fn redirect_career()   -> Redirect { Redirect::permanent("/#career") }
+async fn redirect_music()    -> Redirect { Redirect::permanent("/#music") }
+async fn redirect_browser()  -> Redirect { Redirect::permanent("/#browser") }
+async fn redirect_koe()      -> Redirect { Redirect::permanent("/#koe") }
+async fn redirect_uta()      -> Redirect { Redirect::permanent("/#uta") }
+async fn redirect_news()     -> Redirect { Redirect::permanent("/#news") }
+async fn redirect_m5dash()   -> Redirect { Redirect::permanent("/#m5dash") }
+async fn redirect_settings() -> Redirect { Redirect::permanent("/#settings") }
+async fn redirect_camera()   -> Redirect { Redirect::permanent("/#camera") }
+async fn redirect_game()     -> Redirect { Redirect::permanent("/#game") }
+async fn redirect_finder()   -> Redirect { Redirect::permanent("/#finder") }
+async fn redirect_contact()  -> Redirect { Redirect::permanent("/#contact") }
+async fn redirect_now()      -> Redirect { Redirect::permanent("/#now") }
+async fn redirect_podcast()  -> Redirect { Redirect::permanent("/#podcast") }
 
 async fn about() -> impl IntoResponse {
     Html(AboutTemplate.render().unwrap_or_default())
@@ -904,39 +917,42 @@ async fn sitemap(State(state): State<Arc<AppState>>) -> Response {
         "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">\n",
     );
 
-    xml.push_str(&format!("  <url><loc>{base}/</loc><priority>1.0</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/about</loc><priority>0.9</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/blog</loc><priority>0.8</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mcp</loc><priority>0.7</priority></url>\n"));
+    let today = chrono::Utc::now().format("%Y-%m-%d").to_string();
+    xml.push_str(&format!("  <url><loc>{base}/</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/about</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/blog</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/projects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/contact</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/now</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mcp</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
     // Anime pages
-    xml.push_str(&format!("  <url><loc>{base}/anime/</loc><priority>0.9</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/anime/ep1.html</loc><priority>0.9</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/anime/ep2.html</loc><priority>0.9</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/anime/ep3.html</loc><priority>0.9</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/anime/ep1-en.html</loc><priority>0.7</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/anime/ep2-en.html</loc><priority>0.7</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/anime/ep3-en.html</loc><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/ep1.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/ep2.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/ep3.html</loc><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/ep1-en.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/ep2-en.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/anime/ep3-en.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
     // MV pages
-    xml.push_str(&format!("  <url><loc>{base}/mv/</loc><priority>0.8</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/jiujitsu.html</loc><priority>0.8</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/tap.html</loc><priority>0.8</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/attention.html</loc><priority>0.7</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/hack.html</loc><priority>0.7</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/musubinaosu.html</loc><priority>0.7</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/claude-code.html</loc><priority>0.7</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/local-ai.html</loc><priority>0.8</priority></url>\n"));
-    xml.push_str(&format!("  <url><loc>{base}/mv/local-ai-ja.html</loc><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/jiujitsu.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/tap.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/attention.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/hack.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/musubinaosu.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/claude-code.html</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/local-ai.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/mv/local-ai-ja.html</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
 
     for post in &state.posts {
+        let loc = format!("{base}/blog/{}", post.slug);
         if post.date.is_empty() {
             xml.push_str(&format!(
-                "  <url><loc>{base}/blog/{slug}</loc></url>\n",
-                slug = post.slug,
+                "  <url><loc>{loc}</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>\n"
             ));
         } else {
             xml.push_str(&format!(
-                "  <url><loc>{base}/blog/{slug}</loc><lastmod>{date}</lastmod></url>\n",
-                slug = post.slug,
+                "  <url><loc>{loc}</loc><lastmod>{date}</lastmod><changefreq>yearly</changefreq><priority>0.7</priority></url>\n",
                 date = post.date,
             ));
         }
@@ -5611,6 +5627,21 @@ async fn main() {
         .route("/en", get(redirect_root))
         .route("/about", get(about))
         .route("/terminal", get(redirect_terminal))
+        .route("/projects", get(redirect_projects))
+        .route("/career",   get(redirect_career))
+        .route("/music",    get(redirect_music))
+        .route("/browser",  get(redirect_browser))
+        .route("/koe",      get(redirect_koe))
+        .route("/uta",      get(redirect_uta))
+        .route("/news",     get(redirect_news))
+        .route("/m5dash",   get(redirect_m5dash))
+        .route("/settings", get(redirect_settings))
+        .route("/camera",   get(redirect_camera))
+        .route("/game",     get(redirect_game))
+        .route("/finder",   get(redirect_finder))
+        .route("/contact",  get(redirect_contact))
+        .route("/now",      get(redirect_now))
+        .route("/podcast",  get(redirect_podcast))
         .route("/soluna", get(soluna_page))
         .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
