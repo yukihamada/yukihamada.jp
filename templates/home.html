@@ -4703,7 +4703,10 @@ let activeId = null;
 // Init menubar after APPS is defined
 mbUpdateMenu('_finder');
 
+const ADMIN_APPS = new Set(['m5dash', 'analytics', 'mail', 'overview']);
+
 function openApp(id) {
+  if (ADMIN_APPS.has(id) && !document.body.classList.contains('admin-user')) return;
   if (wins[id]) {
     wins[id].min ? restoreWin(id) : bringFront(id);
     return;

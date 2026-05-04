@@ -659,7 +659,6 @@ async fn redirect_browser()  -> Redirect { Redirect::permanent("/#browser") }
 async fn redirect_koe()      -> Redirect { Redirect::permanent("/#koe") }
 async fn redirect_uta()      -> Redirect { Redirect::permanent("/#uta") }
 async fn redirect_news()     -> Redirect { Redirect::permanent("/#news") }
-async fn redirect_m5dash()   -> Redirect { Redirect::permanent("/#m5dash") }
 async fn redirect_settings() -> Redirect { Redirect::permanent("/#settings") }
 async fn redirect_camera()   -> Redirect { Redirect::permanent("/#camera") }
 async fn redirect_game()     -> Redirect { Redirect::permanent("/#game") }
@@ -5634,7 +5633,6 @@ async fn main() {
         .route("/koe",      get(redirect_koe))
         .route("/uta",      get(redirect_uta))
         .route("/news",     get(redirect_news))
-        .route("/m5dash",   get(redirect_m5dash))
         .route("/settings", get(redirect_settings))
         .route("/camera",   get(redirect_camera))
         .route("/game",     get(redirect_game))
