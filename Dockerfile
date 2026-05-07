@@ -1,26 +1,41 @@
-# Use stable Rust base; rust-toolchain.toml installs the pinned nightly automatically.
-FROM rust:bookworm AS builder
-
-RUN cargo install cargo-leptos@0.3.5
-
+FROM rust:bookworm AS chef
+RUN cargo install cargo-chef
 WORKDIR /app
-# Copy toolchain file first so rustup installs it before the full build
-COPY rust-toolchain.toml .
-RUN rustup show
-COPY . .
-RUN cargo leptos build --release
+
+FROM chef AS planner
+COPY Cargo.toml Cargo.lock* ./
+COPY src/ src/
+COPY templates/ templates/
+RUN cargo chef prepare --recipe-path recipe.json
+
+FROM chef AS builder
+COPY --from=planner /app/recipe.json recipe.json
+RUN cargo chef cook --release --recipe-path recipe.json
+COPY Cargo.toml Cargo.lock* ./
+COPY src/ src/
+COPY templates/ templates/
+RUN cargo build --release
+
+# OGP auto-generation stage
+FROM python:3.12-slim AS ogp
+RUN apt-get update && apt-get install -y fonts-noto-cjk && rm -rf /var/lib/apt/lists/*
+RUN pip install --no-cache-dir Pillow
+WORKDIR /app
+COPY scripts/generate_ogp.py ./
+COPY public/blog/images/ public/blog/images/
+COPY content/blog/ content/blog/
+ENV BLOG_DIR=content/blog IMG_DIR=public/blog/images
+RUN python3 generate_ogp.py
 
 FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder /app/target/release/yukihamada-server ./server
-COPY --from=builder /app/target/site ./site
-
-ENV LEPTOS_OUTPUT_NAME="yukihamada-jp"
-ENV LEPTOS_SITE_ROOT="site"
-ENV LEPTOS_SITE_PKG_DIR="pkg"
-ENV LEPTOS_SITE_ADDR="0.0.0.0:8080"
-ENV LEPTOS_ENV="PROD"
+COPY --from=builder /app/target/release/yukihamada-jp ./server
+COPY public/ public/
+COPY --from=ogp /app/public/blog/images/ public/blog/images/
+COPY content/ content/
+COPY templates/ templates/
+RUN mkdir -p /data
 
 EXPOSE 8080
 CMD ["./server"]

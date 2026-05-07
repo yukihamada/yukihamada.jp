@@ -6401,7 +6401,7 @@ openApp = function(id, pushUrl = true) {
   _openApp0(id);
   if (pushUrl && !_noHash) {
     history.pushState({ id }, '', '/#' + id);
-    document.title = (APPS[id]?.title.replace(/^[^ ]+ /, '').split(' — ')[0] || id) + ' — 濱田優貴';
+    document.title = (APPS[id]?.title.split(' — ')[0] || id) + ' — 濱田優貴';
   }
 };
 

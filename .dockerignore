@@ -1,0 +1,5 @@
+target/
+.git/
+*.md
+.DS_Store
+tasks/
