@@ -5,3 +5,9 @@
 .DS_Store
 tasks/
 <stdin>
+
+# Secrets (never commit)
+public/mv/client_secret.json
+public/mv/.youtube_token.pickle
+public/mv/*.pickle
+*client_secret*.json
