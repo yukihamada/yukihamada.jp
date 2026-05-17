@@ -629,8 +629,11 @@ async fn blog_post(
                 .filter(|p| p.slug != slug && p.tags.iter().any(|t| post.tags.contains(t)))
                 .take(3)
                 .collect();
-            let ogp_path = format!("public/blog/images/{}-ogp.jpg", post.slug);
-            let og_image = if std::path::Path::new(&ogp_path).exists() {
+            let ogp_png = format!("public/blog/images/ogp-{}.png", post.slug);
+            let ogp_jpg = format!("public/blog/images/{}-ogp.jpg", post.slug);
+            let og_image = if std::path::Path::new(&ogp_png).exists() {
+                format!("https://yukihamada.jp/blog/images/ogp-{}.png", post.slug)
+            } else if std::path::Path::new(&ogp_jpg).exists() {
                 format!("https://yukihamada.jp/blog/images/{}-ogp.jpg", post.slug)
             } else {
                 "https://yukihamada.jp/og-image.jpg".to_string()
