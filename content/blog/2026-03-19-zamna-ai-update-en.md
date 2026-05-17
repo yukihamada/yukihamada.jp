@@ -1,7 +1,7 @@
 ---
 title: "Skipping BJJ, Building AI — ZAMNA Hawaii and New Products"
 date: 2026-03-19
-tags: [bjj, ai, soluna, koe, zamna, enabler]
+tags: [bjj, ai, SOLUNA, Koe, zamna, enabler]
 description: "BJJ update, why I'm obsessed with AI development, ZAMNA Hawaii in September, and the products that came from it."
 ---
 

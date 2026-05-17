@@ -5,6 +5,8 @@ description: "v1.0からv2.5まで1週間。CoreML、whisper.cpp、llama.cpp、M
 tags: ["Koe", "音声", "マルチプラットフォーム"]
 ---
 
+> **技術詳細は別記事に分けた** → [Koe技術スタック — CoreML + whisper.cpp + llama.cpp + Metal](/blog/2026-03-10-koe-cross-platform-tech)
+
 ## 「自分が毎日使いたいもの」を作った
 
 Koeは、音声をテキストに変換するアプリだ。ただし、クラウドに音声を送らない。すべてデバイス上で処理する。

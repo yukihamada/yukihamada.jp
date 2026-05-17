@@ -1,7 +1,7 @@
 ---
 title: "柔術サボりがちだけどAI開発が止まらない — ZAMNA Hawaii と新プロダクトの話"
 date: 2026-03-19
-tags: [bjj, ai, soluna, koe, zamna, enabler]
+tags: [bjj, ai, SOLUNA, Koe, zamna, enabler]
 description: "最近の柔術事情、AI開発にハマりすぎている話、9月のZAMNA Hawaiiイベント、そしてそこから生まれた複数のプロダクトについて。"
 ---
 

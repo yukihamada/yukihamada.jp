@@ -5,6 +5,8 @@ description: "L-Acousticsの1/3のコストで1万人規模フェスの音響を
 tags: ["Koe Device", "ハードウェア", "フェスティバル"]
 ---
 
+> **技術仕様は別記事に分けた** → [Koe Device技術仕様 — ESP32-S3 Rust + P2P UDP + 技適対応](/blog/2026-03-05-koe-device-tech)
+
 ## $100万の音響システムは誰のためか
 
 1万人規模の野外フェスティバルを開くとき、音響システムだけで$100万（約1,500万円）かかる。L-Acoustics、d&b audiotechnik、Meyer Soundといったプロ音響メーカーのラインアレイシステムを借りると、それくらいが相場だ。

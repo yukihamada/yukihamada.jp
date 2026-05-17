@@ -5,6 +5,8 @@ description: "chatweb.aiにおけるRust並列モデル呼び出し、tokio::sel
 tags: ["chatweb.ai", "Rust", "SSE", "tech"]
 ---
 
+> **概念・背景の概要版** → [AIモデルを同時に走らせて最速の回答を選ぶ — マルチモデルレース](/blog/2026-02-05-multi-model-ai)
+
 ## 問題: 単一モデル依存の脆弱性
 
 chatweb.aiは複数のLLMプロバイダ（Anthropic、OpenAI、Groq、Nemotron自前ポッド）を利用する。単一プロバイダに依存すると、障害時にサービス全体が停止する。OpenRouterの$3,400クレジットが枯渇した2026年3月のインシデントで、この問題が顕在化した。

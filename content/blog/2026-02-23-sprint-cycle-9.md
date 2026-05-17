@@ -1,7 +1,7 @@
 ---
 title: Sprint Cycle 9 — 全プロダクト進捗レポート (2026-02-23)
 date: 2026-02-23
-tags: [sprint, stayflow, miseban-ai, jitsuflow, ironclaw, nanobot]
+tags: [sprint, StayFlow, miseban-ai, jiuflow, ironclaw, nanobot]
 description: Cycle 9のスプリントレビュー。6プロダクトの現状、完了タスク、次スプリントの計画。
 ---
 
