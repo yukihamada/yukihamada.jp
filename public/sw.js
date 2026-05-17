@@ -1,5 +1,5 @@
-const CACHE = 'yh-v3';
-const PRECACHE = ['/', '/blog', '/about', '/favicon.svg', '/favicon-192.png'];
+const CACHE = 'yh-v4';
+const PRECACHE = ['/', '/about', '/favicon.svg', '/favicon-192.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(PRECACHE)).catch(() => {}));
