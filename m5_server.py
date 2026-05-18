@@ -107,7 +107,7 @@ async def _ask_claude(question: str, context: str) -> str:
         "- 元メルカリ 取締役 CPO/CINO（2014〜2021）\n"
         "- 元NOT A HOTEL 共同創業者（2018〜2024）\n"
         "- 柔術青帯\n"
-        "- 「建てて、残して、いいやつと。」がモットー\n"
+        "- 「建てて、残して、いいやつらと。」がモットー\n"
         "- Rust・Swift・ESP32を自分で書く実装型CEO\n"
     )
     if context:

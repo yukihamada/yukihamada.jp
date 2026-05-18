@@ -515,7 +515,7 @@ fn render_cli_home(posts: &[blog::BlogPost]) -> String {
         "\n  {accent}{bold}濱田優貴{reset}  {dim}//{reset}  {accent}Yuki Hamada{reset}\n"
     ));
     s.push_str(&format!(
-        "  {dim}建てて、残して、いいやつと。{reset}\n"
+        "  {dim}建てて、残して、いいやつらと。{reset}\n"
     ));
     s.push_str(&format!("  {muted}Enabler CEO / ex-Mercari CPO / 柔術青帯{reset}\n\n"));
 
@@ -3947,7 +3947,7 @@ async fn run_agentic_chat_with_progress(
         let mut m5_context = String::new();
         m5_context.push_str("# 濱田優貴について\n");
         m5_context.push_str("- Enabler CEO、元メルカリ CPO、元NOT A HOTEL 共同創業者、柔術青帯\n");
-        m5_context.push_str("- モットー: 建てて、残して、いいやつと。\n");
+        m5_context.push_str("- モットー: 建てて、残して、いいやつらと。\n");
         m5_context.push_str("- プロダクト: Soluna(solun.art), JiuFlow(jiuflow.art), Koe Device(koe.live), chatweb.ai, パシャ(pasha.run)\n");
         m5_context.push_str("- 連絡: mail@yukihamada.jp / X: @yukihamada\n\n");
         if !rag.is_empty() {
@@ -4307,7 +4307,7 @@ fn make_chat_system(all_titles: &str, relevant: &str) -> String {
         \n- 元メルカリ 取締役 CPO/CINO（2014〜2021）\
         \n- 元NOT A HOTEL 共同創業者（2018〜2024）\
         \n- 柔術青帯\
-        \n- 「建てて、残して、いいやつと。」がモットー\
+        \n- 「建てて、残して、いいやつらと。」がモットー\
         \n- Rust・Swift・ESP32を自分で書く実装型CEO\
         \n\n# 主なプロジェクト\
         \n- Soluna: 北海道弟子屈の宿泊空間 + SOLUNA FEST HAWAII → solun.art\
@@ -5092,7 +5092,7 @@ async fn mcp_call(state: &Arc<AppState>, name: &str, args: &serde_json::Value) -
             - NOT A HOTEL 共同創業者・元取締役 (2018〜2024)\n\
             - メルカリ 取締役 CPO/CINO (2014〜2021)\n\
             - サイブリッジ 共同創業者 (2003〜2013)\n\
-            - BJJ Blue Belt | Motto: 建てて、残して、いいやつと。\n\n\
+            - BJJ Blue Belt | Motto: 建てて、残して、いいやつらと。\n\n\
             ## Projects\n\
             - Soluna: 北海道弟子屈の宿泊空間 → https://solun.art\n\
             - JiuFlow: 柔術テクニックマッピング → https://jiuflow.art\n\
