@@ -6433,18 +6433,15 @@ function handleHash(hash) {
   if (pm) {
     const slug = pm[1];
     _noHash = true;
-    openApp('blog', false);
-    setTimeout(() => {
-      _noHash = false;
-      const meta = postMeta[slug];
-      if (meta) {
-        openPost(slug, meta.title, meta.date, false);
-        document.title = meta.title + ' — 濱田優貴';
-      } else {
-        // Fallback: open post directly even if not yet in postMeta
-        openPost(slug, '…', '', false);
-      }
-    }, 300);
+    const meta = postMeta[slug];
+    if (meta) {
+      openPost(slug, meta.title, meta.date, false);
+      document.title = meta.title + ' — 濱田優貴';
+    } else {
+      // Fallback: open post directly even if not yet in postMeta
+      openPost(slug, '…', '', false);
+    }
+    _noHash = false;
     return;
   }
   if (APPS[h]) {
