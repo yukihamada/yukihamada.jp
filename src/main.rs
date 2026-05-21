@@ -674,6 +674,10 @@ async fn about() -> impl IntoResponse {
     Html(AboutTemplate.render().unwrap_or_default())
 }
 
+async fn notary_options() -> impl IntoResponse {
+    Html(include_str!("../templates/notary_options.html"))
+}
+
 async fn soluna_page() -> impl IntoResponse {
     Html(r#"<!DOCTYPE html>
 <html lang="ja">
@@ -5644,6 +5648,7 @@ async fn main() {
         .route("/now",      get(redirect_now))
         .route("/podcast",  get(redirect_podcast))
         .route("/soluna", get(soluna_page))
+        .route("/notary-options", get(notary_options))
         .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
         .route("/blog/{slug}", get(blog_post))
