@@ -3084,11 +3084,16 @@
     </div>
   </div>
 
-  <!-- NEWS -->
+  <!-- NEWS — news.xyz は X-Frame-Options:DENY のため iframe 埋め込み不可。別タブ起動のカードにフォールバック。 -->
   <div id="tpl-news">
-    <div class="koe-win" style="background:#0a0a0a;">
-      <iframe class="koe-iframe" src="https://news.xyz"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"></iframe>
+    <div class="koe-win" style="background:#0a0a0a;display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center;color:#e0e0e0;font-family:inherit;padding:32px;max-width:440px;">
+        <div style="font-size:44px;margin-bottom:14px;">📰</div>
+        <div style="font-size:20px;font-weight:800;letter-spacing:.04em;margin-bottom:10px;">news.xyz</div>
+        <div style="font-size:13px;opacity:.6;line-height:1.8;margin-bottom:22px;">AIが24時間ニュースを生成・編集するサイト。セキュリティ設定により埋め込み表示ができないため、別タブで開きます。</div>
+        <a href="https://news.xyz" target="_blank" rel="noopener noreferrer"
+           style="display:inline-block;background:#E8B64A;color:#080808;font-weight:700;font-size:14px;padding:12px 30px;border-radius:10px;text-decoration:none;">news.xyz を開く →</a>
+      </div>
     </div>
   </div>
 
@@ -7132,6 +7137,12 @@ function blogFilter(btn, source) {
 // ════════════════════════════════════════════
 window.brNavigate = function(url) {
   if (!url.startsWith('http')) url = 'https://' + url;
+  // 埋め込み不可ドメイン (X-Frame-Options) は frame に入れず別タブで開く
+  if (window.__cannotEmbed && window.__cannotEmbed(url)) {
+    if (window.externalOpen) window.externalOpen(url);
+    else window.open(url, '_blank', 'noopener,noreferrer');
+    return;
+  }
   var urlInput = document.getElementById('br-url');
   var frame = document.getElementById('br-frame');
   var newtab = document.getElementById('br-newtab');
@@ -7191,6 +7202,8 @@ window.initBrowser = function(winEl) {
     _currentUrl = url;
     urlInput.value = url;
     iconEl.textContent = url.startsWith('https://') ? '🔒' : '⚠';
+    // 埋め込み不可ドメイン (X-Frame-Options) は iframe を試さず即「別タブで開く」表示へ
+    if (window.__cannotEmbed && window.__cannotEmbed(url)) { showBlocked(); return; }
     if (blocked) blocked.style.display = 'none';
     newtab.style.display = 'none';
     frame.style.display = 'block';
@@ -7245,7 +7258,23 @@ window.initBrowser = function(winEl) {
 // ════════════════════════════════════════════
 // IFRAME WINDOW (anime, mv, etc.)
 // ════════════════════════════════════════════
+// X-Frame-Options:DENY / SAMEORIGIN を返すドメインは iframe 埋め込み不可。
+// これらは別タブで開く（dead frame と console エラーを防ぐ）。
+window.__cannotEmbed = function(url) {
+  try {
+    var h = new URL(url, location.href).hostname.replace(/^www\./, '');
+    var deny = ['news.xyz','chatweb.ai','teai.io','jiuflow.art','jiuflow.com',
+                'koe.live','stayflowapp.com','pasha.run','misebanai.com','kokon.tokyo'];
+    return deny.some(function(d){ return h === d || h.endsWith('.' + d); });
+  } catch(e) { return false; }
+};
 window.openIframeWin = function(url, title, w, h) {
+  // 埋め込み不可ドメインは別タブ起動にフォールバック
+  if (window.__cannotEmbed(url)) {
+    if (window.externalOpen) window.externalOpen(url);
+    else window.open(url, '_blank', 'noopener,noreferrer');
+    return;
+  }
   var id = 'iframe-' + url.replace(/[^a-z0-9]/gi, '-');
   if (wins[id]) { bringFront(id); return; }
   var layer = document.getElementById('win-layer');
