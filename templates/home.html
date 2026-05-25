@@ -2,6 +2,9 @@
 <html lang="ja">
 <head>
   <meta charset="utf-8">
+  <!-- 初期ロードで #blog/<slug> を踏んだら、SSRの /blog/<slug> へ即リダイレクト（記事を瞬間表示）。
+       ホーム内クリック(pushState)では発火しない。スラッシュ無しの通常記事slugのみ対象。 -->
+  <script>(function(){try{var m=location.hash.replace(/^#\/?/,'').match(/^blog\/([^\/]+)$/);if(m&&m[1]){location.replace('/blog/'+m[1]);}}catch(e){}})();</script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>濱田優貴（Yuki Hamada）— Enabler CEO · 元メルカリCPO · プロダクトビルダー</title>
   <meta name="description" content="濱田優貴の公式サイト。Enabler Inc. CEO、元メルカリCPO・取締役。共同所有型リゾートSOLUNA、柔術アプリJiuFlow、AI音声アシスタントKoeなど自社プロダクトをRust/Swiftで開発。東京在住のスタートアップ起業家。">
