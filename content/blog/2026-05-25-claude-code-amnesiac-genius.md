@@ -76,4 +76,8 @@ Anthropic自身がドキュメントで言い切っている——「Claudeに�
 
 ---
 
-ここで使っている `CLAUDE.md`・hooks・`/goal` の全設定を、「置くだけで自動適用される一式」にまとめた実戦マニュアル（全25ページ相当）を、MUのTシャツを持っている人に [**`/vault`**](https://wearmu.com/vault) で全文公開しています。記憶喪失を治す `CLAUDE.md` テンプレも、危険コマンドを止めるhookも、そのままコピーして使えます。
+ここで使っている `CLAUDE.md`・hooks・`/goal` の全設定を、「置くだけで自動適用される一式」にまとめた**実戦マニュアル（全25ページ相当）**を、MUのTシャツを持っている人に全文公開しています。記憶喪失を治す `CLAUDE.md` テンプレも、危険コマンドを止める hook も、そのままコピーして使えます。
+
+**👉 [［MUホルダー限定］実戦マニュアル全文を読む — wearmu.com/vault](https://wearmu.com/vault)**
+
+Tシャツを持っていない人はこちらから → [wearmu.com で MU を買う](https://wearmu.com/buy)
