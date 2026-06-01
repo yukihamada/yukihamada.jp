@@ -137,13 +137,6 @@
       border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px;
     }
 
-    /* dog note */
-    .dog-note {
-      font-size: .82rem; color: var(--text-muted); margin: -18px 0 30px; line-height: 1.6;
-      padding: 10px 14px; border-left: 2px solid var(--amber); background: rgba(255,255,255,.015);
-    }
-    .dog-note a { color: var(--amber); text-decoration: none; border-bottom: 1px dashed var(--amber); }
-
     /* proposal patterns on confirmation */
     .props { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); text-align: left; }
     .prop {
@@ -194,14 +187,6 @@
     .done p { color: var(--text-muted); line-height: 1.75; margin: 0; }
     .done .big { color: var(--text); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
 
-    /* MU cross-sell after booking */
-    .mu-cross { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); text-align: left; }
-    #mu-mount { min-height: 40px; }
-    .mu-all {
-      display: inline-block; margin-top: 18px; font-size: .9rem; font-weight: 600;
-      color: var(--amber); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .15s;
-    }
-    .mu-all:hover { border-color: var(--amber); }
   </style>
 </head>
 <body class="force-dark">
@@ -239,7 +224,6 @@
         <div class="meet-info-row"><span>内容</span><b id="meet-topic">ご相談・情報交換</b></div>
       </div>
 
-      <p class="dog-note">🐶 対面の場合、小型犬が同席することがあります（ビションプー／毛が抜けにくく、Good Behavior 認定済みのお利口さんです）。<a id="dog-link" href="https://wearmu.com/elepote" target="_blank" rel="noopener">▶ ELE</a></p>
 
       <form id="meet-form" autocomplete="on">
         <p class="step-label">時間を選ぶ</p>
@@ -292,13 +276,6 @@
           <p class="prop-d">bim.house・SOLUNA・wearmu などの実装力で、御社と何ができるか。小さく一個、共同で試します。</p>
         </div>
         <p style="color:var(--text-muted);font-size:.84rem;margin-top:12px;">気になるテーマがあれば、当日ひとことお伝えください。</p>
-      </div>
-
-      <div class="mu-cross" id="mu-cross" style="display:none;">
-        <p class="step-label" style="justify-content:center;">会えた記念に、よければ一枚。</p>
-        <p style="color:var(--text-muted);font-size:.9rem;margin:-6px 0 18px;">無限／MU — 北海道の気象データから AI が毎時間ひとつ生む、108個限定のT。当日お声がけいただければ、お渡しもできます。</p>
-        <div id="mu-mount"></div>
-        <a href="https://wearmu.com" target="_blank" rel="noopener" class="mu-all">MU をもっと見る →</a>
       </div>
     </div>
   </div>
@@ -390,7 +367,6 @@
         document.getElementById('form-view').style.display = 'none';
         document.getElementById('done-view').style.display = 'block';
         window.scrollTo(0, 0);
-        showMuOffer();
       } else {
         msg.textContent = data.error || '送信に失敗しました。時間をおいて再度お試しください。';
         msg.className = 'err';
@@ -403,24 +379,6 @@
     }
   });
 
-  // Lazy-load the wearmu.com product widget only after a booking is confirmed,
-  // so the form itself stays light. Fails silently if the CDN is unreachable.
-  function showMuOffer() {
-    const box = document.getElementById('mu-cross');
-    const s = document.createElement('script');
-    s.src = 'https://wearmu.com/embed.js';
-    s.defer = true;
-    s.onload = () => {
-      try {
-        if (window.MU && MU.mount) {
-          MU.mount({ count: 3, container: '#mu-mount', theme: 'dark', available: true, lang: 'ja' });
-          box.style.display = 'block';
-        }
-      } catch (_) {}
-    };
-    s.onerror = () => {}; // keep the link-out fallback hidden; no broken UI
-    document.head.appendChild(s);
-  }
 </script>
 </body>
 </html>

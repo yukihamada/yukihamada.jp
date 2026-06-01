@@ -721,10 +721,44 @@ fn meet_booked_slots() -> std::collections::HashSet<String> {
 // Serializes concurrent bookings so two people can't grab the same slot.
 static MEET_BOOK_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
+// Slot id "2026-06-03T14:00" is JST. True if its start is still in the future.
+fn meet_slot_is_future(id: &str) -> bool {
+    match chrono::NaiveDateTime::parse_from_str(id, "%Y-%m-%dT%H:%M") {
+        Ok(naive_jst) => (naive_jst - chrono::Duration::hours(9)) > chrono::Utc::now().naive_utc(),
+        Err(_) => true, // unparseable → don't hide (fail open)
+    }
+}
+
+// Admin auth for meet ops: env MEET_ADMIN_TOKEN (?token=) OR admin_auth cookie.
+fn meet_admin_authed(state: &AppState, headers: &HeaderMap, token_param: &str) -> bool {
+    if let Ok(t) = std::env::var("MEET_ADMIN_TOKEN") {
+        if !t.is_empty() && token_param == t {
+            return true;
+        }
+    }
+    headers
+        .get("cookie")
+        .and_then(|v| v.to_str().ok())
+        .map(|cookies| {
+            cookies.split(';').any(|part| {
+                if let Some(tok) = part.trim().strip_prefix("admin_auth=") {
+                    let s = state.admin_sessions.lock().unwrap();
+                    if let Some((email, exp)) = s.get(tok) {
+                        return (email == "mail@yukihamada.jp" || email == "yuki@hamada.tokyo")
+                            && *exp > now_secs();
+                    }
+                }
+                false
+            })
+        })
+        .unwrap_or(false)
+}
+
 async fn meet_page() -> impl IntoResponse {
     let booked = meet_booked_slots();
     let opts: String = MEET_SLOTS
         .iter()
+        .filter(|(id, _)| meet_slot_is_future(id)) // hide past slots
         .map(|(id, label)| {
             // label is "6/3(水) 14:00–15:00" — split into date + time for layout.
             let (date, time) = label.split_once(' ').unwrap_or((label, ""));
@@ -777,6 +811,16 @@ async fn meet_book(
             .into_response();
     };
     let label = *label;
+
+    // Reject slots that have already passed.
+    if !meet_slot_is_future(&body.slot) {
+        return (
+            StatusCode::BAD_REQUEST,
+            cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "この時間はすでに過ぎています。別の枠をお選びください。"})),
+        )
+            .into_response();
+    }
 
     let name = body.name.trim();
     let email = body.email.trim().to_lowercase();
@@ -901,6 +945,65 @@ async fn meet_book(
         Json(serde_json::json!({"ok": true, "slot_label": label})),
     )
         .into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct MeetAdminQuery {
+    #[serde(default)]
+    token: String,
+}
+
+// Admin: list all bookings (PII — gated).
+async fn meet_admin_list(
+    State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
+    Query(q): Query<MeetAdminQuery>,
+) -> Response {
+    if !meet_admin_authed(&state, &headers, &q.token) {
+        return (StatusCode::UNAUTHORIZED, cors_headers(), Json(serde_json::json!({"ok": false}))).into_response();
+    }
+    let data = std::fs::read_to_string(meet_data_file()).unwrap_or_default();
+    let bookings: Vec<serde_json::Value> =
+        data.lines().filter_map(|l| serde_json::from_str(l).ok()).collect();
+    (cors_headers(), Json(serde_json::json!({"ok": true, "bookings": bookings}))).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct MeetCancelReq {
+    #[serde(default)]
+    token: String,
+    slot: String,
+}
+
+// Admin: cancel a booking, freeing the slot.
+async fn meet_admin_cancel(
+    State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
+    axum::Json(body): axum::Json<MeetCancelReq>,
+) -> Response {
+    if !meet_admin_authed(&state, &headers, &body.token) {
+        return (StatusCode::UNAUTHORIZED, cors_headers(), Json(serde_json::json!({"ok": false}))).into_response();
+    }
+    let _guard = MEET_BOOK_LOCK.lock().unwrap();
+    let path = meet_data_file();
+    let data = std::fs::read_to_string(&path).unwrap_or_default();
+    let total = data.lines().count();
+    let kept: Vec<&str> = data
+        .lines()
+        .filter(|l| {
+            serde_json::from_str::<serde_json::Value>(l)
+                .ok()
+                .and_then(|v| v.get("slot").and_then(|s| s.as_str()).map(|s| s != body.slot))
+                .unwrap_or(true) // keep unparseable lines
+        })
+        .collect();
+    let removed = total - kept.len();
+    let mut out = kept.join("\n");
+    if !out.is_empty() {
+        out.push('\n');
+    }
+    let _ = std::fs::write(&path, out);
+    (cors_headers(), Json(serde_json::json!({"ok": true, "removed": removed, "slot": body.slot}))).into_response()
 }
 
 async fn soluna_page() -> impl IntoResponse {
@@ -5877,6 +5980,9 @@ async fn main() {
         .route("/meet", get(meet_page))
         .route("/api/meet/book", post(meet_book))
         .route("/api/meet/book", axum::routing::options(options_cors))
+        .route("/api/meet/admin/list", get(meet_admin_list))
+        .route("/api/meet/admin/cancel", post(meet_admin_cancel))
+        .route("/api/meet/admin/cancel", axum::routing::options(options_cors))
         .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
         .route("/blog/{slug}", get(blog_post))
