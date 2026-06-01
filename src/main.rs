@@ -721,6 +721,97 @@ fn meet_booked_slots() -> std::collections::HashSet<String> {
 // Serializes concurrent bookings so two people can't grab the same slot.
 static MEET_BOOK_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
 
+// Cached busy intervals (unix start,end) from the Google Calendar ICS feed + fetch time.
+static GCAL_BUSY: std::sync::Mutex<Option<(Vec<(i64, i64)>, u64)>> = std::sync::Mutex::new(None);
+
+// Parse one ICS DTSTART/DTEND line → unix seconds. Handles UTC (…Z), all-day
+// (VALUE=DATE), and local/TZID datetimes (assumed JST = Yuki's calendar tz).
+fn parse_ics_dt(line: &str) -> Option<i64> {
+    let val = line.rsplit(':').next()?.trim();
+    if let Some(utc) = val.strip_suffix('Z') {
+        let n = chrono::NaiveDateTime::parse_from_str(utc, "%Y%m%dT%H%M%S").ok()?;
+        return Some(n.and_utc().timestamp());
+    }
+    if val.len() == 8 {
+        let d = chrono::NaiveDate::parse_from_str(val, "%Y%m%d").ok()?;
+        let n = d.and_hms_opt(0, 0, 0)?;
+        return Some((n - chrono::Duration::hours(9)).and_utc().timestamp());
+    }
+    let n = chrono::NaiveDateTime::parse_from_str(val, "%Y%m%dT%H%M%S").ok()?;
+    Some((n - chrono::Duration::hours(9)).and_utc().timestamp())
+}
+
+fn parse_ics_busy(ics: &str) -> Vec<(i64, i64)> {
+    let mut out = Vec::new();
+    let (mut s, mut e, mut in_ev) = (None, None, false);
+    for line in ics.lines() {
+        let line = line.trim_end();
+        if line.starts_with("BEGIN:VEVENT") {
+            in_ev = true;
+            s = None;
+            e = None;
+        } else if line.starts_with("END:VEVENT") {
+            match (s, e) {
+                (Some(a), Some(b)) if b > a => out.push((a, b)),
+                (Some(a), _) => out.push((a, a + 3600)), // no/invalid end → assume 1h
+                _ => {}
+            }
+            in_ev = false;
+        } else if in_ev && line.starts_with("DTSTART") {
+            s = parse_ics_dt(line);
+        } else if in_ev && line.starts_with("DTEND") {
+            e = parse_ics_dt(line);
+        }
+    }
+    out
+}
+
+// Busy intervals from GCAL_ICS_URL (Google Calendar secret iCal address).
+// Cached 5 min. Fail-open: unset/unfetchable → empty (no slots hidden).
+async fn meet_busy_intervals() -> Vec<(i64, i64)> {
+    let url = match std::env::var("GCAL_ICS_URL") {
+        Ok(u) if !u.is_empty() => u,
+        _ => return Vec::new(),
+    };
+    {
+        let c = GCAL_BUSY.lock().unwrap();
+        if let Some((iv, at)) = c.as_ref() {
+            if now_secs() < at + 300 {
+                return iv.clone();
+            }
+        }
+    }
+    let fetched = reqwest::Client::new()
+        .get(&url)
+        .timeout(std::time::Duration::from_secs(6))
+        .send()
+        .await
+        .ok();
+    let body = match fetched {
+        Some(r) => r.text().await.unwrap_or_default(),
+        None => {
+            // network failure → reuse stale cache if any, else empty
+            let c = GCAL_BUSY.lock().unwrap();
+            return c.as_ref().map(|(iv, _)| iv.clone()).unwrap_or_default();
+        }
+    };
+    let iv = parse_ics_busy(&body);
+    *GCAL_BUSY.lock().unwrap() = Some((iv.clone(), now_secs()));
+    iv
+}
+
+// True if a slot (JST start, +1h) overlaps any busy interval.
+fn meet_slot_overlaps_busy(id: &str, busy: &[(i64, i64)]) -> bool {
+    match chrono::NaiveDateTime::parse_from_str(id, "%Y-%m-%dT%H:%M") {
+        Ok(n) => {
+            let start = (n - chrono::Duration::hours(9)).and_utc().timestamp();
+            let end = start + 3600;
+            busy.iter().any(|(bs, be)| start < *be && *bs < end)
+        }
+        Err(_) => false,
+    }
+}
+
 // Slot id "2026-06-03T14:00" is JST. True if its start is still in the future.
 fn meet_slot_is_future(id: &str) -> bool {
     match chrono::NaiveDateTime::parse_from_str(id, "%Y-%m-%dT%H:%M") {
@@ -756,9 +847,11 @@ fn meet_admin_authed(state: &AppState, headers: &HeaderMap, token_param: &str) -
 
 async fn meet_page() -> impl IntoResponse {
     let booked = meet_booked_slots();
+    let busy = meet_busy_intervals().await; // Google Calendar freebusy (empty if unconfigured)
     let opts: String = MEET_SLOTS
         .iter()
-        .filter(|(id, _)| meet_slot_is_future(id)) // hide past slots
+        // hide past slots and ones that clash with a real calendar event
+        .filter(|(id, _)| meet_slot_is_future(id) && !meet_slot_overlaps_busy(id, &busy))
         .map(|(id, label)| {
             // label is "6/3(水) 14:00–15:00" — split into date + time for layout.
             let (date, time) = label.split_once(' ').unwrap_or((label, ""));
@@ -818,6 +911,16 @@ async fn meet_book(
             StatusCode::BAD_REQUEST,
             cors_headers(),
             Json(serde_json::json!({"ok": false, "error": "この時間はすでに過ぎています。別の枠をお選びください。"})),
+        )
+            .into_response();
+    }
+
+    // Reject slots that clash with a real calendar event (freebusy).
+    if meet_slot_overlaps_busy(&body.slot, &meet_busy_intervals().await) {
+        return (
+            StatusCode::CONFLICT,
+            cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "この時間は予定が入りました。別の枠をお選びください。"})),
         )
             .into_response();
     }
