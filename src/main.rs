@@ -681,7 +681,7 @@ async fn notary_options() -> impl IntoResponse {
 // ── Meeting scheduler (self-serve slot picker) ──
 // NOTE: meet.html is embedded via include_str! below — bump this marker when the
 // template changes so the cloud build recompiles instead of reusing a cached
-// object with a stale template (workspace include_str! gotcha). marker: og-2
+// object with a stale template (workspace include_str! gotcha). marker: meet-online-1
 
 // Single source of truth for /meet candidate slots: (id, human label in JST).
 // Edit this list to change the offered times; the page and the booking
@@ -702,6 +702,33 @@ const MEET_SLOTS: &[(&str, &str)] = &[
 fn meet_data_file() -> String {
     let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
     format!("{dir}/meetings.jsonl")
+}
+
+fn meet_busy_file() -> String {
+    let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+    format!("{dir}/meet_busy.json")
+}
+
+// Externally-reported busy slot ids (pushed by the local gog calendar sync).
+// Stored as {"ts": unix, "slots": [...]}. Fail-open: ignored if older than 2h
+// so a stopped sync reverts to showing all slots rather than hiding everything.
+fn meet_external_busy() -> std::collections::HashSet<String> {
+    let mut set = std::collections::HashSet::new();
+    if let Ok(data) = std::fs::read_to_string(meet_busy_file()) {
+        if let Ok(v) = serde_json::from_str::<serde_json::Value>(&data) {
+            let ts = v.get("ts").and_then(|x| x.as_u64()).unwrap_or(0);
+            if now_secs().saturating_sub(ts) <= 7200 {
+                if let Some(arr) = v.get("slots").and_then(|x| x.as_array()) {
+                    for s in arr {
+                        if let Some(s) = s.as_str() {
+                            set.insert(s.to_string());
+                        }
+                    }
+                }
+            }
+        }
+    }
+    set
 }
 
 // Slots that already have a confirmed booking (1 meeting per slot).
@@ -848,11 +875,14 @@ fn meet_admin_authed(state: &AppState, headers: &HeaderMap, token_param: &str) -
 
 async fn meet_page() -> impl IntoResponse {
     let booked = meet_booked_slots();
-    let busy = meet_busy_intervals().await; // Google Calendar freebusy (empty if unconfigured)
+    let busy = meet_busy_intervals().await; // Google Calendar freebusy via ICS (empty if unconfigured)
+    let ext_busy = meet_external_busy(); // freebusy pushed by the local gog sync
     let opts: String = MEET_SLOTS
         .iter()
         // hide past slots and ones that clash with a real calendar event
-        .filter(|(id, _)| meet_slot_is_future(id) && !meet_slot_overlaps_busy(id, &busy))
+        .filter(|(id, _)| {
+            meet_slot_is_future(id) && !meet_slot_overlaps_busy(id, &busy) && !ext_busy.contains(*id)
+        })
         .map(|(id, label)| {
             // label is "6/3(水) 14:00–15:00" — split into date + time for layout.
             let (date, time) = label.split_once(' ').unwrap_or((label, ""));
@@ -916,7 +946,17 @@ async fn meet_book(
             .into_response();
     }
 
-    // Reject slots that clash with a real calendar event (freebusy).
+    // Reject slots reported busy by the local calendar sync.
+    if meet_external_busy().contains(&body.slot) {
+        return (
+            StatusCode::CONFLICT,
+            cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "この時間は予定が入りました。別の枠をお選びください。"})),
+        )
+            .into_response();
+    }
+
+    // Reject slots that clash with a real calendar event (ICS freebusy).
     if meet_slot_overlaps_busy(&body.slot, &meet_busy_intervals().await) {
         return (
             StatusCode::CONFLICT,
@@ -948,6 +988,21 @@ async fn meet_book(
             .into_response();
     }
 
+    // Mint a unique online meeting room (Jitsi Meet — no API key / no cost).
+    // Room name is an unguessable 16-hex slug so only people with the link join.
+    let meet_url = {
+        use std::hash::{Hash, Hasher};
+        let mut h = std::collections::hash_map::DefaultHasher::new();
+        body.slot.hash(&mut h);
+        email.hash(&mut h);
+        name.hash(&mut h);
+        chrono::Utc::now()
+            .timestamp_nanos_opt()
+            .unwrap_or_default()
+            .hash(&mut h);
+        format!("https://meet.jit.si/yukihamada-{:016x}", h.finish())
+    };
+
     // Reject double-booking: serialize concurrent bookings, then re-check.
     let record = serde_json::json!({
         "ts": chrono::Utc::now().to_rfc3339(),
@@ -957,6 +1012,7 @@ async fn meet_book(
         "email": email,
         "message": message,
         "referrer": referrer,
+        "meet_url": meet_url,
     });
     {
         let _guard = MEET_BOOK_LOCK.lock().unwrap();
@@ -982,7 +1038,7 @@ async fn meet_book(
     // Notify Yuki via Telegram.
     if let Some(tok) = state.telegram_token.clone() {
         let text = format!(
-            "📅 yukihamada.jp #日程確定\n\n{label}\n👤 {name}\n✉️ {email}{}{}",
+            "📅 yukihamada.jp #日程確定\n\n{label}\n👤 {name}\n✉️ {email}\n🔗 {meet_url}{}{}",
             if referrer.is_empty() { String::new() } else { format!("\n🤝 紹介: {referrer}") },
             if message.is_empty() { String::new() } else { format!("\n📝 {message}") }
         );
@@ -1004,11 +1060,12 @@ async fn meet_book(
         let email_s = email.clone();
         let message_s = message.clone();
         let referrer_s = referrer.clone();
+        let meet_url_s = meet_url.clone();
         tokio::spawn(async move {
             let client = reqwest::Client::new();
             // To the counterpart.
             let body_text = format!(
-                "{name_s} 様\n\n下記の日程で承りました。\n\n■ 日時: {label_s} (日本時間)\n\n濱田から追って連絡が入る場合があります。\nご不明点はこのメールへの返信でお問い合わせください。\n\n— 濱田優貴 / yukihamada.jp"
+                "{name_s} 様\n\n下記の日程で承りました。\n\n■ 日時: {label_s} (日本時間)\n■ オンライン会議室（当日この URL を開いてください）:\n  {meet_url_s}\n\n濱田から追って連絡が入る場合があります。\nご不明点はこのメールへの返信でお問い合わせください。\n\n— 濱田優貴 / yukihamada.jp"
             );
             let _ = client
                 .post("https://api.resend.com/emails")
@@ -1025,7 +1082,7 @@ async fn meet_book(
                 .await;
             // Notification copy to Yuki.
             let notify = format!(
-                "日程が確定しました。\n\n日時: {label_s}\n相手: {name_s} <{email_s}>{}{}",
+                "日程が確定しました。\n\n日時: {label_s}\n相手: {name_s} <{email_s}>\n会議室: {meet_url_s}{}{}",
                 if referrer_s.is_empty() { String::new() } else { format!("\n紹介: {referrer_s}") },
                 if message_s.is_empty() { String::new() } else { format!("\nメッセージ: {message_s}") }
             );
@@ -1046,7 +1103,7 @@ async fn meet_book(
 
     (
         cors_headers(),
-        Json(serde_json::json!({"ok": true, "slot_label": label})),
+        Json(serde_json::json!({"ok": true, "slot_label": label, "meet_url": meet_url})),
     )
         .into_response()
 }
@@ -1069,7 +1126,38 @@ async fn meet_admin_list(
     let data = std::fs::read_to_string(meet_data_file()).unwrap_or_default();
     let bookings: Vec<serde_json::Value> =
         data.lines().filter_map(|l| serde_json::from_str(l).ok()).collect();
-    (cors_headers(), Json(serde_json::json!({"ok": true, "bookings": bookings}))).into_response()
+    let all_slots: Vec<&str> = MEET_SLOTS.iter().map(|(id, _)| *id).collect();
+    (
+        cors_headers(),
+        Json(serde_json::json!({"ok": true, "bookings": bookings, "all_slots": all_slots})),
+    )
+        .into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct MeetBusyReq {
+    #[serde(default)]
+    token: String,
+    #[serde(default)]
+    slots: Vec<String>,
+}
+
+// Admin/sync: replace the externally-reported busy slot set (from local gog sync).
+async fn meet_admin_busy(
+    State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
+    axum::Json(body): axum::Json<MeetBusyReq>,
+) -> Response {
+    if !meet_admin_authed(&state, &headers, &body.token) {
+        return (StatusCode::UNAUTHORIZED, cors_headers(), Json(serde_json::json!({"ok": false}))).into_response();
+    }
+    let path = meet_busy_file();
+    if let Some(dir) = std::path::Path::new(&path).parent() {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    let payload = serde_json::json!({"ts": now_secs(), "slots": body.slots});
+    let _ = std::fs::write(&path, payload.to_string());
+    (cors_headers(), Json(serde_json::json!({"ok": true, "busy": body.slots.len()}))).into_response()
 }
 
 #[derive(serde::Deserialize)]
@@ -6087,6 +6175,8 @@ async fn main() {
         .route("/api/meet/admin/list", get(meet_admin_list))
         .route("/api/meet/admin/cancel", post(meet_admin_cancel))
         .route("/api/meet/admin/cancel", axum::routing::options(options_cors))
+        .route("/api/meet/admin/busy", post(meet_admin_busy))
+        .route("/api/meet/admin/busy", axum::routing::options(options_cors))
         .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
         .route("/blog/{slug}", get(blog_post))
@@ -6220,7 +6310,8 @@ async fn main() {
         .layer(axum::middleware::from_fn(security_headers))
         .layer(axum::middleware::from_fn(redirect_hamada_tokyo));
 
-    let addr = "0.0.0.0:8080";
+    let port = std::env::var("PORT").unwrap_or_else(|_| "8080".to_string());
+    let addr = format!("0.0.0.0:{port}");
     println!("listening on http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
