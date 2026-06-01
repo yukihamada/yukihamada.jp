@@ -686,14 +686,15 @@ async fn notary_options() -> impl IntoResponse {
 // Single source of truth for /meet candidate slots: (id, human label in JST).
 // Edit this list to change the offered times; the page and the booking
 // validator both read from here.
+// 候補枠。2026-06-01 に gog でYukiの実カレンダーと突合し、予定とぶつかる
+// 6/3 14:00・6/10 14:00 を除外（残りは実空き確認済み）。GCAL_ICS_URL を
+// 設定すれば以後この突合は自動（freebusyで動的非表示）になる。
 const MEET_SLOTS: &[(&str, &str)] = &[
-    ("2026-06-03T14:00", "6/3(水) 14:00–15:00"),
     ("2026-06-03T16:00", "6/3(水) 16:00–17:00"),
     ("2026-06-04T10:00", "6/4(木) 10:00–11:00"),
     ("2026-06-05T15:00", "6/5(金) 15:00–16:00"),
     // 来週分（直近が合わない相手向け）
     ("2026-06-09T11:00", "6/9(火) 11:00–12:00"),
-    ("2026-06-10T14:00", "6/10(水) 14:00–15:00"),
     ("2026-06-11T16:00", "6/11(木) 16:00–17:00"),
 ];
 
