@@ -693,18 +693,54 @@ const MEET_SLOTS: &[(&str, &str)] = &[
     ("2026-06-11T16:00", "6/11(木) 16:00–17:00"),
 ];
 
+// Meeting bookings file. Dir overridable via MEET_DATA_DIR (default /data on Fly).
+fn meet_data_file() -> String {
+    let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+    format!("{dir}/meetings.jsonl")
+}
+
+// Slots that already have a confirmed booking (1 meeting per slot).
+fn meet_booked_slots() -> std::collections::HashSet<String> {
+    let mut set = std::collections::HashSet::new();
+    if let Ok(data) = std::fs::read_to_string(meet_data_file()) {
+        for line in data.lines() {
+            if let Ok(v) = serde_json::from_str::<serde_json::Value>(line) {
+                if let Some(s) = v.get("slot").and_then(|x| x.as_str()) {
+                    set.insert(s.to_string());
+                }
+            }
+        }
+    }
+    set
+}
+
+// Serializes concurrent bookings so two people can't grab the same slot.
+static MEET_BOOK_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
 async fn meet_page() -> impl IntoResponse {
+    let booked = meet_booked_slots();
     let opts: String = MEET_SLOTS
         .iter()
         .map(|(id, label)| {
             // label is "6/3(水) 14:00–15:00" — split into date + time for layout.
             let (date, time) = label.split_once(' ').unwrap_or((label, ""));
-            format!(
-                "<label class=\"slot\"><input type=\"radio\" name=\"slot\" value=\"{id}\">\
-                 <span class=\"moon\"></span>\
-                 <span class=\"slot-meta\"><span class=\"slot-date\">{date}</span>\
-                 <span class=\"slot-time\">{time}</span></span></label>"
-            )
+            if booked.contains(*id) {
+                // Already taken — show but disable (no radio, "満席" badge).
+                format!(
+                    "<label class=\"slot slot-taken\">\
+                     <span class=\"moon\"></span>\
+                     <span class=\"slot-meta\"><span class=\"slot-date\">{date}</span>\
+                     <span class=\"slot-time\">{time}</span></span>\
+                     <span class=\"slot-badge\">満席</span></label>"
+                )
+            } else {
+                format!(
+                    "<label class=\"slot\"><input type=\"radio\" name=\"slot\" value=\"{id}\">\
+                     <span class=\"moon\"></span>\
+                     <span class=\"slot-meta\"><span class=\"slot-date\">{date}</span>\
+                     <span class=\"slot-time\">{time}</span></span></label>"
+                )
+            }
         })
         .collect();
     let html = include_str!("../templates/meet.html").replace("<!--SLOTS-->", &opts);
@@ -760,7 +796,7 @@ async fn meet_book(
             .into_response();
     }
 
-    // Persist as an append-only JSONL record.
+    // Reject double-booking: serialize concurrent bookings, then re-check.
     let record = serde_json::json!({
         "ts": chrono::Utc::now().to_rfc3339(),
         "slot": body.slot,
@@ -770,12 +806,26 @@ async fn meet_book(
         "message": message,
         "referrer": referrer,
     });
-    let _ = std::fs::create_dir_all("/data");
-    let _ = std::fs::OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open("/data/meetings.jsonl")
-        .and_then(|mut f| std::io::Write::write_all(&mut f, format!("{record}\n").as_bytes()));
+    {
+        let _guard = MEET_BOOK_LOCK.lock().unwrap();
+        if meet_booked_slots().contains(&body.slot) {
+            return (
+                StatusCode::CONFLICT,
+                cors_headers(),
+                Json(serde_json::json!({"ok": false, "error": "この時間は直前に埋まりました。別の枠をお選びください。"})),
+            )
+                .into_response();
+        }
+        let path = meet_data_file();
+        if let Some(dir) = std::path::Path::new(&path).parent() {
+            let _ = std::fs::create_dir_all(dir);
+        }
+        let _ = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&path)
+            .and_then(|mut f| std::io::Write::write_all(&mut f, format!("{record}\n").as_bytes()));
+    }
 
     // Notify Yuki via Telegram.
     if let Some(tok) = state.telegram_token.clone() {

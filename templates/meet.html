@@ -119,6 +119,35 @@
     }
     .slot:has(input:checked) .slot-date { color: var(--text); }
 
+    /* taken / sold-out slot */
+    .slot-taken { cursor: not-allowed; opacity: .45; }
+    .slot-taken:hover { border-color: var(--border); transform: none; }
+    .slot-taken .slot-time { text-decoration: line-through; }
+    .slot-badge {
+      margin-left: auto; font-size: .72rem; font-weight: 700; color: var(--text-muted);
+      border: 1px solid var(--border); border-radius: 999px; padding: 3px 10px;
+    }
+
+    /* dog note */
+    .dog-note {
+      font-size: .82rem; color: var(--text-muted); margin: -18px 0 30px; line-height: 1.6;
+      padding: 10px 14px; border-left: 2px solid var(--amber); background: rgba(255,255,255,.015);
+    }
+    .dog-note a { color: var(--amber); text-decoration: none; border-bottom: 1px dashed var(--amber); }
+
+    /* proposal patterns on confirmation */
+    .props { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); text-align: left; }
+    .prop {
+      display: block; padding: 16px 18px; border: 1px solid var(--border); border-radius: 13px;
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.008));
+      margin-bottom: 11px; transition: border-color .15s, transform .15s;
+    }
+    .prop:hover { border-color: rgba(232,160,76,.5); transform: translateY(-1px); }
+    .prop-h { display: flex; align-items: baseline; gap: 10px; margin-bottom: 5px; }
+    .prop-n { font-size: .78rem; font-weight: 800; color: var(--amber); }
+    .prop-t { font-size: 1.05rem; font-weight: 700; }
+    .prop-d { font-size: .88rem; color: var(--text-muted); line-height: 1.6; margin: 0; }
+
     /* fields */
     .field { margin-bottom: 16px; }
     .field label { display: block; font-size: .82rem; color: var(--text-muted); margin-bottom: 7px; font-weight: 600; }
@@ -201,6 +230,8 @@
         <div class="meet-info-row"><span>内容</span><b id="meet-topic">ご相談・情報交換</b></div>
       </div>
 
+      <p class="dog-note">🐶 対面の場合、小型犬が同席することがあります（ビションプー／毛が抜けにくく、Good Behavior 認定済みのお利口さんです）。<a id="dog-link" href="https://wearmu.com/elepote" target="_blank" rel="noopener">▶ ELE</a></p>
+
       <form id="meet-form" autocomplete="on">
         <p class="step-label">時間を選ぶ</p>
         <div class="slots">
@@ -235,6 +266,23 @@
       <div class="cal-row">
         <a id="cal-google" class="cal-btn" target="_blank" rel="noopener">Google カレンダーに追加</a>
         <a id="cal-ics" class="cal-btn ghost" download="meeting.ics">.ics をダウンロード</a>
+      </div>
+
+      <div class="props">
+        <p class="step-label">当日、こんなテーマで話せます</p>
+        <div class="prop">
+          <div class="prop-h"><span class="prop-n">01</span><span class="prop-t">2週間で、一個つくる</span></div>
+          <p class="prop-d">課題を1つください。費用の話の前に、Enabler流で動く叩き台を2週間でお見せします。</p>
+        </div>
+        <div class="prop">
+          <div class="prop-h"><span class="prop-n">02</span><span class="prop-t">プロダクト / AI の壁打ち</span></div>
+          <p class="prop-d">ex-Mercari CPO の視点で、プロダクト設計・AI活用・組織を一緒に。今ある事業の解像度を上げます。</p>
+        </div>
+        <div class="prop">
+          <div class="prop-h"><span class="prop-n">03</span><span class="prop-t">新規事業の共同実験</span></div>
+          <p class="prop-d">bim.house・SOLUNA・wearmu などの実装力で、御社と何ができるか。小さく一個、共同で試します。</p>
+        </div>
+        <p style="color:var(--text-muted);font-size:.84rem;margin-top:12px;">気になるテーマがあれば、当日ひとことお伝えください。</p>
       </div>
 
       <div class="mu-cross" id="mu-cross" style="display:none;">
