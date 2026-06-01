@@ -1138,12 +1138,18 @@ async fn ws_room(
     if room.is_empty() {
         return StatusCode::BAD_REQUEST.into_response();
     }
+    // Small-group mesh: every peer connects to every other peer (N² links), so
+    // cap participants to keep bandwidth/CPU sane. Beyond this an SFU is needed.
+    const ROOM_CAP: usize = 6;
     let tx = {
         let mut rooms = state.rtc_rooms.lock().unwrap();
-        rooms
+        let tx = rooms
             .entry(room.clone())
-            .or_insert_with(|| broadcast::channel::<String>(64).0)
-            .clone()
+            .or_insert_with(|| broadcast::channel::<String>(128).0);
+        if tx.receiver_count() >= ROOM_CAP {
+            return StatusCode::SERVICE_UNAVAILABLE.into_response();
+        }
+        tx.clone()
     };
     ws.on_upgrade(move |socket| handle_ws_room(socket, state, room, tx))
 }
@@ -1172,13 +1178,16 @@ async fn handle_ws_room(
             r = rx.recv() => {
                 match r {
                     Ok(text) => {
-                        // Never echo a peer's own message back to itself.
-                        let from_self = serde_json::from_str::<serde_json::Value>(&text)
-                            .ok()
-                            .and_then(|v| v.get("from").and_then(|x| x.as_u64()))
-                            .map(|f| f == me)
-                            .unwrap_or(false);
-                        if from_self { continue; }
+                        // Deliver only what this peer should see:
+                        //  - never echo a peer's own message back to itself (`from` == me)
+                        //  - directed messages (offer/answer/candidate carry `to`) go only
+                        //    to the addressed peer; broadcast ones (join/leave) have no `to`.
+                        if let Ok(v) = serde_json::from_str::<serde_json::Value>(&text) {
+                            if v.get("from").and_then(|x| x.as_u64()) == Some(me) { continue; }
+                            if let Some(to) = v.get("to").and_then(|x| x.as_u64()) {
+                                if to != me { continue; }
+                            }
+                        }
                         if socket.send(Message::Text(text.into())).await.is_err() { break; }
                     }
                     Err(broadcast::error::RecvError::Closed) => break,

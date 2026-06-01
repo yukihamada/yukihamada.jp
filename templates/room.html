@@ -28,48 +28,59 @@
     header h1 { font-size: 1rem; font-weight: 700; margin: 0; letter-spacing: .02em; }
     header .sub { color: var(--muted); font-size: .8rem; margin-left: auto; }
 
-    .stage {
-      position: relative; flex: 1; min-height: 0;
-      display: flex; align-items: center; justify-content: center; padding: 16px;
+    .stage { position: relative; flex: 1; min-height: 0; padding: 14px; }
+
+    /* video grid — auto-fits 1..6 tiles */
+    .grid {
+      display: grid; gap: 10px; width: 100%; height: 100%;
+      grid-template-columns: 1fr; align-content: center;
     }
-    #remote {
-      width: 100%; height: 100%; object-fit: contain;
-      background: #000; border-radius: 16px;
+    .grid.n2 { grid-template-columns: 1fr 1fr; }
+    .grid.n3, .grid.n4 { grid-template-columns: 1fr 1fr; }
+    .grid.n5, .grid.n6 { grid-template-columns: 1fr 1fr 1fr; }
+    @media (max-width: 640px) {
+      .grid.n3, .grid.n4, .grid.n5, .grid.n6 { grid-template-columns: 1fr 1fr; }
     }
-    /* local self-view, picture-in-picture corner */
-    #local {
-      position: absolute; right: 28px; bottom: 28px;
-      width: 26vw; max-width: 220px; min-width: 120px; aspect-ratio: 4/3;
-      object-fit: cover; border-radius: 12px; transform: scaleX(-1);
-      border: 1px solid rgba(255,255,255,.18);
-      box-shadow: 0 8px 30px rgba(0,0,0,.5); background: #000; z-index: 3;
+    .tile {
+      position: relative; background: #000; border-radius: 14px; overflow: hidden;
+      min-height: 0; aspect-ratio: 4/3; border: 1px solid rgba(255,255,255,.08);
+    }
+    .tile.solo { aspect-ratio: auto; height: 100%; }
+    .tile video { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .tile .name {
+      position: absolute; left: 10px; bottom: 8px; z-index: 2;
+      font-size: .74rem; color: #fff; background: rgba(0,0,0,.5);
+      padding: 3px 9px; border-radius: 999px; backdrop-filter: blur(4px);
+    }
+    .tile.me video { transform: scaleX(-1); }
+    .tile.connecting::after {
+      content: "接続中…"; position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center; color: var(--muted); font-size: .85rem;
     }
 
-    /* waiting / status overlay */
+    /* waiting overlay (only when alone) */
     .overlay {
-      position: absolute; inset: 0; z-index: 2;
+      position: absolute; inset: 14px; z-index: 5; border-radius: 14px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 18px; text-align: center; padding: 24px;
-      background: radial-gradient(circle at center, rgba(232,160,76,.10), transparent 60%);
-      transition: opacity .4s;
+      gap: 16px; text-align: center; padding: 24px;
+      background: rgba(8,8,10,.78);
+      background-image: radial-gradient(circle at center, rgba(232,160,76,.12), transparent 60%);
     }
     .overlay .moon-big {
-      width: 80px; height: 80px; border-radius: 50%;
+      width: 76px; height: 76px; border-radius: 50%;
       background: radial-gradient(circle at 34% 30%, #fff6e8, var(--amber) 60%, #b97a2e);
       box-shadow: 0 0 0 1px rgba(232,160,76,.4), 0 12px 50px rgba(232,160,76,.5);
       animation: pulse 2.6s ease-in-out infinite;
     }
     @keyframes pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.06); opacity: .82; } }
-    .overlay h2 { margin: 0; font-size: 1.3rem; font-weight: 700; }
-    .overlay p { margin: 0; color: var(--muted); font-size: .92rem; line-height: 1.7; max-width: 360px; }
+    .overlay h2 { margin: 0; font-size: 1.25rem; font-weight: 700; }
+    .overlay p { margin: 0; color: var(--muted); font-size: .9rem; line-height: 1.7; max-width: 360px; }
     .overlay .link-btn {
       margin-top: 4px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16);
       color: var(--text); padding: 10px 18px; border-radius: 999px; font-size: .86rem; cursor: pointer;
     }
-    .overlay .link-btn:active { transform: scale(.97); }
     .overlay[hidden] { display: none; }
 
-    /* controls bar */
     .controls {
       display: flex; align-items: center; justify-content: center; gap: 14px;
       padding: 16px; padding-bottom: max(16px, env(safe-area-inset-bottom));
@@ -85,7 +96,6 @@
     .ctl.leave:hover { background: #d8463a; }
 
     .ended { text-align: center; padding: 40px 24px; margin: auto; }
-    .ended h2 { font-weight: 700; }
     .ended a { color: var(--amber); }
   </style>
 </head>
@@ -97,13 +107,17 @@
   </header>
 
   <div class="stage" id="stage">
-    <video id="remote" autoplay playsinline></video>
-    <video id="local" autoplay playsinline muted></video>
+    <div class="grid" id="grid">
+      <div class="tile me solo" id="tile-me">
+        <video id="local" autoplay playsinline muted></video>
+        <span class="name">あなた</span>
+      </div>
+    </div>
 
     <div class="overlay" id="overlay">
       <div class="moon-big"></div>
-      <h2 id="ov-title">相手の参加を待っています</h2>
-      <p id="ov-text">このページを開いたままお待ちください。相手が同じURLを開くと、自動的につながります。</p>
+      <h2 id="ov-title">参加者を待っています</h2>
+      <p id="ov-text">このページを開いたままお待ちください。同じURLを開いた人が、自動的に会議に加わります。（最大6人）</p>
       <button class="link-btn" id="copy-link">招待リンクをコピー</button>
     </div>
   </div>
@@ -120,25 +134,30 @@
     const ICE = { iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun.cloudflare.com:3478' },
     ] };
 
-    const remoteV = document.getElementById('remote');
-    const localV  = document.getElementById('local');
+    const grid = document.getElementById('grid');
+    const localV = document.getElementById('local');
+    const meTile = document.getElementById('tile-me');
     const overlay = document.getElementById('overlay');
     const statusEl = document.getElementById('status');
-    const ovTitle = document.getElementById('ov-title');
-    const ovText  = document.getElementById('ov-text');
 
-    let myId = null, pc = null, localStream = null, ws = null;
-    let connected = false;
+    let myId = null, ws = null, localStream = null;
+    const peers = new Map(); // peerId -> { pc, tile, video }
 
-    function setStatus(t) { statusEl.textContent = t; }
-    function showOverlay(title, text) {
-      if (title) ovTitle.textContent = title;
-      if (text) ovText.textContent = text;
-      overlay.hidden = false;
+    function remoteCount() { return peers.size; }
+
+    function relayout() {
+      const n = remoteCount() + 1; // +1 = me
+      grid.className = 'grid n' + Math.min(n, 6);
+      meTile.classList.toggle('solo', n === 1);
+      peers.forEach(p => p.tile.classList.toggle('solo', false));
+      if (n > 1) overlay.hidden = true; else overlay.hidden = false;
+      statusEl.textContent = n > 1 ? ('通話中 · ' + n + '人') : '参加者を待っています';
     }
-    function hideOverlay() { overlay.hidden = true; }
+
+    function send(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
 
     document.getElementById('copy-link').onclick = async () => {
       try { await navigator.clipboard.writeText(location.href);
@@ -146,42 +165,64 @@
       } catch (_) {}
     };
 
-    function send(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
+    function addTile(peerId) {
+      const tile = document.createElement('div');
+      tile.className = 'tile connecting';
+      tile.id = 'tile-' + peerId;
+      const v = document.createElement('video');
+      v.autoplay = true; v.playsInline = true;
+      const tag = document.createElement('span');
+      tag.className = 'name'; tag.textContent = '参加者';
+      tile.appendChild(v); tile.appendChild(tag);
+      grid.appendChild(tile);
+      return { tile, video: v };
+    }
 
-    function newPC() {
-      pc = new RTCPeerConnection(ICE);
+    function getPeer(peerId) {
+      let p = peers.get(peerId);
+      if (p) return p;
+      const { tile, video } = addTile(peerId);
+      const pc = new RTCPeerConnection(ICE);
       localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
       pc.ontrack = (e) => {
-        remoteV.srcObject = e.streams[0];
-        connected = true; hideOverlay(); setStatus('通話中');
+        video.srcObject = e.streams[0];
+        tile.classList.remove('connecting');
       };
-      pc.onicecandidate = (e) => { if (e.candidate) send({ t: 'candidate', candidate: e.candidate }); };
+      pc.onicecandidate = (e) => { if (e.candidate) send({ t: 'candidate', to: peerId, candidate: e.candidate }); };
       pc.onconnectionstatechange = () => {
-        const s = pc.connectionState;
-        if (s === 'connected') { setStatus('通話中'); }
-        else if (s === 'disconnected' || s === 'failed') {
-          if (connected) showOverlay('再接続を試みています…', 'ネットワークが不安定です。少しお待ちください。');
-          setStatus('再接続中…');
-        }
+        if (pc.connectionState === 'failed' || pc.connectionState === 'closed') removePeer(peerId);
       };
-      return pc;
+      p = { pc, tile, video };
+      peers.set(peerId, p);
+      relayout();
+      return p;
+    }
+
+    function removePeer(peerId) {
+      const p = peers.get(peerId);
+      if (!p) return;
+      try { p.pc.close(); } catch (_) {}
+      try { p.tile.remove(); } catch (_) {}
+      peers.delete(peerId);
+      relayout();
     }
 
     async function init() {
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       } catch (err) {
-        showOverlay('カメラ / マイクを使えません', 'ブラウザの権限を許可してから再読み込みしてください。');
-        setStatus('権限エラー');
+        overlay.hidden = false;
+        document.getElementById('ov-title').textContent = 'カメラ / マイクを使えません';
+        document.getElementById('ov-text').textContent = 'ブラウザの権限を許可してから再読み込みしてください。';
+        statusEl.textContent = '権限エラー';
         return;
       }
       localV.srcObject = localStream;
 
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
       ws = new WebSocket(`${proto}://${location.host}/ws/room/${room}`);
-
-      ws.onopen = () => setStatus('相手を待っています');
-      ws.onclose = () => { if (!connected) setStatus('切断されました'); };
+      ws.onopen = () => relayout();
+      ws.onclose = () => { if (remoteCount() === 0) statusEl.textContent = '切断されました'; };
 
       ws.onmessage = async (ev) => {
         let m; try { m = JSON.parse(ev.data); } catch (_) { return; }
@@ -189,42 +230,43 @@
         if (m.t === 'hello') { myId = m.id; return; }
 
         if (m.t === 'join') {
-          // Tie-break: the lower peer id sends the offer (avoids glare).
+          // For each pair, the LOWER peer id initiates the offer (avoids glare).
+          // Existing peers (lower id) offer to the newcomer (higher id).
           if (myId != null && myId < m.from) {
-            if (!pc) newPC();
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
-            send({ t: 'offer', sdp: pc.localDescription });
+            const p = getPeer(m.from);
+            const offer = await p.pc.createOffer();
+            await p.pc.setLocalDescription(offer);
+            send({ t: 'offer', to: m.from, sdp: p.pc.localDescription });
           }
           return;
         }
+
+        // All directed messages below must be addressed to me.
+        if (m.to != null && m.to !== myId) return;
+
         if (m.t === 'offer') {
-          if (!pc) newPC();
-          await pc.setRemoteDescription(m.sdp);
-          const ans = await pc.createAnswer();
-          await pc.setLocalDescription(ans);
-          send({ t: 'answer', sdp: pc.localDescription });
+          const p = getPeer(m.from);
+          await p.pc.setRemoteDescription(m.sdp);
+          const ans = await p.pc.createAnswer();
+          await p.pc.setLocalDescription(ans);
+          send({ t: 'answer', to: m.from, sdp: p.pc.localDescription });
           return;
         }
         if (m.t === 'answer') {
-          if (pc) await pc.setRemoteDescription(m.sdp);
+          const p = peers.get(m.from);
+          if (p) await p.pc.setRemoteDescription(m.sdp);
           return;
         }
         if (m.t === 'candidate') {
-          if (pc && m.candidate) { try { await pc.addIceCandidate(m.candidate); } catch (_) {} }
+          const p = peers.get(m.from);
+          if (p && m.candidate) { try { await p.pc.addIceCandidate(m.candidate); } catch (_) {} }
           return;
         }
-        if (m.t === 'leave') {
-          if (pc) { pc.close(); pc = null; }
-          remoteV.srcObject = null; connected = false;
-          showOverlay('相手が退出しました', '同じURLを開けば、もう一度つなぎ直せます。');
-          setStatus('相手を待っています');
-          return;
-        }
+        if (m.t === 'leave') { removePeer(m.from); return; }
       };
     }
 
-    // ── Controls ──
+    // ── Controls (tracks are shared, so toggling enabled affects every peer) ──
     document.getElementById('btn-mic').onclick = function () {
       if (!localStream) return;
       const on = localStream.getAudioTracks().some(t => (t.enabled = !t.enabled));
@@ -234,11 +276,10 @@
       if (!localStream) return;
       const on = localStream.getVideoTracks().some(t => (t.enabled = !t.enabled));
       this.classList.toggle('off', !on); this.textContent = on ? '🎥' : '🚫';
-      localV.style.visibility = on ? 'visible' : 'hidden';
     };
     document.getElementById('btn-leave').onclick = function () {
       try { send({ t: 'leave' }); } catch (_) {}
-      if (pc) pc.close();
+      peers.forEach(p => { try { p.pc.close(); } catch (_) {} });
       if (ws) ws.close();
       if (localStream) localStream.getTracks().forEach(t => t.stop());
       document.getElementById('stage').innerHTML =
@@ -246,11 +287,14 @@
         '<h2>通話を終了しました</h2><p style="color:var(--muted)">' +
         'ご参加ありがとうございました。<br><a href="/meet">日程をもう一度選ぶ</a></p></div>';
       document.getElementById('controls').style.display = 'none';
-      setStatus('終了');
+      statusEl.textContent = '終了';
     };
 
-    if (!room) { showOverlay('会議室が見つかりません', 'リンクをもう一度ご確認ください。'); }
-    else init();
+    if (!room) {
+      overlay.hidden = false;
+      document.getElementById('ov-title').textContent = '会議室が見つかりません';
+      document.getElementById('ov-text').textContent = 'リンクをもう一度ご確認ください。';
+    } else { init(); }
   })();
   </script>
 </body>
