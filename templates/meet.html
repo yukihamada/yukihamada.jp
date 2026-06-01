@@ -127,6 +127,15 @@
     .done h2 { font-size: 1.5rem; margin: 0 0 12px; }
     .done p { color: var(--text-muted); line-height: 1.75; margin: 0; }
     .done .big { color: var(--text); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+
+    /* MU cross-sell after booking */
+    .mu-cross { margin-top: 40px; padding-top: 32px; border-top: 1px solid var(--border); text-align: left; }
+    #mu-mount { min-height: 40px; }
+    .mu-all {
+      display: inline-block; margin-top: 18px; font-size: .9rem; font-weight: 600;
+      color: var(--amber); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color .15s;
+    }
+    .mu-all:hover { border-color: var(--amber); }
   </style>
 </head>
 <body class="force-dark">
@@ -185,6 +194,13 @@
       <h2>確定しました</h2>
       <p class="big" id="done-text"></p>
       <p>確認メールをお送りしました。<br>濱田から追って連絡が入る場合があります。</p>
+
+      <div class="mu-cross" id="mu-cross" style="display:none;">
+        <p class="step-label" style="justify-content:center;">記念に、MUを着る。</p>
+        <p style="color:var(--text-muted);font-size:.9rem;margin:-6px 0 18px;">無限／MU — 北海道の気象データから AI が毎時間ひとつ生む、108個限定のT。</p>
+        <div id="mu-mount"></div>
+        <a href="https://wearmu.com" target="_blank" rel="noopener" class="mu-all">MU をもっと見る →</a>
+      </div>
     </div>
   </div>
 </main>
@@ -218,6 +234,7 @@
         document.getElementById('form-view').style.display = 'none';
         document.getElementById('done-view').style.display = 'block';
         window.scrollTo(0, 0);
+        showMuOffer();
       } else {
         msg.textContent = data.error || '送信に失敗しました。時間をおいて再度お試しください。';
         msg.className = 'err';
@@ -229,6 +246,25 @@
       btn.disabled = false; btn.textContent = 'この時間で確定する';
     }
   });
+
+  // Lazy-load the wearmu.com product widget only after a booking is confirmed,
+  // so the form itself stays light. Fails silently if the CDN is unreachable.
+  function showMuOffer() {
+    const box = document.getElementById('mu-cross');
+    const s = document.createElement('script');
+    s.src = 'https://wearmu.com/embed.js';
+    s.defer = true;
+    s.onload = () => {
+      try {
+        if (window.MU && MU.mount) {
+          MU.mount({ count: 3, container: '#mu-mount', theme: 'dark', available: true, lang: 'ja' });
+          box.style.display = 'block';
+        }
+      } catch (_) {}
+    };
+    s.onerror = () => {}; // keep the link-out fallback hidden; no broken UI
+    document.head.appendChild(s);
+  }
 </script>
 </body>
 </html>
