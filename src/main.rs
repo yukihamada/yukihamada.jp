@@ -683,7 +683,7 @@ async fn notary_options() -> impl IntoResponse {
 // ── Meeting scheduler (self-serve slot picker) ──
 // NOTE: meet.html is embedded via include_str! below — bump this marker when the
 // template changes so the cloud build recompiles instead of reusing a cached
-// object with a stale template (workspace include_str! gotcha). marker: meet-online-2
+// object with a stale template (workspace include_str! gotcha). marker: meet-online-3
 
 // Single source of truth for /meet candidate slots: (id, human label in JST).
 // Edit this list to change the offered times; the page and the booking

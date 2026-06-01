@@ -131,6 +131,56 @@
   <script>
   (function () {
     const room = (location.pathname.split('/').filter(Boolean).pop() || '').slice(0, 64);
+
+    // ── i18n (global-first: English unless the browser/?lang= says Japanese) ──
+    const STR = {
+      ja: {
+        title: 'オンライン会議室 — 濱田優貴', app: '濱田優貴 ミーティング',
+        connecting: '接続中…', waiting: '参加者を待っています',
+        inCall: n => '通話中 · ' + n + '人', you: 'あなた', guest: '参加者',
+        waitText: 'このページを開いたままお待ちください。同じURLを開いた人が、自動的に会議に加わります。（最大6人）',
+        copy: '招待リンクをコピー', copied: 'コピーしました ✓',
+        noMediaTitle: 'カメラ / マイクを使えません',
+        noMediaText: 'ブラウザの権限を許可してから再読み込みしてください。',
+        permError: '権限エラー', disconnected: '切断されました',
+        endedTitle: '通話を終了しました', endedText: 'ご参加ありがとうございました。',
+        rebook: '日程をもう一度選ぶ', ended: '終了',
+        notFoundTitle: '会議室が見つかりません', notFoundText: 'リンクをもう一度ご確認ください。',
+        mic: 'マイク', cam: 'カメラ', leave: '退出',
+      },
+      en: {
+        title: 'Video room — Yuki Hamada', app: 'Yuki Hamada · Meeting',
+        connecting: 'Connecting…', waiting: 'Waiting for others to join',
+        inCall: n => 'In call · ' + n, you: 'You', guest: 'Guest',
+        waitText: 'Keep this page open. Anyone who opens the same link joins automatically (up to 6).',
+        copy: 'Copy invite link', copied: 'Copied ✓',
+        noMediaTitle: 'Camera / microphone unavailable',
+        noMediaText: 'Allow access in your browser, then reload the page.',
+        permError: 'Permission error', disconnected: 'Disconnected',
+        endedTitle: 'Call ended', endedText: 'Thanks for joining.',
+        rebook: 'Pick another time', ended: 'Ended',
+        notFoundTitle: 'Room not found', notFoundText: 'Please check the link and try again.',
+        mic: 'Microphone', cam: 'Camera', leave: 'Leave',
+      },
+    };
+    const qLang = new URLSearchParams(location.search).get('lang');
+    const lang = (qLang === 'ja' || qLang === 'en') ? qLang
+      : ((navigator.language || 'en').toLowerCase().startsWith('ja') ? 'ja' : 'en');
+    const T = STR[lang];
+    function applyI18n() {
+      document.documentElement.lang = lang;
+      document.title = T.title;
+      document.getElementById('status').textContent = T.connecting;
+      document.querySelector('header h1').textContent = T.app;
+      document.querySelector('#tile-me .name').textContent = T.you;
+      document.getElementById('ov-title').textContent = T.waiting;
+      document.getElementById('ov-text').textContent = T.waitText;
+      document.getElementById('copy-link').textContent = T.copy;
+      document.getElementById('btn-mic').title = T.mic;
+      document.getElementById('btn-cam').title = T.cam;
+      document.getElementById('btn-leave').title = T.leave;
+    }
+    applyI18n();
     // ICE servers (STUN + optional TURN) come from the server so TURN credentials
     // aren't baked into the page. Falls back to public STUN if the fetch fails.
     let ICE = { iceServers: [
@@ -162,14 +212,14 @@
       meTile.classList.toggle('solo', n === 1);
       peers.forEach(p => p.tile.classList.toggle('solo', false));
       if (n > 1) overlay.hidden = true; else overlay.hidden = false;
-      statusEl.textContent = n > 1 ? ('通話中 · ' + n + '人') : '参加者を待っています';
+      statusEl.textContent = n > 1 ? T.inCall(n) : T.waiting;
     }
 
     function send(obj) { if (ws && ws.readyState === 1) ws.send(JSON.stringify(obj)); }
 
     document.getElementById('copy-link').onclick = async () => {
       try { await navigator.clipboard.writeText(location.href);
-        document.getElementById('copy-link').textContent = 'コピーしました ✓';
+        document.getElementById('copy-link').textContent = T.copied;
       } catch (_) {}
     };
 
@@ -180,7 +230,7 @@
       const v = document.createElement('video');
       v.autoplay = true; v.playsInline = true;
       const tag = document.createElement('span');
-      tag.className = 'name'; tag.textContent = '参加者';
+      tag.className = 'name'; tag.textContent = T.guest;
       tile.appendChild(v); tile.appendChild(tag);
       grid.appendChild(tile);
       return { tile, video: v };
@@ -221,9 +271,9 @@
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       } catch (err) {
         overlay.hidden = false;
-        document.getElementById('ov-title').textContent = 'カメラ / マイクを使えません';
-        document.getElementById('ov-text').textContent = 'ブラウザの権限を許可してから再読み込みしてください。';
-        statusEl.textContent = '権限エラー';
+        document.getElementById('ov-title').textContent = T.noMediaTitle;
+        document.getElementById('ov-text').textContent = T.noMediaText;
+        statusEl.textContent = T.permError;
         return;
       }
       localV.srcObject = localStream;
@@ -231,7 +281,7 @@
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
       ws = new WebSocket(`${proto}://${location.host}/ws/room/${room}`);
       ws.onopen = () => relayout();
-      ws.onclose = () => { if (remoteCount() === 0) statusEl.textContent = '切断されました'; };
+      ws.onclose = () => { if (remoteCount() === 0) statusEl.textContent = T.disconnected; };
 
       ws.onmessage = async (ev) => {
         let m; try { m = JSON.parse(ev.data); } catch (_) { return; }
@@ -293,16 +343,16 @@
       if (localStream) localStream.getTracks().forEach(t => t.stop());
       document.getElementById('stage').innerHTML =
         '<div class="ended"><div class="moon-big" style="margin:0 auto 18px"></div>' +
-        '<h2>通話を終了しました</h2><p style="color:var(--muted)">' +
-        'ご参加ありがとうございました。<br><a href="/meet">日程をもう一度選ぶ</a></p></div>';
+        '<h2>' + T.endedTitle + '</h2><p style="color:var(--muted)">' +
+        T.endedText + '<br><a href="/meet">' + T.rebook + '</a></p></div>';
       document.getElementById('controls').style.display = 'none';
-      statusEl.textContent = '終了';
+      statusEl.textContent = T.ended;
     };
 
     if (!room) {
       overlay.hidden = false;
-      document.getElementById('ov-title').textContent = '会議室が見つかりません';
-      document.getElementById('ov-text').textContent = 'リンクをもう一度ご確認ください。';
+      document.getElementById('ov-title').textContent = T.notFoundTitle;
+      document.getElementById('ov-text').textContent = T.notFoundText;
     } else { init(); }
   })();
   </script>
