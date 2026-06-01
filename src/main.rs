@@ -199,6 +199,8 @@ struct AppState {
     gmail_email: Option<String>,
     // Cached Gmail access token: (token, expires_at_secs)
     gmail_access_token: Mutex<Option<(String, u64)>>,
+    // WebRTC 1:1 signaling rooms: room_id → broadcast sender relaying SDP/ICE between peers.
+    rtc_rooms: Mutex<HashMap<String, broadcast::Sender<String>>>,
 }
 
 const SESSIONS_FILE: &str = "/data/sessions.json";
@@ -988,8 +990,9 @@ async fn meet_book(
             .into_response();
     }
 
-    // Mint a unique online meeting room (Jitsi Meet — no API key / no cost).
-    // Room name is an unguessable 16-hex slug so only people with the link join.
+    // Mint a unique room on our own video tool (/room/<id> — self-hosted WebRTC,
+    // no third-party meeting service). The 16-hex id is unguessable so only people
+    // with the link can join.
     let meet_url = {
         use std::hash::{Hash, Hasher};
         let mut h = std::collections::hash_map::DefaultHasher::new();
@@ -1000,7 +1003,7 @@ async fn meet_book(
             .timestamp_nanos_opt()
             .unwrap_or_default()
             .hash(&mut h);
-        format!("https://meet.jit.si/yukihamada-{:016x}", h.finish())
+        format!("https://yukihamada.jp/room/{:016x}", h.finish())
     };
 
     // Reject double-booking: serialize concurrent bookings, then re-check.
@@ -1106,6 +1109,110 @@ async fn meet_book(
         Json(serde_json::json!({"ok": true, "slot_label": label, "meet_url": meet_url})),
     )
         .into_response()
+}
+
+// ── Own 1:1 video call tool (WebRTC) ──
+// The /meet booking hands out a https://yukihamada.jp/room/<id> link. The room
+// page (room.html) does peer-to-peer WebRTC video; this server only relays the
+// SDP/ICE signaling between the (≤2) peers in a room via a per-room broadcast
+// channel. No third-party meeting service involved.
+
+static RTC_PEER_SEQ: AtomicU64 = AtomicU64::new(1);
+
+// Serve the branded video room page (room id is read from the URL by its JS).
+async fn room_page(Path(_id): Path<String>) -> impl IntoResponse {
+    Html(include_str!("../templates/room.html"))
+}
+
+// WebSocket signaling endpoint: /ws/room/{id}
+async fn ws_room(
+    ws: WebSocketUpgrade,
+    State(state): State<Arc<AppState>>,
+    Path(room_id): Path<String>,
+) -> impl IntoResponse {
+    let room: String = room_id
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .take(64)
+        .collect();
+    if room.is_empty() {
+        return StatusCode::BAD_REQUEST.into_response();
+    }
+    let tx = {
+        let mut rooms = state.rtc_rooms.lock().unwrap();
+        rooms
+            .entry(room.clone())
+            .or_insert_with(|| broadcast::channel::<String>(64).0)
+            .clone()
+    };
+    ws.on_upgrade(move |socket| handle_ws_room(socket, state, room, tx))
+}
+
+async fn handle_ws_room(
+    mut socket: WebSocket,
+    state: Arc<AppState>,
+    room: String,
+    tx: broadcast::Sender<String>,
+) {
+    let me = RTC_PEER_SEQ.fetch_add(1, Ordering::Relaxed);
+    let mut rx = tx.subscribe();
+    // Tell this client its own peer id (used for the offer/answer tie-break).
+    if socket
+        .send(Message::Text(format!("{{\"t\":\"hello\",\"id\":{me}}}").into()))
+        .await
+        .is_err()
+    {
+        return;
+    }
+    // Announce our arrival so an already-present peer initiates the offer.
+    let _ = tx.send(format!("{{\"t\":\"join\",\"from\":{me}}}"));
+
+    loop {
+        tokio::select! {
+            r = rx.recv() => {
+                match r {
+                    Ok(text) => {
+                        // Never echo a peer's own message back to itself.
+                        let from_self = serde_json::from_str::<serde_json::Value>(&text)
+                            .ok()
+                            .and_then(|v| v.get("from").and_then(|x| x.as_u64()))
+                            .map(|f| f == me)
+                            .unwrap_or(false);
+                        if from_self { continue; }
+                        if socket.send(Message::Text(text.into())).await.is_err() { break; }
+                    }
+                    Err(broadcast::error::RecvError::Closed) => break,
+                    Err(broadcast::error::RecvError::Lagged(_)) => continue,
+                }
+            }
+            m = socket.recv() => {
+                match m {
+                    Some(Ok(Message::Text(s))) => {
+                        if s.len() > 64_000 { continue; } // guard oversized frames
+                        // Re-stamp `from` with the server-assigned id (anti-spoof) and relay.
+                        let relay = match serde_json::from_str::<serde_json::Value>(&s) {
+                            Ok(mut v) => { v["from"] = serde_json::json!(me); v.to_string() }
+                            Err(_) => continue,
+                        };
+                        let _ = tx.send(relay);
+                    }
+                    Some(Ok(Message::Close(_))) | None => break,
+                    Some(Err(_)) => break,
+                    _ => {}
+                }
+            }
+        }
+    }
+
+    // Tell the other side we left, then drop the room if we were the last one.
+    let _ = tx.send(format!("{{\"t\":\"leave\",\"from\":{me}}}"));
+    drop(rx);
+    let mut rooms = state.rtc_rooms.lock().unwrap();
+    if let Some(t) = rooms.get(&room) {
+        if t.receiver_count() == 0 {
+            rooms.remove(&room);
+        }
+    }
 }
 
 #[derive(serde::Deserialize)]
@@ -6144,6 +6251,7 @@ async fn main() {
         gmail_refresh_token,
         gmail_email,
         gmail_access_token: Mutex::new(None),
+        rtc_rooms: Mutex::new(HashMap::new()),
     });
     std::fs::create_dir_all(VIDEO_DIR).ok();
 
@@ -6268,6 +6376,8 @@ async fn main() {
         .route("/api/user/verify", axum::routing::options(options_cors))
         .route("/api/user/me", get(user_me))
         .route("/ws/terminal", get(ws_terminal))
+        .route("/room/{id}", get(room_page))
+        .route("/ws/room/{id}", get(ws_room))
         .route("/yukiterm", get(yukiterm_script))
         .route("/chat", get(chat_page))
         .route("/api/chat", post(chat_handler))
