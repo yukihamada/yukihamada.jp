@@ -683,7 +683,7 @@ async fn notary_options() -> impl IntoResponse {
 // ── Meeting scheduler (self-serve slot picker) ──
 // NOTE: meet.html is embedded via include_str! below — bump this marker when the
 // template changes so the cloud build recompiles instead of reusing a cached
-// object with a stale template (workspace include_str! gotcha). marker: meet-online-1
+// object with a stale template (workspace include_str! gotcha). marker: meet-online-2
 
 // Single source of truth for /meet candidate slots: (id, human label in JST).
 // Edit this list to change the offered times; the page and the booking
@@ -1124,34 +1124,64 @@ async fn room_page(Path(_id): Path<String>) -> impl IntoResponse {
     Html(include_str!("../templates/room.html"))
 }
 
-// ICE servers for the room page. Always returns public STUN; adds TURN when
-// configured via env (TURN_URLS comma-separated, TURN_USERNAME, TURN_CREDENTIAL)
-// so strict/symmetric NAT peers can relay. Credentials live in Fly secrets, not
-// in the page source — the page fetches this at call time.
+// Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
+// from Cloudflare are short-lived, so we mint once and reuse for ~12h.
+static RTC_ICE_CACHE: std::sync::Mutex<Option<(serde_json::Value, u64)>> =
+    std::sync::Mutex::new(None);
+
+fn stun_only() -> serde_json::Value {
+    serde_json::json!([
+        { "urls": "stun:stun.l.google.com:19302" },
+        { "urls": "stun:stun1.l.google.com:19302" },
+        { "urls": "stun:stun.cloudflare.com:3478" },
+    ])
+}
+
+// ICE servers for the room page. Returns public STUN, plus Cloudflare TURN when
+// TURN_KEY_ID + TURN_KEY_API_TOKEN are set (Fly secrets) so strict/symmetric NAT
+// peers can relay. Credentials are minted server-side (short-lived, cached 12h)
+// and never baked into the page; the page fetches this at call time.
 async fn room_ice() -> impl IntoResponse {
-    let mut servers = vec![
-        serde_json::json!({ "urls": "stun:stun.l.google.com:19302" }),
-        serde_json::json!({ "urls": "stun:stun1.l.google.com:19302" }),
-        serde_json::json!({ "urls": "stun:stun.cloudflare.com:3478" }),
-    ];
-    if let (Ok(urls), Ok(user), Ok(cred)) = (
-        std::env::var("TURN_URLS"),
-        std::env::var("TURN_USERNAME"),
-        std::env::var("TURN_CREDENTIAL"),
-    ) {
-        let urls: Vec<&str> = urls.split(',').map(|s| s.trim()).filter(|s| !s.is_empty()).collect();
-        if !urls.is_empty() {
-            servers.push(serde_json::json!({
-                "urls": urls,
-                "username": user,
-                "credential": cred,
-            }));
+    // Serve cached config if still fresh.
+    {
+        let c = RTC_ICE_CACHE.lock().unwrap();
+        if let Some((servers, exp)) = c.as_ref() {
+            if now_secs() < *exp {
+                return (cors_headers(), Json(serde_json::json!({ "iceServers": servers }))).into_response();
+            }
         }
     }
-    (
-        cors_headers(),
-        Json(serde_json::json!({ "iceServers": servers })),
-    )
+
+    let servers = match (std::env::var("TURN_KEY_ID"), std::env::var("TURN_KEY_API_TOKEN")) {
+        (Ok(key_id), Ok(token)) if !key_id.is_empty() && !token.is_empty() => {
+            let ttl: u64 = 86_400; // 24h credential lifetime
+            let url = format!("https://rtc.live.cloudflare.com/v1/turn/keys/{key_id}/credentials/generate");
+            let resp = reqwest::Client::new()
+                .post(&url)
+                .header("Authorization", format!("Bearer {token}"))
+                .json(&serde_json::json!({ "ttl": ttl }))
+                .timeout(std::time::Duration::from_secs(8))
+                .send()
+                .await;
+            let ice = match resp {
+                Ok(r) => r.json::<serde_json::Value>().await.ok(),
+                Err(_) => None,
+            };
+            // Cloudflare returns { iceServers: { urls:[...], username, credential } }.
+            match ice.as_ref().and_then(|v| v.get("iceServers")).cloned() {
+                Some(cf) => {
+                    // Cache for 12h (well within the 24h credential ttl).
+                    let arr = serde_json::json!([cf]);
+                    *RTC_ICE_CACHE.lock().unwrap() = Some((arr.clone(), now_secs() + 43_200));
+                    arr
+                }
+                None => stun_only(), // fail-open to STUN if CF call failed
+            }
+        }
+        _ => stun_only(),
+    };
+
+    (cors_headers(), Json(serde_json::json!({ "iceServers": servers }))).into_response()
 }
 
 // WebSocket signaling endpoint: /ws/room/{id}
