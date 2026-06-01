@@ -256,6 +256,13 @@
       <p class="big" id="done-text"></p>
       <p>確認メールをお送りしました。<br>濱田から追って連絡が入る場合があります。</p>
 
+      <div id="meet-link-row" class="cal-row" style="display:none;">
+        <a id="meet-join" class="cal-btn" target="_blank" rel="noopener">オンライン会議室を開く</a>
+      </div>
+      <p id="meet-link-note" style="display:none;color:var(--text-muted);font-size:.84rem;margin:8px 0 0;">
+        当日この URL を開くと会議に参加できます（確認メールにも記載しています）。
+      </p>
+
       <div class="cal-row">
         <a id="cal-google" class="cal-btn" target="_blank" rel="noopener">Google カレンダーに追加</a>
         <a id="cal-ics" class="cal-btn ghost" download="meeting.ics">.ics をダウンロード</a>
@@ -318,25 +325,29 @@
       String(d.getUTCHours()).padStart(2, '0') +
       String(d.getUTCMinutes()).padStart(2, '0') + '00Z';
   }
-  function setupCalendar(slotId) {
+  function setupCalendar(slotId, meetUrl) {
     const start = new Date(slotId + ':00+09:00');
     if (isNaN(start)) return;
     const end = new Date(start.getTime() + 60 * 60 * 1000);
     const title = '濱田優貴 ミーティング';
-    const details = (topic ? '内容: ' + topic + '\n' : '') + 'オンライン（Google Meet）／約60分\nyukihamada.jp/meet';
+    const details = (topic ? '内容: ' + topic + '\n' : '') +
+      'オンライン会議／約60分' +
+      (meetUrl ? '\n会議室: ' + meetUrl : '') + '\nyukihamada.jp/meet';
     const dates = fmtUTC(start) + '/' + fmtUTC(end);
     document.getElementById('cal-google').href =
       'https://calendar.google.com/calendar/render?action=TEMPLATE' +
       '&text=' + encodeURIComponent(title) +
       '&dates=' + dates +
+      (meetUrl ? '&location=' + encodeURIComponent(meetUrl) : '') +
       '&details=' + encodeURIComponent(details);
     const ics = [
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//yukihamada.jp//meet//JP',
       'BEGIN:VEVENT', 'UID:' + slotId + '@yukihamada.jp',
       'DTSTART:' + fmtUTC(start), 'DTEND:' + fmtUTC(end),
       'SUMMARY:' + title, 'DESCRIPTION:' + details.replace(/\n/g, '\\n'),
+    ].concat(meetUrl ? ['LOCATION:' + meetUrl, 'URL:' + meetUrl] : []).concat([
       'END:VEVENT', 'END:VCALENDAR',
-    ].join('\r\n');
+    ]).join('\r\n');
     document.getElementById('cal-ics').href =
       'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
   }
@@ -363,7 +374,13 @@
       const data = await r.json();
       if (r.ok && data.ok) {
         document.getElementById('done-text').textContent = data.slot_label;
-        setupCalendar(slot.value);
+        if (data.meet_url) {
+          const j = document.getElementById('meet-join');
+          j.href = data.meet_url;
+          document.getElementById('meet-link-row').style.display = '';
+          document.getElementById('meet-link-note').style.display = '';
+        }
+        setupCalendar(slot.value, data.meet_url || '');
         document.getElementById('form-view').style.display = 'none';
         document.getElementById('done-view').style.display = 'block';
         window.scrollTo(0, 0);
