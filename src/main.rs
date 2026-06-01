@@ -687,6 +687,10 @@ const MEET_SLOTS: &[(&str, &str)] = &[
     ("2026-06-03T16:00", "6/3(水) 16:00–17:00"),
     ("2026-06-04T10:00", "6/4(木) 10:00–11:00"),
     ("2026-06-05T15:00", "6/5(金) 15:00–16:00"),
+    // 来週分（直近が合わない相手向け）
+    ("2026-06-09T11:00", "6/9(火) 11:00–12:00"),
+    ("2026-06-10T14:00", "6/10(水) 14:00–15:00"),
+    ("2026-06-11T16:00", "6/11(木) 16:00–17:00"),
 ];
 
 async fn meet_page() -> impl IntoResponse {
@@ -714,6 +718,9 @@ struct MeetBookReq {
     email: String,
     #[serde(default)]
     message: String,
+    // Optional referrer (?ref=… on the link) — who introduced this person.
+    #[serde(default)]
+    referrer: String,
 }
 
 async fn meet_book(
@@ -734,6 +741,7 @@ async fn meet_book(
     let name = body.name.trim();
     let email = body.email.trim().to_lowercase();
     let message: String = body.message.trim().chars().take(1000).collect();
+    let referrer: String = body.referrer.trim().chars().take(80).collect();
 
     if name.is_empty() || name.chars().count() > 80 {
         return (
@@ -760,6 +768,7 @@ async fn meet_book(
         "name": name,
         "email": email,
         "message": message,
+        "referrer": referrer,
     });
     let _ = std::fs::create_dir_all("/data");
     let _ = std::fs::OpenOptions::new()
@@ -771,7 +780,8 @@ async fn meet_book(
     // Notify Yuki via Telegram.
     if let Some(tok) = state.telegram_token.clone() {
         let text = format!(
-            "📅 yukihamada.jp #日程確定\n\n{label}\n👤 {name}\n✉️ {email}{}",
+            "📅 yukihamada.jp #日程確定\n\n{label}\n👤 {name}\n✉️ {email}{}{}",
+            if referrer.is_empty() { String::new() } else { format!("\n🤝 紹介: {referrer}") },
             if message.is_empty() { String::new() } else { format!("\n📝 {message}") }
         );
         tokio::spawn(async move {
@@ -791,6 +801,7 @@ async fn meet_book(
         let name_s = name.to_string();
         let email_s = email.clone();
         let message_s = message.clone();
+        let referrer_s = referrer.clone();
         tokio::spawn(async move {
             let client = reqwest::Client::new();
             // To the counterpart.
@@ -812,7 +823,8 @@ async fn meet_book(
                 .await;
             // Notification copy to Yuki.
             let notify = format!(
-                "日程が確定しました。\n\n日時: {label_s}\n相手: {name_s} <{email_s}>{}",
+                "日程が確定しました。\n\n日時: {label_s}\n相手: {name_s} <{email_s}>{}{}",
+                if referrer_s.is_empty() { String::new() } else { format!("\n紹介: {referrer_s}") },
                 if message_s.is_empty() { String::new() } else { format!("\nメッセージ: {message_s}") }
             );
             let _ = client

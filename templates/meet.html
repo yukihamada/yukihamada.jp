@@ -55,6 +55,34 @@
     }
     .tz::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
 
+    /* meeting info card */
+    .meet-info {
+      border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin-bottom: 30px;
+      background: rgba(255,255,255,.02);
+    }
+    .meet-info-row { display: flex; gap: 14px; font-size: .92rem; padding: 5px 0; }
+    .meet-info-row + .meet-info-row { border-top: 1px solid rgba(255,255,255,.04); }
+    .meet-info-row span { color: var(--text-muted); min-width: 44px; flex-shrink: 0; }
+    .meet-info-row b { font-weight: 600; }
+
+    #ref-hello { color: var(--amber); font-weight: 600; margin: 0 0 6px; font-size: 1rem; }
+
+    .alt-link {
+      display: inline-block; margin: -16px 0 34px; font-size: .85rem; color: var(--text-muted);
+      text-decoration: none; border-bottom: 1px dashed var(--border); transition: color .15s, border-color .15s;
+    }
+    .alt-link:hover { color: var(--amber); border-color: var(--amber); }
+
+    /* calendar buttons on confirmation */
+    .cal-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 24px; }
+    .cal-btn {
+      display: inline-block; padding: 11px 18px; border-radius: 10px; font-size: .9rem; font-weight: 600;
+      text-decoration: none; color: #1a1206; background: linear-gradient(180deg, #f0b060, var(--amber));
+      box-shadow: 0 6px 22px rgba(232,160,76,.28); transition: transform .15s;
+    }
+    .cal-btn:hover { transform: translateY(-1px); }
+    .cal-btn.ghost { background: transparent; color: var(--amber); border: 1px solid var(--amber); box-shadow: none; }
+
     .step-label {
       font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
       color: var(--amber); margin: 0 0 14px; display: flex; align-items: center; gap: 10px;
@@ -161,8 +189,16 @@
       <div class="meet-head">
         <div class="meet-moon"></div>
         <h1>日程を、選ぶ。</h1>
+        <p id="ref-hello" style="display:none;"></p>
         <p>濱田優貴とのミーティング。都合のよい時間をどうぞ。</p>
         <div class="tz">時刻はすべて日本時間 (JST)</div>
+      </div>
+
+      <div class="meet-info">
+        <div class="meet-info-row"><span>相手</span><b>濱田優貴 — Enabler CEO / ex-Mercari CPO</b></div>
+        <div class="meet-info-row"><span>所要</span><b>約60分</b></div>
+        <div class="meet-info-row"><span>形式</span><b>オンライン（Google Meet）／対面も相談可</b></div>
+        <div class="meet-info-row"><span>内容</span><b id="meet-topic">ご相談・情報交換</b></div>
       </div>
 
       <form id="meet-form" autocomplete="on">
@@ -170,6 +206,7 @@
         <div class="slots">
           <!--SLOTS-->
         </div>
+        <a id="no-fit" class="alt-link" href="#">どの候補も合わない方はこちら（別日程をリクエスト）</a>
 
         <p class="step-label">連絡先</p>
         <div class="field">
@@ -195,9 +232,14 @@
       <p class="big" id="done-text"></p>
       <p>確認メールをお送りしました。<br>濱田から追って連絡が入る場合があります。</p>
 
+      <div class="cal-row">
+        <a id="cal-google" class="cal-btn" target="_blank" rel="noopener">Google カレンダーに追加</a>
+        <a id="cal-ics" class="cal-btn ghost" download="meeting.ics">.ics をダウンロード</a>
+      </div>
+
       <div class="mu-cross" id="mu-cross" style="display:none;">
-        <p class="step-label" style="justify-content:center;">記念に、MUを着る。</p>
-        <p style="color:var(--text-muted);font-size:.9rem;margin:-6px 0 18px;">無限／MU — 北海道の気象データから AI が毎時間ひとつ生む、108個限定のT。</p>
+        <p class="step-label" style="justify-content:center;">会えた記念に、よければ一枚。</p>
+        <p style="color:var(--text-muted);font-size:.9rem;margin:-6px 0 18px;">無限／MU — 北海道の気象データから AI が毎時間ひとつ生む、108個限定のT。当日お声がけいただければ、お渡しもできます。</p>
         <div id="mu-mount"></div>
         <a href="https://wearmu.com" target="_blank" rel="noopener" class="mu-all">MU をもっと見る →</a>
       </div>
@@ -210,6 +252,61 @@
   const btn = document.getElementById('submit');
   const msg = document.getElementById('msg');
 
+  // ── Personalization from link params: ?ref=紹介者 &topic=議題 ──
+  const params = new URLSearchParams(location.search);
+  const referrer = (params.get('ref') || '').slice(0, 80);
+  const topic = (params.get('topic') || '').slice(0, 120);
+  if (referrer) {
+    const h = document.getElementById('ref-hello');
+    h.textContent = referrer + ' さんのご紹介、ありがとうございます。';
+    h.style.display = 'block';
+  }
+  if (topic) document.getElementById('meet-topic').textContent = topic;
+
+  // ── "どの候補も合わない方はこちら" → 別日程リクエストメール ──
+  (function () {
+    const subject = encodeURIComponent('日程候補のリクエスト — 濱田優貴ミーティング');
+    const body = encodeURIComponent(
+      'お名前:\nご希望の日時（第1〜第3希望）:\n' +
+      (topic ? '議題: ' + topic + '\n' : '議題:\n') +
+      (referrer ? '紹介: ' + referrer + '\n' : '') +
+      '\n— yukihamada.jp/meet'
+    );
+    document.getElementById('no-fit').href =
+      'mailto:mail@yukihamada.jp?subject=' + subject + '&body=' + body;
+  })();
+
+  // ── Build "add to calendar" links from a slot id like "2026-06-03T14:00" (JST) ──
+  function fmtUTC(d) {
+    return d.getUTCFullYear() +
+      String(d.getUTCMonth() + 1).padStart(2, '0') +
+      String(d.getUTCDate()).padStart(2, '0') + 'T' +
+      String(d.getUTCHours()).padStart(2, '0') +
+      String(d.getUTCMinutes()).padStart(2, '0') + '00Z';
+  }
+  function setupCalendar(slotId) {
+    const start = new Date(slotId + ':00+09:00');
+    if (isNaN(start)) return;
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    const title = '濱田優貴 ミーティング';
+    const details = (topic ? '内容: ' + topic + '\n' : '') + 'オンライン（Google Meet）／約60分\nyukihamada.jp/meet';
+    const dates = fmtUTC(start) + '/' + fmtUTC(end);
+    document.getElementById('cal-google').href =
+      'https://calendar.google.com/calendar/render?action=TEMPLATE' +
+      '&text=' + encodeURIComponent(title) +
+      '&dates=' + dates +
+      '&details=' + encodeURIComponent(details);
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//yukihamada.jp//meet//JP',
+      'BEGIN:VEVENT', 'UID:' + slotId + '@yukihamada.jp',
+      'DTSTART:' + fmtUTC(start), 'DTEND:' + fmtUTC(end),
+      'SUMMARY:' + title, 'DESCRIPTION:' + details.replace(/\n/g, '\\n'),
+      'END:VEVENT', 'END:VCALENDAR',
+    ].join('\r\n');
+    document.getElementById('cal-ics').href =
+      'data:text/calendar;charset=utf-8,' + encodeURIComponent(ics);
+  }
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     msg.textContent = ''; msg.className = '';
@@ -220,6 +317,7 @@
       name: document.getElementById('name').value.trim(),
       email: document.getElementById('email').value.trim(),
       message: document.getElementById('message').value.trim(),
+      referrer: referrer,
     };
     btn.disabled = true; btn.textContent = '送信中…';
     try {
@@ -231,6 +329,7 @@
       const data = await r.json();
       if (r.ok && data.ok) {
         document.getElementById('done-text').textContent = data.slot_label;
+        setupCalendar(slot.value);
         document.getElementById('form-view').style.display = 'none';
         document.getElementById('done-view').style.display = 'block';
         window.scrollTo(0, 0);
