@@ -131,11 +131,19 @@
   <script>
   (function () {
     const room = (location.pathname.split('/').filter(Boolean).pop() || '').slice(0, 64);
-    const ICE = { iceServers: [
+    // ICE servers (STUN + optional TURN) come from the server so TURN credentials
+    // aren't baked into the page. Falls back to public STUN if the fetch fails.
+    let ICE = { iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
       { urls: 'stun:stun.cloudflare.com:3478' },
     ] };
+    async function loadIce() {
+      try {
+        const r = await fetch('/api/room/ice', { cache: 'no-store' });
+        if (r.ok) { const j = await r.json(); if (j && j.iceServers) ICE = j; }
+      } catch (_) {}
+    }
 
     const grid = document.getElementById('grid');
     const localV = document.getElementById('local');
@@ -208,6 +216,7 @@
     }
 
     async function init() {
+      await loadIce();
       try {
         localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
       } catch (err) {

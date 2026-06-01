@@ -1124,6 +1124,36 @@ async fn room_page(Path(_id): Path<String>) -> impl IntoResponse {
     Html(include_str!("../templates/room.html"))
 }
 
+// ICE servers for the room page. Always returns public STUN; adds TURN when
+// configured via env (TURN_URLS comma-separated, TURN_USERNAME, TURN_CREDENTIAL)
+// so strict/symmetric NAT peers can relay. Credentials live in Fly secrets, not
+// in the page source — the page fetches this at call time.
+async fn room_ice() -> impl IntoResponse {
+    let mut servers = vec![
+        serde_json::json!({ "urls": "stun:stun.l.google.com:19302" }),
+        serde_json::json!({ "urls": "stun:stun1.l.google.com:19302" }),
+        serde_json::json!({ "urls": "stun:stun.cloudflare.com:3478" }),
+    ];
+    if let (Ok(urls), Ok(user), Ok(cred)) = (
+        std::env::var("TURN_URLS"),
+        std::env::var("TURN_USERNAME"),
+        std::env::var("TURN_CREDENTIAL"),
+    ) {
+        let urls: Vec<&str> = urls.split(',').map(|s| s.trim()).filter(|s| !s.is_empty()).collect();
+        if !urls.is_empty() {
+            servers.push(serde_json::json!({
+                "urls": urls,
+                "username": user,
+                "credential": cred,
+            }));
+        }
+    }
+    (
+        cors_headers(),
+        Json(serde_json::json!({ "iceServers": servers })),
+    )
+}
+
 // WebSocket signaling endpoint: /ws/room/{id}
 async fn ws_room(
     ws: WebSocketUpgrade,
@@ -6386,6 +6416,7 @@ async fn main() {
         .route("/api/user/me", get(user_me))
         .route("/ws/terminal", get(ws_terminal))
         .route("/room/{id}", get(room_page))
+        .route("/api/room/ice", get(room_ice))
         .route("/ws/room/{id}", get(ws_room))
         .route("/yukiterm", get(yukiterm_script))
         .route("/chat", get(chat_page))
