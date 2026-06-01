@@ -678,6 +678,165 @@ async fn notary_options() -> impl IntoResponse {
     Html(include_str!("../templates/notary_options.html"))
 }
 
+// ── Meeting scheduler (self-serve slot picker) ──
+// Single source of truth for /meet candidate slots: (id, human label in JST).
+// Edit this list to change the offered times; the page and the booking
+// validator both read from here.
+const MEET_SLOTS: &[(&str, &str)] = &[
+    ("2026-06-03T14:00", "6/3(水) 14:00–15:00"),
+    ("2026-06-03T16:00", "6/3(水) 16:00–17:00"),
+    ("2026-06-04T10:00", "6/4(木) 10:00–11:00"),
+    ("2026-06-05T15:00", "6/5(金) 15:00–16:00"),
+];
+
+async fn meet_page() -> impl IntoResponse {
+    let opts: String = MEET_SLOTS
+        .iter()
+        .map(|(id, label)| {
+            // label is "6/3(水) 14:00–15:00" — split into date + time for layout.
+            let (date, time) = label.split_once(' ').unwrap_or((label, ""));
+            format!(
+                "<label class=\"slot\"><input type=\"radio\" name=\"slot\" value=\"{id}\">\
+                 <span class=\"moon\"></span>\
+                 <span class=\"slot-meta\"><span class=\"slot-date\">{date}</span>\
+                 <span class=\"slot-time\">{time}</span></span></label>"
+            )
+        })
+        .collect();
+    let html = include_str!("../templates/meet.html").replace("<!--SLOTS-->", &opts);
+    Html(html)
+}
+
+#[derive(serde::Deserialize)]
+struct MeetBookReq {
+    slot: String,
+    name: String,
+    email: String,
+    #[serde(default)]
+    message: String,
+}
+
+async fn meet_book(
+    State(state): State<Arc<AppState>>,
+    axum::Json(body): axum::Json<MeetBookReq>,
+) -> Response {
+    // Validate slot against the canonical list.
+    let Some((_, label)) = MEET_SLOTS.iter().find(|(id, _)| *id == body.slot) else {
+        return (
+            StatusCode::BAD_REQUEST,
+            cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "時間の選択が不正です。"})),
+        )
+            .into_response();
+    };
+    let label = *label;
+
+    let name = body.name.trim();
+    let email = body.email.trim().to_lowercase();
+    let message: String = body.message.trim().chars().take(1000).collect();
+
+    if name.is_empty() || name.chars().count() > 80 {
+        return (
+            StatusCode::BAD_REQUEST,
+            cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "お名前を入力してください。"})),
+        )
+            .into_response();
+    }
+    if !email.contains('@') || email.len() > 120 {
+        return (
+            StatusCode::BAD_REQUEST,
+            cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "メールアドレスを確認してください。"})),
+        )
+            .into_response();
+    }
+
+    // Persist as an append-only JSONL record.
+    let record = serde_json::json!({
+        "ts": chrono::Utc::now().to_rfc3339(),
+        "slot": body.slot,
+        "slot_label": label,
+        "name": name,
+        "email": email,
+        "message": message,
+    });
+    let _ = std::fs::create_dir_all("/data");
+    let _ = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open("/data/meetings.jsonl")
+        .and_then(|mut f| std::io::Write::write_all(&mut f, format!("{record}\n").as_bytes()));
+
+    // Notify Yuki via Telegram.
+    if let Some(tok) = state.telegram_token.clone() {
+        let text = format!(
+            "📅 yukihamada.jp #日程確定\n\n{label}\n👤 {name}\n✉️ {email}{}",
+            if message.is_empty() { String::new() } else { format!("\n📝 {message}") }
+        );
+        tokio::spawn(async move {
+            let url = format!("https://api.telegram.org/bot{tok}/sendMessage");
+            let _ = reqwest::Client::new()
+                .post(&url)
+                .json(&serde_json::json!({"chat_id": 1136442501_i64, "text": text}))
+                .timeout(std::time::Duration::from_secs(5))
+                .send()
+                .await;
+        });
+    }
+
+    // Confirmation email to the counterpart + notification copy to Yuki.
+    if let Some(resend_key) = state.resend_key.clone() {
+        let label_s = label.to_string();
+        let name_s = name.to_string();
+        let email_s = email.clone();
+        let message_s = message.clone();
+        tokio::spawn(async move {
+            let client = reqwest::Client::new();
+            // To the counterpart.
+            let body_text = format!(
+                "{name_s} 様\n\n下記の日程で承りました。\n\n■ 日時: {label_s} (日本時間)\n\n濱田から追って連絡が入る場合があります。\nご不明点はこのメールへの返信でお問い合わせください。\n\n— 濱田優貴 / yukihamada.jp"
+            );
+            let _ = client
+                .post("https://api.resend.com/emails")
+                .header("Authorization", format!("Bearer {resend_key}"))
+                .json(&serde_json::json!({
+                    "from": "yukihamada.jp <info@enablerdao.com>",
+                    "to": [email_s],
+                    "reply_to": "mail@yukihamada.jp",
+                    "subject": format!("【日程確定】{label_s}"),
+                    "text": body_text,
+                }))
+                .timeout(std::time::Duration::from_secs(10))
+                .send()
+                .await;
+            // Notification copy to Yuki.
+            let notify = format!(
+                "日程が確定しました。\n\n日時: {label_s}\n相手: {name_s} <{email_s}>{}",
+                if message_s.is_empty() { String::new() } else { format!("\nメッセージ: {message_s}") }
+            );
+            let _ = client
+                .post("https://api.resend.com/emails")
+                .header("Authorization", format!("Bearer {resend_key}"))
+                .json(&serde_json::json!({
+                    "from": "yukihamada.jp <info@enablerdao.com>",
+                    "to": ["mail@yukihamada.jp"],
+                    "subject": format!("[meet] {label_s} / {name_s}"),
+                    "text": notify,
+                }))
+                .timeout(std::time::Duration::from_secs(10))
+                .send()
+                .await;
+        });
+    }
+
+    (
+        cors_headers(),
+        Json(serde_json::json!({"ok": true, "slot_label": label})),
+    )
+        .into_response()
+}
+
 async fn soluna_page() -> impl IntoResponse {
     Html(r#"<!DOCTYPE html>
 <html lang="ja">
@@ -5649,6 +5808,9 @@ async fn main() {
         .route("/podcast",  get(redirect_podcast))
         .route("/soluna", get(soluna_page))
         .route("/notary-options", get(notary_options))
+        .route("/meet", get(meet_page))
+        .route("/api/meet/book", post(meet_book))
+        .route("/api/meet/book", axum::routing::options(options_cors))
         .route("/blog", get(blog_list_tag))
         .route("/blog/soluna/{slug}", get(blog_soluna_proxy))
         .route("/blog/{slug}", get(blog_post))

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>日程調整 — 濱田優貴</title>
+  <meta name="description" content="濱田優貴とのミーティング日程。候補から都合のよい時間を選んでください。">
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="canonical" href="https://yukihamada.jp/meet">
+  <meta property="og:title" content="日程調整 — 濱田優貴">
+  <meta property="og:description" content="候補から都合のよい時間を選んでください。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yukihamada.jp/meet">
+  <meta property="og:locale" content="ja_JP">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/style.css">
+  <script src="https://enabler-analytics.fly.dev/t.js" defer></script>
+  <style>
+    :root { --amber: #e8a04c; }
+    body.force-dark { background: #08080a; }
+
+    /* ambient moon glow behind the content */
+    .meet-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .meet-bg::before {
+      content: ""; position: absolute; top: -180px; left: 50%; transform: translateX(-50%);
+      width: 620px; height: 620px; border-radius: 50%;
+      background: radial-gradient(circle at center, rgba(232,160,76,.16), rgba(232,160,76,.04) 42%, transparent 70%);
+      filter: blur(6px);
+    }
+
+    .meet-wrap { position: relative; z-index: 1; max-width: 540px; }
+
+    .meet-head { text-align: center; margin-bottom: 36px; }
+    .meet-moon {
+      width: 64px; height: 64px; margin: 0 auto 22px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 34% 30%, #fff6e8, var(--amber) 60%, #b97a2e);
+      box-shadow: 0 0 0 1px rgba(232,160,76,.4), 0 12px 50px rgba(232,160,76,.45);
+    }
+    .meet-head h1 {
+      font-size: clamp(1.9rem, 6vw, 2.6rem); font-weight: 800; letter-spacing: .02em;
+      margin: 0 0 10px; line-height: 1.1;
+    }
+    .meet-head p { color: var(--text-muted); margin: 0; font-size: 1.02rem; }
+    .tz {
+      display: inline-flex; align-items: center; gap: 7px; margin-top: 16px;
+      font-size: .76rem; color: var(--text-muted);
+      padding: 5px 13px; border: 1px solid var(--border); border-radius: 999px;
+      background: rgba(255,255,255,.02);
+    }
+    .tz::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--amber); }
+
+    .step-label {
+      font-size: .72rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+      color: var(--amber); margin: 0 0 14px; display: flex; align-items: center; gap: 10px;
+    }
+    .step-label::after { content: ""; flex: 1; height: 1px; background: var(--border); }
+
+    /* slot cards */
+    .slots { display: flex; flex-direction: column; gap: 11px; margin: 0 0 34px; }
+    .slot {
+      display: flex; align-items: center; gap: 16px;
+      padding: 17px 20px; border: 1px solid var(--border); border-radius: 14px;
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,.008));
+      cursor: pointer; position: relative;
+      transition: border-color .18s, transform .18s, box-shadow .18s;
+    }
+    .slot input { position: absolute; opacity: 0; pointer-events: none; }
+    .slot:hover { border-color: rgba(232,160,76,.45); transform: translateY(-1px); }
+    .slot .moon {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      border: 2px solid var(--text-muted); transition: all .18s; position: relative;
+    }
+    .slot-meta { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+    .slot-date { font-size: .95rem; color: var(--text-muted); font-weight: 600; min-width: 74px; }
+    .slot-time { font-size: 1.35rem; font-weight: 700; letter-spacing: .01em; font-feature-settings: "tnum"; }
+    .slot:has(input:checked) {
+      border-color: var(--amber);
+      background: linear-gradient(180deg, rgba(232,160,76,.12), rgba(232,160,76,.03));
+      box-shadow: 0 6px 30px rgba(232,160,76,.18);
+    }
+    .slot:has(input:checked) .moon {
+      border-color: var(--amber);
+      background: radial-gradient(circle at 34% 30%, #fff6e8, var(--amber) 65%, #b97a2e);
+      box-shadow: 0 0 14px rgba(232,160,76,.7);
+    }
+    .slot:has(input:checked) .slot-date { color: var(--text); }
+
+    /* fields */
+    .field { margin-bottom: 16px; }
+    .field label { display: block; font-size: .82rem; color: var(--text-muted); margin-bottom: 7px; font-weight: 600; }
+    .field input, .field textarea {
+      width: 100%; padding: 13px 15px; border: 1px solid var(--border); border-radius: 11px;
+      background: rgba(255,255,255,.025); color: var(--text); font: inherit; font-size: 1rem;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .field input::placeholder, .field textarea::placeholder { color: #5a5a63; }
+    .field input:focus, .field textarea:focus {
+      outline: none; border-color: var(--amber); box-shadow: 0 0 0 3px rgba(232,160,76,.14);
+    }
+    .field textarea { resize: vertical; min-height: 84px; }
+
+    #submit {
+      width: 100%; padding: 16px; font-size: 1.02rem; font-weight: 700; margin-top: 8px;
+      border: none; border-radius: 12px; cursor: pointer; color: #1a1206;
+      background: linear-gradient(180deg, #f0b060, var(--amber));
+      box-shadow: 0 8px 30px rgba(232,160,76,.32); transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+    #submit:hover { transform: translateY(-1px); box-shadow: 0 12px 38px rgba(232,160,76,.42); }
+    #submit:disabled { opacity: .5; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    #msg { margin-top: 16px; font-size: .95rem; text-align: center; }
+    #msg.err { color: #ff7a7a; }
+
+    .done { text-align: center; padding: 28px 0; }
+    .done .meet-moon { box-shadow: 0 0 0 1px rgba(232,160,76,.4), 0 12px 50px rgba(232,160,76,.55); position: relative; }
+    .done .meet-moon::after {
+      content: ""; position: absolute; inset: 0; margin: auto; width: 22px; height: 12px;
+      border-left: 3px solid #1a1206; border-bottom: 3px solid #1a1206;
+      transform: rotate(-45deg) translate(1px,-3px);
+    }
+    .done h2 { font-size: 1.5rem; margin: 0 0 12px; }
+    .done p { color: var(--text-muted); line-height: 1.75; margin: 0; }
+    .done .big { color: var(--text); font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; }
+  </style>
+</head>
+<body class="force-dark">
+
+<div class="meet-bg"></div>
+
+<nav class="nav">
+  <div class="container nav-inner">
+    <a href="/" class="nav-logo">YH</a>
+    <div class="nav-links">
+      <a href="/about">About</a>
+      <a href="/#projects">Projects</a>
+      <a href="/mv/">Music</a>
+      <a href="/blog">Blog</a>
+      <a href="/mcp">API</a>
+    </div>
+  </div>
+</nav>
+
+<main class="section">
+  <div class="container meet-wrap">
+    <div id="form-view">
+      <div class="meet-head">
+        <div class="meet-moon"></div>
+        <h1>日程を、選ぶ。</h1>
+        <p>濱田優貴とのミーティング。都合のよい時間をどうぞ。</p>
+        <div class="tz">時刻はすべて日本時間 (JST)</div>
+      </div>
+
+      <form id="meet-form" autocomplete="on">
+        <p class="step-label">時間を選ぶ</p>
+        <div class="slots">
+          <!--SLOTS-->
+        </div>
+
+        <p class="step-label">連絡先</p>
+        <div class="field">
+          <label for="name">お名前</label>
+          <input type="text" id="name" name="name" required maxlength="80" placeholder="山田 太郎">
+        </div>
+        <div class="field">
+          <label for="email">メールアドレス</label>
+          <input type="email" id="email" name="email" required maxlength="120" placeholder="you@example.com">
+        </div>
+        <div class="field">
+          <label for="message">伝えておきたいこと（任意）</label>
+          <textarea id="message" name="message" maxlength="1000" placeholder="議題・参加人数・オンライン / 対面の希望など"></textarea>
+        </div>
+        <button type="submit" id="submit">この時間で確定する</button>
+        <div id="msg"></div>
+      </form>
+    </div>
+
+    <div id="done-view" class="done" style="display:none;">
+      <div class="meet-moon"></div>
+      <h2>確定しました</h2>
+      <p class="big" id="done-text"></p>
+      <p>確認メールをお送りしました。<br>濱田から追って連絡が入る場合があります。</p>
+    </div>
+  </div>
+</main>
+
+<script>
+  const form = document.getElementById('meet-form');
+  const btn = document.getElementById('submit');
+  const msg = document.getElementById('msg');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    msg.textContent = ''; msg.className = '';
+    const slot = form.querySelector('input[name="slot"]:checked');
+    if (!slot) { msg.textContent = '時間を選んでください。'; msg.className = 'err'; return; }
+    const payload = {
+      slot: slot.value,
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      message: document.getElementById('message').value.trim(),
+    };
+    btn.disabled = true; btn.textContent = '送信中…';
+    try {
+      const r = await fetch('/api/meet/book', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await r.json();
+      if (r.ok && data.ok) {
+        document.getElementById('done-text').textContent = data.slot_label;
+        document.getElementById('form-view').style.display = 'none';
+        document.getElementById('done-view').style.display = 'block';
+        window.scrollTo(0, 0);
+      } else {
+        msg.textContent = data.error || '送信に失敗しました。時間をおいて再度お試しください。';
+        msg.className = 'err';
+        btn.disabled = false; btn.textContent = 'この時間で確定する';
+      }
+    } catch (_) {
+      msg.textContent = '通信エラーが発生しました。';
+      msg.className = 'err';
+      btn.disabled = false; btn.textContent = 'この時間で確定する';
+    }
+  });
+</script>
+</body>
+</html>
