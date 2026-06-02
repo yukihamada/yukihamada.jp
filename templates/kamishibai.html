@@ -193,6 +193,8 @@ function curTime(){ return useWA ? (waPlaying ? actx.currentTime - waStartAt : w
 function curDur(){ return useWA ? DUR : (A.duration || 151); }
 function isPausedA(){ return useWA ? !waPlaying : A.paused; }
 function waStartFrom(off){
+  try{ A.pause(); }catch(_){}                 // WebAudio開始時は<audio>フォールバックを必ず止める(二重防止)
+  if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){}}  // 既存ソースも止める
   asrc=actx.createBufferSource(); asrc.buffer=abuf; asrc.connect(actx.destination);
   asrc.onended=()=>{ if(waPlaying && curTime()>=DUR-0.3) onEnded(); };
   waStartAt=actx.currentTime - off; waPlaying=true; asrc.start(0, Math.max(0,off));
@@ -252,7 +254,7 @@ function startLoop(){ ended=false; cancelAnimationFrame(rafId); rafId=requestAni
 function onEnded(){ if(ended)return; ended=true; if(useWA)waStopKeep(); if(particleTimer)clearInterval(particleTimer);
   capEl.classList.remove('show'); cta.classList.add('on'); }
 A.addEventListener('ended',onEnded);                  // <audio> フォールバック経路
-kick.addEventListener('click',async()=>{ kick.style.display='none'; setScene(0); renderCap(CAPS[0][1]); await unlockAudio(); await playAudio(); });
+kick.addEventListener('click',async(e)=>{ e.stopPropagation(); /* #frameのタップ再生に伝播させない(二重再生防止) */ kick.style.display='none'; setScene(0); renderCap(CAPS[0][1]); await unlockAudio(); await playAudio(); });
 replay.addEventListener('click',async()=>{ cta.classList.remove('on'); curCap=-1; ended=false; seekZero(); await playAudio(); });
 // 再生中に画面をタップ → 一時停止/再開（kick・CTA・リンク類のクリックは邪魔しない）
 document.getElementById('frame').addEventListener('click',(e)=>{
