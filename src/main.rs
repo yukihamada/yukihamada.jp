@@ -6349,6 +6349,16 @@ async fn main() {
     let app = Router::new()
         .route("/", get(home))
         .route("/community", get(community::page))
+        // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
+        .route("/campfire", get(community::page))
+        .route("/tomoshibi", get(community::page))
+        .route("/takibi", get(community::page))
+        .route("/bonfire", get(community::page))
+        .route("/fire", get(community::page))
+        // 日本語パスはブラウザが percent-encode して送るため、その形で登録する
+        .route("/%E7%84%9A%E3%81%8D%E7%81%AB", get(community::page)) // 焚き火
+        .route("/%E7%81%AF%E7%81%AB", get(community::page)) // 灯火
+        .route("/%E3%81%A8%E3%82%82%E3%81%97%E3%81%B3", get(community::page)) // ともしび
         .route("/community/join", get(community::join_page))
         .route("/community/welcome", get(community::welcome_page))
         .route("/community/buildings", get(community::buildings_page))
