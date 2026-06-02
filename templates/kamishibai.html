@@ -187,7 +187,7 @@ const CAPS=[
 const A=document.getElementById('audio');           // <audio> フォールバック
 // ── 音声エンジン: iOS のサイレント(マナー)スイッチは <audio> をミュートするため、
 //    WebAudio(メディア音=サイレントでも鳴る)を第一に使う。失敗時のみ <audio> に戻す。
-const AUDIO_URL = location.origin + '/audio/kamishibai-ep1.mp3';  // 同一オリジン(CORS不要)
+const AUDIO_URL = location.origin + '/audio/kamishibai-ep1.mp3?v=2';  // 同一オリジン(CORS不要)・?vでキャッシュバスト
 let actx=null, abuf=null, asrc=null, waStartAt=0, waPausedAt=0, waPlaying=false, useWA=false, DUR=151;
 function curTime(){ return useWA ? (waPlaying ? actx.currentTime - waStartAt : waPausedAt) : A.currentTime; }
 function curDur(){ return useWA ? DUR : (A.duration || 151); }
@@ -206,7 +206,7 @@ async function unlockAudio(){            // 必ずユーザー操作内で呼ぶ
     // iOS解錠は await より前に同期で（無音1サンプルをジェスチャ内で鳴らす）
     try{ const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0); }catch(_){}
     if(actx.state==='suspended') await actx.resume();
-    if(!abuf){ const r=await fetch(AUDIO_URL,{cache:'force-cache'}); const ab=await r.arrayBuffer(); abuf=await actx.decodeAudioData(ab); DUR=abuf.duration; }
+    if(!abuf){ const r=await fetch(AUDIO_URL); const ab=await r.arrayBuffer(); abuf=await actx.decodeAudioData(ab); DUR=abuf.duration; }
     useWA=true;
   }catch(e){ useWA=false; A.src=AUDIO_URL; }   // WebAudio不可 → <audio>にフォールバック
 }
