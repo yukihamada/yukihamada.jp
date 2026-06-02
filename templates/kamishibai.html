@@ -128,7 +128,7 @@
   <div id="bar2"></div>
 </div></div>
 
-<audio id="audio" src="ep1.mp3?v=26" preload="auto"></audio>
+<audio id="audio" preload="none" playsinline></audio>
 <script>
 const SCENES=[
  {t:0,    img:"01_hook",    fx:"q"},
@@ -184,7 +184,33 @@ const CAPS=[
  [148.78,"それじゃ、また。はまだ、でした。"],
 ];
 
-const A=document.getElementById('audio');
+const A=document.getElementById('audio');           // <audio> フォールバック
+// ── 音声エンジン: iOS のサイレント(マナー)スイッチは <audio> をミュートするため、
+//    WebAudio(メディア音=サイレントでも鳴る)を第一に使う。失敗時のみ <audio> に戻す。
+const AUDIO_URL = location.origin + '/audio/kamishibai-ep1.mp3';  // 同一オリジン(CORS不要)
+let actx=null, abuf=null, asrc=null, waStartAt=0, waPausedAt=0, waPlaying=false, useWA=false, DUR=151;
+function curTime(){ return useWA ? (waPlaying ? actx.currentTime - waStartAt : waPausedAt) : A.currentTime; }
+function curDur(){ return useWA ? DUR : (A.duration || 151); }
+function isPausedA(){ return useWA ? !waPlaying : A.paused; }
+function waStartFrom(off){
+  asrc=actx.createBufferSource(); asrc.buffer=abuf; asrc.connect(actx.destination);
+  asrc.onended=()=>{ if(waPlaying && curTime()>=DUR-0.3) onEnded(); };
+  waStartAt=actx.currentTime - off; waPlaying=true; asrc.start(0, Math.max(0,off));
+}
+function waStopKeep(){ if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){}} asrc=null; waPausedAt=curTime(); waPlaying=false; }
+async function unlockAudio(){            // 必ずユーザー操作内で呼ぶ
+  try{
+    if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+    // iOS解錠は await より前に同期で（無音1サンプルをジェスチャ内で鳴らす）
+    try{ const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0); }catch(_){}
+    if(actx.state==='suspended') await actx.resume();
+    if(!abuf){ const r=await fetch(AUDIO_URL,{cache:'force-cache'}); const ab=await r.arrayBuffer(); abuf=await actx.decodeAudioData(ab); DUR=abuf.duration; }
+    useWA=true;
+  }catch(e){ useWA=false; A.src=AUDIO_URL; }   // WebAudio不可 → <audio>にフォールバック
+}
+async function playAudio(){ if(useWA){ if(actx.state==='suspended') await actx.resume(); if(!waPlaying) waStartFrom(waPausedAt); } else { if(!A.src) A.src=AUDIO_URL; try{ await A.play(); }catch(_){ } } startLoop(); }
+function pauseAudio(){ if(useWA){ if(waPlaying) waStopKeep(); } else { A.pause(); } }
+function seekZero(){ if(useWA){ if(waPlaying) waStopKeep(); waPausedAt=0; } else { A.currentTime=0; } }
 const scenesEl=document.getElementById('scenes'), capEl=document.getElementById('cap');
 const fillEl=document.getElementById('fill'), fxEl=document.getElementById('fx');
 const kick=document.getElementById('kick'), cta=document.getElementById('cta'), replay=document.getElementById('replay');
@@ -209,27 +235,31 @@ const FXMAP={q:["？","❓"],dust:["💤","📚","🎫"],apple:["🍎"],night:["
 function setParticles(kind){ if(particleTimer){clearInterval(particleTimer);particleTimer=null;}
   if(REDUCE)return;
   const set=FXMAP[kind]; if(!set)return;
-  particleTimer=setInterval(()=>{ if(A.paused)return; spawn(set[Math.floor(Math.random()*set.length)], 20+Math.random()*22); }, 1000); }
+  particleTimer=setInterval(()=>{ if(isPausedA())return; spawn(set[Math.floor(Math.random()*set.length)], 20+Math.random()*22); }, 1000); }
 
 function tick(){
-  const t=A.currentTime;
+  const t=curTime();
   let si=0; for(let i=0;i<SCENES.length;i++){ if(t>=SCENES[i].t) si=i; }
   setScene(si);
   let ci=0; for(let i=0;i<CAPS.length;i++){ if(t>=CAPS[i][0]) ci=i; }
   if(ci!==curCap){ curCap=ci; renderCap(CAPS[ci][1]); }
-  fillEl.style.width=(t/(A.duration||151)*100)+'%';
+  fillEl.style.width=(t/(curDur()||151)*100)+'%';
 }
-A.addEventListener('timeupdate',tick);
-A.addEventListener('ended',()=>{ if(particleTimer)clearInterval(particleTimer);
-  capEl.classList.remove('show'); cta.classList.add('on'); });
-kick.addEventListener('click',()=>{ kick.style.display='none'; A.play(); setScene(0); renderCap(CAPS[0][1]); });
-replay.addEventListener('click',()=>{ cta.classList.remove('on'); A.currentTime=0; curCap=-1; A.play(); });
+// 再生時計は requestAnimationFrame で回す（WebAudio/<audio> 共通）
+let rafId=null, ended=false;
+function loop(){ tick(); if(!ended && curTime()>=curDur()-0.05){ onEnded(); return; } if(!isPausedA()){ rafId=requestAnimationFrame(loop); } }
+function startLoop(){ ended=false; cancelAnimationFrame(rafId); rafId=requestAnimationFrame(loop); }
+function onEnded(){ if(ended)return; ended=true; if(useWA)waStopKeep(); if(particleTimer)clearInterval(particleTimer);
+  capEl.classList.remove('show'); cta.classList.add('on'); }
+A.addEventListener('ended',onEnded);                  // <audio> フォールバック経路
+kick.addEventListener('click',async()=>{ kick.style.display='none'; setScene(0); renderCap(CAPS[0][1]); await unlockAudio(); await playAudio(); });
+replay.addEventListener('click',async()=>{ cta.classList.remove('on'); curCap=-1; ended=false; seekZero(); await playAudio(); });
 // 再生中に画面をタップ → 一時停止/再開（kick・CTA・リンク類のクリックは邪魔しない）
 document.getElementById('frame').addEventListener('click',(e)=>{
   if(kick.style.display!=='none') return;          // まだ未再生
   if(cta.classList.contains('on')) return;          // 終了画面ではCTA操作を優先
   if(e.target.closest('a,button')) return;          // リンク/ボタンは素通し
-  A.paused ? A.play() : A.pause();
+  isPausedA() ? playAudio() : pauseAudio();
 });
 SCENES.forEach(s=>{ const im=new Image(); im.src=`img/${s.img}.png`; });
 </script>
