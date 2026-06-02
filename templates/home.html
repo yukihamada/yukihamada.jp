@@ -2539,6 +2539,23 @@
         <a href="/community" class="about-link">🔥 ともしび</a>
         <a href="/kamishibai" class="about-link">🎴 紙芝居</a>
       </div>
+      <a href="/community/buildings" id="dataStatus" class="data-status" aria-live="polite" title="保存データの状況"></a>
+      <style>
+        .data-status{display:none;margin-top:14px;font-size:12px;line-height:1.7;color:#8c8c98;
+          text-decoration:none;border:1px solid rgba(140,140,152,.25);border-radius:10px;padding:8px 12px;}
+        .data-status.show{display:inline-block;}
+        .data-status b{color:#c0392b;font-weight:700;}
+        .data-status .ds-k{display:inline-block;background:rgba(192,57,43,.14);color:#c0392b;
+          font-weight:700;border-radius:6px;padding:1px 7px;margin-right:8px;font-size:11px;}
+      </style>
+      <script>
+        fetch('/api/community/stats').then(r=>r.json()).then(d=>{
+          var el=document.getElementById('dataStatus'); if(!el)return;
+          el.innerHTML='<span class="ds-k">データ</span>ともしび 投稿<b>'+d.posts+'</b> / 人<b>'+d.members+'</b> / 建物<b>'+d.buildings+'</b>'
+            +' ・ 保存 '+d.storage+' ・ 最終更新 '+d.updated;
+          el.classList.add('show');
+        }).catch(function(){});
+      </script>
     </div>
     <div class="about-now">
       <div class="about-now-label">▸ 今やっていること</div>

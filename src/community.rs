@@ -444,6 +444,39 @@ pub async fn api_buildings() -> Json<serde_json::Value> {
     Json(serde_json::json!({ "buildings": bs }))
 }
 
+/// 保存データの可視化用。投稿/メンバー/建物の件数・保存先・最終更新を返す。
+pub async fn api_stats() -> Json<serde_json::Value> {
+    {
+        let _g = STORE_LOCK.lock().unwrap();
+        let _ = archive_locked();
+    }
+    let posts: Vec<Post> = load("posts.json");
+    let logs = posts.iter().filter(|p| is_log(p)).count();
+    let buildings = load::<Building>("buildings.json").len();
+    let members = load::<Member>("members.json").len();
+    // 最終更新 = データファイルの最新 mtime を日付に
+    let dir = data_dir();
+    let newest = ["posts.json", "buildings.json", "members.json"]
+        .iter()
+        .filter_map(|f| std::fs::metadata(format!("{}/{}", dir, f)).ok())
+        .filter_map(|m| m.modified().ok())
+        .max();
+    let updated = newest
+        .map(|t| {
+            let dt: chrono::DateTime<chrono::Utc> = t.into();
+            dt.format("%Y-%m-%d").to_string()
+        })
+        .unwrap_or_else(|| "—".to_string());
+    Json(serde_json::json!({
+        "posts": posts.len(),
+        "logs": logs,
+        "members": members,
+        "buildings": buildings,
+        "storage": "/data/community (Fly volume・追記型)",
+        "updated": updated,
+    }))
+}
+
 pub async fn api_members() -> Json<serde_json::Value> {
     let members: Vec<serde_json::Value> = load::<Member>("members.json")
         .into_iter()

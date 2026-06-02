@@ -6379,6 +6379,7 @@ async fn main() {
         .route("/api/community/auth/verify", get(community::auth_verify))
         .route("/api/community/posts", get(community::api_posts))
         .route("/api/community/members", get(community::api_members))
+        .route("/api/community/stats", get(community::api_stats))
         .route("/api/community/webhook", post(community::webhook_post))
         .route("/api/community/webhook", axum::routing::options(options_cors))
         .route("/ja", get(redirect_root))
