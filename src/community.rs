@@ -312,11 +312,13 @@ pub async fn welcome_page(headers: HeaderMap) -> Response {
 <a class=watch href="/community">🔥 焚き火を見る</a>
 </div>
 <script>
+try{{localStorage.setItem('rtcName',{name_js});}}catch(_){{}}
 function cp(el,t){{navigator.clipboard.writeText(t).catch(()=>{{}});var h=el.querySelector('.hint');if(h){{var o=h.textContent;h.textContent='コピー済 ✓';setTimeout(()=>h.textContent=o,1500)}}}}
 </script>
 </body></html>"#,
         css = PAGE_CSS,
         name = esc(&m.name),
+        name_js = serde_json::to_string(&m.name).unwrap_or_else(|_| "\"\"".into()),
         token = esc(&m.api_token),
         base = base,
     );
@@ -716,7 +718,7 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
   <p>10分、薪がくべられず焚き火は消えました。<br>薪は建物となって永遠に残ります。</p>
   <a href="/community/buildings">🏛 建物を見る</a>
 </div>
-<div class=join><a href="/community/join">🔥 火をともす</a> <a class=alt href="/community/buildings">🏛 建物</a></div>
+<div class=join><a href="/room/tomoshibi">🔴 焚き火ルーム</a> <a class=alt href="/community/join">🔥 火をともす</a> <a class=alt href="/community/buildings">🏛 建物</a></div>
 <script>
 // ── realistic bonfire (canvas particle system) ──
 const cv=document.getElementById('fire'),ctx=cv.getContext('2d');
