@@ -1125,6 +1125,12 @@ async fn room_page(Path(_id): Path<String>) -> impl IntoResponse {
     Html(include_str!("../templates/room.html"))
 }
 
+// 紙芝居『あなたの中に、悪魔を1匹。』第1話。画像/音声は <base> 経由で
+// devil-podcast.fly.dev から配信（marker: kamishibai-1）。
+async fn kamishibai_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai.html"))
+}
+
 // Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
 // from Cloudflare are short-lived, so we mint once and reuse for ~12h.
 static RTC_ICE_CACHE: std::sync::Mutex<Option<(serde_json::Value, u64)>> =
@@ -6348,6 +6354,9 @@ async fn main() {
     community::spawn_background(); // 記念日点火(C) + federation(D) を設定があれば起動
     let app = Router::new()
         .route("/", get(home))
+        .route("/kamishibai", get(kamishibai_page))
+        .route("/akuma", get(kamishibai_page))
+        .route("/shibai", get(kamishibai_page))
         .route("/community", get(community::page))
         // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
         .route("/campfire", get(community::page))
