@@ -1185,6 +1185,25 @@ async fn room_ice() -> impl IntoResponse {
     (cors_headers(), Json(serde_json::json!({ "iceServers": servers }))).into_response()
 }
 
+// Live headcount for a room (how many peers are connected right now). Used by the
+// ともしび campfire page to show "N people are by the fire" so an empty page reads
+// as "quiet" rather than "dead". Counts active broadcast subscribers == live peers.
+async fn room_presence(
+    State(state): State<Arc<AppState>>,
+    Path(room_id): Path<String>,
+) -> impl IntoResponse {
+    let room: String = room_id
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .take(64)
+        .collect();
+    let count = {
+        let rooms = state.rtc_rooms.lock().unwrap();
+        rooms.get(&room).map(|t| t.receiver_count()).unwrap_or(0)
+    };
+    (cors_headers(), Json(serde_json::json!({ "room": room, "count": count, "cap": 6 }))).into_response()
+}
+
 // WebSocket signaling endpoint: /ws/room/{id}
 async fn ws_room(
     ws: WebSocketUpgrade,
@@ -6326,6 +6345,7 @@ async fn main() {
     std::fs::create_dir_all(VIDEO_DIR).ok();
 
     community::seed_if_empty();
+    community::spawn_background(); // 記念日点火(C) + federation(D) を設定があれば起動
     let app = Router::new()
         .route("/", get(home))
         .route("/community", get(community::page))
@@ -6340,6 +6360,8 @@ async fn main() {
         .route("/api/community/auth/verify", get(community::auth_verify))
         .route("/api/community/posts", get(community::api_posts))
         .route("/api/community/members", get(community::api_members))
+        .route("/api/community/webhook", post(community::webhook_post))
+        .route("/api/community/webhook", axum::routing::options(options_cors))
         .route("/ja", get(redirect_root))
         .route("/en", get(redirect_root))
         .route("/about", get(about))
@@ -6461,6 +6483,7 @@ async fn main() {
         .route("/ws/terminal", get(ws_terminal))
         .route("/room/{id}", get(room_page))
         .route("/api/room/ice", get(room_ice))
+        .route("/api/room/{id}/presence", get(room_presence))
         .route("/ws/room/{id}", get(ws_room))
         .route("/yukiterm", get(yukiterm_script))
         .route("/chat", get(chat_page))

@@ -15,12 +15,15 @@ use axum::{
     Json,
 };
 use serde::{de::DeserializeOwned, Deserialize, Serialize};
+use std::collections::BTreeMap;
 use std::sync::{Arc, Mutex};
 
 use crate::AppState;
 
 const FROM_EMAIL: &str = "ともしび <info@enablerdao.com>";
 static STORE_LOCK: Mutex<()> = Mutex::new(());
+/// auth_request のレート制限: email -> 直近のリクエスト時刻(秒)。メール爆撃の踏み台防止。
+static AUTH_RL: Mutex<BTreeMap<String, Vec<i64>>> = Mutex::new(BTreeMap::new());
 
 fn base_url() -> String {
     std::env::var("COMMUNITY_BASE_URL")
@@ -133,6 +136,34 @@ fn cookie_token(headers: &HeaderMap) -> Option<String> {
         .map(|(_, v)| v.to_string())
 }
 
+/// 表示言語を決める（global-first: ?lang / Accept-Language、既定は英語）。
+#[derive(Deserialize, Default)]
+pub struct LangQ {
+    #[serde(default)]
+    lang: Option<String>,
+}
+
+fn pick_lang(headers: &HeaderMap, q: &LangQ) -> &'static str {
+    if let Some(l) = q.lang.as_deref() {
+        if l == "en" {
+            return "en";
+        }
+        if l == "ja" {
+            return "ja";
+        }
+    }
+    let al = headers
+        .get(header::ACCEPT_LANGUAGE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("")
+        .to_lowercase();
+    if al.starts_with("ja") || al.split(',').any(|p| p.trim().starts_with("ja")) {
+        "ja"
+    } else {
+        "en"
+    }
+}
+
 fn esc(s: &str) -> String {
     s.replace('&', "&amp;")
         .replace('<', "&lt;")
@@ -182,6 +213,21 @@ pub async fn auth_request(
     } else {
         body.name.trim().chars().take(40).collect()
     };
+
+    // rate limit: 同一メール 60秒に1通・5通/時まで（メール爆撃の踏み台防止）
+    {
+        let now = chrono::Utc::now().timestamp();
+        let mut rl = AUTH_RL.lock().unwrap();
+        if rl.len() > 10_000 {
+            rl.retain(|_, v| v.iter().any(|t| now - *t < 3600));
+        }
+        let v = rl.entry(email.clone()).or_default();
+        v.retain(|t| now - *t < 3600);
+        if v.iter().any(|t| now - *t < 60) || v.len() >= 5 {
+            return (StatusCode::TOO_MANY_REQUESTS, "少し時間をおいて再度お試しください").into_response();
+        }
+        v.push(now);
+    }
 
     let token = rand_hex(32);
     {
@@ -284,7 +330,7 @@ pub async fn auth_verify(Query(q): Query<VerifyQ>) -> Response {
     resp
 }
 
-pub async fn welcome_page(headers: HeaderMap) -> Response {
+pub async fn welcome_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Response {
     let Some(tok) = cookie_token(&headers) else {
         return Redirect::to("/community/join").into_response();
     };
@@ -292,24 +338,66 @@ pub async fn welcome_page(headers: HeaderMap) -> Response {
         return Redirect::to("/community/join").into_response();
     };
     let base = base_url();
+    let ja = pick_lang(&headers, &q) == "ja";
+    let (lang_attr, title, h1, sub, l_key, l_add, l_talk, say1, say2, watch) = if ja {
+        (
+            "ja",
+            "ともしび — 火がともりました",
+            format!("{} さん、火がともりました", esc(&m.name)),
+            "あなたの権限キー（api_token）です。これで Claude から焚き火を操作できます。",
+            "あなたの api_token",
+            "Claude に追加（1回だけ）",
+            "Claude で話しかける",
+            "ともしびに火をともして",
+            "今やってる作業を薪にして",
+            "🔥 焚き火を見る",
+        )
+    } else {
+        (
+            "en",
+            "Tomoshibi — Fire lit",
+            format!("{}, your fire is lit", esc(&m.name)),
+            "This is your api key. It lets Claude tend the campfire.",
+            "Your api_token",
+            "Add to Claude (once)",
+            "Talk to Claude",
+            "Light the fire on Tomoshibi",
+            "Turn what I'm working on into a log",
+            "🔥 See the fire",
+        )
+    };
+    // セキュリティ: 権限キーは画面に平文で晒さない。表示はマスク、コピーは全文。
+    let masked = {
+        let t = &m.api_token;
+        if t.len() > 12 {
+            format!("{}…{}", &t[..6], &t[t.len() - 4..])
+        } else {
+            "•".repeat(t.len())
+        }
+    };
+    let cmd_full = format!(
+        "claude mcp add --transport http tomoshibi {base}/community/mcp --header \"Authorization: Bearer {}\"",
+        m.api_token
+    );
+    let cmd_masked = cmd_full.replace(m.api_token.as_str(), &masked);
     let html = format!(
-        r#"<!DOCTYPE html><html lang=ja><head><meta charset=utf-8>
+        r#"<!DOCTYPE html><html lang={lang_attr}><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<title>ともしび — 火がともりました</title>
+<title>{title}</title>
 <style>{css}</style></head>
 <body class=center>
 <div class=card>
 <div class=fire-emoji>🔥</div>
-<h1>{name} さん、火がともりました</h1>
-<p class=sub>あなたの権限キー（api_token）です。これで Claude から焚き火を操作できます。</p>
-<div class=label>あなたの api_token</div>
-<div class=cmd onclick="cp(this,'{token}')">{token}<span class=hint>コピー</span></div>
-<div class=label>Claude に追加（1回だけ）</div>
-<div class=cmd onclick="cp(this,this.dataset.c)" data-c='claude mcp add --transport http tomoshibi {base}/community/mcp --header "Authorization: Bearer {token}"'>claude mcp add --transport http tomoshibi {base}/community/mcp --header "Authorization: Bearer {token}"<span class=hint>コピー</span></div>
-<div class=label>Claude で話しかける</div>
-<div class=say onclick="cp(this,'ともしびに火をともして')">"ともしびに火をともして"<span class=hint>コピー</span></div>
-<div class=say onclick="cp(this,'今やってる作業を薪にして')">"今やってる作業を薪にして"<span class=hint>コピー</span></div>
-<a class=watch href="/community">🔥 焚き火を見る</a>
+<h1>{h1}</h1>
+<p class=sub>{sub}</p>
+<div class=label>{l_key}</div>
+<div class=cmd onclick="cp(this,this.dataset.c)" data-c='{token}'>{masked}<span class=hint>コピー</span></div>
+<div class=label>{l_add}</div>
+<div class=cmd onclick="cp(this,this.dataset.c)" data-c='{cmd_full}'>{cmd_masked}<span class=hint>コピー</span></div>
+<div class=label>{l_talk}</div>
+<div class=say onclick="cp(this,'{say1}')">"{say1}"<span class=hint>コピー</span></div>
+<div class=say onclick="cp(this,'{say2}')">"{say2}"<span class=hint>コピー</span></div>
+<a class=watch href="/community">{watch}</a>
 </div>
 <script>
 try{{localStorage.setItem('rtcName',{name_js});}}catch(_){{}}
@@ -317,10 +405,8 @@ function cp(el,t){{navigator.clipboard.writeText(t).catch(()=>{{}});var h=el.que
 </script>
 </body></html>"#,
         css = PAGE_CSS,
-        name = esc(&m.name),
         name_js = serde_json::to_string(&m.name).unwrap_or_else(|_| "\"\"".into()),
         token = esc(&m.api_token),
-        base = base,
     );
     Html(html).into_response()
 }
@@ -334,7 +420,7 @@ pub async fn api_posts() -> Json<serde_json::Value> {
     }
     let (alive, remain) = fire_state();
     let mut posts: Vec<Post> = load("posts.json");
-    let count = posts.len();
+    let count = posts.iter().filter(|p| is_log(p)).count(); // 薪の数（炎の大きさ）
     posts.reverse(); // newest first
     posts.truncate(100);
     let buildings = load::<Building>("buildings.json").len();
@@ -368,38 +454,51 @@ pub async fn api_members() -> Json<serde_json::Value> {
 
 // ── shared write helpers ─────────────────────────────────────────────────
 
-/// 最後の薪から FIRE_TTL_SECS 過ぎていたら、今の薪を建物に移して焚き火を空にする。
-/// STORE_LOCK を保持した状態で呼ぶこと。戻り値 = アーカイブした建物（あれば）。
+/// 薪か？（kind=content のピン留め作品は焚き火ライフサイクルの対象外）。
+fn is_log(p: &Post) -> bool {
+    p.kind != "content"
+}
+
+/// 最後の薪から FIRE_TTL_SECS 過ぎていたら、薪だけを建物に移す。
+/// ピン留め(content)は posts.json に残す。STORE_LOCK 保持下で呼ぶこと。
 fn archive_locked() -> Option<Building> {
-    let posts: Vec<Post> = load("posts.json");
-    let last = posts.iter().map(|p| &p.created_at).max()?;
+    let all: Vec<Post> = load("posts.json");
+    let logs: Vec<Post> = all.iter().filter(|p| is_log(p)).cloned().collect();
+    if logs.is_empty() {
+        return None;
+    }
+    let last = logs.iter().map(|p| &p.created_at).max()?;
     let last_ts = chrono::DateTime::parse_from_rfc3339(last).ok()?.timestamp();
     if chrono::Utc::now().timestamp() - last_ts < fire_ttl_secs() {
         return None;
     }
-    let started = posts.iter().map(|p| p.created_at.clone()).min().unwrap_or_default();
-    let mut members: Vec<String> = posts.iter().map(|p| p.author_name.clone()).collect();
+    let started = logs.iter().map(|p| p.created_at.clone()).min().unwrap_or_default();
+    let mut members: Vec<String> = logs.iter().map(|p| p.author_name.clone()).collect();
     members.sort();
     members.dedup();
     let b = Building {
         id: rand_hex(8),
         started_at: started,
         ended_at: last.clone(),
-        log_count: posts.len(),
+        log_count: logs.len(),
         members,
-        posts,
+        posts: logs,
     };
     let mut buildings: Vec<Building> = load("buildings.json");
     buildings.push(b.clone());
     save("buildings.json", &buildings);
-    save("posts.json", &Vec::<Post>::new());
+    // ピン留め(content)だけ残す
+    let pinned: Vec<Post> = all.into_iter().filter(|p| !is_log(p)).collect();
+    save("posts.json", &pinned);
     Some(b)
 }
 
-/// 火が生きているか（最後の薪から10分以内）と、残り秒。
+/// 火が生きているか（最後の薪から10分以内）と、残り秒。薪が無ければ未着火。
 fn fire_state() -> (bool, i64) {
     let posts: Vec<Post> = load("posts.json");
-    let Some(last) = posts.iter().filter_map(|p| chrono::DateTime::parse_from_rfc3339(&p.created_at).ok()).map(|d| d.timestamp()).max() else {
+    let Some(last) = posts.iter().filter(|p| is_log(p))
+        .filter_map(|p| chrono::DateTime::parse_from_rfc3339(&p.created_at).ok())
+        .map(|d| d.timestamp()).max() else {
         return (false, 0);
     };
     let remain = fire_ttl_secs() - (chrono::Utc::now().timestamp() - last);
@@ -425,6 +524,176 @@ fn add_post(author: &str, body: &str, kind: &str, url: Option<String>) -> Post {
     }
     save("posts.json", &posts);
     p
+}
+
+// ── 火を実体にリンクする（A:webhook薪 / C:記念日 / D:federation） ───────────
+//
+// 旧「番人ポエム」は撤去。火の燃料を Bot の定型文ではなく、すでに鼓動している
+// 実体（コミット/デプロイ/売上・記念日・他コミュニティの火）に繋ぐ。
+// → 無人でも火が生き、しかも薪はすべて本物のイベント＝コンセプトを汚さない。
+
+/// 起動時に呼ぶ。記念日点火(C)と federation(D) を、設定があるときだけ動かす。
+/// 設定（anniversaries.json / COMMUNITY_FEDERATION_PEERS）が無ければ何もしない＝安全。
+pub fn spawn_background() {
+    spawn_anniversary();
+    spawn_federation();
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+struct Anniversary {
+    date: String, // "MM-DD" または "YYYY-MM-DD"
+    title: String,
+    #[serde(default)]
+    url: Option<String>,
+}
+
+/// C. 記念日に灯す火。anniversaries.json があり今日が一致したら 1日1回 memorial を灯す。
+fn spawn_anniversary() {
+    tokio::spawn(async move {
+        loop {
+            let list: Vec<Anniversary> = load("anniversaries.json");
+            if !list.is_empty() {
+                let now = chrono::Utc::now();
+                let md = now.format("%m-%d").to_string();
+                let ymd = now.format("%Y-%m-%d").to_string();
+                for a in list.iter().filter(|a| a.date == md || a.date == ymd) {
+                    let posts: Vec<Post> = load("posts.json");
+                    let already = posts.iter().any(|p| {
+                        p.kind == "memorial"
+                            && p.body.contains(&a.title)
+                            && p.created_at.starts_with(ymd.as_str())
+                    });
+                    if !already {
+                        add_post("記念", &a.title, "memorial", a.url.clone());
+                    }
+                }
+            }
+            tokio::time::sleep(std::time::Duration::from_secs(3600)).await;
+        }
+    });
+}
+
+/// D. federation。`COMMUNITY_FEDERATION_PEERS="名前|URL,名前|URL"`（URLは相手の
+/// /api/community/posts）。相手の新しい薪を relay として取り込む。relay は再 relay
+/// しない（ループ防止）。設定が無ければ起動しない。
+fn spawn_federation() {
+    let raw = std::env::var("COMMUNITY_FEDERATION_PEERS").unwrap_or_default();
+    let peers: Vec<(String, String)> = raw
+        .split(',')
+        .filter_map(|p| p.split_once('|'))
+        .map(|(n, u)| (n.trim().to_string(), u.trim().to_string()))
+        .filter(|(n, u)| !n.is_empty() && u.starts_with("http"))
+        .collect();
+    if peers.is_empty() {
+        return;
+    }
+    tokio::spawn(async move {
+        let client = reqwest::Client::new();
+        loop {
+            for (name, url) in &peers {
+                let Ok(r) = client
+                    .get(url)
+                    .timeout(std::time::Duration::from_secs(8))
+                    .send()
+                    .await
+                else {
+                    continue;
+                };
+                let Ok(j) = r.json::<serde_json::Value>().await else {
+                    continue;
+                };
+                let Some(arr) = j.get("posts").and_then(|v| v.as_array()) else {
+                    continue;
+                };
+                let mut seen: Vec<String> = load("federation_seen.json");
+                for p in arr.iter().take(20) {
+                    let kind = p.get("kind").and_then(|v| v.as_str()).unwrap_or("");
+                    if kind == "content" || kind == "relay" {
+                        continue; // ピン留め・再relay は取り込まない
+                    }
+                    let oid = p.get("id").and_then(|v| v.as_str()).unwrap_or("");
+                    let key = format!("{name}:{oid}");
+                    if oid.is_empty() || seen.contains(&key) {
+                        continue;
+                    }
+                    let author = p.get("author_name").and_then(|v| v.as_str()).unwrap_or("誰か");
+                    let body = p.get("body").and_then(|v| v.as_str()).unwrap_or("");
+                    let url2 = p
+                        .get("url")
+                        .and_then(|v| v.as_str())
+                        .filter(|s| s.starts_with("http"))
+                        .map(|s| s.to_string());
+                    add_post(&format!("{name}» {author}"), body, "relay", url2);
+                    seen.push(key);
+                }
+                if seen.len() > 2000 {
+                    let drop = seen.len() - 2000;
+                    seen.drain(0..drop);
+                }
+                save("federation_seen.json", &seen);
+            }
+            tokio::time::sleep(std::time::Duration::from_secs(180)).await;
+        }
+    });
+}
+
+// ── webhook（A. 仕事の鼓動を薪に） ──────────────────────────────────────────
+// 外部の実イベント（commit / deploy / sale / ...）を薪としてくべる。
+// 共有シークレット COMMUNITY_WEBHOOK_SECRET 一致が必要。未設定なら無効(503)。
+
+#[derive(Deserialize)]
+pub struct WebhookBody {
+    #[serde(default)]
+    text: String,
+    #[serde(default)]
+    url: Option<String>,
+    #[serde(default)]
+    kind: Option<String>,
+    #[serde(default)]
+    author: Option<String>,
+}
+
+fn webhook_kind(k: &str) -> &'static str {
+    match k {
+        "commit" => "commit",
+        "deploy" => "deploy",
+        "sale" => "sale",
+        "memorial" => "memorial",
+        _ => "event",
+    }
+}
+
+pub async fn webhook_post(headers: HeaderMap, Json(body): Json<WebhookBody>) -> Response {
+    let secret = std::env::var("COMMUNITY_WEBHOOK_SECRET").unwrap_or_default();
+    if secret.is_empty() {
+        return (StatusCode::SERVICE_UNAVAILABLE, "webhook disabled").into_response();
+    }
+    let provided = headers
+        .get("x-tomoshibi-secret")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("");
+    if provided != secret {
+        return (StatusCode::UNAUTHORIZED, "bad secret").into_response();
+    }
+    let text = body.text.trim();
+    if text.is_empty() {
+        return (StatusCode::BAD_REQUEST, "text required").into_response();
+    }
+    let kind = webhook_kind(body.kind.as_deref().unwrap_or("event"));
+    let author = body
+        .author
+        .as_deref()
+        .map(|s| s.chars().take(40).collect::<String>())
+        .filter(|s| !s.is_empty())
+        .unwrap_or_else(|| "🛰 自動".to_string());
+    let url = body
+        .url
+        .as_deref()
+        .filter(|s| s.starts_with("http"))
+        .filter(|s| s.len() <= 500 && !s.contains(['"', '<', '>', ' ']))
+        .map(|s| s.to_string());
+    add_post(&author, text, kind, url);
+    Json(serde_json::json!({"ok": true})).into_response()
 }
 
 // ── MCP ────────────────────────────────────────────────────────────────────
@@ -520,8 +789,8 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                     ok(text(s))
                 }
                 "ignite" | "add_log" => {
-                    // write — require valid api_token
-                    let tok = bearer(&headers).or_else(|| cookie_token(&headers)).unwrap_or_default();
+                    // write — require valid Bearer api_token (no cookie fallback → no CSRF)
+                    let tok = bearer(&headers).unwrap_or_default();
                     let Some(m) = member_by_token(&tok) else {
                         return err(-32001, "unauthorized: 有効な Bearer api_token が必要です。/community/join でメール認証して取得してください。");
                     };
@@ -542,7 +811,8 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                         let url = args
                             .get("url")
                             .and_then(|v| v.as_str())
-                            .filter(|s| s.starts_with("http"))
+                            .filter(|s| s.starts_with("https://") || s.starts_with("http://"))
+                            .filter(|s| s.len() <= 500 && !s.contains(['"', '<', '>', ' ']))
                             .map(|s| s.to_string());
                         add_post(&m.name, t, "log", url);
                         ok(text("薪をくべました🔥 炎が大きくなりました。".into()))
@@ -559,7 +829,13 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
 
 const PAGE_CSS: &str = r#"
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#0a0a0c;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-serif;min-height:100vh}
+body{color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-serif;min-height:100vh;
+ background:
+  radial-gradient(58% 46% at 50% 104%, rgba(255,170,70,.36), transparent 70%),
+  radial-gradient(90% 70% at 50% 100%, rgba(232,101,31,.26), transparent 72%),
+  radial-gradient(120% 90% at 50% 30%, transparent 40%, rgba(0,0,0,.5) 100%),
+  #08080a;
+ background-attachment:fixed}
 .center{display:flex;align-items:center;justify-content:center;padding:40px 20px}
 .card{max-width:560px;width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:32px 28px}
 .fire-emoji{font-size:44px;margin-bottom:10px}
@@ -575,32 +851,63 @@ input{width:100%;background:#161616;border:1px solid #2a2a2a;border-radius:6px;p
 button{width:100%;background:#e8651f;border:none;border-radius:6px;padding:14px;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
 "#;
 
-pub async fn join_page() -> Html<String> {
+pub async fn join_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Html<String> {
     let base = base_url();
+    let ja = pick_lang(&headers, &q) == "ja";
+    let (title, h1, sub, name_ph, email_ph, btn, have_key, watch, sending, sent, failed) = if ja {
+        (
+            "ともしび — 火をともす",
+            "焚き火に火をともす",
+            "あなたが作業すると、その熱が炎になる。<br>まずメールで認証して、Claude から焚き火を操作する権限キーを受け取ります。誰でも参加できます。",
+            "名前（例: 濱田 優貴）",
+            "メールアドレス",
+            "🔥 ログインリンクを送る",
+            "すでに権限キーを持っている人",
+            "🔥 焚き火を見る",
+            "送信中…",
+            "✓ メールを送りました。リンクを開くと火がともります。",
+            "送信に失敗しました。",
+        )
+    } else {
+        (
+            "Tomoshibi — Light a fire",
+            "Light the campfire",
+            "When you work, that warmth becomes the flame.<br>Verify by email to get an api key that lets Claude tend the fire. Anyone can join.",
+            "Name (e.g. Yuki Hamada)",
+            "Email address",
+            "🔥 Send login link",
+            "Already have an api key?",
+            "🔥 See the fire",
+            "Sending…",
+            "✓ Email sent. Open the link to light the fire.",
+            "Failed to send.",
+        )
+    };
+    let lang_attr = if ja { "ja" } else { "en" };
     Html(format!(
-        r#"<!DOCTYPE html><html lang=ja><head><meta charset=utf-8>
+        r#"<!DOCTYPE html><html lang={lang_attr}><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<title>ともしび — 火をともす</title><style>{css}</style></head>
+<title>{title}</title><style>{css}</style></head>
 <body class=center>
 <div class=card>
 <div class=fire-emoji>🔥</div>
-<h1>焚き火に火をともす</h1>
-<p class=sub>あなたが作業すると、その熱が炎になる。<br>まずメールで認証して、Claude から焚き火を操作する権限キーを受け取ります。誰でも参加できます。</p>
+<h1>{h1}</h1>
+<p class=sub>{sub}</p>
 <form onsubmit="return go(event)">
-<input id=name placeholder="名前（例: 濱田 優貴）" maxlength=40>
-<input id=email type=email placeholder="メールアドレス" required>
-<button type=submit>🔥 ログインリンクを送る</button>
+<input id=name placeholder="{name_ph}" maxlength=40>
+<input id=email type=email placeholder="{email_ph}" required>
+<button type=submit>{btn}</button>
 </form>
 <p id=msg class=sub style="margin-top:14px"></p>
-<div class=label>すでに権限キーを持っている人</div>
+<div class=label>{have_key}</div>
 <div class=cmd onclick="cp(this,this.dataset.c)" data-c='claude mcp add --transport http tomoshibi {base}/community/mcp --header "Authorization: Bearer <api_token>"'>claude mcp add --transport http tomoshibi {base}/community/mcp --header "Authorization: Bearer &lt;api_token&gt;"<span class=hint>コピー</span></div>
-<a class=watch href="/community">🔥 焚き火を見る</a>
+<a class=watch href="/community">{watch}</a>
 </div>
 <script>
-function cp(el,t){{navigator.clipboard.writeText(t).catch(()=>{{}});var h=el.querySelector('.hint');if(h){{var o=h.textContent;h.textContent='コピー済 ✓';setTimeout(()=>h.textContent=o,1500)}}}}
-async function go(e){{e.preventDefault();var msg=document.getElementById('msg');msg.textContent='送信中…';
+function cp(el,t){{navigator.clipboard.writeText(t).catch(()=>{{}});var h=el.querySelector('.hint');if(h){{var o=h.textContent;h.textContent='✓';setTimeout(()=>h.textContent=o,1500)}}}}
+async function go(e){{e.preventDefault();var msg=document.getElementById('msg');msg.textContent='{sending}';
 try{{var r=await fetch('/api/community/auth/request',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{email:document.getElementById('email').value,name:document.getElementById('name').value}})}});
-if(r.ok){{msg.innerHTML='✓ メールを送りました。リンクを開くと火がともります。';}}else{{msg.textContent='送信に失敗しました。';}}}}catch(_){{msg.textContent='送信に失敗しました。';}}return false;}}
+if(r.ok){{msg.innerHTML='{sent}';}}else{{msg.textContent='{failed}';}}}}catch(_){{msg.textContent='{failed}';}}return false;}}
 </script>
 </body></html>"#,
         css = PAGE_CSS,
@@ -613,23 +920,40 @@ pub async fn page() -> Html<String> {
 }
 
 /// 消えた焚き火が積もる建物の一覧。append-only に残り続ける。
-pub async fn buildings_page() -> Html<String> {
+pub async fn buildings_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Html<String> {
     {
         let _g = STORE_LOCK.lock().unwrap();
         let _ = archive_locked();
     }
+    let ja = pick_lang(&headers, &q) == "ja";
+    let (lang_attr, title, page_h1, page_sub, nav_fire, nav_join, empty) = if ja {
+        (
+            "ja", "ともしび — 建物", "🏛 建物",
+            "消えた焚き火の薪は、ここに建物として永遠に残ります。",
+            "🔥 焚き火へ", "火をともす",
+            "まだ建物はありません。焚き火が10分消えると、その薪がここに建物として残ります。",
+        )
+    } else {
+        (
+            "en", "Tomoshibi — Buildings", "🏛 Buildings",
+            "Logs from fires that went out remain here forever as buildings.",
+            "🔥 To the fire", "Light a fire",
+            "No buildings yet. When a fire is quiet for 10 minutes, its logs remain here as a building.",
+        )
+    };
     let mut bs: Vec<Building> = load("buildings.json");
     bs.reverse();
     let cards: String = if bs.is_empty() {
-        "<div class=empty>まだ建物はありません。焚き火が10分消えると、その薪がここに建物として残ります。</div>".to_string()
+        format!("<div class=empty>{empty}</div>")
     } else {
+        let (lbl_fire, lbl_logs) = if ja { ("焚き火", "薪") } else { ("Fire", "logs") };
         bs.iter().map(|b| {
-            let members = b.members.iter().map(|m| esc(m)).collect::<Vec<_>>().join("・");
+            let members = b.members.iter().map(|m| esc(m)).collect::<Vec<_>>().join(if ja {"・"} else {", "});
             let logs = b.posts.iter().rev().take(6).map(|p| {
                 format!("<div class=bl>🪵 <b>{}</b> {}</div>", esc(&p.author_name), esc(&p.body))
             }).collect::<Vec<_>>().join("");
             format!(
-                "<div class=bld><div class=bhead><span class=bicon>🏛</span><div><div class=bt>焚き火 #{id}</div><div class=bm>薪 {n} 本 ・ {members}</div></div></div><div class=blogs>{logs}</div><div class=bdate>{start} 〜 {end}</div></div>",
+                "<div class=bld><div class=bhead><span class=bicon>🏛</span><div><div class=bt>{lbl_fire} #{id}</div><div class=bm>{lbl_logs} {n} ・ {members}</div></div></div><div class=blogs>{logs}</div><div class=bdate>{start} 〜 {end}</div></div>",
                 id = &b.id[..6.min(b.id.len())], n = b.log_count, members = members, logs = logs,
                 start = esc(&b.started_at[..10.min(b.started_at.len())]),
                 end = esc(&b.ended_at[..10.min(b.ended_at.len())]),
@@ -637,9 +961,9 @@ pub async fn buildings_page() -> Html<String> {
         }).collect()
     };
     Html(format!(
-        r#"<!DOCTYPE html><html lang=ja><head><meta charset=utf-8>
+        r#"<!DOCTYPE html><html lang={lang_attr}><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1"><meta name=robots content=noindex>
-<title>ともしび — 建物</title>
+<title>{title}</title>
 <style>{css}
 .bwrap{{max-width:680px;margin:0 auto;padding:40px 18px 80px}}
 .bld{{background:rgba(255,255,255,.03);border:1px solid rgba(244,205,139,.14);border-radius:12px;padding:18px;margin-bottom:14px}}
@@ -652,9 +976,9 @@ pub async fn buildings_page() -> Html<String> {
 </style></head>
 <body>
 <div class=bwrap>
-<h1 style="text-align:center;color:#f4cd8b;font-size:24px;font-weight:900;margin-bottom:6px">🏛 建物</h1>
-<p style="text-align:center;color:rgba(243,237,226,.5);font-size:13px;line-height:1.7;margin-bottom:8px">消えた焚き火の薪は、ここに建物として永遠に残ります。</p>
-<div class=bnav><a href="/community">🔥 焚き火へ</a><a href="/community/join">火をともす</a></div>
+<h1 style="text-align:center;color:#f4cd8b;font-size:24px;font-weight:900;margin-bottom:6px">{page_h1}</h1>
+<p style="text-align:center;color:rgba(243,237,226,.5);font-size:13px;line-height:1.7;margin-bottom:8px">{page_sub}</p>
+<div class=bnav><a href="/community">{nav_fire}</a><a href="/community/join">{nav_join}</a></div>
 {cards}
 </div></body></html>"#,
         css = PAGE_CSS, cards = cards
@@ -678,11 +1002,17 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
 .top .sub{color:rgba(243,237,226,.5);font-size:13px;margin-top:6px;line-height:1.7}
 .stat{display:inline-flex;gap:16px;margin-top:14px;font-size:12px;color:rgba(243,237,226,.6)}
 .stat b{color:#f4cd8b}
-.feed{margin-top:340px}
+.feed{margin-top:min(340px,46vh)}
 .log{background:rgba(20,16,14,.66);backdrop-filter:blur(6px);border:1px solid rgba(244,205,139,.12);border-radius:10px;padding:13px 16px;margin-bottom:10px;animation:rise .6s ease}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .log .who{font-size:12px;color:#f4cd8b;font-weight:700}
 .log .who .k{font-size:10px;color:#e8651f;margin-left:6px;border:1px solid rgba(232,101,31,.4);border-radius:4px;padding:1px 5px}
+.log .who .k[data-kind=deploy]{color:#7ee0a0;border-color:rgba(126,224,160,.45)}
+.log .who .k[data-kind=commit]{color:#7ec8ff;border-color:rgba(126,200,255,.45)}
+.log .who .k[data-kind=sale]{color:#ffd479;border-color:rgba(255,212,121,.5)}
+.log .who .k[data-kind=relay]{color:#c89bff;border-color:rgba(200,155,255,.45)}
+.log .who .k[data-kind=memorial]{color:#ff9bbf;border-color:rgba(255,155,191,.5)}
+.log .who .k[data-kind=event]{color:#f0c987;border-color:rgba(240,201,135,.4)}
 .log .body{font-size:14px;color:rgba(243,237,226,.92);margin-top:4px;line-height:1.65;white-space:pre-wrap;word-break:break-word}
 .log a{color:#f0c987}
 .log .t{font-size:11px;color:rgba(243,237,226,.32);margin-top:5px}
@@ -691,7 +1021,10 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
 .join{position:fixed;left:0;right:0;bottom:0;z-index:3;text-align:center;padding:16px;background:linear-gradient(transparent,rgba(8,8,10,.9) 40%)}
 .join a{display:inline-block;background:#e8651f;color:#fff;text-decoration:none;font-weight:700;padding:13px 26px;border-radius:8px;box-shadow:0 6px 30px rgba(232,101,31,.5)}
 .join a.alt{background:transparent;color:#f0c987;border:1px solid rgba(240,201,135,.3);box-shadow:none;margin-left:8px}
-.empty{color:rgba(243,237,226,.4);text-align:center;font-size:13px;margin-top:340px}
+.empty{color:rgba(243,237,226,.55);text-align:center;font-size:13px;line-height:1.8;margin-top:min(340px,46vh)}
+.empty a{color:#f0c987}
+.presence{display:inline-block;margin-top:12px;font-size:12.5px;color:#ffd9a8;background:rgba(232,101,31,.14);border:1px solid rgba(232,101,31,.42);border-radius:999px;padding:5px 14px;text-decoration:none}
+.presence:hover{background:rgba(232,101,31,.24)}
 .ember{position:fixed;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:rgba(6,6,8,.82);backdrop-filter:blur(3px);padding:30px;animation:fade 1.2s ease}
 .ember.show{display:flex}
 @keyframes fade{from{opacity:0}to{opacity:1}}
@@ -706,19 +1039,24 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
 <div class=wrap>
   <div class=top>
     <h1>🔥 ともしび</h1>
-    <div class=sub>作業が薪になる。火を囲む焚き火。<br>権限のある人が Claude（MCP）から薪をくべると、炎が大きくなる。</div>
-    <div class=stat><span>薪 <b id=cn>0</b></span><span>人 <b id=mn>0</b></span><span>建物 <b id=bn>0</b></span></div>
+    <div class=sub id=sub></div>
+    <a class=presence id=presence href="/room/tomoshibi" hidden></a>
+    <div class=stat><span><span id=l-wood>薪</span> <b id=cn>0</b></span><span><span id=l-people>人</span> <b id=mn>0</b></span><span><span id=l-bld>建物</span> <b id=bn>0</b></span></div>
     <div id=countdown class=countdown></div>
   </div>
   <div id=feed class=feed></div>
 </div>
 <div id=ember class=ember>
   <div class=big>🏛</div>
-  <h2>火が消えました</h2>
-  <p>10分、薪がくべられず焚き火は消えました。<br>薪は建物となって永遠に残ります。</p>
-  <a href="/community/buildings">🏛 建物を見る</a>
+  <h2 id=em-title>火が消えました</h2>
+  <p id=em-text></p>
+  <a id=em-link href="/community/buildings">🏛 建物を見る</a>
 </div>
-<div class=join><a href="/room/tomoshibi">🔴 焚き火ルーム</a> <a class=alt href="/community/join">🔥 火をともす</a> <a class=alt href="/community/buildings">🏛 建物</a></div>
+<div class=join>
+  <a id=j-room href="/room/tomoshibi">🔴 焚き火ルーム</a>
+  <a class=alt id=j-join href="/community/join">🔥 火をともす</a>
+  <a class=alt id=j-bld href="/community/buildings">🏛 建物</a>
+</div>
 <script>
 // ── realistic bonfire (canvas particle system) ──
 const cv=document.getElementById('fire'),ctx=cv.getContext('2d');
@@ -777,34 +1115,106 @@ function frame(){t++;
   requestAnimationFrame(frame);}
 requestAnimationFrame(frame);
 
+// ── i18n (global-first: English unless browser/?lang= says Japanese) ──
+const STR={
+  ja:{
+    docTitle:'ともしび — 焚き火',
+    sub:'作業が薪になる、火を囲む場所。<br>見る人・薪をくべる人・集まる人、どれでもいい。まず火を見て、よかったら火をともそう。',
+    wood:'薪',people:'人',bld:'建物',
+    roomEmpty:'🔴 焚き火ルームはいま静か — 開いて待つ',
+    roomN:n=>'🔴 焚き火ルームにいま '+n+'人 — 加わる',
+    burning:s=>'あと '+s+' で火が消えます（薪をくべると延びる）',
+    uninit:'まだ火がついていません — あなたの火をともそう',
+    outNow:'火は消えました',
+    emTitle:'火が消えました',
+    emText:'10分、薪がくべられず焚き火は消えました。<br>薪は建物となって永遠に残ります。',
+    emLink:'🏛 建物を見る',
+    jRoom:'🔴 焚き火ルーム',jJoin:'🔥 火をともす',jBld:'🏛 建物',
+    emptyFeed:'まだ薪がありません。<br><a href="/community/join">火をともして</a>、最初の薪をくべよう。',
+    kinds:{ignite:'着火',content:'作品',commit:'commit',deploy:'deploy',sale:'売上',event:'イベント',relay:'中継',memorial:'記念'},
+    now:'たった今',min:'分前',hr:'時間前',day:'日前',
+  },
+  en:{
+    docTitle:'Tomoshibi — Campfire',
+    sub:'A campfire where your work becomes firewood.<br>Watch, add a log, or gather — any of these. Look at the fire first, then light yours if you like.',
+    wood:'Logs',people:'People',bld:'Buildings',
+    roomEmpty:'🔴 The fire room is quiet — open it and wait',
+    roomN:n=>'🔴 '+n+' by the fire now — join',
+    burning:s=>'fire goes out in '+s+' (add a log to extend)',
+    uninit:'No fire yet — light yours',
+    outNow:'The fire went out',
+    emTitle:'The fire went out',
+    emText:'No logs for 10 minutes, so the fire went out.<br>Its logs remain forever as a building.',
+    emLink:'🏛 See buildings',
+    jRoom:'🔴 Fire room',jJoin:'🔥 Light a fire',jBld:'🏛 Buildings',
+    emptyFeed:'No logs yet.<br><a href="/community/join">Light a fire</a> and add the first log.',
+    kinds:{ignite:'lit',content:'work',commit:'commit',deploy:'deploy',sale:'sale',event:'event',relay:'relay',memorial:'memorial'},
+    now:'just now',min:'m ago',hr:'h ago',day:'d ago',
+  },
+};
+const qLang=new URLSearchParams(location.search).get('lang');
+const lang=(qLang==='ja'||qLang==='en')?qLang:((navigator.language||'en').toLowerCase().startsWith('ja')?'ja':'en');
+const T=STR[lang];
+(function applyI18n(){
+  document.documentElement.lang=lang;document.title=T.docTitle;
+  document.getElementById('sub').innerHTML=T.sub;
+  document.getElementById('l-wood').textContent=T.wood;
+  document.getElementById('l-people').textContent=T.people;
+  document.getElementById('l-bld').textContent=T.bld;
+  document.getElementById('em-title').textContent=T.emTitle;
+  document.getElementById('em-text').innerHTML=T.emText;
+  document.getElementById('em-link').textContent=T.emLink;
+  document.getElementById('j-room').textContent=T.jRoom;
+  document.getElementById('j-join').textContent=T.jJoin;
+  document.getElementById('j-bld').textContent=T.jBld;
+})();
+
 // ── feed ──
 function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 function linkify(s){return esc(s).replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target=_blank rel=noopener>$1</a>')}
-function ago(iso){const d=(Date.now()-new Date(iso).getTime())/1000;if(d<60)return'たった今';if(d<3600)return Math.floor(d/60)+'分前';if(d<86400)return Math.floor(d/3600)+'時間前';return Math.floor(d/86400)+'日前';}
-let remain=0,ttl=600;
-function fmt(s){s=Math.max(0,s|0);return Math.floor(s/60)+'分'+('0'+(s%60)).slice(-2)+'秒'}
+function ago(iso){const d=(Date.now()-new Date(iso).getTime())/1000;if(d<60)return T.now;if(d<3600)return Math.floor(d/60)+T.min;if(d<86400)return Math.floor(d/3600)+T.hr;return Math.floor(d/86400)+T.day;}
+let remain=0,ttl=600,nLogs=0,sawFire=false;
+function fmt(s){s=Math.max(0,s|0);return lang==='ja'?Math.floor(s/60)+'分'+('0'+(s%60)).slice(-2)+'秒':Math.floor(s/60)+':'+('0'+(s%60)).slice(-2)}
 function tick(){const cd=document.getElementById('countdown');const em=document.getElementById('ember');
   if(remain>0)remain--;
   alive=remain>0;
-  const ratio=Math.min(1,remain/ttl);
+  if(alive)sawFire=true;
+  const ratio=ttl>0?Math.min(1,remain/ttl):0;
   // fire size = wood count, but fades as the 10-min window runs out
   intensity=alive?Math.max(0.3,intensity_base*(0.35+0.65*ratio)):0;
-  if(!alive){cd.textContent='火は消えています';cd.classList.remove('low');em.classList.add('show');}
-  else{em.classList.remove('show');cd.textContent='あと '+fmt(remain)+' で火が消えます（薪をくべると延びる）';cd.classList.toggle('low',remain<120);}
+  if(alive){
+    em.classList.remove('show');cd.classList.toggle('low',remain<120);
+    cd.textContent=T.burning(fmt(remain));
+  } else if(nLogs===0 && !sawFire){
+    // 未着火 — 穏やかに誘う（消火オーバーレイは出さない）
+    em.classList.remove('show');cd.classList.remove('low');
+    cd.textContent=T.uninit;
+  } else {
+    // 見ている前で消えた／薪が尽きた
+    em.classList.add('show');cd.classList.remove('low');cd.textContent=T.outNow;
+  }
 }
-let intensity_base=1;
+let intensity_base=1,roomPeople=0;
+// 炎の大きさ = 薪の数 + 焚き火ルームの在室人数（B: 人が集まると物理的に火が育つ）
+function recompIntensity(){intensity_base=Math.max(1,Math.min(12,1+nLogs*0.5+roomPeople*0.9));}
+// ── presence: 焚き火ルームにいま何人いるか（空でも"閉店中"でなく"静か"に見せる） ──
+async function loadPresence(){const el=document.getElementById('presence');try{
+  const d=await (await fetch('/api/room/tomoshibi/presence',{cache:'no-store'})).json();
+  roomPeople=d.count||0;el.textContent=roomPeople>0?T.roomN(roomPeople):T.roomEmpty;el.hidden=false;
+  recompIntensity();
+}catch(_){el.hidden=true;}}
 async function load(){try{const r=await fetch('/api/community/posts');const d=await r.json();
-  const n=d.count||(d.posts||[]).length;document.getElementById('cn').textContent=n;
+  const n=d.count||0;document.getElementById('cn').textContent=n;
   document.getElementById('bn').textContent=d.buildings||0;
-  intensity_base=Math.max(1,Math.min(10,1+n*0.6));
-  ttl=d.ttl_secs||600;remain=d.remain_secs||0;tick();
+  nLogs=n;recompIntensity();
+  ttl=d.ttl_secs||600;remain=d.remain_secs||0;if(d.fire_alive)sawFire=true;tick();
   const m=await (await fetch('/api/community/members')).json();document.getElementById('mn').textContent=(m.members||[]).length;
   const feed=document.getElementById('feed');
-  if(!d.posts||!d.posts.length){feed.innerHTML='<div class=empty>まだ薪がありません。最初の火をともしてください。</div>';return;}
-  feed.innerHTML=d.posts.map(p=>{const k=p.kind=='ignite'?'<span class=k>着火</span>':(p.kind=='content'?'<span class=k>作品</span>':'');
+  if(!d.posts||!d.posts.length){feed.innerHTML='<div class=empty>'+T.emptyFeed+'</div>';return;}
+  feed.innerHTML=d.posts.map(p=>{const kl=T.kinds[p.kind];const k=kl?'<span class=k data-kind="'+esc(p.kind)+'">'+kl+'</span>':'';
     const u=p.url?'<div class=body><a href="'+esc(p.url)+'" target=_blank rel=noopener>'+esc(p.url)+'</a></div>':'';
     return '<div class=log><div class=who>'+esc(p.author_name)+k+'</div><div class=body>'+linkify(p.body)+'</div>'+u+'<div class=t>'+ago(p.created_at)+'</div></div>';}).join('');
 }catch(e){}}
-load();setInterval(load,8000);setInterval(tick,1000);
+load();loadPresence();setInterval(load,8000);setInterval(loadPresence,15000);setInterval(tick,1000);
 </script>
 </body></html>"##;

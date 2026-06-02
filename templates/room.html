@@ -11,7 +11,14 @@
     * { box-sizing: border-box; }
     html, body { height: 100%; margin: 0; }
     body {
-      background: var(--bg); color: var(--text);
+      /* campfire wallpaper — warm glow rising from the bottom, ties the room to ともしび */
+      background:
+        radial-gradient(58% 46% at 50% 104%, rgba(255,170,70,.30), transparent 70%),
+        radial-gradient(90% 70% at 50% 100%, rgba(232,101,31,.22), transparent 72%),
+        radial-gradient(120% 90% at 50% 26%, transparent 42%, rgba(0,0,0,.55) 100%),
+        var(--bg);
+      background-attachment: fixed;
+      color: var(--text);
       font-family: "Hiragino Kaku Gothic ProN", "Noto Sans JP", system-ui, sans-serif;
       display: flex; flex-direction: column; overflow: hidden;
     }
@@ -63,8 +70,9 @@
       position: absolute; inset: 14px; z-index: 5; border-radius: 14px;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
       gap: 16px; text-align: center; padding: 24px;
-      background: rgba(8,8,10,.78);
-      background-image: radial-gradient(circle at center, rgba(232,160,76,.12), transparent 60%);
+      background: rgba(8,8,10,.42);
+      background-image: radial-gradient(circle at 50% 120%, rgba(232,101,31,.28), transparent 60%);
+      backdrop-filter: blur(2px);
     }
     .overlay .moon-big {
       width: 76px; height: 76px; border-radius: 50%;
@@ -78,7 +86,9 @@
     .overlay .link-btn {
       margin-top: 4px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.16);
       color: var(--text); padding: 10px 18px; border-radius: 999px; font-size: .86rem; cursor: pointer;
+      text-decoration: none; display: inline-block;
     }
+    .overlay .link-btn.fire { background: rgba(232,101,31,.16); border-color: rgba(232,101,31,.45); color: #ffd9a8; }
     .overlay[hidden] { display: none; }
 
     .controls {
@@ -155,6 +165,7 @@
       <h2 id="ov-title">参加者を待っています</h2>
       <p id="ov-text">このページを開いたままお待ちください。同じURLを開いた人が、自動的に会議に加わります。（最大6人）</p>
       <button class="link-btn" id="copy-link">招待リンクをコピー</button>
+      <a class="link-btn fire" id="to-fire" href="/community" hidden>🔥 焚き火に戻る</a>
     </div>
   </div>
 
@@ -191,7 +202,7 @@
         noMediaText: 'ブラウザの権限を許可してから再読み込みしてください。',
         permError: '権限エラー', disconnected: '切断されました',
         endedTitle: '通話を終了しました', endedText: 'ご参加ありがとうございました。',
-        rebook: '日程をもう一度選ぶ', ended: '終了',
+        rebook: '日程をもう一度選ぶ', ended: '終了', toFire: '🔥 焚き火に戻る',
         notFoundTitle: '会議室が見つかりません', notFoundText: 'リンクをもう一度ご確認ください。',
         mic: 'マイク', cam: 'カメラ', leave: '退出',
         screen: '画面共有', chat: 'チャット', msgPh: 'メッセージ…', send: '送信', namePrompt: '名前を入力してください',
@@ -206,7 +217,7 @@
         noMediaText: 'Allow access in your browser, then reload the page.',
         permError: 'Permission error', disconnected: 'Disconnected',
         endedTitle: 'Call ended', endedText: 'Thanks for joining.',
-        rebook: 'Pick another time', ended: 'Ended',
+        rebook: 'Pick another time', ended: 'Ended', toFire: '🔥 Back to the campfire',
         notFoundTitle: 'Room not found', notFoundText: 'Please check the link and try again.',
         mic: 'Microphone', cam: 'Camera', leave: 'Leave',
         screen: 'Share screen', chat: 'Chat', msgPh: 'Message…', send: 'Send', namePrompt: 'Enter your name',
@@ -233,6 +244,9 @@
       document.getElementById('chat-title').textContent = T.chat;
       document.getElementById('chat-input').placeholder = T.msgPh;
       document.querySelector('#chat-form button').textContent = T.send;
+      // ともしび focus room: offer a way back to the campfire so the worlds stay connected.
+      const tf = document.getElementById('to-fire');
+      if (tf) { tf.textContent = T.toFire; if (room === 'tomoshibi') tf.hidden = false; }
     }
     applyI18n();
     // ICE servers (STUN + optional TURN) come from the server so TURN credentials
@@ -378,8 +392,9 @@
         }
 
         if (m.t === 'join') {
-          // Let the newcomer learn our name.
+          // Let the newcomer learn our name and current screen-share state.
           sendProfile();
+          if (sharing) send({ t: 'screen', on: true });
           // For each pair, the LOWER peer id initiates the offer (avoids glare).
           // Existing peers (lower id) offer to the newcomer (higher id).
           if (myId != null && myId < m.from) {
@@ -432,10 +447,12 @@
       peers.forEach(p => { try { p.pc.close(); } catch (_) {} });
       if (ws) ws.close();
       if (localStream) localStream.getTracks().forEach(t => t.stop());
+      const backHref = room === 'tomoshibi' ? '/community' : '/meet';
+      const backLabel = room === 'tomoshibi' ? T.toFire : T.rebook;
       document.getElementById('stage').innerHTML =
         '<div class="ended"><div class="moon-big" style="margin:0 auto 18px"></div>' +
         '<h2>' + T.endedTitle + '</h2><p style="color:var(--muted)">' +
-        T.endedText + '<br><a href="/meet">' + T.rebook + '</a></p></div>';
+        T.endedText + '<br><a href="' + backHref + '">' + backLabel + '</a></p></div>';
       document.getElementById('controls').style.display = 'none';
       statusEl.textContent = T.ended;
     };
