@@ -1,4 +1,5 @@
 mod blog;
+mod community;
 
 use axum::{
     extract::{Path, Query, State},
@@ -6324,8 +6325,21 @@ async fn main() {
     });
     std::fs::create_dir_all(VIDEO_DIR).ok();
 
+    community::seed_if_empty();
     let app = Router::new()
         .route("/", get(home))
+        .route("/community", get(community::page))
+        .route("/community/join", get(community::join_page))
+        .route("/community/welcome", get(community::welcome_page))
+        .route("/community/buildings", get(community::buildings_page))
+        .route("/api/community/buildings", get(community::api_buildings))
+        .route("/community/mcp", get(community::mcp_get).post(community::mcp_post))
+        .route("/community/mcp", axum::routing::options(options_cors))
+        .route("/api/community/auth/request", post(community::auth_request))
+        .route("/api/community/auth/request", axum::routing::options(options_cors))
+        .route("/api/community/auth/verify", get(community::auth_verify))
+        .route("/api/community/posts", get(community::api_posts))
+        .route("/api/community/members", get(community::api_members))
         .route("/ja", get(redirect_root))
         .route("/en", get(redirect_root))
         .route("/about", get(about))
