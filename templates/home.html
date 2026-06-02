@@ -2548,7 +2548,7 @@
           font-weight:700;border-radius:6px;padding:1px 7px;margin-right:8px;font-size:11px;}
       </style>
       <script>
-        fetch('/api/community/stats').then(r=>r.json()).then(d=>{
+        fetch('/api/community/stats',{credentials:'same-origin'}).then(r=> r.ok ? r.json() : Promise.reject()).then(d=>{
           var el=document.getElementById('dataStatus'); if(!el)return;
           el.innerHTML='<span class="ds-k">データ</span>ともしび 投稿<b>'+d.posts+'</b> / 人<b>'+d.members+'</b> / 建物<b>'+d.buildings+'</b>'
             +' ・ 保存 '+d.storage+' ・ 最終更新 '+d.updated;

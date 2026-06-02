@@ -445,7 +445,13 @@ pub async fn api_buildings() -> Json<serde_json::Value> {
 }
 
 /// 保存データの可視化用。投稿/メンバー/建物の件数・保存先・最終更新を返す。
-pub async fn api_stats() -> Json<serde_json::Value> {
+pub async fn api_stats(headers: HeaderMap) -> axum::response::Response {
+    use axum::response::IntoResponse;
+    // 会員(api_token cookie/bearer)のみ。未ログインは 401 → トップでは非表示。
+    let tok = cookie_token(&headers).or_else(|| bearer(&headers)).unwrap_or_default();
+    if member_by_token(&tok).is_none() {
+        return (axum::http::StatusCode::UNAUTHORIZED, Json(serde_json::json!({"authed": false}))).into_response();
+    }
     {
         let _g = STORE_LOCK.lock().unwrap();
         let _ = archive_locked();
@@ -474,7 +480,7 @@ pub async fn api_stats() -> Json<serde_json::Value> {
         "buildings": buildings,
         "storage": "/data/community (Fly volume・追記型)",
         "updated": updated,
-    }))
+    })).into_response()
 }
 
 pub async fn api_members() -> Json<serde_json::Value> {
