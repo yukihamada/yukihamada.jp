@@ -1131,6 +1131,12 @@ async fn kamishibai_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai.html"))
 }
 
+// 紙芝居『いい奴らと、世界をつくる。』第2話（士業 × AI × いい奴ら）。画像は <base>
+// 経由で devil-podcast から、音声は同一オリジン /audio/kamishibai-ep2.mp3（marker: kamishibai-2）。
+async fn kamishibai_ep2_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep2.html"))
+}
+
 // Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
 // from Cloudflare are short-lived, so we mint once and reuse for ~12h.
 static RTC_ICE_CACHE: std::sync::Mutex<Option<(serde_json::Value, u64)>> =
@@ -6357,6 +6363,9 @@ async fn main() {
         .route("/kamishibai", get(kamishibai_page))
         .route("/akuma", get(kamishibai_page))
         .route("/shibai", get(kamishibai_page))
+        .route("/kamishibai/2", get(kamishibai_ep2_page))
+        .route("/iiyatsura", get(kamishibai_ep2_page))
+        .route("/shigyo", get(kamishibai_ep2_page))
         .route("/community", get(community::page))
         // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
         .route("/campfire", get(community::page))
