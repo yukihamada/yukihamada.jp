@@ -10,7 +10,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only -a yukihamada-jp
+      # --strategy immediate: 既存マシンを入れ替え（新マシンを作らない）。
+      # org のマシン上限でローリング(緑machine作成)が弾かれるため。
+      - run: flyctl deploy --remote-only -a yukihamada-jp --strategy immediate
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
 
