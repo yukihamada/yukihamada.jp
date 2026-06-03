@@ -6601,6 +6601,8 @@ async fn main() {
         .route("/room/{id}", get(room_page))
         .route("/connect", get(connect_page))
         .route("/call", get(connect_page))
+        // 最小プロンプト用 短縮: 貼るだけでケンタローの声ルームへ直行
+        .route("/k", get(|| async { axum::response::Redirect::temporary("/room/kentaro?name=%E3%82%B1%E3%83%B3%E3%82%BF%E3%83%AD%E3%83%BC") }))
         .route("/api/room/ice", get(room_ice))
         .route("/api/room/{id}/presence", get(room_presence))
         .route("/ws/room/{id}", get(ws_room))
