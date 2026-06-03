@@ -1216,6 +1216,94 @@ async fn room_presence(
     (cors_headers(), Json(serde_json::json!({ "room": room, "count": count, "cap": 6 }))).into_response()
 }
 
+// KOE — 声でつなぐ。相手の名前を入れるとルームを自動生成し、リンクをワンタップで共有。
+// 相手が入室すると presence で「つながった」を表示。声/顔の実体は既存 /room（mesh WebRTC）。
+async fn connect_page() -> impl IntoResponse {
+    Html(CONNECT_HTML)
+}
+
+const CONNECT_HTML: &str = r##"<!doctype html><html lang=ja><head><meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>KOE — 声でつなぐ</title><meta name=robots content="noindex">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#08080a;color:#f3ede2;font-family:'Hiragino Kaku Gothic ProN','Helvetica Neue',Arial,sans-serif;min-height:100dvh;
+ background:radial-gradient(60% 45% at 50% 0%,rgba(232,160,76,.12),transparent 70%),#08080a}
+.wrap{max-width:520px;margin:0 auto;padding:54px 22px 80px}
+.kick{font-size:11px;letter-spacing:.42em;color:#e8a04c;text-transform:uppercase;text-align:center}
+h1{font-size:34px;font-weight:800;text-align:center;margin:14px 0 6px}
+.sub{color:rgba(243,237,226,.55);font-size:14px;text-align:center;margin-bottom:30px}
+label{display:block;font-size:12px;letter-spacing:.06em;color:rgba(243,237,226,.5);margin:18px 0 7px}
+input{width:100%;background:#161616;border:1px solid #2a2a2a;border-radius:10px;padding:15px 16px;color:#f3ede2;font-size:17px}
+input:focus{outline:none;border-color:#e8a04c}
+.btn{display:block;width:100%;margin-top:16px;background:#e8a04c;color:#0a0a0a;border:0;border-radius:10px;padding:16px;font-size:17px;font-weight:800;cursor:pointer;text-decoration:none;text-align:center}
+.btn.s{background:transparent;color:#f0c987;border:1px solid rgba(240,201,135,.3)}
+.panel{display:none;margin-top:24px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px}
+.panel.show{display:block}
+.lk{background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:12px 14px;font-size:13px;color:#f0c987;word-break:break-all;margin:8px 0 4px}
+.share{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.share a,.share button{flex:1;min-width:88px;text-align:center;background:#161616;border:1px solid #2a2a2a;border-radius:8px;padding:11px 8px;color:#f3ede2;font-size:13px;text-decoration:none;cursor:pointer;font-family:inherit}
+.status{margin-top:16px;text-align:center;font-size:15px;color:rgba(243,237,226,.6)}
+.status.on{color:#7ee0a0;font-weight:700}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#888;margin-right:7px}
+.status.on .dot{background:#37d67a;box-shadow:0 0 0 0 rgba(55,214,122,.7);animation:p 1.6s infinite}
+@keyframes p{70%{box-shadow:0 0 0 8px rgba(55,214,122,0)}}
+.hint{font-size:12px;color:rgba(243,237,226,.4);text-align:center;margin-top:22px;line-height:1.8}
+</style></head><body>
+<div class=wrap>
+  <div class=kick>KOE · 声でつなぐ</div>
+  <h1>🎙 声でつなぐ</h1>
+  <div class=sub>相手の名前を入れるだけ。リンクを送って、ひらいたら声でつながります。</div>
+  <label>だれとつなぐ？</label>
+  <input id=name placeholder="例：けんたろう" maxlength=40 autocomplete=off>
+  <button class=btn id=make>つなぐリンクを作る</button>
+
+  <div class=panel id=panel>
+    <div style="font-size:13px;color:rgba(243,237,226,.55)"><b id=who></b> とつなぐ部屋ができました。</div>
+    <div class=lk id=link></div>
+    <div class=share>
+      <button id=sh>📣 共有</button>
+      <a id=line target=_blank rel=noopener>LINE</a>
+      <a id=sms>SMS</a>
+      <a id=mail>メール</a>
+      <button id=cp>コピー</button>
+    </div>
+    <a class=btn id=enter target=_blank style="margin-top:14px">▶ 自分が今すぐ入る</a>
+    <div class=status id=status><span class=dot></span>あなたを待っています…</div>
+  </div>
+  <div class=hint>声・顔・画面共有・チャット対応（最大6人）。<br>同じリンクを開いた人が自動でつながります。</div>
+</div>
+<script>
+var $=function(s){return document.getElementById(s)};
+function rid(){var c='abcdefghijkmnpqrstuvwxyz23456789',o='';for(var i=0;i<8;i++)o+=c[Math.floor(Math.random()*c.length)];return o;}
+var room='', poll=null;
+function mk(){
+  var nm=$('name').value.trim()||'相手';
+  room='koe-'+rid();
+  var url=location.origin+'/room/'+room+'?name='+encodeURIComponent(nm);
+  $('who').textContent=nm;
+  $('link').textContent=url;
+  $('enter').href='/room/'+room;
+  var msg='声でつなぎたい。これ開いて → '+url;
+  $('line').href='https://line.me/R/share?text='+encodeURIComponent(msg);
+  $('sms').href='sms:?&body='+encodeURIComponent(msg);
+  $('mail').href='mailto:?subject='+encodeURIComponent('声でつなぎたい')+'&body='+encodeURIComponent(msg);
+  $('sh').onclick=function(){if(navigator.share){navigator.share({title:'声でつなぐ',text:msg,url:url}).catch(function(){});}else{cp();}};
+  $('cp').onclick=cp;
+  $('panel').classList.add('show');
+  if(poll)clearInterval(poll); poll=setInterval(checkp,4000); checkp();
+}
+function cp(){navigator.clipboard&&navigator.clipboard.writeText(location.origin+'/room/'+room).then(function(){$('cp').textContent='コピー済 ✓';setTimeout(function(){$('cp').textContent='コピー';},1500);});}
+function checkp(){fetch('/api/room/'+room+'/presence',{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
+  var n=d.count||0, s=$('status');
+  if(n>=2){s.className='status on';s.innerHTML='<span class=dot></span>🎉 つながりました（'+n+'人）';}
+  else if(n===1){s.className='status on';s.innerHTML='<span class=dot></span>あなたが入室中 — 相手のひらきを待っています';}
+  else{s.className='status';s.innerHTML='<span class=dot></span>リンクを送って、ふたりで開いてください';}
+}).catch(function(){});}
+$('make').onclick=mk;
+$('name').addEventListener('keydown',function(e){if(e.key==='Enter')mk();});
+</script></body></html>"##;
+
 // WebSocket signaling endpoint: /ws/room/{id}
 async fn ws_room(
     ws: WebSocketUpgrade,
@@ -6511,6 +6599,8 @@ async fn main() {
         .route("/api/user/me", get(user_me))
         .route("/ws/terminal", get(ws_terminal))
         .route("/room/{id}", get(room_page))
+        .route("/connect", get(connect_page))
+        .route("/call", get(connect_page))
         .route("/api/room/ice", get(room_ice))
         .route("/api/room/{id}/presence", get(room_presence))
         .route("/ws/room/{id}", get(ws_room))
