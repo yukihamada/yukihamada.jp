@@ -1222,6 +1222,17 @@ async fn connect_page() -> impl IntoResponse {
     Html(CONNECT_HTML)
 }
 
+// /k/<handle> — 誰でも: ascii化したハンドルの声ルームへ直行。貼るだけ・どこでも。
+async fn k_handle(Path(handle): Path<String>) -> impl IntoResponse {
+    let h: String = handle
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .take(48)
+        .collect();
+    let h = if h.is_empty() { "koe".to_string() } else { h.to_lowercase() };
+    axum::response::Redirect::temporary(&format!("/room/{}", h))
+}
+
 const CONNECT_HTML: &str = r##"<!doctype html><html lang=ja><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>KOE — 声でつなぐ</title><meta name=robots content="noindex">
@@ -1268,6 +1279,9 @@ input:focus{outline:none;border-color:#e8a04c}
       <a id=mail>メール</a>
       <button id=cp>コピー</button>
     </div>
+    <label style="margin-top:18px">どこでも貼れる（Claude Code / Slack / メモ）</label>
+    <div class=lk id=prompt></div>
+    <button class="btn s" id=cpp style="margin-top:8px">このプロンプトをコピー</button>
     <a class=btn id=enter target=_blank style="margin-top:14px">▶ 自分が今すぐ入る</a>
     <div class=status id=status><span class=dot></span>あなたを待っています…</div>
   </div>
@@ -1277,23 +1291,30 @@ input:focus{outline:none;border-color:#e8a04c}
 var $=function(s){return document.getElementById(s)};
 function rid(){var c='abcdefghijkmnpqrstuvwxyz23456789',o='';for(var i=0;i<8;i++)o+=c[Math.floor(Math.random()*c.length)];return o;}
 var room='', poll=null;
+var shortUrl='', prompt='';
 function mk(){
   var nm=$('name').value.trim()||'相手';
-  room='koe-'+rid();
+  // 名前を ascii ハンドル化（できれば覚えやすく、無理なら koe-ランダム）
+  var h=nm.toLowerCase().replace(/[^a-z0-9-]/g,''); if(!h)h='koe-'+rid();
+  room=h;
+  shortUrl=location.origin+'/k/'+h;                 // どこでも貼れる短縮
+  prompt='!open '+shortUrl;                          // Claude Code 用
   var url=location.origin+'/room/'+room+'?name='+encodeURIComponent(nm);
   $('who').textContent=nm;
-  $('link').textContent=url;
+  $('link').textContent=shortUrl;
+  $('prompt').textContent=prompt;
   $('enter').href='/room/'+room;
-  var msg='声でつなぎたい。これ開いて → '+url;
+  var msg='声でつなぎたい。これ開いて → '+shortUrl;
   $('line').href='https://line.me/R/share?text='+encodeURIComponent(msg);
   $('sms').href='sms:?&body='+encodeURIComponent(msg);
   $('mail').href='mailto:?subject='+encodeURIComponent('声でつなぎたい')+'&body='+encodeURIComponent(msg);
-  $('sh').onclick=function(){if(navigator.share){navigator.share({title:'声でつなぐ',text:msg,url:url}).catch(function(){});}else{cp();}};
-  $('cp').onclick=cp;
+  $('sh').onclick=function(){if(navigator.share){navigator.share({title:'声でつなぐ',text:msg,url:shortUrl}).catch(function(){});}else{cp();}};
+  $('cp').onclick=cp; $('cpp').onclick=cpp;
   $('panel').classList.add('show');
   if(poll)clearInterval(poll); poll=setInterval(checkp,4000); checkp();
 }
-function cp(){navigator.clipboard&&navigator.clipboard.writeText(location.origin+'/room/'+room).then(function(){$('cp').textContent='コピー済 ✓';setTimeout(function(){$('cp').textContent='コピー';},1500);});}
+function cp(){navigator.clipboard&&navigator.clipboard.writeText(shortUrl).then(function(){$('cp').textContent='コピー済 ✓';setTimeout(function(){$('cp').textContent='コピー';},1500);});}
+function cpp(){navigator.clipboard&&navigator.clipboard.writeText(prompt).then(function(){$('cpp').textContent='コピー済 ✓';setTimeout(function(){$('cpp').textContent='このプロンプトをコピー';},1500);});}
 function checkp(){fetch('/api/room/'+room+'/presence',{cache:'no-store'}).then(function(r){return r.json();}).then(function(d){
   var n=d.count||0, s=$('status');
   if(n>=2){s.className='status on';s.innerHTML='<span class=dot></span>🎉 つながりました（'+n+'人）';}
@@ -6601,8 +6622,9 @@ async fn main() {
         .route("/room/{id}", get(room_page))
         .route("/connect", get(connect_page))
         .route("/call", get(connect_page))
-        // 最小プロンプト用 短縮: 貼るだけでケンタローの声ルームへ直行
+        // 最小プロンプト用 短縮: 貼るだけで声ルームへ直行（/k=ケンタロー、/k/<名前>=誰でも）
         .route("/k", get(|| async { axum::response::Redirect::temporary("/room/kentaro?name=%E3%82%B1%E3%83%B3%E3%82%BF%E3%83%AD%E3%83%BC") }))
+        .route("/k/{handle}", get(k_handle))
         .route("/api/room/ice", get(room_ice))
         .route("/api/room/{id}/presence", get(room_presence))
         .route("/ws/room/{id}", get(ws_room))
