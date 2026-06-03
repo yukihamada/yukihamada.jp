@@ -204,7 +204,7 @@ const scenesEl=document.getElementById('scenes'), capEl=document.getElementById(
 const fillEl=document.getElementById('fill'), fxEl=document.getElementById('fx');
 const kick=document.getElementById('kick'), cta=document.getElementById('cta'), replay=document.getElementById('replay');
 const layers=SCENES.map(s=>{ const d=document.createElement('div'); d.className='scene';
-  d.style.backgroundImage=`url(img/${s.img}.png)`; scenesEl.appendChild(d); return d; });
+  d.style.backgroundImage=`url(img/${s.img}.webp)`; scenesEl.appendChild(d); return d; });
 let curScene=-1, curCap=-1, particleTimer=null;
 const REDUCE=matchMedia('(prefers-reduced-motion:reduce)').matches;
 
@@ -248,7 +248,7 @@ document.getElementById('frame').addEventListener('click',(e)=>{
   if(e.target.closest('a,button')) return;
   isPausedA() ? playAudio() : pauseAudio();
 });
-SCENES.forEach(s=>{ const im=new Image(); im.src=`img/${s.img}.png`; });
+SCENES.forEach(s=>{ const im=new Image(); im.src=`img/${s.img}.webp`; });
 </script>
 </body>
 </html>
