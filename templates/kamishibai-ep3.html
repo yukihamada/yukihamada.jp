@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>紙芝居 第3話『任せ方、ぜんぶ。』｜ASOVIEW × MU — 濱田優貴</title>
+<meta name="description" content="あそビュー社でのAI講演（2026.06.04）を、本人クローン声つきの紙芝居に。AIへの任せ方5原則と、記念Tシャツ。">
+<meta property="og:title" content="紙芝居 第3話『任せ方、ぜんぶ。』ASOVIEW × MU">
+<meta property="og:description" content="退屈は、AIに。ワクワクは、人に。本人クローン声つき・全9場面。">
+<meta property="og:image" content="https://yukihamada.jp/assets/asoview-kamishibai/scene8.png">
+<style>
+  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#d8b36a; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;overflow:hidden}
+  #stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
+  #art.show{opacity:1}
+  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.25) 40%,rgba(13,13,13,.05) 62%,rgba(13,13,13,.4) 100%)}
+  #cap{position:absolute;left:0;right:0;bottom:0;padding:30px 7vw 42px;text-align:center}
+  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:9px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-title{font-size:clamp(24px,4.2vw,46px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:15px}
+  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:860px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
+  #scene-link{display:none;margin-top:16px;padding:12px 32px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-link.show{display:inline-block}
+  #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
+  #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:var(--bg);z-index:5;transition:opacity .9s}
+  #title.hide{opacity:0;pointer-events:none}
+  #title .circle{width:80px;height:80px;border:3px solid var(--ink);border-radius:50%}
+  #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
+  #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
+  #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="art"></div><div id="shade"></div>
+  <div id="progress"></div><div id="dots"></div>
+  <div id="cap">
+    <div id="scene-sub"></div><div id="scene-title"></div><div id="scene-text"></div>
+    <a id="scene-link" target="_blank" rel="noopener"></a>
+  </div>
+  <div id="title">
+    <div class="circle"></div>
+    <h1>任せ方、ぜんぶ。</h1>
+    <p>紙芝居 第3話 ・ ASOVIEW × MU ・ 2026.06.04<br>声：濱田優貴（AIクローン）</p>
+    <div class="start">タップで、はじまる</div>
+  </div>
+  <div id="hint">クリック＝次へ ／ ←戻る</div>
+</div>
+<script>
+const SCENES=[{"sub": "あそビューのみなさんへ", "title": "ありがとうございました", "text": "あそビューのみなさん、きょうはありがとうございました。七十六分もしゃべりました。眠くならなかったなら、エーアイのおかげ。眠くなったなら、ぼくのせいです。", "img": "/assets/asoview-kamishibai/scene1.png", "audio": "/audio/asoview-kam-1.mp3", "buy": ""}, {"sub": "きょう一番もちかえってほしいこと", "title": "作るを、空気のように。", "text": "きょう、いちばん持って帰ってほしいのは、これです。作るを、空気のように。買うことはアマゾンが、売ることはメルカリが、かんたんにしました。次は、作ること。誰もが、つくり手になれる時代です。", "img": "/assets/asoview-kamishibai/scene2.png", "audio": "/audio/asoview-kam-2.mp3", "buy": ""}, {"sub": "任せ方 5原則", "title": "その一　雑でいい", "text": "任せ方、その一。雑でいい。完璧な指示を書こうとして三十分悩むくらいなら、雑に投げて三十秒で直すほうが速い。エーアイは、雑につよい。", "img": "/assets/asoview-kamishibai/scene3.png", "audio": "/audio/asoview-kam-3.mp3", "buy": ""}, {"sub": "任せ方 5原則", "title": "その二　証拠を、見せろ", "text": "その二。証拠を、見せろ。できました、という言葉を信じてはいけません。差分、テストの結果、スクリーンショット。証拠とセットで、はじめて、できた、です。", "img": "/assets/asoview-kamishibai/scene4.png", "audio": "/audio/asoview-kam-4.mp3", "buy": ""}, {"sub": "任せ方 5原則", "title": "その三　十回、叩かせる", "text": "その三。十回、叩かせる。できたものは、お客さん目線のエーアイに、厳しくダメ出しさせる。直して、また叩かせる。これを十回。人は疲れるけど、エーアイは疲れません。", "img": "/assets/asoview-kamishibai/scene5.png", "audio": "/audio/asoview-kam-5.mp3", "buy": ""}, {"sub": "任せ方 5原則", "title": "その四　最後の魔法は、人がかける", "text": "その四。最後の魔法は、人がかける。エーアイは、案を百個つくれます。でも、どれが本当にワクワクするかを選べるのは、人だけ。最後の判は、人が打つ。", "img": "/assets/asoview-kamishibai/scene6.png", "audio": "/audio/asoview-kam-6.mp3", "buy": ""}, {"sub": "任せ方 5原則", "title": "その五　寝てる間に、終わらせる", "text": "その五。寝てる間に、終わらせる。テストを書いて、通るまでループが回る仕組みを組んでから、寝る。人間がポチポチ働かされたら、負けです。合宿でこれを組んだ営業の方は、翌日、いちおくえんの案件が決まりました。本当の話です。", "img": "/assets/asoview-kamishibai/scene7.png", "audio": "/audio/asoview-kam-7.mp3", "buy": ""}, {"sub": "ASOVIEW × MU ・ 記念グッズ", "title": "ことばは、ティーシャツになった", "text": "そして、きょうのことばは、そのままティーシャツになりました。作るを、空気のように。最後の魔法は、人がかける。雑でいい、証拠を見せろ。寝てる間に、終わらせる。死んでも、つくりつづける。もちろん、エーアイがつくって、もう売ってます。一枚売れると、ぼくに六百円入ります。", "img": "/assets/asoview-kamishibai/scene8.png", "audio": "/audio/asoview-kam-8.mp3", "buy": "https://wearmu.com/shop?brand=asoview-camp"}, {"sub": "また、合宿で", "title": "退屈は、AIに。ワクワクは、人に。", "text": "きょうの話は、ぜんぶ仕組みにして置いてあります。退屈は、エーアイに。ワクワクは、人に。また、合宿で会いましょう。", "img": "/assets/asoview-kamishibai/scene9.png", "audio": "/audio/asoview-kam-9.mp3", "buy": ""}];
+let idx=-1, started=false;
+let actx=null, abuf={}, asrc=null;
+SCENES.forEach(s=>{ const i=new Image(); i.src=s.img; });
+
+function unlock(){
+  if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+  try{ const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0);}catch(_){}
+  if(actx.state==='suspended') actx.resume();
+}
+async function playAudio(i){
+  if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){} asrc=null; }
+  const url=SCENES[i].audio;
+  try{
+    if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
+    if(idx!==i) return;
+    asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.start(0);
+  }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+function play(i){
+  if(i<0||i>=SCENES.length) return;
+  idx=i; const s=SCENES[i];
+  const art=document.getElementById('art');
+  art.classList.remove('show');
+  setTimeout(()=>{ art.style.backgroundImage="url('"+s.img+"')"; art.classList.add('show'); },350);
+  document.getElementById('scene-sub').textContent=s.sub||'';
+  document.getElementById('scene-title').textContent=s.title;
+  document.getElementById('scene-text').textContent=s.text;
+  const link=document.getElementById('scene-link');
+  if(s.buy){ link.href=s.buy; link.textContent='🛒 みんなで買う（受注生産・在庫ゼロ）'; link.classList.add('show'); }
+  else link.classList.remove('show');
+  document.getElementById('dots').textContent=(i+1)+' / '+SCENES.length;
+  document.getElementById('progress').style.width=(((i+1)/SCENES.length)*100)+'%';
+  playAudio(i);
+}
+document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());
+document.getElementById('stage').addEventListener('click',()=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if(idx<SCENES.length-1) play(idx+1);
+});
+document.addEventListener('keydown',e=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if((e.key==='ArrowRight'||e.key===' ')&&idx<SCENES.length-1) play(idx+1);
+  if(e.key==='ArrowLeft'&&idx>0) play(idx-1);
+});
+</script>
+</body>
+</html>

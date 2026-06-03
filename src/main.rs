@@ -1137,6 +1137,14 @@ async fn kamishibai_ep2_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep2.html"))
 }
 
+// 紙芝居 第3話『任せ方、ぜんぶ。』（あそビュー社 AI 講演 2026.06.04 の記念紙芝居）。
+// 全9場面、各場面の画像は /assets/asoview-kamishibai/、音声は同一オリジン
+// /audio/asoview-kam-N.mp3 を WebAudio で再生（iOS サイレントでも鳴る）。
+// 8場面目に記念Tシャツの購入QR＋リンク（wearmu.com）。(marker: kamishibai-3)
+async fn kamishibai_ep3_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep3.html"))
+}
+
 // Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
 // from Cloudflare are short-lived, so we mint once and reuse for ~12h.
 static RTC_ICE_CACHE: std::sync::Mutex<Option<(serde_json::Value, u64)>> =
@@ -6475,6 +6483,9 @@ async fn main() {
         .route("/kamishibai/2", get(kamishibai_ep2_page))
         .route("/iiyatsura", get(kamishibai_ep2_page))
         .route("/shigyo", get(kamishibai_ep2_page))
+        .route("/kamishibai/3", get(kamishibai_ep3_page))
+        .route("/asoview", get(kamishibai_ep3_page))
+        .route("/makasekata", get(kamishibai_ep3_page))
         .route("/community", get(community::page))
         // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
         .route("/campfire", get(community::page))
