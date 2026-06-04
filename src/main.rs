@@ -1922,6 +1922,79 @@ async fn security_headers(
     res
 }
 
+// ── devil.pub 読者リード ──
+// 本(devil.pub/inner-devil)の途中メールゲートから POST される受け口。
+// 保存 /data/devil_leads.jsonl + Telegram 通知。CORS は devil.pub 限定。
+
+fn devil_cors_headers() -> HeaderMap {
+    let mut h = HeaderMap::new();
+    h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://devil.pub".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_METHODS, "POST,OPTIONS".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_HEADERS, "content-type".parse().unwrap());
+    h
+}
+
+async fn devil_lead_options() -> Response {
+    (StatusCode::NO_CONTENT, devil_cors_headers()).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct DevilLeadReq {
+    email: String,
+    #[serde(default)]
+    source: String,
+    #[serde(default)]
+    progress: String,
+}
+
+async fn devil_lead(
+    State(state): State<Arc<AppState>>,
+    axum::Json(body): axum::Json<DevilLeadReq>,
+) -> Response {
+    let email = body.email.trim().to_lowercase();
+    if !email.contains('@') || email.len() > 120 {
+        return (
+            StatusCode::BAD_REQUEST,
+            devil_cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "メールアドレスの形式が正しくありません。"})),
+        )
+            .into_response();
+    }
+    let source: String = body.source.trim().chars().take(80).collect();
+    let progress: String = body.progress.trim().chars().take(20).collect();
+    let record = serde_json::json!({
+        "ts": chrono::Utc::now().to_rfc3339(),
+        "email": email,
+        "source": source,
+        "progress": progress,
+    });
+    let path = {
+        let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+        format!("{dir}/devil_leads.jsonl")
+    };
+    if let Some(dir) = std::path::Path::new(&path).parent() {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    let _ = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+        .and_then(|mut f| std::io::Write::write_all(&mut f, format!("{record}\n").as_bytes()));
+    if let Some(tok) = state.telegram_token.clone() {
+        let text = format!("😈 devil.pub 読者リード\n✉️ {email}\n📖 {source} {progress}");
+        tokio::spawn(async move {
+            let url = format!("https://api.telegram.org/bot{tok}/sendMessage");
+            let _ = reqwest::Client::new()
+                .post(&url)
+                .json(&serde_json::json!({"chat_id": 1136442501_i64, "text": text}))
+                .timeout(std::time::Duration::from_secs(5))
+                .send()
+                .await;
+        });
+    }
+    (StatusCode::OK, devil_cors_headers(), Json(serde_json::json!({"ok": true}))).into_response()
+}
+
 // ── Fan Club API ──
 
 fn cors_headers() -> HeaderMap {
@@ -6521,6 +6594,8 @@ async fn main() {
         .route("/api/community/buildings", get(community::api_buildings))
         .route("/community/mcp", get(community::mcp_get).post(community::mcp_post))
         .route("/community/mcp", axum::routing::options(options_cors))
+        .route("/api/devil/lead", post(devil_lead))
+        .route("/api/devil/lead", axum::routing::options(devil_lead_options))
         .route("/api/community/auth/request", post(community::auth_request))
         .route("/api/community/auth/request", axum::routing::options(options_cors))
         .route("/api/community/auth/verify", get(community::auth_verify))
