@@ -1173,19 +1173,22 @@ async fn thanks_asoview_page() -> impl IntoResponse {
 }
 
 // まぐまぐ向け限定紙芝居『AI駆動開発・方針と現状』(2026.06.04)。パスワードゲート付き・noindex。
-// パス: env MAGMAG_KAMI_PASS（未設定時は既定値）。合致で sha256 トークンを cookie に発行。
-// 画像 /assets/mg-14b7a2be/、音声 /audio/mg-14b7a2be-N.mp3（推測不能トークン付きパス）。
+// パス: env MAGMAG_KAMI_PASS。⚠リポジトリはpublicのため既定値は置かない(fail-closed):
+// 未設定なら誰も通れない。デプロイ前に `flyctl secrets set --stage MAGMAG_KAMI_PASS=...` 必須。
+// 画像 /assets/mg-14b7a2be/、音声 /audio/mg-14b7a2be-N.mp3（推測困難トークン付きパス）。
 // (marker: kamishibai-magmag)
-fn magmag_kami_pass() -> String {
-    std::env::var("MAGMAG_KAMI_PASS").unwrap_or_else(|_| "magmag-1487".to_string())
+fn magmag_kami_pass() -> Option<String> {
+    std::env::var("MAGMAG_KAMI_PASS").ok().filter(|s| !s.trim().is_empty())
 }
-fn magmag_kami_token() -> String {
+fn magmag_kami_token() -> Option<String> {
     use sha2::Digest;
-    let hash = sha2::Sha256::digest(format!("magmag-kami:{}", magmag_kami_pass()).as_bytes());
-    hash.iter().map(|b| format!("{:02x}", b)).collect()
+    let pass = magmag_kami_pass()?;
+    let hash = sha2::Sha256::digest(format!("magmag-kami:{pass}").as_bytes());
+    Some(hash.iter().map(|b| format!("{:02x}", b)).collect())
 }
 fn magmag_kami_cookie_ok(headers: &HeaderMap) -> bool {
-    let expect = format!("magmag_kami={}", magmag_kami_token());
+    let Some(token) = magmag_kami_token() else { return false };
+    let expect = format!("magmag_kami={token}");
     headers
         .get("cookie")
         .and_then(|c| c.to_str().ok())
@@ -1196,23 +1199,41 @@ fn magmag_kami_cookie_ok(headers: &HeaderMap) -> bool {
 struct MagmagKamiForm {
     p: String,
 }
+// まぐまぐ限定紙芝居のテンプレは公開リポにコミットしない(限定コンテンツの漏洩防止)。
+// よって include_str!(コンパイル時必須) ではなく実行時読み込み + 無ければ 404。
+// 本番へは別経路(volume等)で配置する想定。未配置なら静かに404。
+fn read_magmag_template(name: &str) -> Option<String> {
+    std::fs::read_to_string(format!("templates/{name}")).ok()
+}
 async fn kamishibai_magmag_page(headers: HeaderMap) -> Response {
     if magmag_kami_cookie_ok(&headers) {
-        return Html(include_str!("../templates/kamishibai-magmag.html")).into_response();
+        return match read_magmag_template("kamishibai-magmag.html") {
+            Some(h) => Html(h).into_response(),
+            None => StatusCode::NOT_FOUND.into_response(),
+        };
     }
-    Html(include_str!("../templates/kamishibai-magmag-gate.html").replace("<!--ERR-->", "")).into_response()
+    match read_magmag_template("kamishibai-magmag-gate.html") {
+        Some(h) => Html(h.replace("<!--ERR-->", "")).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
+    }
 }
 async fn kamishibai_magmag_login(axum::Form(form): axum::Form<MagmagKamiForm>) -> Response {
-    if form.p.trim() == magmag_kami_pass() {
+    if magmag_kami_pass().is_some_and(|p| form.p.trim() == p) {
         let cookie = format!(
             "magmag_kami={}; Path=/kamishibai/magmag; HttpOnly; SameSite=Strict; Max-Age=2592000",
-            magmag_kami_token()
+            magmag_kami_token().unwrap_or_default()
         );
         let mut headers = HeaderMap::new();
         headers.insert("set-cookie", cookie.parse().unwrap());
-        return (headers, Html(include_str!("../templates/kamishibai-magmag.html"))).into_response();
+        return match read_magmag_template("kamishibai-magmag.html") {
+            Some(h) => (headers, Html(h)).into_response(),
+            None => StatusCode::NOT_FOUND.into_response(),
+        };
     }
-    Html(include_str!("../templates/kamishibai-magmag-gate.html").replace("<!--ERR-->", "パスワードが違います")).into_response()
+    match read_magmag_template("kamishibai-magmag-gate.html") {
+        Some(h) => Html(h.replace("<!--ERR-->", "パスワードが違います")).into_response(),
+        None => StatusCode::NOT_FOUND.into_response(),
+    }
 }
 
 // Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
