@@ -13,3 +13,11 @@ public/mv/*.pickle
 *client_secret*.json
 
 .secrets.local
+
+# まぐまぐ限定紙芝居 (限定コンテンツ=公開repoに出さない。構成は MAGMAG.local.md 参照)
+MAGMAG.local.md
+templates/kamishibai-magmag.html
+templates/kamishibai-magmag-gate.html
+public/assets/mg-14b7a2be/
+public/audio/mg-14b7a2be-*.mp3
+scripts/restore_magmag.sh
