@@ -9,6 +9,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # 限定コンテンツ(まぐまぐ紙芝居等)はprivate repoが正本。デプロイ時にoverlayを
+      # リポジトリルートへ重ねてイメージに焼き込む(=デプロイで消えない)。
+      # 鍵はread-only deploy key。repo/鍵が無くてもデプロイ自体は続行(continue-on-error)
+      # — その場合は該当ルートが404(fail-closed)になるだけ。
+      - name: Overlay private content
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: yukihamada/yukihamada-private-content
+          ssh-key: ${{ secrets.PRIVATE_CONTENT_DEPLOY_KEY }}
+          path: .private-content
+      - name: Merge overlay
+        run: |
+          if [ -d .private-content/overlay ]; then
+            cp -rv .private-content/overlay/. ./ | wc -l
+            rm -rf .private-content
+          else
+            echo "no private content — skipping (magmag routes will 404)"
+          fi
       - uses: superfly/flyctl-actions/setup-flyctl@master
       # --strategy immediate: 既存マシンを入れ替え（新マシンを作らない）。
       # org のマシン上限でローリング(緑machine作成)が弾かれるため。
