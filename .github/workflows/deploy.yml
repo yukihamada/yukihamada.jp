@@ -5,7 +5,53 @@ on:
     branches: [main, master]
 
 jobs:
+  # ── test: cargo build --release → 起動スモークテスト ──
+  # 「cargo build は通るが起動時 panic / テンプレ404」事故(include_str/ルート登録/
+  # 設定読込の回帰)を捕まえる。テンプレは実行時読込なので workdir=リポジトリルートで起動。
+  # private-content overlay はこのジョブには無いので magmag は 404(fail-closed)が正常 →
+  # ここでは触らず、公開ルート /health と /(UA付き) の 200 で判定する。
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - name: Build (release)
+        run: cargo build --release
+      - name: Startup smoke test
+        run: |
+          set -euo pipefail
+          # リポジトリルートで起動(テンプレは実行時読込)。PORT は env で指定。
+          PORT=8099 MEET_DATA_DIR="$RUNNER_TEMP/yjp-data" ./target/release/yukihamada-jp > "$RUNNER_TEMP/server.log" 2>&1 &
+          SRV=$!
+          # 起動を最大20秒待つ。途中でプロセスが死んだら即失敗(panic検出)。
+          ok=""
+          for i in $(seq 1 40); do
+            if ! kill -0 "$SRV" 2>/dev/null; then
+              echo "::error::server process exited before becoming ready"
+              cat "$RUNNER_TEMP/server.log"
+              exit 1
+            fi
+            if curl -fsS -o /dev/null "http://localhost:8099/health" 2>/dev/null; then ok=1; break; fi
+            sleep 0.5
+          done
+          if [ -z "$ok" ]; then
+            echo "::error::server did not become ready in time"
+            cat "$RUNNER_TEMP/server.log"
+            kill "$SRV" 2>/dev/null || true
+            exit 1
+          fi
+          echo "=== /health ==="
+          curl -fsS -o /dev/null -w "health: %{http_code}\n" "http://localhost:8099/health"
+          echo "=== / (browser UA — 素のcurlはANSIターミナル版が返るため UA 必須) ==="
+          curl -fsS -A "Mozilla/5.0" -o /dev/null -w "home: %{http_code}\n" "http://localhost:8099/"
+          echo "=== /kamishibai/5 (include_str! 焼込みルートの回帰検出) ==="
+          curl -fsS -A "Mozilla/5.0" -o /dev/null -w "kamishibai/5: %{http_code}\n" "http://localhost:8099/kamishibai/5"
+          echo "smoke test passed"
+          kill "$SRV" 2>/dev/null || true
+
+  # ── deploy: 本番デプロイ(既存ステップをそのまま) ──
   deploy:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -48,3 +94,22 @@ jobs:
             -H "Content-Type: application/json" \
             -H "X-Tomoshibi-Secret: $TOMOSHIBI_SECRET" \
             -d "{\"text\":\"yukihamada.jp を本番デプロイ（${GITHUB_SHA:0:7}）\",\"kind\":\"deploy\",\"author\":\"GitHub Actions\",\"url\":\"https://github.com/${GITHUB_REPOSITORY}/commit/${GITHUB_SHA}\"}" || true
+
+  # ── verify: 本番が生きているか + 限定コンテンツがイメージに焼かれた証拠を確認 ──
+  verify:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify production
+        run: |
+          set -euo pipefail
+          sleep 20
+          # 素のcurlはANSIターミナル版が返る仕様なので UA 必須。
+          echo "=== / ==="
+          curl -fsS -A "Mozilla/5.0" -o /dev/null -w "home: %{http_code}\n" "https://yukihamada.jp/"
+          # magmag が 200 = private-content overlay が本番イメージに焼き込まれた証拠。
+          echo "=== /kamishibai/magmag (限定コンテンツ焼込みの証拠) ==="
+          curl -fsS -A "Mozilla/5.0" -o /dev/null -w "magmag: %{http_code}\n" "https://yukihamada.jp/kamishibai/magmag"
+          echo "=== /kamishibai/5 ==="
+          curl -fsS -A "Mozilla/5.0" -o /dev/null -w "kamishibai/5: %{http_code}\n" "https://yukihamada.jp/kamishibai/5"
+          echo "production verify passed"
