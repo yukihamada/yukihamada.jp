@@ -808,7 +808,7 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                 "protocolVersion": protocol_version,
                 "serverInfo":{"name":"tomoshibi","version":"1.0.0"},
                 "capabilities":{"tools":{}},
-                "instructions":"🪵 ともしび — 10分で消える焚き火。くべた薪は、建物になって残る。\nadd_log で今の気持ちを一本くべると炎が育ち、ignite で火を大きくできる。一人の小さな火が、みんなの灯りになる。\n最初の一手: add_log で『いま考えていること』を一行くべてみて。"
+                "instructions":"🪵 ともしび — 消える火が、いちばん残る。\nくべた言葉は10分で消え、でも\"建物\"になって積もる。\n→ add_log に、いま頭にある一行を放り込む。それだけで火は育つ。"
             }}))
         }
         "ping" => ok(serde_json::json!({})),
