@@ -1145,6 +1145,20 @@ async fn kamishibai_ep3_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep3.html"))
 }
 
+// 紙芝居 第4話『薪は、プロダクトだ。』（ATSUME 焚き火編 2026.06.04）。
+// AI辛口査定★2の告白 → みんなで使って育てる方針 → 「あなたのプロダクトもMCPで焚き火へ」。
+// 全9場面、画像 /assets/atsume-kamishibai/、音声 /audio/atsume-kam-N.mp3 を WebAudio で再生。
+// 8・9場面目に atsm.wtf/community への CTA。(marker: kamishibai-4)
+async fn kamishibai_ep4_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep4.html"))
+}
+
+// あそビュー講演(2026.06.04)の御礼スライド。本人クローン声つき・全5場面。
+// 画像 /assets/asoview-thanks/、音声 /audio/asoview-thanks-N.mp3 を WebAudio で。
+async fn thanks_asoview_page() -> impl IntoResponse {
+    Html(include_str!("../templates/thanks-asoview.html"))
+}
+
 // Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
 // from Cloudflare are short-lived, so we mint once and reuse for ~12h.
 static RTC_ICE_CACHE: std::sync::Mutex<Option<(serde_json::Value, u64)>> =
@@ -6486,6 +6500,11 @@ async fn main() {
         .route("/kamishibai/3", get(kamishibai_ep3_page))
         .route("/asoview", get(kamishibai_ep3_page))
         .route("/makasekata", get(kamishibai_ep3_page))
+        .route("/kamishibai/4", get(kamishibai_ep4_page))
+        .route("/atsume", get(kamishibai_ep4_page))
+        .route("/takibi", get(kamishibai_ep4_page))
+        .route("/arigatou", get(thanks_asoview_page))
+        .route("/asoview/thanks", get(thanks_asoview_page))
         .route("/community", get(community::page))
         // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
         .route("/campfire", get(community::page))
