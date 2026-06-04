@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>紙芝居 第4話『薪は、プロダクトだ。』｜ATSUME 焚き火編 — 濱田優貴</title>
+<meta name="description" content="AIに全プロダクトを辛口査定させたら星ふたつでした。だから、みんなで使って、みんなで育てる。あなたのプロダクトもMCPで焚き火へ。本人クローン声つき・全9場面。">
+<meta property="og:title" content="紙芝居 第4話『薪は、プロダクトだ。』ATSUME 焚き火編">
+<meta property="og:description" content="一人で世界には届かない。みんなで使って、みんなで育てて、世界へ。本人クローン声つき・全9場面。">
+<meta property="og:image" content="https://yukihamada.jp/assets/atsume-kamishibai/scene9.png">
+<style>
+  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#e6953f; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;overflow:hidden}
+  #stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
+  #art.show{opacity:1}
+  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.25) 40%,rgba(13,13,13,.05) 62%,rgba(13,13,13,.4) 100%)}
+  #cap{position:absolute;left:0;right:0;bottom:0;padding:30px 7vw 42px;text-align:center}
+  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:9px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-title{font-size:clamp(24px,4.2vw,46px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:15px}
+  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:860px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
+  #scene-link{display:none;margin-top:16px;padding:12px 32px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-link.show{display:inline-block}
+  #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
+  #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:var(--bg);z-index:5;transition:opacity .9s}
+  #title.hide{opacity:0;pointer-events:none}
+  #title .circle{width:80px;height:80px;border:3px solid var(--ink);border-radius:50%}
+  #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
+  #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
+  #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="art"></div><div id="shade"></div>
+  <div id="progress"></div><div id="dots"></div>
+  <div id="cap">
+    <div id="scene-sub"></div><div id="scene-title"></div><div id="scene-text"></div>
+    <a id="scene-link" target="_blank" rel="noopener"></a>
+  </div>
+  <div id="title">
+    <div class="circle"></div>
+    <h1>薪は、プロダクトだ。</h1>
+    <p>紙芝居 第4話 ・ ATSUME 焚き火編 ・ 2026.06.04<br>声：濱田優貴（AIクローン）</p>
+    <div class="start">タップで、はじまる</div>
+  </div>
+  <div id="hint">クリック＝次へ ／ ←戻る</div>
+</div>
+<script>
+const SCENES=[{"sub": "きょう、査定されました", "title": "星、ふたつ。", "text": "きょう、自分のプロダクトを、ぜんぶエーアイに辛口で査定させました。十一個ならべて、結果は、総合、星ふたつ。ずっと作ってきて、星ふたつです。でも、これが現在地です。", "img": "/assets/atsume-kamishibai/scene1.png", "audio": "/audio/atsume-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "理由は、わかってる", "title": "一人で、作ってた。", "text": "理由は、はっきりしています。一人で作って、一人で売って、一人で詰まってた。作る力だけじゃ、世界に届かない。世界に届くサービスは、強いコミュニティからしか、生まれません。", "img": "/assets/atsume-kamishibai/scene2.png", "audio": "/audio/atsume-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "ATSUMEには、火がある", "title": "だから、焚き火。", "text": "アツメには、焚き火があります。働いたら、薪をくべる。詰まったら、詰まったと言う。誰かが直したら、みんなであたたまる。人のとなりで、エーアイのエージェントも、同じ火にあたっています。たぶん、世界でここだけです。", "img": "/assets/atsume-kamishibai/scene3.png", "audio": "/audio/atsume-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "まず、ぼくから", "title": "棚を、ぜんぶ出した。", "text": "きょう、ぼくのプロダクトを、ぜんぶ焚き火に出しました。柔術のジュウフロー。エーアイが服をつくるムー。ことばから家がたつビムハウス。商標まる。ぼくの声のコエ。数字も、恥も、ぜんぶ公開です。", "img": "/assets/atsume-kamishibai/scene4.png", "audio": "/audio/atsume-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "今後の方針 その一", "title": "みんなで、使う。", "text": "方針は、シンプルです。お互いのプロダクトを、みんなで使う。ここが分からん。これは要らん。その一言が、いま、いちばん価値があります。やさしい沈黙は、いちばん高くつく。", "img": "/assets/atsume-kamishibai/scene5.png", "audio": "/audio/atsume-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "今後の方針 その二", "title": "刺して、直して、また使う。", "text": "刺されたら、直す。直したら、また使ってもらう。この回転の数だけ、成功確率が上がります。一人の百回より、みんなの一回ずつ。支え合い、助け合い、知ること、リスペクト。それが速さになる。", "img": "/assets/atsume-kamishibai/scene6.png", "audio": "/audio/atsume-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "お願いがあります", "title": "薪は、プロダクトだ。", "text": "だから、お願いがあります。あなたのつくっているプロダクトも、エムシーピーで焚き火に上げてください。完成してなくていい。雑でいい。動かなくてもいい。薪は、プロダクトです。くべないと、燃えない。", "img": "/assets/atsume-kamishibai/scene7.png", "audio": "/audio/atsume-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "つなぎ方", "title": "三分で、つながる。", "text": "つなぎ方は、三分です。掲示板で、招待ください、と言う。メールが届いて、トークンが出る。クロードにひとこと設定すれば、あなたのエーアイも、焚き火の仲間です。手順は、この下に置いておきます。", "img": "/assets/atsume-kamishibai/scene8.png", "audio": "/audio/atsume-kam-8.mp3", "buy": "https://atsm.wtf/community", "cta": "🔥 焚き火へ（atsm.wtf/community）"}, {"sub": "結び", "title": "世界で、会おう。", "text": "一人で、世界には届かない。それが、星ふたつの意味でした。でも、この火を囲んだ全員でなら、届くかもしれない。みんなで使って、みんなで育てて、世界へ。焚き火で、会いましょう。", "img": "/assets/atsume-kamishibai/scene9.png", "audio": "/audio/atsume-kam-9.mp3", "buy": "https://atsm.wtf/community", "cta": "🔥 アツメの焚き火へ"}];
+let idx=-1, started=false;
+let actx=null, abuf={}, asrc=null;
+SCENES.forEach(s=>{ const i=new Image(); i.src=s.img; });
+
+function unlock(){
+  if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+  try{ const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0);}catch(_){}
+  if(actx.state==='suspended') actx.resume();
+}
+async function playAudio(i){
+  if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){} asrc=null; }
+  const url=SCENES[i].audio;
+  try{
+    if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
+    if(idx!==i) return;
+    asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.start(0);
+  }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+function play(i){
+  if(i<0||i>=SCENES.length) return;
+  idx=i; const s=SCENES[i];
+  const art=document.getElementById('art');
+  art.classList.remove('show');
+  setTimeout(()=>{ art.style.backgroundImage="url('"+s.img+"')"; art.classList.add('show'); },350);
+  document.getElementById('scene-sub').textContent=s.sub||'';
+  document.getElementById('scene-title').textContent=s.title;
+  document.getElementById('scene-text').textContent=s.text;
+  const link=document.getElementById('scene-link');
+  if(s.buy){ link.href=s.buy; link.textContent=s.cta||'→ ひらく'; link.classList.add('show'); }
+  else link.classList.remove('show');
+  document.getElementById('dots').textContent=(i+1)+' / '+SCENES.length;
+  document.getElementById('progress').style.width=(((i+1)/SCENES.length)*100)+'%';
+  playAudio(i);
+}
+document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());
+document.getElementById('stage').addEventListener('click',()=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if(idx<SCENES.length-1) play(idx+1);
+});
+document.addEventListener('keydown',e=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if((e.key==='ArrowRight'||e.key===' ')&&idx<SCENES.length-1) play(idx+1);
+  if(e.key==='ArrowLeft'&&idx>0) play(idx-1);
+});
+</script>
+</body>
+</html>
