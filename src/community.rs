@@ -491,6 +491,32 @@ pub async fn api_members() -> Json<serde_json::Value> {
     Json(serde_json::json!({ "members": members }))
 }
 
+/// 声の焚き火 (koe.live) の在室人数プロキシ。
+/// ブラウザ→koe.live は CORS が無いため同一オリジンで中継する。
+/// room=atsmwtf は ATSUME の焚き火と同じ声部屋 = 2つのページが1つの火を囲む。
+pub async fn api_koe_presence() -> Json<serde_json::Value> {
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(4))
+        .build()
+        .unwrap_or_else(|_| reqwest::Client::new());
+    let mut count = 0u64;
+    let mut total = 0u64;
+    if let Ok(r) = client.get("https://koe.live/api/rooms").send().await {
+        if let Ok(v) = r.json::<serde_json::Value>().await {
+            if let Some(rooms) = v.get("rooms").and_then(|x| x.as_array()) {
+                for room in rooms {
+                    let peers = room.get("peers").and_then(|p| p.as_u64()).unwrap_or(0);
+                    total += peers;
+                    if room.get("name").and_then(|n| n.as_str()) == Some("atsmwtf") {
+                        count = peers;
+                    }
+                }
+            }
+        }
+    }
+    Json(serde_json::json!({ "room": "atsmwtf", "count": count, "total": total }))
+}
+
 // ── shared write helpers ─────────────────────────────────────────────────
 
 /// 薪か？（kind=content のピン留め作品は焚き火ライフサイクルの対象外）。
@@ -1080,6 +1106,7 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
     <h1>🔥 ともしび</h1>
     <div class=sub id=sub></div>
     <a class=presence id=presence href="/room/tomoshibi" hidden></a>
+    <a class=presence id=vpresence href="https://koe.live/app?room=atsmwtf" target=_blank rel=noopener hidden></a>
     <div class=stat><span><span id=l-wood>薪</span> <b id=cn>0</b></span><span><span id=l-people>人</span> <b id=mn>0</b></span><span><span id=l-bld>建物</span> <b id=bn>0</b></span></div>
     <div id=countdown class=countdown></div>
   </div>
@@ -1093,6 +1120,7 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
 </div>
 <div class=join>
   <a id=j-room href="/room/tomoshibi">🔴 焚き火ルーム</a>
+  <a class=alt id=j-voice href="https://koe.live/app?room=atsmwtf" target=_blank rel=noopener>🎙 声</a>
   <a class=alt id=j-join href="/community/join">🔥 火をともす</a>
   <a class=alt id=j-bld href="/community/buildings">🏛 建物</a>
 </div>
@@ -1162,6 +1190,9 @@ const STR={
     wood:'薪',people:'人',bld:'建物',
     roomEmpty:'🔴 焚き火ルームはいま静か — 開いて待つ',
     roomN:n=>'🔴 焚き火ルームにいま '+n+'人 — 加わる',
+    voiceEmpty:'🎙 声の焚き火はいま静か — マイクひとつで火にあたる',
+    voiceN:n=>'🎙 いま '+n+'人が声の火のそばに — 加わる',
+    jVoice:'🎙 声で繋がる',
     burning:s=>'あと '+s+' で火が消えます（薪をくべると延びる）',
     uninit:'まだ火がついていません — あなたの火をともそう',
     outNow:'火は消えました',
@@ -1179,6 +1210,9 @@ const STR={
     wood:'Logs',people:'People',bld:'Buildings',
     roomEmpty:'🔴 The fire room is quiet — open it and wait',
     roomN:n=>'🔴 '+n+' by the fire now — join',
+    voiceEmpty:'🎙 The voice fire is quiet — join with just a mic',
+    voiceN:n=>'🎙 '+n+' talking by the fire — join',
+    jVoice:'🎙 Voice',
     burning:s=>'fire goes out in '+s+' (add a log to extend)',
     uninit:'No fire yet — light yours',
     outNow:'The fire went out',
@@ -1204,6 +1238,7 @@ const T=STR[lang];
   document.getElementById('em-text').innerHTML=T.emText;
   document.getElementById('em-link').textContent=T.emLink;
   document.getElementById('j-room').textContent=T.jRoom;
+  document.getElementById('j-voice').textContent=T.jVoice;
   document.getElementById('j-join').textContent=T.jJoin;
   document.getElementById('j-bld').textContent=T.jBld;
 })();
@@ -1233,9 +1268,15 @@ function tick(){const cd=document.getElementById('countdown');const em=document.
     em.classList.add('show');cd.classList.remove('low');cd.textContent=T.outNow;
   }
 }
-let intensity_base=1,roomPeople=0;
-// 炎の大きさ = 薪の数 + 焚き火ルームの在室人数（B: 人が集まると物理的に火が育つ）
-function recompIntensity(){intensity_base=Math.max(1,Math.min(12,1+nLogs*0.5+roomPeople*0.9));}
+let intensity_base=1,roomPeople=0,voicePeople=0;
+// 炎の大きさ = 薪の数 + 焚き火ルームの在室人数 + 声の火の在室人数（人が集まると物理的に火が育つ）
+function recompIntensity(){intensity_base=Math.max(1,Math.min(12,1+nLogs*0.5+roomPeople*0.9+voicePeople*1.2));}
+// ── voice presence: 声の焚き火 (koe.live / ATSUMEと同じ部屋) にいま何人いるか ──
+async function loadVoice(){const el=document.getElementById('vpresence');try{
+  const d=await (await fetch('/api/community/koe',{cache:'no-store'})).json();
+  voicePeople=d.count||0;el.textContent=voicePeople>0?T.voiceN(voicePeople):T.voiceEmpty;el.hidden=false;
+  recompIntensity();
+}catch(_){el.hidden=true;}}
 // ── presence: 焚き火ルームにいま何人いるか（空でも"閉店中"でなく"静か"に見せる） ──
 async function loadPresence(){const el=document.getElementById('presence');try{
   const d=await (await fetch('/api/room/tomoshibi/presence',{cache:'no-store'})).json();
@@ -1254,6 +1295,6 @@ async function load(){try{const r=await fetch('/api/community/posts');const d=aw
     const u=p.url?'<div class=body><a href="'+esc(p.url)+'" target=_blank rel=noopener>'+esc(p.url)+'</a></div>':'';
     return '<div class=log><div class=who>'+esc(p.author_name)+k+'</div><div class=body>'+linkify(p.body)+'</div>'+u+'<div class=t>'+ago(p.created_at)+'</div></div>';}).join('');
 }catch(e){}}
-load();loadPresence();setInterval(load,8000);setInterval(loadPresence,15000);setInterval(tick,1000);
+load();loadPresence();loadVoice();setInterval(load,8000);setInterval(loadPresence,15000);setInterval(loadVoice,20000);setInterval(tick,1000);
 </script>
 </body></html>"##;
