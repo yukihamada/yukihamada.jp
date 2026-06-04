@@ -6502,7 +6502,6 @@ async fn main() {
         .route("/makasekata", get(kamishibai_ep3_page))
         .route("/kamishibai/4", get(kamishibai_ep4_page))
         .route("/atsume", get(kamishibai_ep4_page))
-        .route("/takibi", get(kamishibai_ep4_page))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
         .route("/community", get(community::page))
