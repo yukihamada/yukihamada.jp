@@ -696,6 +696,27 @@ details[open] .toc-title::after { content: ' -'; }
 }
 .share-btn:hover { color: var(--text); border-color: var(--text-muted); background: var(--bg-card); }
 
+/* ── Reader CTA (end of article) ── */
+.reader-cta {
+  margin: 40px 0 8px; padding: 20px 24px;
+  background: var(--bg-alt); border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.reader-cta-text {
+  font-size: 0.9rem; color: var(--text-muted); margin: 0 0 12px;
+}
+.reader-cta-links {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 20px;
+}
+.reader-cta-link {
+  font-size: 0.9rem; font-weight: 600; color: var(--accent);
+}
+.reader-cta-link:hover { color: var(--accent-hover); }
+.reader-cta-link.reader-cta-muted {
+  font-weight: 500; color: var(--text-muted);
+}
+.reader-cta-link.reader-cta-muted:hover { color: var(--text); }
+
 /* ── Author Card ── */
 .author-card {
   display: flex; align-items: flex-start; gap: 16px;
