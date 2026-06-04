@@ -778,6 +778,15 @@ html,body{width:100vw;height:100vh;overflow:hidden;background:#000;color:var(--t
 }
 #lyrics-btn:hover{background:rgba(212,168,70,.1);color:var(--gold);}
 
+#tee-btn{
+  position:fixed;bottom:24px;left:96px;z-index:150;
+  background:rgba(212,168,70,.12);border:1px solid rgba(212,168,70,.5);
+  color:var(--gold-l);font-size:11px;letter-spacing:.2em;
+  padding:8px 14px;border-radius:20px;cursor:pointer;
+  text-decoration:none;display:inline-block;
+  font-family:inherit;transition:all .3s;}
+#tee-btn:hover{background:rgba(212,168,70,.25);color:#fff;}
+
 #lyrics-overlay{
   position:fixed;inset:0;z-index:600;
   background:rgba(0,0,0,.96);
@@ -2427,6 +2436,7 @@ init();
 
 <!-- ── LYRICS BUTTON ── -->
 <button id="lyrics-btn" onclick="showLyrics()">歌詞</button>
+<a id="tee-btn" href="https://wearmu.com/shop/TAPTAPTAP-AGENT-TEE-22bc05a8" target="_blank" rel="noopener">👕 Tシャツ買えよ</a>
 
 <!-- ── LYRICS OVERLAY ── -->
 <div id="lyrics-overlay">
@@ -2488,6 +2498,16 @@ init();
     </div>
 
     <div class="lyrics-section">
+      <div class="lyrics-section-label">2026.06 — 現在地</div>
+      <p>あれから、6月。数字は隠さない。<br>
+      柔術は161人で、月18万。🥋<br>
+      AIブランドは毎時1着、もう607案。👕<br>
+      言葉から家が建って、1,483軒。🏠<br>
+      盛ってない。全部、晒してる。<br>
+      ここまでは俺の話。ここからは、君の話。</p>
+    </div>
+
+    <div class="lyrics-section">
       <div class="lyrics-section-label">Elio — ローカルAI</div>
       <p>機内でも、無人島でも動く。🤖<br>
       ネットなし、完全タダ、完全プライベート。<br>
@@ -2505,7 +2525,10 @@ init();
       <div class="lyrics-section-label">Bridge</div>
       <p>バグ、あります。すぐ直します。<br>
       高くしたくない。使ってほしいから。<br>
-      うまくいったら 一緒に得しよう。</p>
+      うまくいったら 一緒に得しよう。<br>
+      この夏、合宿やる。朝までコードと、馬鹿話と、焚き火。🔥<br>
+      君の席、空けてある。<br>
+      <a href="https://wearmu.com/shop/TAPTAPTAP-AGENT-TEE-22bc05a8" target="_blank" rel="noopener" style="color:var(--gold-l);text-decoration:underline;">気になったやつは、Tシャツ買えよ 👕</a>——売上も、また晒すから。</p>
     </div>
 
     <div class="lyrics-section">
@@ -2516,7 +2539,9 @@ init();
       Koeでアイデア、逃さないで<br>
       JiuFlowで今日も、一段強くなる<br>
       Elioに今日も、話しかけた<br>
-      Solunaで今夜も、フェスは続く ✨</p>
+      Solunaで今夜も、フェスは続く ✨<br>
+      ドメインは2126年まで取ってある。<br>
+      2月の胃痛から、夏の焚き火まで——合宿で会おう 🔥</p>
     </div>
   </div>
 </div>
