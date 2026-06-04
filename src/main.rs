@@ -1153,10 +1153,66 @@ async fn kamishibai_ep4_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep4.html"))
 }
 
+// 紙芝居 第5話『鍵は、かけたつもり。』(AI時代のセキュリティ編 2026.06.04)。
+// 公開サーバー7本をAIに監査→3本が無認証で書き込み可の告白→fail-closed等の三原則→
+// 監査ゲートA-G公開ページ(/security-gate)へのCTA。
+// 全9場面、画像 /assets/kagi-kamishibai/、音声 /audio/kagi-kam-N.mp3 を WebAudio で再生。(marker: kamishibai-5)
+async fn kamishibai_ep5_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep5.html"))
+}
+
+// 監査ゲート A–G — 公開前の7項目チェックリスト + 泥棒テスト(curl例)。紙芝居EP5のCTA先。
+async fn security_gate_page() -> impl IntoResponse {
+    Html(include_str!("../templates/security-gate.html"))
+}
+
 // あそビュー講演(2026.06.04)の御礼スライド。本人クローン声つき・全5場面。
 // 画像 /assets/asoview-thanks/、音声 /audio/asoview-thanks-N.mp3 を WebAudio で。
 async fn thanks_asoview_page() -> impl IntoResponse {
     Html(include_str!("../templates/thanks-asoview.html"))
+}
+
+// まぐまぐ向け限定紙芝居『AI駆動開発・方針と現状』(2026.06.04)。パスワードゲート付き・noindex。
+// パス: env MAGMAG_KAMI_PASS（未設定時は既定値）。合致で sha256 トークンを cookie に発行。
+// 画像 /assets/mg-14b7a2be/、音声 /audio/mg-14b7a2be-N.mp3（推測不能トークン付きパス）。
+// (marker: kamishibai-magmag)
+fn magmag_kami_pass() -> String {
+    std::env::var("MAGMAG_KAMI_PASS").unwrap_or_else(|_| "magmag-1487".to_string())
+}
+fn magmag_kami_token() -> String {
+    use sha2::Digest;
+    let hash = sha2::Sha256::digest(format!("magmag-kami:{}", magmag_kami_pass()).as_bytes());
+    hash.iter().map(|b| format!("{:02x}", b)).collect()
+}
+fn magmag_kami_cookie_ok(headers: &HeaderMap) -> bool {
+    let expect = format!("magmag_kami={}", magmag_kami_token());
+    headers
+        .get("cookie")
+        .and_then(|c| c.to_str().ok())
+        .map(|c| c.split(';').any(|p| p.trim() == expect))
+        .unwrap_or(false)
+}
+#[derive(serde::Deserialize)]
+struct MagmagKamiForm {
+    p: String,
+}
+async fn kamishibai_magmag_page(headers: HeaderMap) -> Response {
+    if magmag_kami_cookie_ok(&headers) {
+        return Html(include_str!("../templates/kamishibai-magmag.html")).into_response();
+    }
+    Html(include_str!("../templates/kamishibai-magmag-gate.html").replace("<!--ERR-->", "")).into_response()
+}
+async fn kamishibai_magmag_login(axum::Form(form): axum::Form<MagmagKamiForm>) -> Response {
+    if form.p.trim() == magmag_kami_pass() {
+        let cookie = format!(
+            "magmag_kami={}; Path=/kamishibai/magmag; HttpOnly; SameSite=Strict; Max-Age=2592000",
+            magmag_kami_token()
+        );
+        let mut headers = HeaderMap::new();
+        headers.insert("set-cookie", cookie.parse().unwrap());
+        return (headers, Html(include_str!("../templates/kamishibai-magmag.html"))).into_response();
+    }
+    Html(include_str!("../templates/kamishibai-magmag-gate.html").replace("<!--ERR-->", "パスワードが違います")).into_response()
 }
 
 // Cached ICE config: (iceServers JSON array, expiry unix secs). TURN credentials
@@ -1182,7 +1238,7 @@ async fn room_ice() -> impl IntoResponse {
         let c = RTC_ICE_CACHE.lock().unwrap();
         if let Some((servers, exp)) = c.as_ref() {
             if now_secs() < *exp {
-                return (cors_headers(), Json(serde_json::json!({ "iceServers": servers }))).into_response();
+                return (cors_headers_any(), Json(serde_json::json!({ "iceServers": servers }))).into_response();
             }
         }
     }
@@ -1216,7 +1272,7 @@ async fn room_ice() -> impl IntoResponse {
         _ => stun_only(),
     };
 
-    (cors_headers(), Json(serde_json::json!({ "iceServers": servers }))).into_response()
+    (cors_headers_any(), Json(serde_json::json!({ "iceServers": servers }))).into_response()
 }
 
 // Live headcount for a room (how many peers are connected right now). Used by the
@@ -1235,7 +1291,7 @@ async fn room_presence(
         let rooms = state.rtc_rooms.lock().unwrap();
         rooms.get(&room).map(|t| t.receiver_count()).unwrap_or(0)
     };
-    (cors_headers(), Json(serde_json::json!({ "room": room, "count": count, "cap": 6 }))).into_response()
+    (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "cap": 6 }))).into_response()
 }
 
 // KOE — 声でつなぐ。相手の名前を入れるとルームを自動生成し、リンクをワンタップで共有。
@@ -2001,6 +2057,20 @@ fn cors_headers() -> HeaderMap {
     let mut h = HeaderMap::new();
     h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://yukihamada.jp".parse().unwrap());
     h.insert(header::ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,OPTIONS".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_HEADERS, "content-type".parse().unwrap());
+    h
+}
+
+// The /room mesh (WS signaling + ICE/presence) is intentionally shareable across
+// our other properties (e.g. atsm.wtf 焚き火 page joins the same room=atsmwtf call
+// in-page). The WS upgrade has no Origin check, but the ICE/presence JSON is read
+// via fetch — so those two endpoints need a permissive CORS origin. They expose no
+// PII (public STUN servers + short-lived TURN creds + a peer headcount), so `*` is
+// safe here while the rest of the API stays locked to https://yukihamada.jp.
+fn cors_headers_any() -> HeaderMap {
+    let mut h = HeaderMap::new();
+    h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, "*".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_METHODS, "GET,OPTIONS".parse().unwrap());
     h.insert(header::ACCESS_CONTROL_ALLOW_HEADERS, "content-type".parse().unwrap());
     h
 }
@@ -6575,6 +6645,10 @@ async fn main() {
         .route("/makasekata", get(kamishibai_ep3_page))
         .route("/kamishibai/4", get(kamishibai_ep4_page))
         .route("/atsume", get(kamishibai_ep4_page))
+        .route("/kamishibai/5", get(kamishibai_ep5_page))
+        .route("/kagi", get(kamishibai_ep5_page))
+        .route("/security-gate", get(security_gate_page))
+        .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
         .route("/community", get(community::page))

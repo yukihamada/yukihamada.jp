@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>監査ゲート A–G ｜ 公開前の7項目 — 濱田優貴</title>
+<meta name="description" content="AI時代、サービスを公開する前に一度だけ通す7項目。認証・秘密・トランスポート・入力検証・CORS・濫用・過剰開示。自分のMCP7本を監査して使ったチェックリストを公開します。">
+<meta property="og:title" content="監査ゲート A–G ｜ 公開前の7項目">
+<meta property="og:description" content="鍵は、かけたつもりじゃなく、かけて、確かめてから。公開前に泥棒として自分のドアを叩く。">
+<meta property="og:image" content="https://yukihamada.jp/assets/kagi-kamishibai/scene9.png">
+<style>
+  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --card:#151311; --accent:#e6953f; --ok:#7bbf6a; --line:rgba(230,149,63,.22); }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:"Hiragino Kaku Gothic ProN",system-ui,sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto;padding:64px 22px 96px}
+  .kicker{color:var(--accent);letter-spacing:.34em;font-size:12px;margin-bottom:14px}
+  h1{font-family:"Hiragino Mincho ProN",serif;font-size:clamp(28px,5vw,44px);font-weight:600;letter-spacing:.04em;line-height:1.4;margin-bottom:18px}
+  .lead{color:var(--dim);font-size:15px;max-width:620px;margin-bottom:10px}
+  .from{margin:22px 0 40px}
+  .from a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--line)}
+  .gate{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 22px 22px 24px;margin:14px 0;display:flex;gap:18px;align-items:flex-start}
+  .gate .id{font-family:"Hiragino Mincho ProN",serif;font-size:30px;color:var(--accent);min-width:34px;line-height:1}
+  .gate h3{font-size:17px;font-weight:600;margin-bottom:6px;letter-spacing:.02em}
+  .gate p{color:var(--dim);font-size:14px}
+  .gate .chk{color:var(--ink);font-size:13px;margin-top:9px;padding-left:16px;position:relative}
+  .gate .chk::before{content:"✓";position:absolute;left:0;color:var(--ok)}
+  h2{font-family:"Hiragino Mincho ProN",serif;font-size:24px;font-weight:600;margin:54px 0 8px;letter-spacing:.04em}
+  .sec-lead{color:var(--dim);font-size:14px;margin-bottom:18px}
+  pre{background:#0a0a0a;border:1px solid var(--line);border-radius:10px;padding:16px 18px;overflow-x:auto;font-family:"SF Mono",Menlo,monospace;font-size:13px;line-height:1.7;color:#cfc8ba}
+  pre .c{color:#6f6a60}
+  pre .g{color:var(--ok)}
+  pre .r{color:#d9714e}
+  .rule{color:var(--accent);font-family:"Hiragino Mincho ProN",serif;font-size:18px;margin:14px 0 4px}
+  .foot{margin-top:64px;padding-top:26px;border-top:1px solid var(--line);color:var(--dim);font-size:13px}
+  .foot a{color:var(--accent);text-decoration:none}
+  .back{display:inline-block;margin-bottom:30px;color:var(--dim);text-decoration:none;font-size:13px;letter-spacing:.1em}
+  .back:hover{color:var(--accent)}
+</style>
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/kamishibai/5">← 紙芝居『鍵は、かけたつもり。』</a>
+  <div class="kicker">公開前に、一度だけ</div>
+  <h1>監査ゲート A–G</h1>
+  <p class="lead">AIで作る速さは百倍になった。鍵のかけ忘れも、百倍になる。<br>サービスを世界に出す前に、自分のドアを一度だけ叩く7項目です。</p>
+  <p class="lead">自分の公開MCPサーバー7本をAIに監査させたら、3本が無認証で書き込める状態でした。鍵は設計してあったのに、配線されていなかった。同じ穴を、あなたが踏まないように。</p>
+  <div class="from">使ったチェックリストを、そのまま置いておきます。<a href="/kamishibai/5">→ 経緯は紙芝居で</a></div>
+
+  <div class="gate"><div class="id">A</div><div><h3>認証ゲート（Authentication）</h3><p>書き込み・破壊系の操作に必ず認証を要求する。「認証を設計した」と「全経路に配線した」は別物。トークン未設定なら<b>開く</b>のではなく<b>閉じる</b>（fail-closed）。</p><div class="chk">無認証で書き込みAPIを叩いて、拒否されることを実際に確認した</div></div></div>
+
+  <div class="gate"><div class="id">B</div><div><h3>秘密の非露出（Secrets）</h3><p>パスワード・APIキー・トークンをコード・ログ・エラー本文・クライアントに出さない。秘密はサーバー側だけが持ち、渡す権限は最小の一つだけ。</p><div class="chk">レスポンスとログに鍵・内部パスが漏れていないか grep した</div></div></div>
+
+  <div class="gate"><div class="id">C</div><div><h3>トランスポート（Transport）</h3><p>HTTPS強制。プロトコルバージョンのエコー、メソッドの出し分け（GET/POST/OPTIONS）を仕様どおりに。中間者・ダウングレードを許さない。</p><div class="chk">httpでアクセスしてhttpsに昇格されることを確認した</div></div></div>
+
+  <div class="gate"><div class="id">D</div><div><h3>入力検証（Input validation）</h3><p>SQLはパラメータ化（文字列連結しない）。URL・ファイル名・IDの形式を検証。外部から渡るURLはSSRF対策（解決後IPがprivate/loopback/内部なら拒否、DNSリバインド・リダイレクトも塞ぐ）。</p><div class="chk">169.254.169.254・localhost・..%2f を投げて弾かれることを確認した</div></div></div>
+
+  <div class="gate"><div class="id">E</div><div><h3>CORS / オリジン</h3><p>ワイルドカード <code>*</code> を惰性で付けない。書き込みは Origin / CSRF を検証。クロスオリジンで意図しない呼び出しが通らないように。</p><div class="chk">別オリジンからの書き込みが拒否されることを確認した</div></div></div>
+
+  <div class="gate"><div class="id">F</div><div><h3>濫用対策（Abuse / rate limit）</h3><p>IPあたり・グローバルの日次上限。課金につながる処理（生成・送信）はキャッシュと上限で守る。匿名枠は信頼できるIPヘッダ（例: fly-client-ip）でキー化。</p><div class="chk">上限を超えたら429が返ることを確認した</div></div></div>
+
+  <div class="gate"><div class="id">G</div><div><h3>過剰開示（Over-exposure）</h3><p>必要な情報だけ返す。内部ID・スタックトレース・他人のデータ・下書き・非公開リストを露出しない。公開既定ではなく非公開既定（fail-closed）に。</p><div class="chk">一覧・詳細APIに他人の非公開データが混ざっていないか確認した</div></div></div>
+
+  <h2>泥棒テスト</h2>
+  <p class="sec-lead">公開する前に、一度、泥棒になる。鍵を持たずに自分のドアを開けてみて、<b>拒否されたら合格</b>。すんなり開いたら、それは世界中に開いています。</p>
+  <pre><span class="c"># 1. 鍵なしで書き込みAPIを叩く → 401/403 が返れば A 合格</span>
+curl -s -o /dev/null -w "%{http_code}\n" -X POST https://your.app/api/write
+<span class="g">→ 401</span>  <span class="c"># 拒否された＝合格</span>
+
+<span class="c"># 2. 内部メタデータへのSSRFを試す → 弾かれれば D 合格</span>
+curl -s -X POST https://your.app/api/fetch -d '{"url":"http://169.254.169.254/"}'
+<span class="g">→ "内部ホストは指定できません"</span>
+
+<span class="c"># 3. 別オリジンからの書き込み → CSRF で弾かれれば E 合格</span>
+curl -s -X POST https://your.app/api/write -H "Origin: https://evil.example"
+<span class="r">→ ここで通ったら、世界中に開いています</span></pre>
+
+  <div class="rule">原則は、三つだけ。</div>
+  <p class="sec-lead">迷ったら、閉じる（fail-closed）。秘密は、書かない（最小の鍵を一つ）。公開前に、泥棒として叩く。<br>鍵は、かけたつもりじゃなく、かけて、確かめてから。</p>
+
+  <div class="foot">
+    濱田優貴 / 株式会社イネブラ ・ ホワイトハットとして、許可ベースのAIレッドチーミングを請けています。<br>
+    お問い合わせ: <a href="mailto:mail@yukihamada.jp">mail@yukihamada.jp</a> ・ <a href="/kamishibai/5">紙芝居 第5話『鍵は、かけたつもり。』</a>
+  </div>
+</div>
+</body>
+</html>

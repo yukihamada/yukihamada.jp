@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>紙芝居 第5話『鍵は、かけたつもり。』｜AI時代のセキュリティ編 — 濱田優貴</title>
+<meta name="description" content="自分の公開サーバー七本をAIに監査させたら、三本が誰でも書き込める状態でした。鍵は設計してあったのに、配線されていなかった。AI時代のセキュリティ三原則。本人クローン声つき・全9場面。">
+<meta property="og:title" content="紙芝居 第5話『鍵は、かけたつもり。』AI時代のセキュリティ編">
+<meta property="og:description" content="速く作れる時代は、速く狙われる時代。鍵は、かけたつもりじゃなく、かけて、確かめてから。本人クローン声つき・全9場面。">
+<meta property="og:image" content="https://yukihamada.jp/assets/kagi-kamishibai/scene9.png">
+<style>
+  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#e6953f; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;overflow:hidden}
+  #stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
+  #art.show{opacity:1}
+  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.25) 40%,rgba(13,13,13,.05) 62%,rgba(13,13,13,.4) 100%)}
+  #cap{position:absolute;left:0;right:0;bottom:0;padding:30px 7vw 42px;text-align:center}
+  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:9px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-title{font-size:clamp(24px,4.2vw,46px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:15px}
+  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:860px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
+  #scene-link{display:none;margin-top:16px;padding:12px 32px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-link.show{display:inline-block}
+  #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
+  #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:var(--bg);z-index:5;transition:opacity .9s}
+  #title.hide{opacity:0;pointer-events:none}
+  #title .circle{width:80px;height:80px;border:3px solid var(--ink);border-radius:50%}
+  #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
+  #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
+  #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
+</style>
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<div id="stage">
+  <div id="art"></div><div id="shade"></div>
+  <div id="progress"></div><div id="dots"></div>
+  <div id="cap">
+    <div id="scene-sub"></div><div id="scene-title"></div><div id="scene-text"></div>
+    <a id="scene-link" target="_blank" rel="noopener"></a>
+  </div>
+  <div id="title">
+    <div class="circle"></div>
+    <h1>鍵は、かけたつもり。</h1>
+    <p>紙芝居 第5話 ・ AI時代のセキュリティ編 ・ 2026.06.04<br>声：濱田優貴（AIクローン）</p>
+    <div class="start">タップで、はじまる</div>
+  </div>
+  <div id="hint">クリック＝次へ ／ ←戻る</div>
+</div>
+<script>
+const SCENES=[{"sub": "AI時代のセキュリティ", "title": "速さは、百倍。", "text": "エーアイで、作る速さは、百倍になりました。朝に思いついて、夜には世界に公開できる。でも、忘れていました。鍵の、かけ忘れも、百倍になることを。", "img": "/assets/kagi-kamishibai/scene1.png", "audio": "/audio/kagi-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "ある朝の、査定", "title": "三本、開いてた。", "text": "ある朝、自分の公開サーバーを、ぜんぶエーアイに監査させました。七本のうち、三本が、誰でも書き込める状態でした。何ヶ月も、開いたままで。", "img": "/assets/kagi-kamishibai/scene2.png", "audio": "/audio/kagi-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "本当の理由", "title": "鍵は、かけたつもり。", "text": "鍵は、ちゃんと設計してありました。でも、配線されていなかった。鍵を買って、ドアに付けたつもりで、付いていなかった。できたつもりが、いちばん危ない。", "img": "/assets/kagi-kamishibai/scene3.png", "audio": "/audio/kagi-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "狙う側も、AI", "title": "泥棒は、休まない。", "text": "そして、いまは穴を探すのも、エーアイです。二十四時間、世界中から、休まずに、すべてのドアノブを、回しにくる。速く作れる時代は、速く狙われる時代です。", "img": "/assets/kagi-kamishibai/scene4.png", "audio": "/audio/kagi-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "原則 その一", "title": "迷ったら、閉じる。", "text": "ルールは、三つだけです。その一、フェイル、クローズド。鍵が見つからないとき、開けておくのではなく、閉じておく。迷ったら、閉じる。あとから開けるのは、簡単です。", "img": "/assets/kagi-kamishibai/scene5.png", "audio": "/audio/kagi-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "原則 その二", "title": "秘密は、書かない。", "text": "その二。合鍵を、玄関マットの下に置かない。パスワードや、エーピーアイキーを、コードに書かない。渡す鍵は、いちばん小さいやつを、ひとつだけ。", "img": "/assets/kagi-kamishibai/scene6.png", "audio": "/audio/kagi-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "原則 その三", "title": "泥棒として、叩く。", "text": "その三。公開する前に、一度、泥棒になってください。鍵を持たずに、自分のドアを開けてみる。拒否されたら、合格。すんなり開いたら、それは、世界中に、開いています。", "img": "/assets/kagi-kamishibai/scene7.png", "audio": "/audio/kagi-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "いい知らせ", "title": "速さと、安全。", "text": "いい知らせも、あります。穴をあけるのがエーアイなら、見つけるのも、エーアイです。七本の監査は、数時間で終わりました。速さと安全は、敵じゃない。安全は、速さの一部です。", "img": "/assets/kagi-kamishibai/scene8.png", "audio": "/audio/kagi-kam-8.mp3", "buy": "", "cta": ""}, {"sub": "公開前に、一度だけ", "title": "公開前の、七項目。", "text": "ぼくが使った監査の項目を、ぜんぶ、この下に置いておきます。エーから、ジーまで、七項目。あなたのプロダクトも、公開する前に、一度だけ。鍵は、かけたつもりじゃなく、かけて、確かめてから。", "img": "/assets/kagi-kamishibai/scene9.png", "audio": "/audio/kagi-kam-9.mp3", "buy": "https://yukihamada.jp/security-gate", "cta": "🔐 監査ゲート A–G を見る"}];
+let idx=-1, started=false;
+let actx=null, abuf={}, asrc=null;
+SCENES.forEach(s=>{ const i=new Image(); i.src=s.img; });
+
+function unlock(){
+  if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+  try{ const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0);}catch(_){}
+  if(actx.state==='suspended') actx.resume();
+}
+async function playAudio(i){
+  if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){} asrc=null; }
+  const url=SCENES[i].audio;
+  try{
+    if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
+    if(idx!==i) return;
+    asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.start(0);
+  }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+function play(i){
+  if(i<0||i>=SCENES.length) return;
+  idx=i; const s=SCENES[i];
+  const art=document.getElementById('art');
+  art.classList.remove('show');
+  setTimeout(()=>{ art.style.backgroundImage="url('"+s.img+"')"; art.classList.add('show'); },350);
+  document.getElementById('scene-sub').textContent=s.sub||'';
+  document.getElementById('scene-title').textContent=s.title;
+  document.getElementById('scene-text').textContent=s.text;
+  const link=document.getElementById('scene-link');
+  if(s.buy){ link.href=s.buy; link.textContent=s.cta||'→ ひらく'; link.classList.add('show'); }
+  else link.classList.remove('show');
+  document.getElementById('dots').textContent=(i+1)+' / '+SCENES.length;
+  document.getElementById('progress').style.width=(((i+1)/SCENES.length)*100)+'%';
+  playAudio(i);
+}
+document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());
+document.getElementById('stage').addEventListener('click',()=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if(idx<SCENES.length-1) play(idx+1);
+});
+document.addEventListener('keydown',e=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if((e.key==='ArrowRight'||e.key===' ')&&idx<SCENES.length-1) play(idx+1);
+  if(e.key==='ArrowLeft'&&idx>0) play(idx-1);
+});
+</script>
+</body>
+</html>
