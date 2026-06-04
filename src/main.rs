@@ -2026,8 +2026,20 @@ struct DevilLeadReq {
 
 async fn devil_lead(
     State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
     axum::Json(body): axum::Json<DevilLeadReq>,
 ) -> Response {
+    // IP別レート制限(5回/時)。CORSはブラウザ限定でcurlからは素通りのため、スパムでTelegram爆撃+/data満杯を防ぐには必須。
+    // バケットは既存 otp_rate_limit を "devil:" プレフィックスで間借り(fanclub_send_otp と同パターン)。
+    let ip = extract_client_ip(&headers);
+    if rate_limited(&state.otp_rate_limit, &format!("devil:{ip}"), 5, 3600) {
+        return (
+            StatusCode::TOO_MANY_REQUESTS,
+            devil_cors_headers(),
+            Json(serde_json::json!({"ok": false, "error": "送信が多すぎます。しばらくしてからお試しください。"})),
+        )
+            .into_response();
+    }
     let email = body.email.trim().to_lowercase();
     if !email.contains('@') || email.len() > 120 {
         return (
