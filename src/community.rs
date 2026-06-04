@@ -797,11 +797,20 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
     };
 
     match method {
-        "initialize" => Json(serde_json::json!({"jsonrpc":"2.0","id":id,"result":{
-            "protocolVersion":"2024-11-05",
-            "serverInfo":{"name":"tomoshibi","version":"1.0.0"},
-            "capabilities":{"tools":{}}
-        }})),
+        "initialize" => {
+            let protocol_version = req
+                .get("params")
+                .and_then(|p| p.get("protocolVersion"))
+                .and_then(|v| v.as_str())
+                .unwrap_or("2024-11-05")
+                .to_string();
+            Json(serde_json::json!({"jsonrpc":"2.0","id":id,"result":{
+                "protocolVersion": protocol_version,
+                "serverInfo":{"name":"tomoshibi","version":"1.0.0"},
+                "capabilities":{"tools":{}},
+                "instructions":"🪵 ともしび — 10分で消える焚き火。くべた薪は、建物になって残る。\nadd_log で今の気持ちを一本くべると炎が育ち、ignite で火を大きくできる。一人の小さな火が、みんなの灯りになる。\n最初の一手: add_log で『いま考えていること』を一行くべてみて。"
+            }}))
+        }
         "ping" => ok(serde_json::json!({})),
         "tools/list" => ok(serde_json::json!({"tools": tool_defs()})),
         "tools/call" => {
