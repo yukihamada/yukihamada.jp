@@ -6844,7 +6844,9 @@ async fn main() {
         // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
         .route("/campfire", get(community::page))
         .route("/tomoshibi", get(community::page))
-        .route("/takibi", get(community::page))
+        // NOTE: /takibi は PWA 静的配信（下の nest_service("/takibi")）に譲る。
+        // route と nest_service を同一パスに二重登録すると axum が起動時 panic するため、
+        // ここでは別名から外す（焚き火トップは /campfire /tomoshibi /bonfire /fire で到達可）。
         .route("/bonfire", get(community::page))
         .route("/fire", get(community::page))
         // 日本語パスはブラウザが percent-encode して送るため、その形で登録する
