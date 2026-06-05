@@ -1,4 +1,4 @@
-const C='takibi-v2';
+const C='takibi-v3';
 self.addEventListener('install',e=>{self.skipWaiting();e.waitUntil(caches.open(C).then(c=>c.addAll(['/takibi/','/takibi/index.html','/takibi/manifest.webmanifest'])))});
 self.addEventListener('activate',e=>e.waitUntil(self.clients.claim()));
 self.addEventListener('fetch',e=>{
