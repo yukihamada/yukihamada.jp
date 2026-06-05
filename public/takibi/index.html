@@ -1,0 +1,78 @@
+<!doctype html><html lang=ja><head>
+<meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>焚火 — ATSM</title>
+<meta name=theme-color content="#0a0a0c">
+<link rel=manifest href="/takibi/manifest.webmanifest">
+<link rel=apple-touch-icon href="/apple-touch-icon.png">
+<meta name=apple-mobile-web-app-capable content=yes>
+<meta name=apple-mobile-web-app-title content="焚火">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:linear-gradient(180deg,#0a0a0c,#000);color:#fff;font-family:-apple-system,'Hiragino Sans',sans-serif;min-height:100vh;padding-bottom:env(safe-area-inset-bottom)}
+header{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:16px 18px calc(14px);background:rgba(8,8,10,.82);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,140,0,.14);z-index:5}
+h1{font-size:22px;font-weight:800;letter-spacing:.04em}
+.maki{font-weight:700;color:#ffae42;font-size:15px}
+main{max-width:680px;margin:0 auto;padding:16px}
+.card{background:rgba(255,255,255,.05);border:1px solid rgba(255,140,0,.18);border-radius:14px;padding:14px;margin-bottom:12px}
+.top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px}
+.au{font-weight:700;color:#ffae42;font-size:14px}
+.ts{font-size:11px;color:#888}
+.bd{font-size:14.5px;line-height:1.75;color:rgba(255,255,255,.92);white-space:pre-wrap;word-break:break-word}
+.bd a{color:#ffd07a}
+.rx{display:flex;gap:18px;margin-top:10px}
+.rb{background:none;border:none;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.rb b{font-size:12px;color:#ffae42}
+.st{text-align:center;color:#888;padding:40px 20px}
+.fab{position:fixed;right:20px;bottom:calc(22px + env(safe-area-inset-bottom));width:60px;height:60px;border-radius:50%;border:none;background:#ff8c1a;color:#000;font-size:26px;box-shadow:0 6px 24px rgba(255,140,0,.45);cursor:pointer}
+dialog{border:none;background:#111;color:#fff;border-radius:16px;padding:18px;width:92%;max-width:520px}
+dialog textarea{width:100%;min-height:140px;background:rgba(255,255,255,.07);border:1px solid #333;border-radius:10px;color:#fff;padding:12px;font:inherit;font-size:15px;resize:vertical}
+dialog input{width:100%;background:rgba(255,255,255,.07);border:1px solid #333;border-radius:10px;color:#fff;padding:10px;font:inherit;margin-bottom:10px}
+dialog .row{display:flex;gap:10px;margin-top:12px}
+.btn{flex:1;padding:13px;border-radius:10px;border:none;font-weight:700;font-size:15px;cursor:pointer}
+.btn.p{background:#ff8c1a;color:#000}.btn.s{background:#222;color:#aaa}
+.note{font-size:11px;color:#777;text-align:center;margin:10px 0 0;line-height:1.6}
+</style></head><body>
+<header><h1>焚火 <span style="font-size:13px;color:#888;font-weight:400">ATSM</span></h1><span class=maki id=maki>🔥 0</span></header>
+<main><div id=feed><div class=st>火を確認中…</div></div>
+<p class=note>あなたの反応・薪の数はこの端末に記録されます。読み取りは誰でも、投稿は <a href="https://atsm.wtf/community" style="color:#ffd07a">atsm.wtf</a> でログインを。</p></main>
+<button class=fab id=fab title="薪をくべる">🔥</button>
+<dialog id=dlg>
+  <div style="font-weight:700;margin-bottom:10px">🔥 薪をくべる</div>
+  <input id=name placeholder="名前（省略可）">
+  <textarea id=txt placeholder="いま作ってること・やったこと・詰まり…一言で。"></textarea>
+  <div class=row><button class="btn s" id=cancel>閉じる</button><button class="btn p" id=send>くべる</button></div>
+  <p class=note id=sendnote>※ 公開PWAは閲覧用。投稿は atsm.wtf でログインすると焚き火に残ります。</p>
+</dialog>
+<script>
+const MCP='https://atsm.wtf/mcp';
+const $=s=>document.querySelector(s);
+let maki=+(localStorage.maki||0); const rx=JSON.parse(localStorage.rx||'{}');
+$('#maki').textContent='🔥 '+maki;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function linkify(s){return esc(s).replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target=_blank rel=noopener>$1</a>')}
+async function mcp(name,args){const r=await fetch(MCP,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name,arguments:args||{}}})});const j=await r.json();return j?.result?.content?.[0]?.text||''}
+function parse(t){const out=[];let a='',s='',b='';const fl=()=>{const x=b.trim();if(a&&x)out.push({a,s,b:x});a=s='';b=''};
+ t.split('\n').forEach(l=>{const m=l.match(/^\[(.+?)\]\s*(\d{2}-\d{2}\s*\d{2}:\d{2})/);if(m){fl();a=m[1];s=m[2];}else{b+=l+'\n';}});fl();return out}
+function key(p){return p.a+'|'+p.s+'|'+p.b.slice(0,20)}
+async function load(){
+  try{const posts=parse(await mcp('community_list_posts',{}));
+    if(!posts.length){$('#feed').innerHTML='<div class=st>🔥 まだ薪がありません</div>';return}
+    $('#feed').innerHTML=posts.map((p,i)=>{const k=key(p);const f=rx[k]?.f||0,t=rx[k]?.t||0;
+      return `<div class=card><div class=top><span class=au>${esc(p.a)}</span><span class=ts>${esc(p.s)}</span></div>
+      <div class=bd>${linkify(p.b)}</div><div class=rx>
+      <button class=rb data-k="${k}" data-r=f>🔥${f?'<b>'+f+'</b>':''}</button>
+      <button class=rb data-k="${k}" data-r=t>🙏${t?'<b>'+t+'</b>':''}</button></div></div>`}).join('');
+  }catch(e){$('#feed').innerHTML='<div class=st>焚き火に繋がりません<br><button class="btn p" style="margin-top:12px;max-width:160px" onclick="load()">もう一度</button></div>'}
+}
+$('#feed').addEventListener('click',e=>{const b=e.target.closest('.rb');if(!b)return;
+  const k=b.dataset.k,r=b.dataset.r;rx[k]=rx[k]||{f:0,t:0};rx[k][r]++;localStorage.rx=JSON.stringify(rx);
+  if(r==='f'){maki++;localStorage.maki=maki;$('#maki').textContent='🔥 '+maki}
+  if(navigator.vibrate)navigator.vibrate(8);
+  b.innerHTML=(r==='f'?'🔥':'🙏')+'<b>'+rx[k][r]+'</b>'});
+$('#fab').onclick=()=>$('#dlg').showModal();
+$('#cancel').onclick=()=>$('#dlg').close();
+$('#send').onclick=()=>{ // 公開版はログイン誘導(トークンは埋めない)
+  $('#sendnote').innerHTML='投稿はログインが必要です → <a href="https://atsm.wtf/community" target=_blank style="color:#ffd07a">atsm.wtf で薪をくべる</a>';};
+load();
+if('serviceWorker' in navigator)navigator.serviceWorker.register('/takibi/sw.js').catch(()=>{});
+</script></body></html>
