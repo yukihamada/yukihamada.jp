@@ -420,6 +420,61 @@ fn is_authed(headers: &HeaderMap) -> bool {
     member_by_token(&tok).is_some()
 }
 
+/// 焚き火の勢いが増えたか減ったかを正直に出す。
+/// 薪 = いま生きてる薪(posts.json) ＋ 建物に積もった薪(buildings.json) の作成時刻を母集団に、
+/// 直近24時間 と その前の24時間 の本数を比べる。人=入会・建物=形成(ended_at) も同様。
+/// delta>0 なら火は育っている、<0 なら冷めてきている。
+fn activity_trend() -> serde_json::Value {
+    let now = chrono::Utc::now().timestamp();
+    let win = 86_400i64; // 24h
+    let parse = |s: &str| {
+        chrono::DateTime::parse_from_rfc3339(s)
+            .ok()
+            .map(|t| t.timestamp())
+    };
+    // 直近winと、その前のwinの件数
+    let bucket = |ts: &[i64]| -> (i64, i64) {
+        let (mut last, mut prev) = (0i64, 0i64);
+        for &t in ts {
+            let age = now - t;
+            if age < win {
+                last += 1;
+            } else if age < 2 * win {
+                prev += 1;
+            }
+        }
+        (last, prev)
+    };
+    let buildings = load::<Building>("buildings.json");
+    // 薪: 生きてる薪 ＋ 建物に積もった薪、すべての created_at
+    let mut wood: Vec<i64> = load::<Post>("posts.json")
+        .iter()
+        .filter(|p| is_log(p))
+        .filter_map(|p| parse(&p.created_at))
+        .collect();
+    wood.extend(
+        buildings
+            .iter()
+            .flat_map(|b| b.posts.iter())
+            .filter_map(|p| parse(&p.created_at)),
+    );
+    let people: Vec<i64> = load::<Member>("members.json")
+        .iter()
+        .filter_map(|m| parse(&m.created_at))
+        .collect();
+    let blds: Vec<i64> = buildings.iter().filter_map(|b| parse(&b.ended_at)).collect();
+    let chip = |ts: &[i64]| {
+        let (last, prev) = bucket(ts);
+        serde_json::json!({ "last": last, "prev": prev, "delta": last - prev })
+    };
+    serde_json::json!({
+        "window_secs": win,
+        "wood": chip(&wood),
+        "people": chip(&people),
+        "buildings": chip(&blds),
+    })
+}
+
 pub async fn api_posts(headers: HeaderMap) -> Json<serde_json::Value> {
     {
         let _g = STORE_LOCK.lock().unwrap();
@@ -454,6 +509,7 @@ pub async fn api_posts(headers: HeaderMap) -> Json<serde_json::Value> {
         "remain_secs": remain,
         "ttl_secs": fire_ttl_secs(),
         "buildings": buildings,
+        "trend": activity_trend(), // 薪・人・建物が直近24hで増えたか減ったか
         "authed": authed,
     }))
 }
@@ -1149,6 +1205,10 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
 .top .sub{color:rgba(243,237,226,.5);font-size:13px;margin-top:6px;line-height:1.7}
 .stat{display:inline-flex;gap:16px;margin-top:14px;font-size:12px;color:rgba(243,237,226,.6)}
 .stat b{color:#f4cd8b}
+.trend{margin-left:5px;font-size:10.5px;font-weight:700;letter-spacing:.02em;vertical-align:1px}
+.trend.up{color:#ffae5a}
+.trend.down{color:#7ec8ff}
+.trend.flat{color:rgba(243,237,226,.32)}
 .feed{margin-top:min(340px,46vh)}
 .log{background:rgba(20,16,14,.66);backdrop-filter:blur(6px);border:1px solid rgba(244,205,139,.12);border-radius:10px;padding:13px 16px;margin-bottom:10px;animation:rise .6s ease}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
@@ -1189,7 +1249,7 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
     <div class=sub id=sub></div>
     <a class=presence id=presence href="/room/tomoshibi" hidden></a>
     <a class=presence id=vpresence href="https://koe.live/app?room=atsmwtf" target=_blank rel=noopener hidden></a>
-    <div class=stat><span><span id=l-wood>薪</span> <b id=cn>0</b></span><span><span id=l-people>人</span> <b id=mn>0</b></span><span><span id=l-bld>建物</span> <b id=bn>0</b></span></div>
+    <div class=stat><span><span id=l-wood>薪</span> <b id=cn>0</b><span class=trend id=tr-wood></span></span><span><span id=l-people>人</span> <b id=mn>0</b><span class=trend id=tr-people></span></span><span><span id=l-bld>建物</span> <b id=bn>0</b><span class=trend id=tr-bld></span></span></div>
     <div id=countdown class=countdown></div>
   </div>
   <div id=feed class=feed></div>
@@ -1285,6 +1345,7 @@ const STR={
     emptyFeed:'まだ薪がありません。<br><a href="/community/join">火をともして</a>、最初の薪をくべよう。',
     kinds:{ignite:'着火',content:'作品',commit:'commit',deploy:'deploy',sale:'売上',event:'イベント',relay:'中継',memorial:'記念'},
     now:'たった今',min:'分前',hr:'時間前',day:'日前',
+    trendTitle:'直近24時間 vs その前の24時間（▲増えた / ▼減った）',
   },
   en:{
     docTitle:'Tomoshibi — Campfire',
@@ -1305,6 +1366,7 @@ const STR={
     emptyFeed:'No logs yet.<br><a href="/community/join">Light a fire</a> and add the first log.',
     kinds:{ignite:'lit',content:'work',commit:'commit',deploy:'deploy',sale:'sale',event:'event',relay:'relay',memorial:'memorial'},
     now:'just now',min:'m ago',hr:'h ago',day:'d ago',
+    trendTitle:'last 24h vs the 24h before (▲ up / ▼ down)',
   },
 };
 const qLang=new URLSearchParams(location.search).get('lang');
@@ -1366,9 +1428,16 @@ async function loadPresence(){const el=document.getElementById('presence');try{
   recompIntensity();
 }catch(_){el.hidden=true;}}
 const lockedTeaser=lang==='ja'?'🔒 ログインして読む':'🔒 Log in to read';
+// 増えた(▲)か減った(▼)かを数字の横に出す。delta=直近24h − その前の24h。
+function setTrend(id,delta){const el=document.getElementById(id);if(!el)return;
+  const dn=delta|0;el.title=T.trendTitle;
+  if(dn>0){el.className='trend up';el.textContent='▲+'+dn;}
+  else if(dn<0){el.className='trend down';el.textContent='▼'+dn;}
+  else{el.className='trend flat';el.textContent='→0';}}
 async function load(){try{const r=await fetch('/api/community/posts');const d=await r.json();
   const n=d.count||0;document.getElementById('cn').textContent=n;
   document.getElementById('bn').textContent=d.buildings||0;
+  if(d.trend){setTrend('tr-wood',d.trend.wood&&d.trend.wood.delta);setTrend('tr-people',d.trend.people&&d.trend.people.delta);setTrend('tr-bld',d.trend.buildings&&d.trend.buildings.delta);}
   nLogs=n;recompIntensity();
   ttl=d.ttl_secs||600;remain=d.remain_secs||0;if(d.fire_alive)sawFire=true;tick();
   // 人数: 認証済みは members 配列、未認証は count（実名は出ない）
