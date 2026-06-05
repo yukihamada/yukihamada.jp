@@ -23,13 +23,29 @@
   </div>
 </nav>
 
-<main class="section" style="min-height:70vh; display:flex; align-items:center; justify-content:center;">
-  <div style="max-width:380px; width:100%; text-align:center;">
-    <h1 style="font-size:4rem; font-weight:700; opacity:0.25; line-height:1; margin-bottom:.5rem;">404</h1>
-    <p style="margin:0 0 .35rem; font-weight:600;">このページは <em>無</em> でした。</p>
-    <p style="margin:0 0 1.6rem; font-size:.85rem; opacity:.6; line-height:1.7;">
-      探していたものは見つからなかった。<br>でも、その「無」を着られるようにした人がいる。
-    </p>
+<main class="section" style="min-height:78vh; display:flex; align-items:center; justify-content:center;">
+  <div style="max-width:400px; width:100%; text-align:center;">
+    <h1 style="font-size:4rem; font-weight:700; opacity:0.22; line-height:1; margin-bottom:.4rem;">404</h1>
+    <p style="margin:0 0 .2rem; font-weight:600;">このページは <em>無</em> でした。</p>
+    <p style="margin:0 0 1rem; font-size:.72rem; opacity:.4; word-break:break-all;"><code>__PATH__</code></p>
+
+    <!-- 悪魔が一言（本人クローン声・WebAudioでiOSサイレントでも鳴る） -->
+    <div style="margin:0 0 1.4rem; padding:14px 16px; border-left:2px solid #e8651f; background:rgba(232,101,31,.05); text-align:left; border-radius:0 8px 8px 0;">
+      <p style="margin:0; font-size:.86rem; line-height:1.8;">「おや、迷子かい。探していたものは、無かった。……でも、それもまた、答えだよ。」</p>
+      <button id="akuma-voice" type="button"
+        style="margin-top:10px; background:none; border:0; padding:0; color:#e8651f; font:inherit; font-size:.78rem; font-weight:600; cursor:pointer;">
+        🔊 悪魔の声で聞く
+      </button>
+    </div>
+
+    <!-- 迷子レスキュー（サーバーが曖昧マッチで候補を差し込む） -->
+    <div style="text-align:left; margin:0 0 1.4rem;">
+      <div style="font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; opacity:.45; margin-bottom:8px;">もしかして</div>
+      <div style="display:flex; flex-direction:column; gap:6px;">__SUGGEST__</div>
+    </div>
+
+    <!-- 生きてる焚き火（/api/community/posts をライブで） -->
+    <a id="fire404" href="/takibi" style="display:block; text-decoration:none; color:inherit; font-size:.84rem; margin:0 0 1.5rem; padding:11px 14px; border:1px solid rgba(232,101,31,.25); border-radius:8px; background:rgba(232,101,31,.04); opacity:0; transition:opacity .4s;">🔥 焚き火へ</a>
 
     <!-- 404＝無。その「無」をTシャツにした実物（MU／wearmu.com） -->
     <a href="https://wearmu.com/shop/MULAB-AGENT-TEE-0a63263c" target="_blank" rel="noopener"
@@ -49,9 +65,8 @@
       </div>
     </a>
 
-    <div style="margin-top:1.8rem; display:flex; gap:.6rem; justify-content:center; flex-wrap:wrap;">
+    <div style="margin-top:1.6rem;">
       <a href="/" class="btn btn-outline">ホームに戻る</a>
-      <a href="/takibi" class="btn btn-outline">🔥 焚き火へ</a>
     </div>
   </div>
 </main>
@@ -61,6 +76,34 @@
     <p class="footer-muted">&copy; 2026 Yuki Hamada</p>
   </div>
 </footer>
+
+<script>
+// 悪魔の声 — 同一オリジンmp3をWebAudioで（iPhoneサイレントスイッチでも鳴る／ユーザー操作内で解錠）
+(function(){
+  var btn=document.getElementById('akuma-voice'); if(!btn) return;
+  var actx, buf;
+  btn.addEventListener('click', async function(){
+    try{
+      actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+      if(actx.state==='suspended') await actx.resume();
+      if(!buf){ var r=await fetch('/audio/404-akuma.mp3'); buf=await actx.decodeAudioData(await r.arrayBuffer()); }
+      var s=actx.createBufferSource(); s.buffer=buf; s.connect(actx.destination); s.start(0);
+      btn.textContent='🔥 …';
+    }catch(e){ btn.style.display='none'; }
+  });
+})();
+// 生きてる焚き火
+(function(){
+  var el=document.getElementById('fire404'); if(!el) return;
+  fetch('/api/community/posts',{cache:'no-store'}).then(function(r){return r.json()}).then(function(d){
+    var n=d.count||0;
+    el.innerHTML = (d.fire_alive && n>0)
+      ? '🔥 いま薪 <b>'+n+'</b> 本、燃えてる — あたっていく?'
+      : '🔥 焚き火はいま静か — のぞいてみる?';
+    el.style.opacity=1;
+  }).catch(function(){ el.innerHTML='🔥 焚き火へ'; el.style.opacity=1; });
+})();
+</script>
 
 </body>
 </html>
