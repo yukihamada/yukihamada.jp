@@ -12,6 +12,10 @@
   <meta name="keywords" content="濱田優貴,Yuki Hamada,Enabler,メルカリ,CPO,SOLUNA,JiuFlow,Koe,Rust,Swift,スタートアップ,起業家,プロダクトマネジメント,柔術">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://yukihamada.jp/">
+  <!-- i18n -->
+  <link rel="alternate" hreflang="ja" href="https://yukihamada.jp/">
+  <link rel="alternate" hreflang="en" href="https://yukihamada.jp/en">
+  <link rel="alternate" hreflang="x-default" href="https://yukihamada.jp/">
 
   <!-- Open Graph -->
   <meta property="og:title" content="濱田優貴 — Enabler CEO · 元メルカリCPO · Builder">
@@ -3097,7 +3101,7 @@
   <!-- UTA -->
   <div id="tpl-uta">
     <div class="koe-win" style="background:#0a0010;">
-      <iframe class="koe-iframe" src="https://uta.live"
+      <iframe class="koe-iframe" data-src="https://uta.live"
         allow="microphone; clipboard-write"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock"></iframe>
     </div>
@@ -3119,7 +3123,7 @@
   <!-- ANALYTICS (admin only) -->
   <div id="tpl-analytics">
     <div class="koe-win" style="background:#050810;">
-      <iframe class="koe-iframe" src="https://enabler-analytics.fly.dev/"
+      <iframe class="koe-iframe" data-src="https://enabler-analytics.fly.dev/"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
     </div>
   </div>
@@ -3524,7 +3528,7 @@
   <!-- M5 DASHBOARD (admin only) -->
   <div id="tpl-m5dash">
     <div class="koe-win" style="background:#050810;">
-      <iframe class="koe-iframe" src="https://m5-dashboard.chatweb.ai/"
+      <iframe class="koe-iframe" data-src="https://m5-dashboard.chatweb.ai/"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>
     </div>
   </div>
@@ -4751,6 +4755,11 @@ function initIconDrag() {
 // ════════════════════════════════════════════
 // WINDOW MANAGER
 // ════════════════════════════════════════════
+// Blog posts that have a generated clone-voice audio file under /audio/blog/.
+// Single source of truth for the inline post player and the Podcast app.
+const BLOG_AUDIO_SLUGS = new Set([
+  '2026-05-01-bjj-best-sport-science',
+]);
 const APPS = {
   blog:     { title:'Blog',              w:600, h:500, cls:'ai-blog' },
   about:    { title:'About — 濱田優貴',  w:400, h:520, cls:'ai-about' },
@@ -4788,7 +4797,8 @@ mbUpdateMenu('_finder');
 
 const ADMIN_APPS = new Set(['m5dash', 'analytics', 'mail', 'overview']);
 
-function openApp(id) {
+function openApp(id, opts) {
+  opts = opts || {};
   if (ADMIN_APPS.has(id) && !document.body.classList.contains('admin-user')) return;
   if (wins[id]) {
     wins[id].min ? restoreWin(id) : bringFront(id);
@@ -4801,8 +4811,17 @@ function openApp(id) {
   const off  = slot * 22;
   const w = Math.min(cfg.w, dw - 60);
   const h = Math.min(cfg.h, dh - 60);
-  const x = Math.max(20, Math.round((dw - w) / 2 + off - 80));
-  const y = Math.max(10, Math.round((dh - h) / 3 + off));
+  let x = Math.max(20, Math.round((dw - w) / 2 + off - 80));
+  let y = Math.max(10, Math.round((dh - h) / 3 + off));
+  // Boot welcome window must not cover the bottom-left hero tagline.
+  // Place it horizontally between the hero (left ~440px) and the dock (right edge),
+  // and pin it near the top — so the brand line stays fully visible.
+  if (opts.boot) {
+    const heroClear = 460;                 // right of the hero column
+    const dockClear = Math.max(heroClear, dw - w - 180); // left of the dock
+    x = Math.min(dockClear, Math.max(heroClear, Math.round((dw - w) / 2 + 140)));
+    y = 60;
+  }
 
   const el = buildWin(id, cfg.title, x, y, w, h);
   layer.appendChild(el);
@@ -4811,6 +4830,11 @@ function openApp(id) {
   const tpl = document.getElementById('tpl-' + id);
   if (tpl) {
     el.querySelector('.win-body').innerHTML = tpl.innerHTML;
+    // Lazy iframes (data-src) load only when their window opens — avoids
+    // eager off-screen requests (e.g. m5-dashboard 404) on every page load.
+    el.querySelectorAll('iframe[data-src]').forEach(f => {
+      if (!f.getAttribute('src')) f.src = f.dataset.src;
+    });
     if (id === 'terminal') initTerm(el);
     if (id === 'chat') initChat(el);
     if (id === 'browser') initBrowser(el);
@@ -6178,8 +6202,10 @@ function openPost(slug, title, date) {
 
       scroll.innerHTML = hdrHtml + '<div class="post-body">' + art.innerHTML + '</div>';
 
-      // Podcast player — inject if audio exists
+      // Podcast player — inject only for posts that actually have audio.
+      // (Probing every post 404s in the console; keep an explicit allowlist.)
       (async () => {
+        if (!BLOG_AUDIO_SLUGS.has(slug)) return;
         const audioUrl = '/audio/blog/' + slug + '.mp3';
         const head = await fetch(audioUrl, {method:'HEAD'}).catch(() => null);
         if (!head || !head.ok) return;
@@ -6817,7 +6843,7 @@ window.addEventListener('load', () => {
       } else {
         const isMobile = window.innerWidth < 768;
         if (!isMobile) {
-          openApp('about');
+          openApp('about', {boot:true});
         }
       }
     }

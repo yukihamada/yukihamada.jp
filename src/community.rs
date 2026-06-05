@@ -540,13 +540,10 @@ pub async fn api_buildings(headers: HeaderMap) -> Json<serde_json::Value> {
 }
 
 /// 保存データの可視化用。投稿/メンバー/建物の件数・保存先・最終更新を返す。
-pub async fn api_stats(headers: HeaderMap) -> axum::response::Response {
+pub async fn api_stats(_headers: HeaderMap) -> axum::response::Response {
     use axum::response::IntoResponse;
-    // 会員(api_token cookie/bearer)のみ。未ログインは 401 → トップでは非表示。
-    let tok = cookie_token(&headers).or_else(|| bearer(&headers)).unwrap_or_default();
-    if member_by_token(&tok).is_none() {
-        return (axum::http::StatusCode::UNAUTHORIZED, Json(serde_json::json!({"authed": false}))).into_response();
-    }
+    // 公開集計のみ（件数と保存先・最終更新日）。本文・会員情報は返さないため
+    // 認証不要で 200 を返す。トップの「ともしび」ライブ表示は誰でも見られる。
     {
         let _g = STORE_LOCK.lock().unwrap();
         let _ = archive_locked();
