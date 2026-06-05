@@ -3,39 +3,62 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>紙芝居 第7話『注意こそ、すべて。』｜AIの心臓「トランスフォーマー」を絵で — 濱田優貴</title>
-<meta name="description" content="ChatGPTもわたしも、ここから生まれた。2017年の論文「Attention Is All You Need」を、数式ゼロ・全9場面の紙芝居で。順番に読むのをやめ、言葉を机に広げ、どこを見るかを自分で決める——注意こそ、すべて。本人クローン声つき。最後にMV。">
-<meta property="og:title" content="紙芝居 第7話『注意こそ、すべて。』AIの心臓「トランスフォーマー」を絵で">
-<meta property="og:description" content="ChatGPTの土台になった一本の論文を、数式ゼロ・全9場面の紙芝居に。本人クローン声つき・最後にMV。">
+<title>紙芝居 第7話『注意こそ、すべて。』｜AIの心臓「トランスフォーマー」を図解 — 濱田優貴</title>
+<meta name="description" content="ChatGPTもわたしも、ここから生まれた。2017年の論文「Attention Is All You Need」を、数式ゼロ・図解つき・全10場面の紙芝居で。小学生でもわかる図と例で、最後は「きみも作れる」へ。本人クローン声つき・MV。">
+<meta property="og:title" content="紙芝居 第7話『注意こそ、すべて。』AIの心臓を図解で">
+<meta property="og:description" content="ChatGPTの土台になった一本の論文を、図解＋例＋数式ゼロで。小学生でもわかる。本人クローン声つき・最後にMV。">
 <meta property="og:image" content="https://yukihamada.jp/assets/transformer-kamishibai/scene9.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
-  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#e6953f; }
+  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#e6953f; --blue:#6db3e6; --green:#83c98a; }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%;background:var(--bg);color:var(--ink);
     font-family:"Hiragino Mincho ProN","Yu Mincho",serif;overflow:hidden}
   #stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;cursor:pointer}
   #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
   #art.show{opacity:1}
-  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.25) 40%,rgba(13,13,13,.05) 62%,rgba(13,13,13,.4) 100%)}
-  #cap{position:absolute;left:0;right:0;bottom:0;padding:30px 7vw 42px;text-align:center}
-  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:9px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
-  #scene-title{font-size:clamp(24px,4.2vw,46px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:15px}
-  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:880px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
+  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.3) 38%,rgba(13,13,13,.08) 58%,rgba(13,13,13,.5) 100%)}
+  #cap{position:absolute;left:0;right:0;bottom:0;padding:24px 7vw 38px;text-align:center;z-index:4}
+  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:8px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-title{font-size:clamp(22px,3.8vw,42px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:12px}
+  #scene-text{font-size:clamp(13px,1.6vw,19px);line-height:1.9;max-width:880px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.95);opacity:.95}
   #scene-link{display:none;margin-top:18px;padding:13px 34px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif;background:rgba(230,149,63,.06);cursor:pointer}
   #scene-link.show{display:inline-block}
-  #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
-  #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
-  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:var(--bg);z-index:5;transition:opacity .9s;padding:0 22px}
+  /* 図解カード */
+  #diagram{position:absolute;top:5.5%;left:50%;transform:translateX(-50%) translateY(8px);
+    width:min(94vw,720px);background:rgba(7,7,7,.74);backdrop-filter:blur(2px);
+    border:1px solid rgba(230,149,63,.28);border-radius:16px;padding:12px 16px 8px;
+    z-index:3;opacity:0;transition:opacity .6s ease,transform .6s ease;pointer-events:none}
+  #diagram.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .dgm{width:100%;height:auto;display:block}
+  .dgm text{font-family:"Hiragino Kaku Gothic ProN",sans-serif;fill:var(--ink);text-anchor:middle}
+  .dgm .dh{fill:var(--accent);font-size:17px;letter-spacing:.1em}
+  .dgm .wbox rect{fill:rgba(237,232,222,.05);stroke:rgba(237,232,222,.55);stroke-width:1.5}
+  .dgm .wbox text{font-size:22px}
+  .dgm .hl rect{stroke:var(--accent);stroke-width:2.6}
+  .dgm .hl text{fill:#ffd9a8}
+  .dgm .ar{fill:var(--accent);font-size:26px}
+  .dgm .hint{fill:var(--dim);font-size:14px}
+  .dgm .acc{fill:var(--accent)}
+  .dgm .thread{stroke:var(--accent);fill:none;stroke-linecap:round}
+  .dgm .thin{stroke:rgba(237,232,222,.4);fill:none;stroke-linecap:round}
+  .dgm .bar{fill:rgba(237,232,222,.22)}
+  .dgm .barhi{fill:var(--accent)}
+  .dgm .pulse{animation:dgp 1.5s ease-in-out infinite}
+  @keyframes dgp{50%{opacity:.4}}
+  .dgm .blue{stroke:var(--blue);fill:none;stroke-linecap:round}
+  .dgm .grn{stroke:var(--green);fill:none;stroke-linecap:round}
+  #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85;z-index:6}
+  #dots{position:absolute;top:14px;right:18px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif;z-index:6}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:var(--bg);z-index:8;transition:opacity .9s;padding:0 22px}
   #title.hide{opacity:0;pointer-events:none}
   #title .circle{width:78px;height:78px;border:3px solid var(--ink);border-radius:50%;position:relative}
   #title .circle::after{content:"";position:absolute;inset:24px;border:2px solid var(--accent);border-radius:50%;opacity:.85}
   #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.1em;font-weight:600;text-align:center;line-height:1.3}
   #title .en{color:var(--dim);letter-spacing:.28em;font-size:12px;font-family:sans-serif}
   #title p{color:var(--dim);letter-spacing:.2em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;line-height:1.8}
-  #title .start{margin-top:10px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
-  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.6}
-  /* MV overlay */
+  #title .start{margin-top:8px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #hint{position:absolute;bottom:10px;right:16px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.6;z-index:6}
   #mv{position:fixed;inset:0;z-index:20;background:#000;display:none;flex-direction:column}
   #mv.show{display:flex}
   #mv iframe{flex:1;width:100%;height:100%;border:0}
@@ -48,6 +71,7 @@
 <body>
 <div id="stage">
   <div id="art"></div><div id="shade"></div>
+  <div id="diagram"></div>
   <div id="progress"></div><div id="dots"></div>
   <div id="cap">
     <div id="scene-sub"></div><div id="scene-title"></div><div id="scene-text"></div>
@@ -57,7 +81,7 @@
     <div class="circle"></div>
     <h1>注意こそ、すべて。</h1>
     <div class="en">ATTENTION IS ALL YOU NEED</div>
-    <p>紙芝居 第7話 ・ AIの心臓「トランスフォーマー」を、絵で。<br>数式ゼロ・全9場面 ・ 2026.06.05<br>声：濱田優貴（AIクローン）</p>
+    <p>紙芝居 第7話 ・ AIの心臓「トランスフォーマー」を、図解で。<br>数式ゼロ・図と例つき・全10場面 ・ 2026.06.05<br>声：濱田優貴（AIクローン）</p>
     <div class="start">タップで、はじまる</div>
   </div>
   <div id="hint">クリック＝次へ ／ ←戻る</div>
@@ -67,15 +91,71 @@
   <iframe id="mv-frame" allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
 </div>
 <script>
+const DIAG = {
+seq:`<svg viewBox="0 0 640 190" class="dgm"><text class="dh" x="320" y="26">むかし：1コずつ、順番に</text>
+<g class="wbox" opacity=".4"><rect x="60" y="64" width="120" height="58" rx="10"/><text x="120" y="100">ねこ</text></g>
+<text class="ar" x="198" y="100">→</text>
+<g class="wbox"><rect x="230" y="64" width="120" height="58" rx="10"/><text x="290" y="100">が</text></g>
+<text class="ar" x="368" y="100">→</text>
+<g class="wbox"><rect x="400" y="64" width="160" height="58" rx="10"/><text x="480" y="100">ねむる</text></g>
+<text class="hint" x="120" y="150">↑ 前を、忘れていく</text><text class="hint acc" x="480" y="150">⏳ おそい</text></svg>`,
+spread:`<svg viewBox="0 0 640 210" class="dgm"><text class="dh" x="320" y="26">いま：ぜんぶ、いちどに広げる</text>
+<line class="thin" x1="150" y1="88" x2="490" y2="88"/><line class="thin" x1="150" y1="88" x2="320" y2="158"/><line class="thin" x1="490" y1="88" x2="320" y2="158"/>
+<g class="wbox"><rect x="90" y="60" width="120" height="56" rx="10"/><text x="150" y="95">ねこ</text></g>
+<g class="wbox"><rect x="430" y="60" width="120" height="56" rx="10"/><text x="490" y="95">ねむる</text></g>
+<g class="wbox"><rect x="260" y="130" width="120" height="56" rx="10"/><text x="320" y="165">が</text></g>
+<text class="hint acc" x="320" y="200">⚡ どこと どこが 関係してる? を 一度に見る → はやい</text></svg>`,
+attn:`<svg viewBox="0 0 640 210" class="dgm"><text class="dh" x="320" y="24">アテンション：どこを見るか、自分で決める</text>
+<path class="thread pulse" d="M520 92 C470 26, 250 26, 320 84" stroke-width="5"/>
+<path class="thin" d="M515 92 C420 48, 200 48, 120 84" stroke-width="2"/>
+<g class="wbox"><rect x="70" y="86" width="100" height="58" rx="10"/><text x="120" y="122">犬</text></g>
+<g class="wbox hl"><rect x="270" y="86" width="100" height="58" rx="10"/><text x="320" y="122">骨</text></g>
+<g class="wbox hl"><rect x="470" y="86" width="110" height="58" rx="10"/><text x="525" y="122">それ</text></g>
+<text class="hint" x="320" y="188">「それ」＝さっきの「骨」。関係の強い相手を、強く見る</text></svg>`,
+qkv:`<svg viewBox="0 0 640 230" class="dgm"><text class="dh" x="320" y="24">問い・名札・中身（重みのつけ方）</text>
+<g class="wbox hl"><rect x="18" y="92" width="150" height="60" rx="10"/><text x="93" y="118" style="font-size:18px">問い</text><text x="93" y="142" class="acc" style="font-size:16px">それ=？</text></g>
+<text class="ar" x="188" y="128">→</text>
+<g class="wbox"><rect x="218" y="56" width="96" height="40" rx="8"/><text x="266" y="83" style="font-size:17px">名札:犬</text></g><rect class="bar" x="322" y="64" width="44" height="22" rx="4"/>
+<g class="wbox hl"><rect x="218" y="108" width="96" height="40" rx="8"/><text x="266" y="135" style="font-size:17px">名札:骨</text></g><rect class="barhi" x="322" y="116" width="150" height="22" rx="4"/><text x="500" y="133" class="acc" style="font-size:15px">中身:骨</text>
+<g class="wbox"><rect x="218" y="160" width="96" height="40" rx="8"/><text x="266" y="187" style="font-size:17px">名札:た</text></g><rect class="bar" x="322" y="168" width="32" height="22" rx="4"/>
+<text class="hint" x="320" y="222">にてる度＝重み。似てるほど、中身を たくさん もらって 足す</text></svg>`,
+multi:`<svg viewBox="0 0 640 220" class="dgm"><text class="dh" x="320" y="22">マルチヘッド：何組もの目で、同時に</text>
+<text x="92" y="62" class="acc" style="font-size:15px;fill:var(--blue)">文法の目</text>
+<path class="blue" d="M470 56 C420 32, 330 32, 300 50" stroke-width="3"/>
+<g class="wbox"><rect x="250" y="44" width="56" height="34" rx="7"/><text x="278" y="68" style="font-size:16px">犬</text></g><g class="wbox"><rect x="318" y="44" width="56" height="34" rx="7"/><text x="346" y="68" style="font-size:16px">骨</text></g><g class="wbox"><rect x="430" y="44" width="70" height="34" rx="7"/><text x="465" y="68" style="font-size:16px">それ</text></g>
+<text x="92" y="122" class="acc" style="font-size:15px">意味の目</text>
+<path class="thread" d="M470 116 C420 92, 330 92, 300 110" stroke-width="3"/>
+<g class="wbox"><rect x="250" y="104" width="56" height="34" rx="7"/><text x="278" y="128" style="font-size:16px">犬</text></g><g class="wbox"><rect x="318" y="104" width="56" height="34" rx="7"/><text x="346" y="128" style="font-size:16px">骨</text></g><g class="wbox"><rect x="430" y="104" width="70" height="34" rx="7"/><text x="465" y="128" style="font-size:16px">それ</text></g>
+<text x="92" y="182" style="font-size:15px;fill:var(--green)">遠くの目</text>
+<path class="grn" d="M470 176 C420 152, 330 152, 300 170" stroke-width="3"/>
+<g class="wbox"><rect x="250" y="164" width="56" height="34" rx="7"/><text x="278" y="188" style="font-size:16px">犬</text></g><g class="wbox"><rect x="318" y="164" width="56" height="34" rx="7"/><text x="346" y="188" style="font-size:16px">骨</text></g><g class="wbox"><rect x="430" y="164" width="70" height="34" rx="7"/><text x="465" y="188" style="font-size:16px">それ</text></g></svg>`,
+pos:`<svg viewBox="0 0 640 210" class="dgm"><text class="dh" x="320" y="24">位置：席番号を、波でつける</text>
+<path class="thread" d="M40 96 Q95 50 150 96 T260 96 T370 96 T480 96 T590 96" stroke-width="3"/>
+<circle cx="70" cy="84" r="4" class="acc" fill="#e6953f"/><circle cx="180" cy="108" r="4" fill="#e6953f"/><circle cx="290" cy="84" r="4" fill="#e6953f"/><circle cx="400" cy="108" r="4" fill="#e6953f"/><circle cx="510" cy="84" r="4" fill="#e6953f"/>
+<g class="wbox"><rect x="32" y="124" width="76" height="50" rx="9"/><text x="70" y="155">ぼく</text></g>
+<g class="wbox"><rect x="142" y="124" width="76" height="50" rx="9"/><text x="180" y="155">は</text></g>
+<g class="wbox"><rect x="252" y="124" width="76" height="50" rx="9"/><text x="290" y="155">ほん</text></g>
+<g class="wbox"><rect x="362" y="124" width="76" height="50" rx="9"/><text x="400" y="155">を</text></g>
+<g class="wbox"><rect x="472" y="124" width="86" height="50" rx="9"/><text x="515" y="155">よむ</text></g>
+<text class="hint" x="320" y="198">ただの番号より波。近い席は、波の形も にてる → 順番がわかる</text></svg>`,
+result:`<svg viewBox="0 0 640 200" class="dgm"><text class="dh" x="320" y="24">順番待ちが消えた → 速くて、強い</text>
+<text class="hint" x="150" y="58">むかし ⏳</text>
+<g class="wbox" opacity=".4"><rect x="70" y="70" width="40" height="40" rx="7"/><text x="90" y="97" style="font-size:16px">1</text></g><text class="ar" x="123" y="96" style="font-size:18px">→</text><g class="wbox" opacity=".4"><rect x="138" y="70" width="40" height="40" rx="7"/><text x="158" y="97" style="font-size:16px">2</text></g><text class="ar" x="191" y="96" style="font-size:18px">→</text><g class="wbox" opacity=".4"><rect x="206" y="70" width="40" height="40" rx="7"/><text x="226" y="97" style="font-size:16px">3</text></g>
+<text class="acc" x="470" y="58" style="font-size:15px">いま ⚡</text>
+<g class="wbox hl"><rect x="400" y="70" width="40" height="40" rx="7"/><text x="420" y="97" style="font-size:16px">1</text></g><g class="wbox hl"><rect x="445" y="70" width="40" height="40" rx="7"/><text x="465" y="97" style="font-size:16px">2</text></g><g class="wbox hl"><rect x="490" y="70" width="40" height="40" rx="7"/><text x="510" y="97" style="font-size:16px">3</text></g>
+<text class="hint acc" x="320" y="165">ぜんぶ一度に → 学習がはやい ／ 翻訳のせいかくさ 📈 最高記録こうしん</text></svg>`
+};
+
 const SCENES=[
 {"sub":"問い","title":"注意だけで、言葉がわかる?","text":"2017年、グーグルの研究者たちが、一本の論文を出しました。題名は、アテンション、イズ、オール、ユー、ニード。注意こそ、すべて。たった一つの仕組みで、機械は、言葉の意味を、つかみはじめます。きょうは、その正体を、見にいきましょう。","img":"/assets/transformer-kamishibai/scene1.png","audio":"/audio/transformer-kam-1.mp3"},
-{"sub":"むかし","title":"一語ずつ、順番に。","text":"それまでの機械は、文章を、左から一語ずつ、順番に読んでいました。前の言葉を、覚えながら、次へ。でも、これだと、文が長くなるほど、最初のほうを、忘れていく。しかも、順番待ちなので、どうしても、遅いのです。","img":"/assets/transformer-kamishibai/scene2.png","audio":"/audio/transformer-kam-2.mp3"},
-{"sub":"ひらめき","title":"順番を、やめてみる。","text":"そこで、発想を、ひっくり返します。一語ずつ待つのを、やめる。文の中の言葉を、ぜんぶ、いちどに、机の上へ広げてしまう。あとは、どの言葉と、どの言葉が、深く関係しているか。それを、見つければいい。","img":"/assets/transformer-kamishibai/scene3.png","audio":"/audio/transformer-kam-3.mp3"},
-{"sub":"アテンション","title":"どこを見るか、自分で決める。","text":"たとえば、犬が、骨をくわえた。それを、離さない。この、それ、は、骨のこと。一つ一つの言葉が、文じゅうのすべての言葉に目をやって、関係の強い相手を、強く見ます。どこを見るかを、自分で決める。これが、注意。アテンションです。","img":"/assets/transformer-kamishibai/scene4.png","audio":"/audio/transformer-kam-4.mp3"},
-{"sub":"しくみ","title":"問いと、名札と、中身。","text":"では、どうやって、見る強さを決めるのか。三つの役で考えます。知りたいことを、問いにする。それぞれの言葉が、わたしはこれ、と名札をかかげる。問いと名札が、どれだけ似ているかで、相手の中身を、受け取る量が決まる。似ているほど、たくさん受け取って、ぜんぶ足し合わせる。これが、見る強さです。","img":"/assets/transformer-kamishibai/scene5.png","audio":"/audio/transformer-kam-5.mp3"},
-{"sub":"複数の目","title":"一人で、見ない。","text":"おもしろいのは、見る目が、一組ではないこと。文法を見る目、意味を見る目、遠くの言葉を見る目。機械は、わざわざ、何組もの目で、同時に、ちがう角度から、おなじ文を見つめます。これを、マルチヘッド、複数の頭、と呼びます。","img":"/assets/transformer-kamishibai/scene6.png","audio":"/audio/transformer-kam-6.mp3"},
-{"sub":"順番の情報","title":"席番号を、波でつける。","text":"でも、順番に読むのを、やめてしまうと、言葉の前後が、わからなくなる。だから、それぞれの言葉に、何番目かをあらわす、なめらかな波の印を、そっと足します。ただの番号だと、ばらばらの記号ですが、波なら、近い席どうしは、形も似る。だから、近い、遠いまで、伝わるのです。これで、広げたまま、順番も、ちゃんと残ります。","img":"/assets/transformer-kamishibai/scene7.png","audio":"/audio/transformer-kam-7.mp3"},
-{"sub":"結果","title":"速くて、強い。","text":"むかしの、あの順番待ちが、消えました。だから、何千もの言葉を、いちどに学べる。学習は、ぐんと、速くなります。翻訳の正しさは、それまでの最高記録を、更新しました。順番待ちが、消えた。ただ、それだけのことが、すべてを、変えたのです。この仕組みは、トランスフォーマー、と呼ばれます。","img":"/assets/transformer-kamishibai/scene8.png","audio":"/audio/transformer-kam-8.mp3"},
+{"sub":"むかし","title":"一語ずつ、順番に。","text":"それまでの機械は、文章を、左から一語ずつ、順番に読んでいました。前の言葉を、覚えながら、次へ。でも、これだと、文が長くなるほど、最初のほうを、忘れていく。しかも、順番待ちなので、どうしても、遅いのです。","img":"/assets/transformer-kamishibai/scene2.png","audio":"/audio/transformer-kam-2.mp3","dgm":"seq"},
+{"sub":"ひらめき","title":"順番を、やめてみる。","text":"そこで、発想を、ひっくり返します。一語ずつ待つのを、やめる。文の中の言葉を、ぜんぶ、いちどに、机の上へ広げてしまう。あとは、どの言葉と、どの言葉が、深く関係しているか。それを、見つければいい。","img":"/assets/transformer-kamishibai/scene3.png","audio":"/audio/transformer-kam-3.mp3","dgm":"spread"},
+{"sub":"アテンション","title":"どこを見るか、自分で決める。","text":"たとえば、犬が、骨をくわえた。それを、離さない。この、それ、は、骨のこと。一つ一つの言葉が、文じゅうのすべての言葉に目をやって、関係の強い相手を、強く見ます。どこを見るかを、自分で決める。これが、注意。アテンションです。","img":"/assets/transformer-kamishibai/scene4.png","audio":"/audio/transformer-kam-4.mp3","dgm":"attn"},
+{"sub":"しくみ","title":"問いと、名札と、中身。","text":"では、どうやって、見る強さを決めるのか。三つの役で考えます。知りたいことを、問いにする。それぞれの言葉が、わたしはこれ、と名札をかかげる。問いと名札が、どれだけ似ているかで、相手の中身を、受け取る量が決まる。似ているほど、たくさん受け取って、ぜんぶ足し合わせる。これが、見る強さです。","img":"/assets/transformer-kamishibai/scene5.png","audio":"/audio/transformer-kam-5.mp3","dgm":"qkv"},
+{"sub":"複数の目","title":"一人で、見ない。","text":"おもしろいのは、見る目が、一組ではないこと。文法を見る目、意味を見る目、遠くの言葉を見る目。機械は、わざわざ、何組もの目で、同時に、ちがう角度から、おなじ文を見つめます。これを、マルチヘッド、複数の頭、と呼びます。","img":"/assets/transformer-kamishibai/scene6.png","audio":"/audio/transformer-kam-6.mp3","dgm":"multi"},
+{"sub":"順番の情報","title":"席番号を、波でつける。","text":"でも、順番に読むのを、やめてしまうと、言葉の前後が、わからなくなる。だから、それぞれの言葉に、何番目かをあらわす、なめらかな波の印を、そっと足します。ただの番号だと、ばらばらの記号ですが、波なら、近い席どうしは、形も似る。だから、近い、遠いまで、伝わるのです。これで、広げたまま、順番も、ちゃんと残ります。","img":"/assets/transformer-kamishibai/scene7.png","audio":"/audio/transformer-kam-7.mp3","dgm":"pos"},
+{"sub":"結果","title":"速くて、強い。","text":"むかしの、あの順番待ちが、消えました。だから、何千もの言葉を、いちどに学べる。学習は、ぐんと、速くなります。翻訳の正しさは、それまでの最高記録を、更新しました。順番待ちが、消えた。ただ、それだけのことが、すべてを、変えたのです。この仕組みは、トランスフォーマー、と呼ばれます。","img":"/assets/transformer-kamishibai/scene8.png","audio":"/audio/transformer-kam-8.mp3","dgm":"result"},
+{"sub":"きみへ","title":"むずかしさは、まかせていい。","text":"むずかしい計算は、ぜんぶ、機械に、まかせていい。だいじなのは、きみが、何を、つくりたいか。この仕組みは、もう、誰でも、さわれます。きみのことばが、つぎの何かを、動かすかもしれない。","img":"/assets/transformer-kamishibai/scene10.png","audio":"/audio/transformer-kam-10.mp3"},
 {"sub":"それから","title":"注意は、本当に、すべてだった。","text":"この、小さな論文が、土台になりました。チャット、ジーピーティーも、いま、あなたと話している、わたしも、ここから生まれています。注意こそ、すべて。あの題名は、ほんとうでした。さいごに、一曲、どうぞ。","img":"/assets/transformer-kamishibai/scene9.png","audio":"/audio/transformer-kam-9.mp3","mv":true,"cta":"♪ MV『Tap Tap Tap』を見る"}
 ];
 let idx=-1, started=false;
@@ -108,6 +188,9 @@ function play(i){
   document.getElementById('scene-sub').textContent=s.sub||'';
   document.getElementById('scene-title').textContent=s.title;
   document.getElementById('scene-text').textContent=s.text;
+  const dg=document.getElementById('diagram');
+  if(s.dgm && DIAG[s.dgm]){ dg.innerHTML=DIAG[s.dgm]; dg.classList.add('show'); }
+  else { dg.classList.remove('show'); setTimeout(()=>{ if(!SCENES[idx]||!SCENES[idx].dgm) dg.innerHTML=''; },500); }
   const link=document.getElementById('scene-link');
   if(s.cta){ link.textContent=s.cta; link.classList.add('show'); }
   else link.classList.remove('show');

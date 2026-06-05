@@ -28,6 +28,7 @@ SCENES = [
  "A row of glowing orbs each resting on a small seat, and beneath them a single continuous flowing sine wave of light threads through all the seats, marking rhythm and position across the row.",
  "A slow single-file queue of dim lanterns left far behind in darkness on one side, while a sweeping streak of warm radiant light rushes forward past it toward the horizon — a sense of breakthrough and acceleration. The figure faces the bright light ahead.",
  "A small glowing scroll resting on the ground like a seed, from which a great luminous tree grows upward, its branches dissolving into countless points of warm light like distant minds; a campfire-warm glow pools at the base. The small figure stands at the roots, looking up. Hopeful finale.",
+ "A small child-like figure seen from behind reaches one hand up toward the dark sky, and from the open palm a single warm spark rises and blooms into a small glowing constellation shaped like the seed of a new tool or idea; gentle campfire warmth around the figure. Encouraging, you-can-build-it feeling.",
 ]
 
 def gen(i, motif):
