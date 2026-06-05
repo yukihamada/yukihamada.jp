@@ -19,7 +19,9 @@ main{max-width:680px;margin:0 auto;padding:16px}
 .bd{font-size:14.5px;line-height:1.75;color:rgba(255,255,255,.92);white-space:pre-wrap;word-break:break-word}
 .bd a{color:#ffd07a}
 .rx{display:flex;gap:16px;margin-top:11px;align-items:center}
-.rb{background:none;border:none;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;gap:5px}
+.rb{background:none;border:none;color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;gap:5px;opacity:.78;transition:opacity .15s,transform .1s}
+.rb:active{transform:scale(.9)}
+.rb.on{opacity:1}
 .rb b{font-size:12px;color:#ffae42}
 .listen{background:rgba(255,140,0,.12);border:1px solid rgba(255,140,0,.4);color:#ffae42;border-radius:20px;padding:6px 13px;font-size:13px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px}
 .listen:disabled{opacity:.5}
@@ -34,9 +36,15 @@ main{max-width:680px;margin:0 auto;padding:16px}
 <script>
 const FEED='/api/takibi/feed';
 const SPEAK='/api/takibi/speak';
+const REACT='/api/takibi/react';
 const AUDIO='';
 const $=s=>document.querySelector(s);
-let maki=+(localStorage.maki||0); const rx=JSON.parse(localStorage.rx||'{}'); const cache={};
+// 匿名 visitor トークン（リアクション重複排除の主キー・この端末ローカルにだけ保存）
+let vid=localStorage.vid;
+if(!vid||vid.length<8){vid=Array.from(crypto.getRandomValues(new Uint8Array(16))).map(b=>b.toString(16).padStart(2,'0')).join('');localStorage.vid=vid;}
+let maki=+(localStorage.maki||0);            // 自分がくべた🔥の数
+const mine=JSON.parse(localStorage.mine||'{}'); // 自分が押した薪 {id:{f:1,t:1}}
+const cache={};
 $('#maki').textContent='🔥 '+maki;
 const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const linkify=s=>esc(s).replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target=_blank rel=noopener>$1</a>');
@@ -45,13 +53,13 @@ async function load(){
     const r=await fetch(FEED); const j=await r.json();
     const items=(j.items||[]).filter(p=>p.text&&p.text.trim());
     if(!items.length){$('#feed').innerHTML='<div class=st>🔥 まだ薪がありません</div>';return}
-    $('#feed').innerHTML=items.map(p=>{const f=rx[p.id]?.f||0,t=rx[p.id]?.t||0;
+    $('#feed').innerHTML=items.map(p=>{const f=p.f||0,t=p.t||0,mf=mine[p.id]?.f,mt=mine[p.id]?.t;
       return `<div class=card><div class=top><span class=au>${esc(p.member_name||'名無し')}</span><span class=ts>${esc((p.created_at||'').slice(5,16))}</span></div>
       <div class=bd>${linkify(p.text)}</div>
       <div class=rx>
         <button class=listen data-id="${p.id}">🔊 <span>聞く</span></button>
-        <button class=rb data-id="${p.id}" data-r=f>🔥${f?'<b>'+f+'</b>':''}</button>
-        <button class=rb data-id="${p.id}" data-r=t>🙏${t?'<b>'+t+'</b>':''}</button>
+        <button class="rb${mf?' on':''}" data-id="${p.id}" data-r=f>🔥${f?'<b>'+f+'</b>':''}</button>
+        <button class="rb${mt?' on':''}" data-id="${p.id}" data-r=t>🙏${t?'<b>'+t+'</b>':''}</button>
       </div></div>`}).join('');
   }catch(e){$('#feed').innerHTML='<div class=st>焚き火に繋がりません<br><button class=btn style="margin-top:12px;max-width:160px" onclick="load()">もう一度</button></div>'}
 }
@@ -64,11 +72,23 @@ $('#feed').addEventListener('click',async e=>{
       const pl=$('#player');pl.src=url;await pl.play();sp.textContent='再生中';pl.onended=()=>{sp.textContent=old;lb.disabled=false};
     }catch(err){sp.textContent='✕ '+(err.message||'失敗').slice(0,16);setTimeout(()=>{sp.textContent=old;lb.disabled=false},2500)}
     return;}
-  const b=e.target.closest('.rb');if(!b)return;
-  const id=b.dataset.id,r=b.dataset.r;rx[id]=rx[id]||{f:0,t:0};rx[id][r]++;localStorage.rx=JSON.stringify(rx);
-  if(r==='f'){maki++;localStorage.maki=maki;$('#maki').textContent='🔥 '+maki}
-  if(navigator.vibrate)navigator.vibrate(8);
-  b.innerHTML=(r==='f'?'🔥':'🙏')+'<b>'+rx[id][r]+'</b>';
+  const b=e.target.closest('.rb');if(!b||b.disabled)return;
+  const id=b.dataset.id,r=b.dataset.r;
+  mine[id]=mine[id]||{};
+  if(mine[id][r])return;                       // 既に押した（サーバも冪等だが無駄打ち防止）
+  b.disabled=true;
+  try{
+    const res=await fetch(REACT,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({id,r,v:vid})});
+    const j=await res.json();
+    if(!j.ok)throw new Error(j.error||'failed');
+    mine[id][r]=1;localStorage.mine=JSON.stringify(mine);
+    const n=r==='f'?j.f:j.t;
+    b.classList.add('on');
+    b.innerHTML=(r==='f'?'🔥':'🙏')+(n?'<b>'+n+'</b>':'');
+    if(r==='f'){maki++;localStorage.maki=maki;$('#maki').textContent='🔥 '+maki}
+    if(navigator.vibrate)navigator.vibrate(8);
+  }catch(_){/* 失敗時はそっと戻す */}
+  b.disabled=false;
 });
 load();
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/takibi/sw.js').catch(()=>{});

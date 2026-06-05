@@ -495,6 +495,25 @@ async fn takibi_speak(axum::Json(req): axum::Json<TakibiSpeakReq>) -> impl IntoR
     ([(axum::http::header::CONTENT_TYPE, "application/json")], out)
 }
 
+#[derive(serde::Deserialize)]
+struct TakibiReactReq { id: String, r: String, v: Option<String> }
+
+// 薪へのリアクション(🔥/🙏)を Koe /api/takibi/react に中継。
+// 重複排除は visitor トークン(v)で行う(サーバ越し中継でIPが潰れる対策)。
+async fn takibi_react(axum::Json(req): axum::Json<TakibiReactReq>) -> impl IntoResponse {
+    let body = serde_json::json!({ "id": req.id, "r": req.r, "v": req.v });
+    let out = match reqwest::Client::new()
+        .post("https://mcp.koe.live/api/takibi/react")
+        .json(&body)
+        .timeout(std::time::Duration::from_secs(12))
+        .send().await
+    {
+        Ok(r) => r.text().await.unwrap_or_else(|_| "{\"ok\":false,\"error\":\"bad upstream\"}".into()),
+        Err(_) => "{\"ok\":false,\"error\":\"koe unreachable\"}".into(),
+    };
+    ([(axum::http::header::CONTENT_TYPE, "application/json")], out)
+}
+
 async fn home(
     State(state): State<Arc<AppState>>,
     headers: HeaderMap,
@@ -6952,6 +6971,7 @@ async fn main() {
         .route("/health", get(health))
         .route("/api/takibi/feed", get(takibi_feed))
         .route("/api/takibi/speak", post(takibi_speak))
+        .route("/api/takibi/react", post(takibi_react))
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
