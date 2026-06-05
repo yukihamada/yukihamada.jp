@@ -384,7 +384,7 @@ pub async fn welcome_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Respons
         r#"<!DOCTYPE html><html lang={lang_attr}><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <title>{title}</title>
-<style>{css}</style></head>
+<style>{css}</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head>
 <body class=center>
 <div class=card>
 <div class=fire-emoji>🔥</div>
@@ -1024,7 +1024,7 @@ pub async fn join_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Html<Strin
     Html(format!(
         r#"<!DOCTYPE html><html lang={lang_attr}><head><meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
-<title>{title}</title><style>{css}</style></head>
+<title>{title}</title><style>{css}</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head>
 <body class=center>
 <div class=card>
 <div class=fire-emoji>🔥</div>
@@ -1120,7 +1120,7 @@ pub async fn buildings_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Html<
 .bdate{{font-size:11px;color:rgba(243,237,226,.3);margin-top:8px}}
 .empty{{color:rgba(243,237,226,.4);text-align:center;font-size:13px;margin-top:40px}}
 .bnav{{text-align:center;margin:10px 0 24px}} .bnav a{{color:#f0c987;text-decoration:none;margin:0 10px;font-size:14px}}
-</style></head>
+</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head>
 <body>
 <div class=bwrap>
 <h1 style="text-align:center;color:#f4cd8b;font-size:24px;font-weight:900;margin-bottom:6px">{page_h1}</h1>
@@ -1179,7 +1179,7 @@ body{background:#08080a;color:#f3ede2;font-family:'Helvetica Neue',Arial,sans-se
 .ember h2{color:#f4cd8b;font-size:22px;font-weight:900;margin:14px 0 6px}
 .ember p{color:rgba(243,237,226,.6);font-size:14px;line-height:1.7;max-width:340px}
 .ember a{display:inline-block;margin-top:22px;background:#6a4a2a;color:#fff;text-decoration:none;font-weight:700;padding:13px 26px;border-radius:8px}
-</style></head>
+</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head>
 <body>
 <canvas id=fire></canvas>
 <div class=vignette></div>

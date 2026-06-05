@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>紙芝居 第7話『注意こそ、すべて。』｜AIの心臓「トランスフォーマー」を絵で — 濱田優貴</title>
+<meta name="description" content="ChatGPTもわたしも、ここから生まれた。2017年の論文「Attention Is All You Need」を、数式ゼロ・全9場面の紙芝居で。順番に読むのをやめ、言葉を机に広げ、どこを見るかを自分で決める——注意こそ、すべて。本人クローン声つき。最後にMV。">
+<meta property="og:title" content="紙芝居 第7話『注意こそ、すべて。』AIの心臓「トランスフォーマー」を絵で">
+<meta property="og:description" content="ChatGPTの土台になった一本の論文を、数式ゼロ・全9場面の紙芝居に。本人クローン声つき・最後にMV。">
+<meta property="og:image" content="https://yukihamada.jp/assets/transformer-kamishibai/scene9.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#e6953f; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;overflow:hidden}
+  #stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
+  #art.show{opacity:1}
+  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.25) 40%,rgba(13,13,13,.05) 62%,rgba(13,13,13,.4) 100%)}
+  #cap{position:absolute;left:0;right:0;bottom:0;padding:30px 7vw 42px;text-align:center}
+  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:9px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-title{font-size:clamp(24px,4.2vw,46px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:15px}
+  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:880px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
+  #scene-link{display:none;margin-top:18px;padding:13px 34px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif;background:rgba(230,149,63,.06);cursor:pointer}
+  #scene-link.show{display:inline-block}
+  #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
+  #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:var(--bg);z-index:5;transition:opacity .9s;padding:0 22px}
+  #title.hide{opacity:0;pointer-events:none}
+  #title .circle{width:78px;height:78px;border:3px solid var(--ink);border-radius:50%;position:relative}
+  #title .circle::after{content:"";position:absolute;inset:24px;border:2px solid var(--accent);border-radius:50%;opacity:.85}
+  #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.1em;font-weight:600;text-align:center;line-height:1.3}
+  #title .en{color:var(--dim);letter-spacing:.28em;font-size:12px;font-family:sans-serif}
+  #title p{color:var(--dim);letter-spacing:.2em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;line-height:1.8}
+  #title .start{margin-top:10px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.6}
+  /* MV overlay */
+  #mv{position:fixed;inset:0;z-index:20;background:#000;display:none;flex-direction:column}
+  #mv.show{display:flex}
+  #mv iframe{flex:1;width:100%;height:100%;border:0}
+  #mv .bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#0d0d0d;border-bottom:1px solid #222}
+  #mv .bar b{font-size:13px;letter-spacing:.2em;color:var(--accent);font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-weight:600}
+  #mv .bar a{color:var(--dim);font-size:12px;letter-spacing:.2em;text-decoration:none;font-family:sans-serif;cursor:pointer}
+</style>
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<div id="stage">
+  <div id="art"></div><div id="shade"></div>
+  <div id="progress"></div><div id="dots"></div>
+  <div id="cap">
+    <div id="scene-sub"></div><div id="scene-title"></div><div id="scene-text"></div>
+    <a id="scene-link"></a>
+  </div>
+  <div id="title">
+    <div class="circle"></div>
+    <h1>注意こそ、すべて。</h1>
+    <div class="en">ATTENTION IS ALL YOU NEED</div>
+    <p>紙芝居 第7話 ・ AIの心臓「トランスフォーマー」を、絵で。<br>数式ゼロ・全9場面 ・ 2026.06.05<br>声：濱田優貴（AIクローン）</p>
+    <div class="start">タップで、はじまる</div>
+  </div>
+  <div id="hint">クリック＝次へ ／ ←戻る</div>
+</div>
+<div id="mv">
+  <div class="bar"><b>♪ MV『Tap Tap Tap』</b><a id="mv-close">✕ とじる</a></div>
+  <iframe id="mv-frame" allow="autoplay; fullscreen" referrerpolicy="no-referrer-when-downgrade"></iframe>
+</div>
+<script>
+const SCENES=[
+{"sub":"問い","title":"注意だけで、言葉がわかる?","text":"2017年、グーグルの研究者たちが、一本の論文を出しました。題名は、アテンション、イズ、オール、ユー、ニード。注意こそ、すべて。たった一つの仕組みで、機械は、言葉の意味を、つかみはじめます。きょうは、その正体を、見にいきましょう。","img":"/assets/transformer-kamishibai/scene1.png","audio":"/audio/transformer-kam-1.mp3"},
+{"sub":"むかし","title":"一語ずつ、順番に。","text":"それまでの機械は、文章を、左から一語ずつ、順番に読んでいました。前の言葉を、覚えながら、次へ。でも、これだと、文が長くなるほど、最初のほうを、忘れていく。しかも、順番待ちなので、どうしても、遅いのです。","img":"/assets/transformer-kamishibai/scene2.png","audio":"/audio/transformer-kam-2.mp3"},
+{"sub":"ひらめき","title":"順番を、やめてみる。","text":"そこで、発想を、ひっくり返します。一語ずつ待つのを、やめる。文の中の言葉を、ぜんぶ、いちどに、机の上へ広げてしまう。あとは、どの言葉と、どの言葉が、深く関係しているか。それを、見つければいい。","img":"/assets/transformer-kamishibai/scene3.png","audio":"/audio/transformer-kam-3.mp3"},
+{"sub":"アテンション","title":"どこを見るか、自分で決める。","text":"たとえば、犬が、骨をくわえた。それを、離さない。この、それ、は、骨のこと。一つ一つの言葉が、文じゅうのすべての言葉に目をやって、関係の強い相手を、強く見ます。どこを見るかを、自分で決める。これが、注意。アテンションです。","img":"/assets/transformer-kamishibai/scene4.png","audio":"/audio/transformer-kam-4.mp3"},
+{"sub":"しくみ","title":"問いと、名札と、中身。","text":"では、どうやって、見る強さを決めるのか。三つの役で考えます。知りたいことを、問いにする。それぞれの言葉が、わたしはこれ、と名札をかかげる。問いと名札が、どれだけ似ているかで、相手の中身を、受け取る量が決まる。似ているほど、たくさん受け取って、ぜんぶ足し合わせる。これが、見る強さです。","img":"/assets/transformer-kamishibai/scene5.png","audio":"/audio/transformer-kam-5.mp3"},
+{"sub":"複数の目","title":"一人で、見ない。","text":"おもしろいのは、見る目が、一組ではないこと。文法を見る目、意味を見る目、遠くの言葉を見る目。機械は、わざわざ、何組もの目で、同時に、ちがう角度から、おなじ文を見つめます。これを、マルチヘッド、複数の頭、と呼びます。","img":"/assets/transformer-kamishibai/scene6.png","audio":"/audio/transformer-kam-6.mp3"},
+{"sub":"順番の情報","title":"席番号を、波でつける。","text":"でも、順番に読むのを、やめてしまうと、言葉の前後が、わからなくなる。だから、それぞれの言葉に、何番目かをあらわす、なめらかな波の印を、そっと足します。ただの番号だと、ばらばらの記号ですが、波なら、近い席どうしは、形も似る。だから、近い、遠いまで、伝わるのです。これで、広げたまま、順番も、ちゃんと残ります。","img":"/assets/transformer-kamishibai/scene7.png","audio":"/audio/transformer-kam-7.mp3"},
+{"sub":"結果","title":"速くて、強い。","text":"むかしの、あの順番待ちが、消えました。だから、何千もの言葉を、いちどに学べる。学習は、ぐんと、速くなります。翻訳の正しさは、それまでの最高記録を、更新しました。順番待ちが、消えた。ただ、それだけのことが、すべてを、変えたのです。この仕組みは、トランスフォーマー、と呼ばれます。","img":"/assets/transformer-kamishibai/scene8.png","audio":"/audio/transformer-kam-8.mp3"},
+{"sub":"それから","title":"注意は、本当に、すべてだった。","text":"この、小さな論文が、土台になりました。チャット、ジーピーティーも、いま、あなたと話している、わたしも、ここから生まれています。注意こそ、すべて。あの題名は、ほんとうでした。さいごに、一曲、どうぞ。","img":"/assets/transformer-kamishibai/scene9.png","audio":"/audio/transformer-kam-9.mp3","mv":true,"cta":"♪ MV『Tap Tap Tap』を見る"}
+];
+let idx=-1, started=false;
+let actx=null, abuf={}, asrc=null;
+SCENES.forEach(s=>{ const i=new Image(); i.src=s.img; });
+
+function unlock(){
+  if(!actx) actx=new (window.AudioContext||window.webkitAudioContext)();
+  try{ const b=actx.createBuffer(1,1,22050), s=actx.createBufferSource(); s.buffer=b; s.connect(actx.destination); s.start(0);}catch(_){}
+  if(actx.state==='suspended') actx.resume();
+}
+async function playAudio(i){
+  if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){} asrc=null; }
+  const url=SCENES[i].audio;
+  try{
+    if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
+    if(idx!==i) return;
+    asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900);
+                       else if(idx===i && SCENES[i].mv) setTimeout(openMV,1400); };
+    asrc.start(0);
+  }catch(e){ /* autoplay/codec fallback: hold the scene */ }
+}
+function play(i){
+  if(i<0||i>=SCENES.length) return;
+  idx=i; const s=SCENES[i];
+  const art=document.getElementById('art');
+  art.classList.remove('show');
+  setTimeout(()=>{ art.style.backgroundImage="url('"+s.img+"')"; art.classList.add('show'); },350);
+  document.getElementById('scene-sub').textContent=s.sub||'';
+  document.getElementById('scene-title').textContent=s.title;
+  document.getElementById('scene-text').textContent=s.text;
+  const link=document.getElementById('scene-link');
+  if(s.cta){ link.textContent=s.cta; link.classList.add('show'); }
+  else link.classList.remove('show');
+  document.getElementById('dots').textContent=(i+1)+' / '+SCENES.length;
+  document.getElementById('progress').style.width=(((i+1)/SCENES.length)*100)+'%';
+  playAudio(i);
+}
+function openMV(){
+  const f=document.getElementById('mv-frame');
+  if(!f.src) f.src="/mv/tap.html";
+  document.getElementById('mv').classList.add('show');
+  if(asrc){ try{asrc.onended=null; asrc.stop();}catch(_){} asrc=null; }
+}
+function closeMV(){ document.getElementById('mv').classList.remove('show'); }
+document.getElementById('scene-link').addEventListener('click',e=>{ e.stopPropagation(); openMV(); });
+document.getElementById('mv-close').addEventListener('click',e=>{ e.stopPropagation(); closeMV(); });
+document.getElementById('stage').addEventListener('click',()=>{
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if(idx<SCENES.length-1) play(idx+1);
+});
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('mv').classList.contains('show')){ if(e.key==='Escape') closeMV(); return; }
+  if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
+  if((e.key==='ArrowRight'||e.key===' ')&&idx<SCENES.length-1) play(idx+1);
+  if(e.key==='ArrowLeft'&&idx>0) play(idx-1);
+});
+</script>
+</body>
+</html>

@@ -1166,6 +1166,21 @@ async fn security_gate_page() -> impl IntoResponse {
     Html(include_str!("../templates/security-gate.html"))
 }
 
+// 紙芝居 第6話『一人でやらない、は、正しい。』(なぜみんなでやるのか 2026.06.04)。
+// 情緒を抜いて計算だけで「協力が最適解」を証明: 並列探索/無相関の盲点/打席数/
+// メトカーフ/比較優位/知識の非競合性/超合理性 → 焚き火(atsm.wtf)に着地。EP4情緒版の対。
+// 全9場面、画像 /assets/minna-kamishibai/、音声 /audio/minna-kam-N.mp3 を WebAudio で。(marker: kamishibai-6)
+async fn kamishibai_ep6_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep6.html"))
+}
+
+// 紙芝居 第7話『注意こそ、すべて。』Transformer論文(Attention Is All You Need)を
+// 数式ゼロ・全9場面で。画像 /assets/transformer-kamishibai/、音声 /audio/transformer-kam-N.mp3、
+// 最後に MV /mv/tap.html を埋め込み。本人クローン声つき。
+async fn kamishibai_ep7_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep7.html"))
+}
+
 // あそビュー講演(2026.06.04)の御礼スライド。本人クローン声つき・全5場面。
 // 画像 /assets/asoview-thanks/、音声 /audio/asoview-thanks-N.mp3 を WebAudio で。
 async fn thanks_asoview_page() -> impl IntoResponse {
@@ -1359,7 +1374,7 @@ input:focus{outline:none;border-color:#e8a04c}
 .status.on .dot{background:#37d67a;box-shadow:0 0 0 0 rgba(55,214,122,.7);animation:p 1.6s infinite}
 @keyframes p{70%{box-shadow:0 0 0 8px rgba(55,214,122,0)}}
 .hint{font-size:12px;color:rgba(243,237,226,.4);text-align:center;margin-top:22px;line-height:1.8}
-</style></head><body>
+</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head><body>
 <div class=wrap>
   <div class=kick>KOE · 声でつなぐ</div>
   <h1>🎙 声でつなぐ</h1>
@@ -1670,6 +1685,7 @@ input:focus{border-color:var(--gold)}
 #toast{position:fixed;bottom:24px;right:24px;background:#1a1a18;border:1px solid rgba(200,164,85,.4);color:var(--gold);font-size:.78rem;padding:10px 16px;border-radius:8px;opacity:0;transition:opacity .25s;pointer-events:none;z-index:9999}
 #toast.show{opacity:1}
 </style>
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
 </head>
 <body>
 <div class="topbar">
@@ -3707,7 +3723,7 @@ input{width:100%;padding:12px;background:#0a0a0a;border:1px solid #222;border-ra
 input:focus{border-color:#E8B64A;}
 button{width:100%;padding:12px;background:#E8B64A;color:#080808;border:none;border-radius:8px;font-weight:700;font-size:.9rem;cursor:pointer;margin-bottom:8px;}
 button:hover{opacity:.85;}.msg{font-size:.8rem;color:#E8B64A;margin-top:8px;min-height:20px;}
-#step2{display:none;}</style></head><body>
+#step2{display:none;}</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head><body>
 <div class="box">
   <h1>Analytics</h1><p>yukihamada.jp</p>
   <div id="step1">
@@ -3766,7 +3782,7 @@ tr:hover td{background:#111;}
 .days{display:flex;gap:8px;margin-bottom:20px;}
 .days button{padding:6px 14px;background:#111;border:1px solid #222;border-radius:6px;color:#aaa;font-size:.75rem;cursor:pointer;}
 .days button.active{background:#E8B64A;color:#080808;border-color:#E8B64A;}
-</style></head><body>
+</style><script defer src="https://enabler-analytics.fly.dev/t.js"></script></head><body>
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
   <h1>Analytics</h1>
   <a class="logout" onclick="logout()">ログアウト</a>
@@ -6681,6 +6697,11 @@ async fn main() {
         .route("/kamishibai/5", get(kamishibai_ep5_page))
         .route("/kagi", get(kamishibai_ep5_page))
         .route("/security-gate", get(security_gate_page))
+        .route("/kamishibai/6", get(kamishibai_ep6_page))
+        .route("/minna", get(kamishibai_ep6_page))
+        .route("/kamishibai/7", get(kamishibai_ep7_page))
+        .route("/transformer", get(kamishibai_ep7_page))
+        .route("/attention", get(kamishibai_ep7_page))
         .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
