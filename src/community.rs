@@ -1385,4 +1385,27 @@ async function load(){try{const r=await fetch('/api/community/posts');const d=aw
 }catch(e){}}
 load();loadPresence();loadVoice();setInterval(load,8000);setInterval(loadPresence,15000);setInterval(loadVoice,20000);setInterval(tick,1000);
 </script>
+<!-- ── 隠し導線: 10分滞在で「MU?」が現れ、ふわふわ動く。一度押すと二度と出ない ── -->
+<a id=mufes href="https://wearmu.com/fest">MU?</a>
+<style>
+#mufes{position:fixed;z-index:6;left:50%;top:42%;display:none;opacity:0;
+  font-family:'Helvetica Neue',Arial,sans-serif;font-weight:900;font-size:30px;letter-spacing:.02em;
+  color:#ffd9a8;text-decoration:none;cursor:pointer;
+  text-shadow:0 0 18px rgba(232,101,31,.8),0 0 42px rgba(232,101,31,.45);
+  background:rgba(232,101,31,.10);border:1px solid rgba(244,205,139,.35);border-radius:999px;padding:9px 20px;
+  -webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px);
+  transition:left 3s ease,top 3s ease,opacity 1.2s ease}
+#mufes.show{display:block;opacity:1;animation:mupulse 2.4s ease-in-out infinite}
+#mufes:hover{color:#fff;background:rgba(232,101,31,.22)}
+@keyframes mupulse{0%,100%{transform:translate(-50%,-50%) scale(.88)}50%{transform:translate(-50%,-50%) scale(1.18)}}
+</style>
+<script>
+(function(){
+  try{if(localStorage.getItem('muFesHintDone'))return;}catch(_){}
+  var el=document.getElementById('mufes');if(!el)return;
+  function wander(){var mx=14,my=20;el.style.left=(mx+Math.random()*(100-2*mx))+'%';el.style.top=(my+Math.random()*(100-2*my))+'%';}
+  el.addEventListener('click',function(){try{localStorage.setItem('muFesHintDone','1');}catch(_){}});
+  setTimeout(function(){el.classList.add('show');wander();setInterval(wander,5200);},600000);
+}());
+</script>
 </body></html>"##;
