@@ -1181,6 +1181,14 @@ async fn kamishibai_ep7_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep7.html"))
 }
 
+// 紙芝居 第8話『先に、渡す。』(ギバー/テイカー、与え方の話)。Adam Grant の GIVE&TAKE +
+// バーニングマンの贈与 + 焚き火 LOVE&RESPECT を全9場面で。最下層も頂点もギバー→賢いギバー
+// (otherish)→テイカーには与えさせろ→焚き火(atsm.wtf)に着地。EP4情緒/EP6計算の続き。
+// 画像 /assets/give-kamishibai/、音声 /audio/give-kam-N.mp3 を WebAudio で。(marker: kamishibai-8)
+async fn kamishibai_ep8_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-ep8.html"))
+}
+
 // あそビュー講演(2026.06.04)の御礼スライド。本人クローン声つき・全5場面。
 // 画像 /assets/asoview-thanks/、音声 /audio/asoview-thanks-N.mp3 を WebAudio で。
 async fn thanks_asoview_page() -> impl IntoResponse {
@@ -6702,6 +6710,9 @@ async fn main() {
         .route("/kamishibai/7", get(kamishibai_ep7_page))
         .route("/transformer", get(kamishibai_ep7_page))
         .route("/attention", get(kamishibai_ep7_page))
+        .route("/kamishibai/8", get(kamishibai_ep8_page))
+        .route("/give", get(kamishibai_ep8_page))
+        .route("/saki", get(kamishibai_ep8_page))
         .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
