@@ -44,13 +44,13 @@ dialog .row{display:flex;gap:10px;margin-top:12px}
   <p class=note id=sendnote>※ 公開PWAは閲覧用。投稿は atsm.wtf でログインすると焚き火に残ります。</p>
 </dialog>
 <script>
-const MCP='https://atsm.wtf/mcp';
+const FEED='/api/takibi/feed';
 const $=s=>document.querySelector(s);
 let maki=+(localStorage.maki||0); const rx=JSON.parse(localStorage.rx||'{}');
 $('#maki').textContent='🔥 '+maki;
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 function linkify(s){return esc(s).replace(/(https?:\/\/[^\s]+)/g,'<a href="$1" target=_blank rel=noopener>$1</a>')}
-async function mcp(name,args){const r=await fetch(MCP,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'tools/call',params:{name,arguments:args||{}}})});const j=await r.json();return j?.result?.content?.[0]?.text||''}
+async function mcp(){const r=await fetch(FEED);const j=await r.json();return j.text||''}
 function parse(t){const out=[];let a='',s='',b='';const fl=()=>{const x=b.trim();if(a&&x)out.push({a,s,b:x});a=s='';b=''};
  t.split('\n').forEach(l=>{const m=l.match(/^\[(.+?)\]\s*(\d{2}-\d{2}\s*\d{2}:\d{2})/);if(m){fl();a=m[1];s=m[2];}else{b+=l+'\n';}});fl();return out}
 function key(p){return p.a+'|'+p.s+'|'+p.b.slice(0,20)}

@@ -451,6 +451,34 @@ async fn mcp_page(State(state): State<Arc<AppState>>) -> impl IntoResponse {
 
 // ── Handlers ──
 
+// /takibi PWA 用 同一オリジン proxy。atsm.wtf/mcp は CORS allow-origin を返さず
+// ブラウザから直接読めないため、サーバ越しに community_list_posts を叩いて素テキストを返す。
+async fn takibi_feed() -> impl IntoResponse {
+    let body = serde_json::json!({
+        "jsonrpc":"2.0","id":1,"method":"tools/call",
+        "params":{"name":"community_list_posts","arguments":{}}
+    });
+    let text = match reqwest::Client::new()
+        .post("https://atsm.wtf/mcp")
+        .json(&body)
+        .timeout(std::time::Duration::from_secs(12))
+        .send().await
+    {
+        Ok(r) => match r.json::<serde_json::Value>().await {
+            Ok(v) => v.get("result").and_then(|x| x.get("content"))
+                .and_then(|c| c.get(0)).and_then(|c| c.get("text"))
+                .and_then(|t| t.as_str()).unwrap_or("").to_string(),
+            Err(_) => String::new(),
+        },
+        Err(_) => String::new(),
+    };
+    (
+        [(axum::http::header::CONTENT_TYPE, "application/json"),
+         (axum::http::header::CACHE_CONTROL, "public, max-age=20")],
+        serde_json::json!({"text": text}).to_string(),
+    )
+}
+
 async fn home(
     State(state): State<Arc<AppState>>,
     headers: HeaderMap,
@@ -6906,6 +6934,7 @@ async fn main() {
         .route("/feed.xml", get(rss_feed))
         .route("/robots.txt", get(robots))
         .route("/health", get(health))
+        .route("/api/takibi/feed", get(takibi_feed))
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
