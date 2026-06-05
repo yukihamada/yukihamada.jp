@@ -451,32 +451,48 @@ async fn mcp_page(State(state): State<Arc<AppState>>) -> impl IntoResponse {
 
 // ── Handlers ──
 
-// /takibi PWA 用 同一オリジン proxy。atsm.wtf/mcp は CORS allow-origin を返さず
-// ブラウザから直接読めないため、サーバ越しに community_list_posts を叩いて素テキストを返す。
+// /takibi PWA は全フェッチを同一オリジンに通す(外部CORSへ依存しない・headless/実機で安定)。
+// feed/speak とも Koe(mcp.koe.live) をサーバ越しに中継。id付きで声生成に使える。
 async fn takibi_feed() -> impl IntoResponse {
-    let body = serde_json::json!({
-        "jsonrpc":"2.0","id":1,"method":"tools/call",
-        "params":{"name":"community_list_posts","arguments":{}}
-    });
-    let text = match reqwest::Client::new()
-        .post("https://atsm.wtf/mcp")
-        .json(&body)
+    let json = match reqwest::Client::new()
+        .get("https://mcp.koe.live/api/takibi/feed")
         .timeout(std::time::Duration::from_secs(12))
         .send().await
     {
-        Ok(r) => match r.json::<serde_json::Value>().await {
-            Ok(v) => v.get("result").and_then(|x| x.get("content"))
-                .and_then(|c| c.get(0)).and_then(|c| c.get("text"))
-                .and_then(|t| t.as_str()).unwrap_or("").to_string(),
-            Err(_) => String::new(),
-        },
-        Err(_) => String::new(),
+        Ok(r) => r.text().await.unwrap_or_else(|_| "{\"items\":[]}".into()),
+        Err(_) => "{\"items\":[]}".into(),
     };
     (
         [(axum::http::header::CONTENT_TYPE, "application/json"),
          (axum::http::header::CACHE_CONTROL, "public, max-age=20")],
-        serde_json::json!({"text": text}).to_string(),
+        json,
     )
+}
+
+#[derive(serde::Deserialize)]
+struct TakibiSpeakReq { id: String }
+
+// 薪id → クローン声mp3 (Koe /api/takibi/speak を中継)。url は絶対化して返す。
+async fn takibi_speak(axum::Json(req): axum::Json<TakibiSpeakReq>) -> impl IntoResponse {
+    let body = serde_json::json!({ "id": req.id });
+    let out = match reqwest::Client::new()
+        .post("https://mcp.koe.live/api/takibi/speak")
+        .json(&body)
+        .timeout(std::time::Duration::from_secs(40))
+        .send().await
+    {
+        Ok(r) => match r.json::<serde_json::Value>().await {
+            Ok(mut v) => {
+                if let Some(u) = v.get("url").and_then(|x| x.as_str()) {
+                    if u.starts_with('/') { v["url"] = serde_json::json!(format!("https://mcp.koe.live{}", u)); }
+                }
+                v.to_string()
+            }
+            Err(_) => "{\"ok\":false,\"error\":\"bad upstream\"}".into(),
+        },
+        Err(_) => "{\"ok\":false,\"error\":\"koe unreachable\"}".into(),
+    };
+    ([(axum::http::header::CONTENT_TYPE, "application/json")], out)
 }
 
 async fn home(
@@ -6935,6 +6951,7 @@ async fn main() {
         .route("/robots.txt", get(robots))
         .route("/health", get(health))
         .route("/api/takibi/feed", get(takibi_feed))
+        .route("/api/takibi/speak", post(takibi_speak))
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
