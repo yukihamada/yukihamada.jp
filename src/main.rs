@@ -431,12 +431,12 @@ struct BlogPostTemplate<'a> {
 }
 
 #[derive(Template)]
-#[template(path = "404.html")]
-struct NotFoundTemplate;
-
-#[derive(Template)]
 #[template(path = "about.html")]
 struct AboutTemplate;
+
+#[derive(Template)]
+#[template(path = "home_en.html")]
+struct HomeEnTemplate;
 
 #[derive(Template)]
 #[template(path = "mcp.html")]
@@ -675,6 +675,11 @@ async fn redirect_podcast()  -> Redirect { Redirect::permanent("/#podcast") }
 
 async fn about() -> impl IntoResponse {
     Html(AboutTemplate.render().unwrap_or_default())
+}
+
+// English landing page (/en) — a clean, fast profile for a worldwide audience.
+async fn home_en() -> impl IntoResponse {
+    Html(HomeEnTemplate.render().unwrap_or_default())
 }
 
 async fn notary_options() -> impl IntoResponse {
@@ -1886,6 +1891,7 @@ async fn sitemap(State(state): State<Arc<AppState>>) -> Response {
     let today = chrono::Utc::now().format("%Y-%m-%d").to_string();
     xml.push_str(&format!("  <url><loc>{base}/</loc><lastmod>{today}</lastmod><changefreq>weekly</changefreq><priority>1.0</priority></url>\n"));
     xml.push_str(&format!("  <url><loc>{base}/about</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
+    xml.push_str(&format!("  <url><loc>{base}/en</loc><lastmod>{today}</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>\n"));
     xml.push_str(&format!("  <url><loc>{base}/blog</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.9</priority></url>\n"));
     xml.push_str(&format!("  <url><loc>{base}/projects</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>\n"));
     xml.push_str(&format!("  <url><loc>{base}/contact</loc><changefreq>yearly</changefreq><priority>0.7</priority></url>\n"));
@@ -3541,8 +3547,126 @@ async fn fanclub_logout(State(state): State<Arc<AppState>>, headers: HeaderMap) 
         .unwrap()
 }
 
-async fn not_found() -> impl IntoResponse {
-    (StatusCode::NOT_FOUND, Html(NotFoundTemplate.render().unwrap_or_default()))
+const NOT_FOUND_TMPL: &str = include_str!("../templates/404.html");
+
+/// 404: 迷子レスキュー（既知ルートへ曖昧マッチ）＋ 記録（/data/notfound.jsonl）。
+/// 生きてる焚き火・悪魔の声はテンプレ内の JS が担当。
+async fn not_found(uri: axum::http::Uri, headers: HeaderMap) -> impl IntoResponse {
+    let path = uri.path().to_string();
+    log_not_found(&path, &headers);
+    let html = NOT_FOUND_TMPL
+        .replace("__PATH__", &html_escape_min(&path))
+        .replace("__SUGGEST__", &build_suggestions(&path));
+    (StatusCode::NOT_FOUND, Html(html))
+}
+
+fn html_escape_min(s: &str) -> String {
+    s.replace('&', "&amp;").replace('<', "&lt;").replace('>', "&gt;").replace('"', "&quot;")
+}
+
+fn levenshtein(a: &str, b: &str) -> usize {
+    let a: Vec<char> = a.chars().collect();
+    let b: Vec<char> = b.chars().collect();
+    let mut prev: Vec<usize> = (0..=b.len()).collect();
+    for (i, ca) in a.iter().enumerate() {
+        let mut cur = vec![i + 1];
+        for (j, cb) in b.iter().enumerate() {
+            let cost = usize::from(ca != cb);
+            cur.push((prev[j + 1] + 1).min(cur[j] + 1).min(prev[j] + cost));
+        }
+        prev = cur;
+    }
+    prev[b.len()]
+}
+
+/// 打ち間違いっぽいパスを既知ルートへ曖昧マッチ。近いものが無ければ人気の行き先。
+fn build_suggestions(path: &str) -> String {
+    const ROUTES: &[(&str, &str)] = &[
+        ("/projects", "しごと・プロジェクト"),
+        ("/blog", "ブログ"),
+        ("/about", "プロフィール"),
+        ("/kamishibai", "紙芝居『あなたの中に、悪魔を1匹』"),
+        ("/takibi", "🔥 焚き火（ともしび）"),
+        ("/koe", "Koe — 声"),
+        ("/music", "音楽"),
+        ("/career", "採用・仲間募集"),
+        ("/meet", "話す・相談"),
+        ("/news", "ニュース"),
+    ];
+    let q = path.trim_matches('/').to_lowercase();
+    let qseg = q.rsplit('/').next().unwrap_or(q.as_str());
+    let mut scored: Vec<(usize, (&str, &str))> = ROUTES
+        .iter()
+        .map(|r| {
+            let name = r.0.trim_start_matches('/');
+            let d = if qseg.is_empty() {
+                usize::MAX
+            } else if name.contains(qseg) || qseg.contains(name) {
+                0
+            } else {
+                levenshtein(qseg, name)
+            };
+            (d, *r)
+        })
+        .collect();
+    scored.sort_by_key(|(d, _)| *d);
+    let close: Vec<(&str, &str)> = scored
+        .iter()
+        .filter(|(d, _)| *d <= 4)
+        .take(3)
+        .map(|(_, r)| *r)
+        .collect();
+    let chosen: Vec<(&str, &str)> = if close.is_empty() {
+        vec![
+            ("/takibi", "🔥 焚き火（ともしび）"),
+            ("/kamishibai", "紙芝居『あなたの中に、悪魔を1匹』"),
+            ("/projects", "しごと・プロジェクト"),
+        ]
+    } else {
+        close
+    };
+    chosen
+        .iter()
+        .map(|(p, l)| {
+            format!(
+                "<a href=\"{p}\" style=\"text-decoration:none;color:inherit;padding:9px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;font-size:.86rem;display:flex;justify-content:space-between;align-items:center\"><span>{l}</span><span style=\"color:#e8651f\">→</span></a>"
+            )
+        })
+        .collect::<Vec<_>>()
+        .join("")
+}
+
+/// 「みんなが探してるのに無いページ」を記録（作るべきコンテンツの可視化）。
+/// 静的アセット(拡張子つき)・スキャナーのノイズ・肥大化は記録しない。
+fn log_not_found(path: &str, headers: &HeaderMap) {
+    let qseg = path.trim_matches('/').rsplit('/').next().unwrap_or("");
+    if path.len() > 120
+        || qseg.contains('.') // .png/.css/.php 等のアセット・探索系は除外
+        || path.contains("wp-")
+        || path.contains("/.")
+    {
+        return;
+    }
+    let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+    let file = format!("{dir}/notfound.jsonl");
+    if std::fs::metadata(&file).map(|m| m.len() > 5_000_000).unwrap_or(false) {
+        return; // 肥大化ガード
+    }
+    let h = |k: header::HeaderName| {
+        headers.get(k).and_then(|v| v.to_str().ok()).unwrap_or("").to_string()
+    };
+    let rec = serde_json::json!({
+        "ts": chrono::Utc::now().to_rfc3339(),
+        "path": path,
+        "referer": h(header::REFERER),
+        "ua": h(header::USER_AGENT).chars().take(160).collect::<String>(),
+    });
+    let _ = std::fs::create_dir_all(&dir);
+    let _ = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&file)
+        .and_then(|mut f| std::io::Write::write_all(&mut f, format!("{rec}\n").as_bytes()));
 }
 
 // ── Main ──
@@ -6745,7 +6869,8 @@ async fn main() {
         .route("/api/community/webhook", post(community::webhook_post))
         .route("/api/community/webhook", axum::routing::options(options_cors))
         .route("/ja", get(redirect_root))
-        .route("/en", get(redirect_root))
+        .route("/en", get(home_en))
+        .route("/en/", get(home_en))
         .route("/about", get(about))
         .route("/terminal", get(redirect_terminal))
         .route("/projects", get(redirect_projects))
@@ -6779,6 +6904,7 @@ async fn main() {
         .route("/feed.xml", get(rss_feed))
         .route("/robots.txt", get(robots))
         .route("/health", get(health))
+        .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
         .route("/api/fanclub/verify", post(fanclub_verify))
