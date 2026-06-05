@@ -32,9 +32,9 @@ main{max-width:680px;margin:0 auto;padding:16px}
 <p class=note>🔊 を押すと、その薪を<b>生成された声</b>で聞けます（Koe）。投稿は <a href="https://atsm.wtf/community" style="color:#ffd07a">atsm.wtf</a> または <a href="https://mcp.koe.live/app" style="color:#ffd07a">Koe</a> から。</p></main>
 <audio id=player style="display:none"></audio>
 <script>
-const FEED='https://mcp.koe.live/api/takibi/feed';
-const SPEAK='https://mcp.koe.live/api/takibi/speak';
-const AUDIO='https://mcp.koe.live';
+const FEED='/api/takibi/feed';
+const SPEAK='/api/takibi/speak';
+const AUDIO='';
 const $=s=>document.querySelector(s);
 let maki=+(localStorage.maki||0); const rx=JSON.parse(localStorage.rx||'{}'); const cache={};
 $('#maki').textContent='🔥 '+maki;
