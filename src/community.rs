@@ -670,6 +670,65 @@ fn fire_state() -> (bool, i64) {
     (remain > 0, remain.max(0))
 }
 
+// ── 薪の発行ルール（issuance policy）─────────────────────────────────────
+// 薪＝1つの本物の熱（実作業・実イベント）。火の大きさ＝今この瞬間の本物の熱量。
+// だから発行はレート規律で守る（1人が連投で火＝トレンドを偽装できないように）。
+// 価値レイヤー（感謝→灰ASH/熾火OKI）は atsm-token 側＝ここでトークンは発行しない。
+
+/// R2 のしきい値。env で調整可（再デプロイ不要）。既定: 連投90秒・時20本・日60本。
+fn rate_limits() -> (i64, usize, usize) {
+    let n = |k: &str, d: i64| std::env::var(k).ok().and_then(|s| s.parse().ok()).unwrap_or(d);
+    (
+        n("COMMUNITY_RATE_GAP_SECS", 90),
+        n("COMMUNITY_RATE_HOURLY", 20) as usize,
+        n("COMMUNITY_RATE_DAILY", 60) as usize,
+    )
+}
+
+/// R2: 発行者ごとのレート台帳。許可なら記録して Ok、超過なら人向け理由を Err。
+/// STORE_LOCK を内部で取って原子的に確認＋記録する（add_post の前に呼ぶ）。
+fn rate_check_and_record(member_id: &str) -> Result<(), String> {
+    let (gap, hourly, daily) = rate_limits();
+    let now = chrono::Utc::now().timestamp();
+    let _g = STORE_LOCK.lock().unwrap();
+    let mut log: Vec<(String, i64)> = load("issue_rate.json");
+    log.retain(|(_, t)| now - *t < 86_400); // 24hで剪定
+    let mine: Vec<i64> = log.iter().filter(|(id, _)| id == member_id).map(|(_, t)| *t).collect();
+    if let Some(&last) = mine.iter().max() {
+        if now - last < gap {
+            return Err(format!("火はもう十分大きい。あと{}秒、手を動かしてからまた薪をくべて。", gap - (now - last)));
+        }
+    }
+    if mine.iter().filter(|t| now - **t < 3600).count() >= hourly {
+        return Err(format!("この1時間で薪 {hourly} 本に達しました。火は十分。少し作業してまた来て。"));
+    }
+    if mine.iter().filter(|t| now - **t < 86_400).count() >= daily {
+        return Err(format!("今日は薪 {daily} 本に達しました。明日また火を育てよう。"));
+    }
+    log.push((member_id.to_string(), now));
+    save("issue_rate.json", &log);
+    Ok(())
+}
+
+/// R3: 直近1時間に同一発行者・同一本文（空白正規化）の薪があれば重複とみなす。
+fn is_duplicate(author: &str, body: &str) -> bool {
+    let norm = |s: &str| s.split_whitespace().collect::<Vec<_>>().join(" ").to_lowercase();
+    let nb = norm(body);
+    if nb.is_empty() {
+        return false;
+    }
+    let now = chrono::Utc::now().timestamp();
+    load::<Post>("posts.json").iter().any(|p| {
+        is_log(p)
+            && p.author_name == author
+            && norm(&p.body) == nb
+            && chrono::DateTime::parse_from_rfc3339(&p.created_at)
+                .ok()
+                .map(|d| now - d.timestamp() < 3600)
+                .unwrap_or(false)
+    })
+}
+
 fn add_post(author: &str, body: &str, kind: &str, url: Option<String>) -> Post {
     let _g = STORE_LOCK.lock().unwrap();
     let _ = archive_locked(); // 消えた火を建物に移してから、新しい薪をくべる
@@ -988,6 +1047,10 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                         return err(-32001, "unauthorized: 有効な Bearer api_token が必要です。/community/join でメール認証して取得してください。");
                     };
                     if name == "ignite" {
+                        // R2: 着火もレート規律の対象（連投で火を偽装させない）
+                        if let Err(msg) = rate_check_and_record(&m.id) {
+                            return err(-32029, &msg);
+                        }
                         let msg = args.get("message").and_then(|v| v.as_str()).unwrap_or("");
                         let body = if msg.is_empty() {
                             format!("{} が火をともした🔥", m.name)
@@ -998,8 +1061,17 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                         ok(text("火がともりました🔥 焚き火に刻まれました。".into()))
                     } else {
                         let t = args.get("text").and_then(|v| v.as_str()).unwrap_or("");
-                        if t.trim().is_empty() {
-                            return err(-32602, "text が必要です");
+                        // R3: 空薪・短すぎる薪は発行しない（2文字以上の実作業の一行を）
+                        if t.trim().chars().count() < 2 {
+                            return err(-32602, "text が短すぎます。いま手を動かしている一行を、2文字以上で。");
+                        }
+                        // R3: 直近1時間の同一本文は重複＝発行しない
+                        if is_duplicate(&m.name, t) {
+                            return err(-32009, "さっきと同じ薪です。新しい熱を一行で。");
+                        }
+                        // R2: 発行レート（連投90秒・時20・日60、env で調整可）
+                        if let Err(msg) = rate_check_and_record(&m.id) {
+                            return err(-32029, &msg);
                         }
                         let url = args
                             .get("url")
