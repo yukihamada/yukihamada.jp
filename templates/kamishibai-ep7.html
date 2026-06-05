@@ -15,13 +15,18 @@
   html,body{height:100%;background:var(--bg);color:var(--ink);
     font-family:"Hiragino Mincho ProN","Yu Mincho",serif;overflow:hidden}
   #stage{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;cursor:pointer}
-  #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.2s ease}
-  #art.show{opacity:1}
-  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.93) 0%,rgba(13,13,13,.3) 38%,rgba(13,13,13,.08) 58%,rgba(13,13,13,.5) 100%)}
-  #cap{position:absolute;left:0;right:0;bottom:0;padding:24px 7vw 38px;text-align:center;z-index:4}
-  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:8px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
-  #scene-title{font-size:clamp(22px,3.8vw,42px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:12px}
-  #scene-text{font-size:clamp(13px,1.6vw,19px);line-height:1.9;max-width:880px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.95);opacity:.95}
+  #art{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transform:scale(1.04);transition:opacity 1.2s ease}
+  #art.show{opacity:1;animation:kenburns 18s ease-out forwards}
+  @keyframes kenburns{from{transform:scale(1.04)}to{transform:scale(1.12)}}
+  #shade{position:absolute;inset:0;background:linear-gradient(to top,rgba(13,13,13,.95) 0%,rgba(13,13,13,.78) 24%,rgba(13,13,13,.18) 52%,rgba(13,13,13,.06) 70%,rgba(13,13,13,.5) 100%)}
+  #cap{position:absolute;left:0;right:0;bottom:0;padding:24px 7vw 40px;text-align:center;z-index:4;
+    opacity:0;transform:translateY(14px);transition:opacity .55s ease,transform .55s ease}
+  #cap.in{opacity:1;transform:translateY(0)}
+  #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:10px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-sub::before{content:"";display:inline-block;width:22px;height:1px;background:var(--accent);vertical-align:middle;margin-right:10px;opacity:.7}
+  #scene-sub::after{content:"";display:inline-block;width:22px;height:1px;background:var(--accent);vertical-align:middle;margin-left:10px;opacity:.7}
+  #scene-title{font-size:clamp(23px,3.8vw,42px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 22px rgba(0,0,0,.92);margin-bottom:14px}
+  #scene-text{font-size:clamp(14px,1.6vw,19px);line-height:1.95;max-width:820px;margin:0 auto;text-shadow:0 1px 12px rgba(0,0,0,.98);opacity:.96}
   #scene-link{display:none;margin-top:18px;padding:13px 34px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif;background:rgba(230,149,63,.06);cursor:pointer}
   #scene-link.show{display:inline-block}
   /* 図解カード */
@@ -65,6 +70,22 @@
   #mv .bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:#0d0d0d;border-bottom:1px solid #222}
   #mv .bar b{font-size:13px;letter-spacing:.2em;color:var(--accent);font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-weight:600}
   #mv .bar a{color:var(--dim);font-size:12px;letter-spacing:.2em;text-decoration:none;font-family:sans-serif;cursor:pointer}
+  @media (max-width:640px){
+    #diagram{top:3%;width:96vw;padding:9px 11px 5px;border-radius:13px}
+    #cap{padding:16px 5vw 30px}
+    #scene-sub{margin-bottom:7px;font-size:12px;letter-spacing:.28em}
+    #scene-title{margin-bottom:10px}
+    #scene-text{line-height:1.85;max-height:38vh;overflow-y:auto}
+  }
+  @media (max-width:640px) and (max-height:680px){
+    #scene-text{font-size:13px;line-height:1.7}
+    #scene-title{font-size:20px;margin-bottom:7px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    #art.show{animation:none}
+    #cap{transition:opacity .3s ease}
+    #cap.in{transform:none}
+  }
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
 </head>
@@ -184,11 +205,17 @@ function play(i){
   if(i<0||i>=SCENES.length) return;
   idx=i; const s=SCENES[i];
   const art=document.getElementById('art');
+  const cap=document.getElementById('cap');
   art.classList.remove('show');
-  setTimeout(()=>{ art.style.backgroundImage="url('"+s.img+"')"; art.classList.add('show'); },350);
-  document.getElementById('scene-sub').textContent=s.sub||'';
-  document.getElementById('scene-title').textContent=s.title;
-  document.getElementById('scene-text').textContent=s.text;
+  cap.classList.remove('in');
+  setTimeout(()=>{
+    if(idx!==i) return;
+    art.style.backgroundImage="url('"+s.img+"')"; art.classList.add('show');
+    document.getElementById('scene-sub').textContent=s.sub||'';
+    document.getElementById('scene-title').textContent=s.title;
+    document.getElementById('scene-text').textContent=s.text;
+    cap.classList.add('in');
+  },350);
   const dg=document.getElementById('diagram');
   if(s.dgm && DIAG[s.dgm]){ dg.innerHTML=DIAG[s.dgm]; dg.classList.add('show'); }
   else { dg.classList.remove('show'); setTimeout(()=>{ if(!SCENES[idx]||!SCENES[idx].dgm) dg.innerHTML=''; },500); }
