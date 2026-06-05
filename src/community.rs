@@ -413,7 +413,14 @@ function cp(el,t){{navigator.clipboard.writeText(t).catch(()=>{{}});var h=el.que
 
 // ── public APIs ────────────────────────────────────────────────────────────
 
-pub async fn api_posts() -> Json<serde_json::Value> {
+/// 認証済みか（api_token を cookie か Bearer で持っているか）。
+/// 未認証には実名・本文・メール・トークンを一切出さない（fail-closed）。
+fn is_authed(headers: &HeaderMap) -> bool {
+    let tok = cookie_token(headers).or_else(|| bearer(headers)).unwrap_or_default();
+    member_by_token(&tok).is_some()
+}
+
+pub async fn api_posts(headers: HeaderMap) -> Json<serde_json::Value> {
     {
         let _g = STORE_LOCK.lock().unwrap();
         let _ = archive_locked(); // 消えた火は遅延的に建物へ
@@ -424,24 +431,56 @@ pub async fn api_posts() -> Json<serde_json::Value> {
     posts.reverse(); // newest first
     posts.truncate(100);
     let buildings = load::<Building>("buildings.json").len();
+    let authed = is_authed(&headers);
+    // 未ログインには本文・実名・冒頭を出さない（実名/機密が冒頭に来る投稿で漏れるため）。
+    // 炎の大きさが分かる最小限（件数・種別・時刻）だけをティーザーとして返す。
+    let posts_out: Vec<serde_json::Value> = if authed {
+        posts.iter().map(|p| serde_json::to_value(p).unwrap_or(serde_json::Value::Null)).collect()
+    } else {
+        posts
+            .iter()
+            .map(|p| serde_json::json!({
+                "id": p.id,
+                "kind": p.kind,
+                "created_at": p.created_at,
+                "teaser": true,
+            }))
+            .collect()
+    };
     Json(serde_json::json!({
-        "posts": posts,
+        "posts": posts_out,
         "count": count,
         "fire_alive": alive,
         "remain_secs": remain,
         "ttl_secs": fire_ttl_secs(),
         "buildings": buildings,
+        "authed": authed,
     }))
 }
 
-pub async fn api_buildings() -> Json<serde_json::Value> {
+pub async fn api_buildings(headers: HeaderMap) -> Json<serde_json::Value> {
     {
         let _g = STORE_LOCK.lock().unwrap();
         let _ = archive_locked();
     }
     let mut bs: Vec<Building> = load("buildings.json");
     bs.reverse();
-    Json(serde_json::json!({ "buildings": bs }))
+    if !is_authed(&headers) {
+        // 未ログインには実名・本文を出さない。建物の存在と規模（薪数・期間）だけ。
+        let teaser: Vec<serde_json::Value> = bs
+            .iter()
+            .map(|b| serde_json::json!({
+                "id": b.id,
+                "started_at": b.started_at,
+                "ended_at": b.ended_at,
+                "log_count": b.log_count,
+                "members_count": b.members.len(),
+                "teaser": true,
+            }))
+            .collect();
+        return Json(serde_json::json!({ "buildings": teaser, "authed": false }));
+    }
+    Json(serde_json::json!({ "buildings": bs, "authed": true }))
 }
 
 /// 保存データの可視化用。投稿/メンバー/建物の件数・保存先・最終更新を返す。
@@ -483,12 +522,17 @@ pub async fn api_stats(headers: HeaderMap) -> axum::response::Response {
     })).into_response()
 }
 
-pub async fn api_members() -> Json<serde_json::Value> {
+pub async fn api_members(headers: HeaderMap) -> Json<serde_json::Value> {
+    // 未ログインには実名を出さない。人数のみ（炎を囲む人数の可視化はティーザーとして残す）。
+    let count = load::<Member>("members.json").len();
+    if !is_authed(&headers) {
+        return Json(serde_json::json!({ "count": count, "authed": false }));
+    }
     let members: Vec<serde_json::Value> = load::<Member>("members.json")
         .into_iter()
         .map(|m| serde_json::json!({"name": m.name, "role": m.role, "since": m.created_at}))
         .collect();
-    Json(serde_json::json!({ "members": members }))
+    Json(serde_json::json!({ "count": count, "members": members, "authed": true }))
 }
 
 /// 声の焚き火 (koe.live) の在室人数プロキシ。
@@ -828,9 +872,20 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                 serde_json::json!({"content":[{"type":"text","text": s}]})
             };
 
+            // 読み取りでも実名・本文は認証必須。未認証はティーザー（人数・件数のみ）。
+            let authed = is_authed(&headers);
             match name {
                 "list_logs" => {
-                    let mut posts: Vec<Post> = load("posts.json");
+                    let posts: Vec<Post> = load("posts.json");
+                    let n = posts.iter().filter(|p| is_log(p)).count();
+                    if !authed {
+                        return ok(text(if n == 0 {
+                            "まだ薪がありません。".into()
+                        } else {
+                            format!("🔥 薪が {n} 本くべられています。本文を読むには /community/join でログインしてください。")
+                        }));
+                    }
+                    let mut posts = posts;
                     posts.reverse();
                     posts.truncate(30);
                     let lines: Vec<String> = posts
@@ -844,6 +899,14 @@ pub async fn mcp_post(headers: HeaderMap, Json(req): Json<serde_json::Value>) ->
                     }))
                 }
                 "list_members" => {
+                    let n = load::<Member>("members.json").len();
+                    if !authed {
+                        return ok(text(if n == 0 {
+                            "（まだ誰もいません）".into()
+                        } else {
+                            format!("🔥 {n} 人が火を囲んでいます。名前を見るには /community/join でログインしてください。")
+                        }));
+                    }
                     let ms: Vec<String> = load::<Member>("members.json")
                         .iter()
                         .map(|m| format!("{} ({})", m.name, m.role))
@@ -1015,6 +1078,7 @@ pub async fn buildings_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Html<
             "No buildings yet. When a fire is quiet for 10 minutes, its logs remain here as a building.",
         )
     };
+    let authed = is_authed(&headers);
     let mut bs: Vec<Building> = load("buildings.json");
     bs.reverse();
     let cards: String = if bs.is_empty() {
@@ -1022,10 +1086,19 @@ pub async fn buildings_page(headers: HeaderMap, Query(q): Query<LangQ>) -> Html<
     } else {
         let (lbl_fire, lbl_logs) = if ja { ("焚き火", "薪") } else { ("Fire", "logs") };
         bs.iter().map(|b| {
-            let members = b.members.iter().map(|m| esc(m)).collect::<Vec<_>>().join(if ja {"・"} else {", "});
-            let logs = b.posts.iter().rev().take(6).map(|p| {
-                format!("<div class=bl>🪵 <b>{}</b> {}</div>", esc(&p.author_name), esc(&p.body))
-            }).collect::<Vec<_>>().join("");
+            // 未ログインには実名・本文を出さない。規模（薪数・人数・期間）だけのティーザー。
+            let (members, logs) = if authed {
+                let m = b.members.iter().map(|m| esc(m)).collect::<Vec<_>>().join(if ja {"・"} else {", "});
+                let l = b.posts.iter().rev().take(6).map(|p| {
+                    format!("<div class=bl>🪵 <b>{}</b> {}</div>", esc(&p.author_name), esc(&p.body))
+                }).collect::<Vec<_>>().join("");
+                (m, l)
+            } else {
+                let m = if ja { format!("{} 人", b.members.len()) } else { format!("{} people", b.members.len()) };
+                let teaser = if ja { "ログインすると薪が読めます" } else { "Log in to read the logs" };
+                let l = format!("<div class=bl><a style=\"color:#f0c987\" href=\"/community/join\">🔒 {teaser}</a></div>");
+                (m, l)
+            };
             format!(
                 "<div class=bld><div class=bhead><span class=bicon>🏛</span><div><div class=bt>{lbl_fire} #{id}</div><div class=bm>{lbl_logs} {n} ・ {members}</div></div></div><div class=blogs>{logs}</div><div class=bdate>{start} 〜 {end}</div></div>",
                 id = &b.id[..6.min(b.id.len())], n = b.log_count, members = members, logs = logs,
@@ -1292,15 +1365,21 @@ async function loadPresence(){const el=document.getElementById('presence');try{
   roomPeople=d.count||0;el.textContent=roomPeople>0?T.roomN(roomPeople):T.roomEmpty;el.hidden=false;
   recompIntensity();
 }catch(_){el.hidden=true;}}
+const lockedTeaser=lang==='ja'?'🔒 ログインして読む':'🔒 Log in to read';
 async function load(){try{const r=await fetch('/api/community/posts');const d=await r.json();
   const n=d.count||0;document.getElementById('cn').textContent=n;
   document.getElementById('bn').textContent=d.buildings||0;
   nLogs=n;recompIntensity();
   ttl=d.ttl_secs||600;remain=d.remain_secs||0;if(d.fire_alive)sawFire=true;tick();
-  const m=await (await fetch('/api/community/members')).json();document.getElementById('mn').textContent=(m.members||[]).length;
+  // 人数: 認証済みは members 配列、未認証は count（実名は出ない）
+  const m=await (await fetch('/api/community/members')).json();document.getElementById('mn').textContent=(m.count!=null?m.count:(m.members||[]).length);
   const feed=document.getElementById('feed');
   if(!d.posts||!d.posts.length){feed.innerHTML='<div class=empty>'+T.emptyFeed+'</div>';return;}
   feed.innerHTML=d.posts.map(p=>{const kl=T.kinds[p.kind];const k=kl?'<span class=k data-kind="'+esc(p.kind)+'">'+kl+'</span>':'';
+    // 未ログイン(teaser)では実名・本文・URLを出さない。種別と時刻＋ログイン導線のみ。
+    if(p.teaser||p.body===undefined){
+      return '<div class=log><div class=who>🪵'+k+'</div><div class=body><a href="/community/join" style="color:#f0c987">'+lockedTeaser+'</a></div><div class=t>'+ago(p.created_at)+'</div></div>';
+    }
     const u=p.url?'<div class=body><a href="'+esc(p.url)+'" target=_blank rel=noopener>'+esc(p.url)+'</a></div>':'';
     return '<div class=log><div class=who>'+esc(p.author_name)+k+'</div><div class=body>'+linkify(p.body)+'</div>'+u+'<div class=t>'+ago(p.created_at)+'</div></div>';}).join('');
 }catch(e){}}
