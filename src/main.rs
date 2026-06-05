@@ -3586,7 +3586,7 @@ fn build_suggestions(path: &str) -> String {
         ("/blog", "ブログ"),
         ("/about", "プロフィール"),
         ("/kamishibai", "紙芝居『あなたの中に、悪魔を1匹』"),
-        ("/takibi", "🔥 焚き火（ともしび）"),
+        ("/tomoshibi", "🔥 焚き火（ともしび）"),
         ("/koe", "Koe — 声"),
         ("/music", "音楽"),
         ("/career", "採用・仲間募集"),
@@ -3618,7 +3618,7 @@ fn build_suggestions(path: &str) -> String {
         .collect();
     let chosen: Vec<(&str, &str)> = if close.is_empty() {
         vec![
-            ("/takibi", "🔥 焚き火（ともしび）"),
+            ("/tomoshibi", "🔥 焚き火（ともしび）"),
             ("/kamishibai", "紙芝居『あなたの中に、悪魔を1匹』"),
             ("/projects", "しごと・プロジェクト"),
         ]
