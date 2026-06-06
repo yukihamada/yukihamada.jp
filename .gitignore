@@ -21,3 +21,6 @@ templates/kamishibai-magmag-gate.html
 public/assets/mg-14b7a2be/
 public/audio/mg-14b7a2be-*.mp3
 scripts/restore_magmag.sh
+public/audio/v2/mg-14b7a2be-*.mp3
+public/assets/kamishibai-v2/magmag/
+scripts/kamishibai_v2/magmag.json
