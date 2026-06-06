@@ -81,3 +81,7 @@ Anthropic自身がドキュメントで言い切っている——「Claudeに�
 **👉 [［MUホルダー限定］実戦マニュアル全文を読む — wearmu.com/vault](https://wearmu.com/vault)**
 
 Tシャツを持っていない人はこちらから → [wearmu.com で MU を買う](https://wearmu.com/buy)
+
+---
+
+こうやってAIに任せて作っているプロダクトの一つが [bim.house](https://bim.house) — 言葉から建築BIMが建ち、建築基準法チェックまでその場で走る（「言葉が、建つ。」）。
