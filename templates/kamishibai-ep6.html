@@ -32,6 +32,9 @@
   #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
   #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
   #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #invite{position:absolute;left:0;right:0;bottom:96px;display:none;justify-content:center;opacity:0;transition:opacity 1.6s ease}
+  #invite.show{display:flex;opacity:1}
+  #invite a{padding:11px 26px;border:1px solid rgba(230,149,63,.55);color:var(--accent);font-size:13px;letter-spacing:.14em;border-radius:3px;text-decoration:none;background:rgba(13,13,13,.55);font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
@@ -51,7 +54,8 @@
     <div style="margin-top:2px;font-size:12px;letter-spacing:.1em;color:#e6953f;font-family:sans-serif;line-height:1.7">🔊 声が流れます ・ iPhoneは「マナーモード（消音）」を解除してね</div>
     <div class="start">タップで、はじまる</div>
   </div>
-  <div id="hint">クリック＝次へ ／ ←戻る</div>
+  <div id="invite"><a href="https://atsm.wtf" target="_blank" rel="noopener">🔥 この紙芝居は、焚き火で生まれました — 火を囲みに</a></div>
+<div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
 const SCENES=[{"sub": "宣言", "title": "一人でやる人間です。", "text": "私は、一人でやる人間です。誰にも頼らない。それを、今から証明します。", "img": "/assets/kamishibai-v2/EP6/scene1.png", "audio": "/audio/v2/minna-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "前提", "title": "計算だけで、考える。", "text": "頼るのは、弱いから。みんなで、なんて、なぐさめだ。だから情緒をぜんぶ抜いて、計算だけで考えてみます。証明は、六つ。ひとつずつ、いきます。", "img": "/assets/kamishibai-v2/EP6/scene2.png", "audio": "/audio/v2/minna-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "証明 一", "title": "十倍、早い。", "text": "出口の見えない、まっ暗な部屋。一人なら、一本の道しか試せない。十人いれば、十本を同時に試せる。答えに当たるのは、十倍、早い。", "img": "/assets/kamishibai-v2/EP6/scene3.png", "audio": "/audio/v2/minna-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "証明 二", "title": "盲点は、掛け算で消える。", "text": "私の見落としは、私には見えない。だから消せない。でも、あなたには見える。あなたの見落としは、私が拾う。見えない場所が、掛け算で、消えていく。", "img": "/assets/kamishibai-v2/EP6/scene4.png", "audio": "/audio/v2/minna-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "証明 三", "title": "当たりは、人の数だけ。", "text": "十回ふって、一回当たる。十人なら、百回。……計算は、まだ、私の味方のはずだった。", "img": "/assets/kamishibai-v2/EP6/scene5.png", "audio": "/audio/v2/minna-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "証明 四", "title": "計算が、おかしい。", "text": "ここで、計算が、おかしなことを言い出した。人が二倍になると、力は二倍。ところが、つながりの数は、四倍になる。三倍なら、九倍。私は、計算違いを疑いました。", "img": "/assets/kamishibai-v2/EP6/scene6.png", "audio": "/audio/v2/minna-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "証明 五", "title": "下手な人がいて、最大になれる。", "text": "私のほうが、何でも上手い。だから一人でやるべきだ。そう思っていました。でも計算はこう答えた。私が一番得意なことだけに集中すれば、二人の合計は、一人ぶんより、大きくなる。下手な人がいて、はじめて、私は最大になれる。", "img": "/assets/kamishibai-v2/EP6/scene7.png", "audio": "/audio/v2/minna-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "証明 六", "title": "わけても、減らない。", "text": "パンは、わければ減る。でも、知ったことは、わけても減らない。私が教えても、私の中から消えない。あなたに渡るぶんだけ、世界が、まるごと増える。", "img": "/assets/kamishibai-v2/EP6/scene8.png", "audio": "/audio/v2/minna-kam-8.mp3", "buy": "", "cta": ""}, {"sub": "反転", "title": "正反対でした。", "text": "六つの計算が、ぜんぶ、同じ方向を指していました。全員が抱えこめば、全員が負ける。全員がわけあえば、全員が勝つ。私が証明したかったことの、正反対でした。", "img": "/assets/kamishibai-v2/EP6/scene9.png", "audio": "/audio/v2/minna-kam-9.mp3", "buy": "", "cta": ""}, {"sub": "むすび", "title": "みんなの火は、朝まで。", "text": "冷たく証明して、たどりついた答えが、あの、あたたかい火でした。一人で守った火は、いつか消える。みんなで分けた火は、朝まで残る。", "img": "/assets/kamishibai-v2/EP6/scene10.png", "audio": "/audio/v2/minna-kam-10.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "火のそばで、会いましょう。", "text": "だから、みんなで。火のそばで、会いましょう。", "img": "/assets/kamishibai-v2/EP6/scene11.png", "audio": "/audio/v2/minna-kam-11.mp3", "buy": "https://atsm.wtf", "cta": "🔥 焚き火へ"}];
@@ -71,9 +75,15 @@ async function playAudio(i){
     if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
     if(idx!==i) return;
     asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
-    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); else if(idx===i && idx===SCENES.length-1) setTimeout(showInvite,1200); };
     asrc.start(0);
   }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+
+// 焚き火への誘い: 最終場面の声が終わったら一度だけ。見せたら二度と出ない(localStorage)
+function showInvite(){
+  try{ if(localStorage.getItem('kmb_takibi_invite_seen')) return; localStorage.setItem('kmb_takibi_invite_seen','1'); }catch(_){ return }
+  document.getElementById('invite').classList.add('show');
 }
 function play(i){
   if(i<0||i>=SCENES.length) return;

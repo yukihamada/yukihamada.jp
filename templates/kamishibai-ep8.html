@@ -32,6 +32,9 @@
   #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
   #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
   #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #invite{position:absolute;left:0;right:0;bottom:96px;display:none;justify-content:center;opacity:0;transition:opacity 1.6s ease}
+  #invite.show{display:flex;opacity:1}
+  #invite a{padding:11px 26px;border:1px solid rgba(230,149,63,.55);color:var(--accent);font-size:13px;letter-spacing:.14em;border-radius:3px;text-decoration:none;background:rgba(13,13,13,.55);font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
@@ -51,7 +54,8 @@
     <div style="margin-top:2px;font-size:12px;letter-spacing:.1em;color:#e6953f;font-family:sans-serif;line-height:1.7">🔊 声が流れます ・ iPhoneは「マナーモード（消音）」を解除してね</div>
     <div class="start">タップで、はじまる</div>
   </div>
-  <div id="hint">クリック＝次へ ／ ←戻る</div>
+  <div id="invite"><a href="https://atsm.wtf" target="_blank" rel="noopener">🔥 この紙芝居は、焚き火で生まれました — 火を囲みに</a></div>
+<div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
 const SCENES=[{"sub": "常識", "title": "親切な人は、損をする?", "text": "「親切な人ほど、貧乏くじを引く」。本当に、そうでしょうか。組織の、いちばん下にいた人。調べたら、ほとんどが、人に与える人でした。", "img": "/assets/kamishibai-v2/EP8/scene1.png", "audio": "/audio/v2/give-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "三人", "title": "ギバー、テイカー、マッチャー。", "text": "世の中には、三人います。先に渡す人。先に奪う人。そして、もらった分だけ返す人。研究者は、ギバー、テイカー、マッチャーと呼びました。", "img": "/assets/kamishibai-v2/EP8/scene2.png", "audio": "/audio/v2/give-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "意外", "title": "いちばん上も、与える人。", "text": "ふつうに考えれば、奪う人が、得をしそうです。でも、成績のいちばん上。そこにいたのも、また、与える人でした。", "img": "/assets/kamishibai-v2/EP8/scene3.png", "audio": "/audio/v2/give-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "裏返る", "title": "自分も、守るかどうか。", "text": "同じ、与える人なのに。なぜ、底に沈む人と、遠くへ行く人に、分かれるのか。違いは、たった一つでした。自分も、守るかどうか。", "img": "/assets/kamishibai-v2/EP8/scene4.png", "audio": "/audio/v2/give-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "橋", "title": "向ける先を、選ぶ。", "text": "優しさを、やめるのではなく。向ける先を、選ぶ。", "img": "/assets/kamishibai-v2/EP8/scene5.png", "audio": "/audio/v2/give-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "作法", "title": "賢く、配る。", "text": "選んだら、まず、気前よく。奪うだけの相手だと、わかったら——返してくれたぶんだけ、返す側に回る。優しさは、無限じゃない。だから、賢く配る。", "img": "/assets/kamishibai-v2/EP8/scene6.png", "audio": "/audio/v2/give-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "砂漠の街", "title": "先に渡す、それだけ。", "text": "すり減らさずに渡す。それを、街まるごとでやった場所がある。砂漠のまんなか、お金を捨てた街。バーニングマン。あるのは、先に渡す、それだけ。一週間で街ができて、跡形もなく、消える。", "img": "/assets/kamishibai-v2/EP8/scene7.png", "audio": "/audio/v2/give-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "むすび", "title": "すり減らさずに。", "text": "貧乏くじを引くのは、優しさのせいじゃない。自分を、すり減らしたから。遠くまで行く人は、みんな、先に渡してきました。ただし、自分を、すり減らさずに。", "img": "/assets/kamishibai-v2/EP8/scene8.png", "audio": "/audio/v2/give-kam-8.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "かしこく、先に、渡す。", "text": "見返りは、考えなくていい。ただ、最初の一本を、誰かに。——かしこく、先に、渡す。", "img": "/assets/kamishibai-v2/EP8/scene9.png", "audio": "/audio/v2/give-kam-9.mp3", "buy": "https://atsm.wtf", "cta": "🔥 最初の一本を"}];
@@ -71,9 +75,15 @@ async function playAudio(i){
     if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
     if(idx!==i) return;
     asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
-    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); else if(idx===i && idx===SCENES.length-1) setTimeout(showInvite,1200); };
     asrc.start(0);
   }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+
+// 焚き火への誘い: 最終場面の声が終わったら一度だけ。見せたら二度と出ない(localStorage)
+function showInvite(){
+  try{ if(localStorage.getItem('kmb_takibi_invite_seen')) return; localStorage.setItem('kmb_takibi_invite_seen','1'); }catch(_){ return }
+  document.getElementById('invite').classList.add('show');
 }
 function play(i){
   if(i<0||i>=SCENES.length) return;

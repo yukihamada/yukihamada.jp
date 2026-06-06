@@ -1257,6 +1257,105 @@ async fn kamishibai_ep8_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep8.html"))
 }
 
+// ── 紙芝居・試写席: 一回見たら燃え尽きるリンク ────────────────────────
+// GET  /kamishibai/hi/{token}        … 未燃焼=幕ページ(まだ燃やさない=bot先読み対策) / 燃焼済み=燃え尽きページ
+// POST /kamishibai/hi/{token}/hiraku … 「幕を、開ける」で初めて燃焼(O_EXCLで原子的)。2人目以降は410
+// トークン平文はコードに置かずSHA-256ハッシュのみ照合。燃焼の焼き印は /data に永続化(deploy跨ぎ有効)。
+const HISEKI_TOKEN_HASHES: &[&str] = &[
+    "dd067ac5557980577c00db7aca011a6bc67584d05c8172759c171e4b1d625dc4", // 2026-06-07 焚き火試写席 第1号
+];
+fn hiseki_token_ok(token: &str) -> bool {
+    use sha2::Digest;
+    if token.len() > 64 || !token.chars().all(|c| c.is_ascii_alphanumeric()) {
+        return false;
+    }
+    let h: String = sha2::Sha256::digest(token.as_bytes())
+        .iter()
+        .map(|b| format!("{:02x}", b))
+        .collect();
+    HISEKI_TOKEN_HASHES.contains(&h.as_str())
+}
+fn hiseki_mark_path(token: &str) -> String {
+    let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+    format!("{dir}/kamishibai_hiseki_{token}.burned")
+}
+fn hiseki_is_burned(token: &str) -> bool {
+    std::path::Path::new(&hiseki_mark_path(token)).exists()
+}
+/// 焼き印を原子的に押す。戻り値: 自分が最初の一人だったか
+fn hiseki_burn(token: &str) -> bool {
+    use std::io::Write;
+    match std::fs::OpenOptions::new()
+        .write(true)
+        .create_new(true)
+        .open(hiseki_mark_path(token))
+    {
+        Ok(mut f) => {
+            let ts = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map(|d| d.as_secs())
+                .unwrap_or(0);
+            let _ = writeln!(f, "burned_at_unix={ts}");
+            true
+        }
+        Err(_) => false,
+    }
+}
+fn hiseki_shell(body: &str) -> String {
+    format!(
+        r##"<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow" />
+<title>試写席 — 紙芝居</title>
+<style>
+  body{{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0d0d0d;color:#ede8de;font-family:"Hiragino Mincho ProN","Yu Mincho",serif;text-align:center}}
+  .w{{padding:32px;max-width:560px}} h1{{font-size:clamp(22px,4vw,34px);letter-spacing:.12em;font-weight:600;margin:0 0 18px}}
+  p{{line-height:2.1;color:#bdb7aa;font-size:15px;margin:0 0 26px}}
+  .fire{{font-size:44px;margin-bottom:18px}}
+  button,a.b{{display:inline-block;padding:14px 44px;border:1px solid #e6953f;color:#e6953f;background:none;letter-spacing:.3em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;cursor:pointer;text-decoration:none}}
+  .dim{{margin-top:22px;font-size:12px;color:#6f6a60;letter-spacing:.15em}}
+</style></head><body><div class="w">{body}</div></body></html>"##
+    )
+}
+async fn kamishibai_hiseki_page(axum::extract::Path(token): axum::extract::Path<String>) -> Response {
+    if !hiseki_token_ok(&token) {
+        return (StatusCode::NOT_FOUND, Html(hiseki_shell(
+            r#"<div class="fire">🌫</div><h1>その席は、ありません。</h1><p>リンクが欠けているか、もう風に消えたか。</p>"#,
+        ))).into_response();
+    }
+    if hiseki_is_burned(&token) {
+        return (StatusCode::GONE, Html(hiseki_shell(
+            r#"<div class="fire">🪵</div><h1>この薪は、燃え尽きました。</h1>
+<p>最初の一人が、もう幕を開けました。<br>でも、火は毎晩くべられます——21時、焚き火に次の一話。</p>
+<a class="b" href="https://atsm.wtf" rel="noopener">🔥 火を囲みに</a>
+<div class="dim">薪は、一度しか燃えない。だから、あたたかい。</div>"#,
+        ))).into_response();
+    }
+    Html(hiseki_shell(&format!(
+        r#"<div class="fire">🔥</div><h1>一夜限りの、試写席。</h1>
+<p>この薪は、最初に幕を開けた<b>一人だけ</b>が観られます。<br>開いた瞬間、燃えて消えます。<br>あなたが、その一人になりますか。</p>
+<button id="open">幕を、開ける</button>
+<div class="dim">そっと閉じれば、まだ燃えません。</div>
+<script>
+document.getElementById('open').addEventListener('click',async()=>{{
+  const r=await fetch('/kamishibai/hi/{token}/hiraku',{{method:'POST'}});
+  if(r.ok){{ document.querySelector('.w').innerHTML='<div class="fire">🔥</div><h1>あなたが、最初の一人です。</h1><p>ようこそ。</p>'; setTimeout(()=>location.href='/kamishibai',1600); }}
+  else location.reload();
+}});
+</script>"#,
+    ))).into_response()
+}
+async fn kamishibai_hiseki_open(axum::extract::Path(token): axum::extract::Path<String>) -> Response {
+    if !hiseki_token_ok(&token) {
+        return StatusCode::NOT_FOUND.into_response();
+    }
+    if hiseki_burn(&token) {
+        (StatusCode::OK, axum::Json(serde_json::json!({"first": true}))).into_response()
+    } else {
+        StatusCode::GONE.into_response()
+    }
+}
+
 // あそビュー講演(2026.06.04)の御礼スライド。本人クローン声つき・全5場面。
 // 画像 /assets/asoview-thanks/、音声 /audio/asoview-thanks-N.mp3 を WebAudio で。
 async fn thanks_asoview_page() -> impl IntoResponse {
@@ -6997,6 +7096,8 @@ async fn main() {
         .route("/transformer", get(kamishibai_ep7_page))
         .route("/attention", get(kamishibai_ep7_page))
         .route("/kamishibai/8", get(kamishibai_ep8_page))
+        .route("/kamishibai/hi/{token}", get(kamishibai_hiseki_page))
+        .route("/kamishibai/hi/{token}/hiraku", post(kamishibai_hiseki_open))
         .route("/give", get(kamishibai_ep8_page))
         .route("/saki", get(kamishibai_ep8_page))
         .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))

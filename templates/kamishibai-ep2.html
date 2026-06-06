@@ -32,6 +32,9 @@
   #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
   #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
   #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #invite{position:absolute;left:0;right:0;bottom:96px;display:none;justify-content:center;opacity:0;transition:opacity 1.6s ease}
+  #invite.show{display:flex;opacity:1}
+  #invite a{padding:11px 26px;border:1px solid rgba(230,149,63,.55);color:var(--accent);font-size:13px;letter-spacing:.14em;border-radius:3px;text-decoration:none;background:rgba(13,13,13,.55);font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
@@ -51,7 +54,8 @@
     <div style="margin-top:2px;font-size:12px;letter-spacing:.1em;color:#e6953f;font-family:sans-serif;line-height:1.7">🔊 声が流れます ・ iPhoneは「マナーモード（消音）」を解除してね</div>
     <div class="start">タップで、はじまる</div>
   </div>
-  <div id="hint">クリック＝次へ ／ ←戻る</div>
+  <div id="invite"><a href="https://atsm.wtf" target="_blank" rel="noopener">🔥 この紙芝居は、焚き火で生まれました — 火を囲みに</a></div>
+<div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
 const SCENES=[{"sub": "夜中の二時", "title": "ハンコを、押せない。", "text": "夜中の、二時。画面の向こうの、賢い相棒に、ぜんぶ聞いてた。契約も、税金も、商標も。返事は、速い。正しい。なのに、その手は、ハンコを、押せない。", "img": "/assets/kamishibai-v2/EP2/scene1.png", "audio": "/audio/v2/ep2v2-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "ひとりで", "title": "誰の手も、いらない?", "text": "ずっと、こう思ってた。ひとりで、世界に届くと思ってた。いちどなんて、会社ごと傾く判断まで、相棒に丸投げしかけた。道具がこれだけ賢いなら、もう、誰の手もいらないって。", "img": "/assets/kamishibai-v2/EP2/scene2.png", "audio": "/audio/v2/ep2v2-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "最初のひとり", "title": "言葉を、守る人。", "text": "でも、自分の言葉に、名前をつけて守る日が来た。初めて知ったんです——言葉は、形にしないと、守れない。その人は、僕の言葉を、誰にも盗られない『形』に、変えてくれた。——言葉を、守る人。", "img": "/assets/kamishibai-v2/EP2/scene3.png", "audio": "/audio/v2/ep2v2-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "ふたり目", "title": "専門家って、人だ。", "text": "つぎは、ずっと苦手だと思ってた人。数字の海に沈みかけた僕を、引っぱり上げてくれた。その手の確かさで、わかったんです——専門家って、人だ。気づけば、空っぽだった椅子が、ひとつ、ふたつ、埋まっていく。", "img": "/assets/kamishibai-v2/EP2/scene4.png", "audio": "/audio/v2/ep2v2-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "裏返る", "title": "逆だった。", "text": "AIが来て、専門家は、いらなくなる。——逆だった。冷たい下調べを、AIが、ぜんぶ持っていった。だから人の手は、やっと、最後の一押しに、戻ってきた。AIは、0.2秒で書類を作る。でも、この一押しには、指紋が残る。", "img": "/assets/kamishibai-v2/EP2/scene5.png", "audio": "/audio/v2/ep2v2-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "芯", "title": "真ん中にいるのは、人。", "text": "AIは、速さ。専門家は、深さ。そして、隣にいてくれる人が、距離を、ゼロにする。でも真ん中にいるのは、ずっと、人でした。", "img": "/assets/kamishibai-v2/EP2/scene6.png", "audio": "/audio/v2/ep2v2-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "ふたたび、夜中の二時", "title": "満席だった。", "text": "夜中の二時。画面の向こうの相棒は、いまも、速い。でも、ハンコを押すのも、隣で頷くのも、最後に『いこう』と言うのも、ぜんぶ、人だった。ひとりで届くと思ってた世界は、いつのまにか、満席だった。", "img": "/assets/kamishibai-v2/EP2/scene7.png", "audio": "/audio/v2/ep2v2-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "隣に、いい奴らは?", "text": "あなたの隣に、いい奴らは、いますか。", "img": "/assets/kamishibai-v2/EP2/scene8.png", "audio": "/audio/v2/ep2v2-kam-8.mp3", "buy": "https://atsm.wtf", "cta": "🔥 火を囲みに"}];
@@ -71,9 +75,15 @@ async function playAudio(i){
     if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
     if(idx!==i) return;
     asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
-    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); else if(idx===i && idx===SCENES.length-1) setTimeout(showInvite,1200); };
     asrc.start(0);
   }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+
+// 焚き火への誘い: 最終場面の声が終わったら一度だけ。見せたら二度と出ない(localStorage)
+function showInvite(){
+  try{ if(localStorage.getItem('kmb_takibi_invite_seen')) return; localStorage.setItem('kmb_takibi_invite_seen','1'); }catch(_){ return }
+  document.getElementById('invite').classList.add('show');
 }
 function play(i){
   if(i<0||i>=SCENES.length) return;
