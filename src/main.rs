@@ -1407,6 +1407,104 @@ async fn room_presence(
     (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "peers": count, "cap": 6 }))).into_response()
 }
 
+// ── 文字起こしログ ────────────────────────────────────────────────
+// Voice in /room is mesh WebRTC (P2P) — audio never reaches this server.
+// Each participant's browser transcribes its OWN mic locally (Web Speech API,
+// 📝 button in room.html, always visible + toggleable) and POSTs final text
+// lines here. Stored as JSONL on /data; reading requires MEET_ADMIN_TOKEN.
+#[derive(serde::Deserialize)]
+struct TranscriptPost {
+    #[serde(default)]
+    name: String,
+    text: String,
+}
+
+fn room_transcript_file() -> (String, String) {
+    let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+    let file = format!("{dir}/room_transcripts.jsonl");
+    (dir, file)
+}
+
+async fn room_transcript_post(
+    State(state): State<Arc<AppState>>,
+    Path(room_id): Path<String>,
+    headers: HeaderMap,
+    Json(body): Json<TranscriptPost>,
+) -> impl IntoResponse {
+    let ip = headers
+        .get("x-forwarded-for")
+        .and_then(|v| v.to_str().ok())
+        .and_then(|s| s.split(',').next())
+        .unwrap_or("?")
+        .trim()
+        .to_string();
+    // バケットは既存 chat_rate_limit を "tr:" プレフィックスで間借り(devil_lead と同パターン)
+    if rate_limited(&state.chat_rate_limit, &format!("tr:{ip}"), 40, 60) {
+        return (StatusCode::TOO_MANY_REQUESTS, "rate limited").into_response();
+    }
+    let room: String = room_id
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .take(64)
+        .collect();
+    let text: String = body.text.trim().chars().take(500).collect();
+    if room.is_empty() || text.is_empty() {
+        return (StatusCode::BAD_REQUEST, "empty").into_response();
+    }
+    let name: String = body.name.trim().chars().take(40).collect();
+    let (dir, file) = room_transcript_file();
+    if std::fs::metadata(&file).map(|m| m.len() > 50_000_000).unwrap_or(false) {
+        return (StatusCode::INSUFFICIENT_STORAGE, "log full").into_response(); // 肥大化ガード
+    }
+    let rec = serde_json::json!({
+        "ts": chrono::Utc::now().to_rfc3339(),
+        "room": room,
+        "name": if name.is_empty() { "guest".into() } else { name },
+        "text": text,
+    });
+    let _ = std::fs::create_dir_all(&dir);
+    use std::io::Write;
+    if let Ok(mut f) = std::fs::OpenOptions::new().create(true).append(true).open(&file) {
+        let _ = writeln!(f, "{rec}");
+    }
+    StatusCode::NO_CONTENT.into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct TranscriptQuery {
+    #[serde(default)]
+    token: String,
+    limit: Option<usize>,
+}
+
+async fn room_transcript_get(
+    State(state): State<Arc<AppState>>,
+    Path(room_id): Path<String>,
+    Query(q): Query<TranscriptQuery>,
+    headers: HeaderMap,
+) -> impl IntoResponse {
+    if !meet_admin_authed(&state, &headers, &q.token) {
+        return (StatusCode::UNAUTHORIZED, "unauthorized").into_response();
+    }
+    let room: String = room_id
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .take(64)
+        .collect();
+    let (_, file) = room_transcript_file();
+    let raw = std::fs::read_to_string(&file).unwrap_or_default();
+    let limit = q.limit.unwrap_or(500).min(5000);
+    let mut lines: Vec<serde_json::Value> = raw
+        .lines()
+        .rev()
+        .filter_map(|l| serde_json::from_str::<serde_json::Value>(l).ok())
+        .filter(|v| v.get("room").and_then(|r| r.as_str()) == Some(room.as_str()))
+        .take(limit)
+        .collect();
+    lines.reverse(); // chronological
+    Json(serde_json::json!({ "room": room, "count": lines.len(), "lines": lines })).into_response()
+}
+
 // KOE — 声でつなぐ。相手の名前を入れるとルームを自動生成し、リンクをワンタップで共有。
 // 相手が入室すると presence で「つながった」を表示。声/顔の実体は既存 /room（mesh WebRTC）。
 async fn connect_page() -> impl IntoResponse {
@@ -7068,6 +7166,8 @@ async fn main() {
         .route("/api/room/{id}/presence", get(room_presence))
         // alias for external consumers (atsm.wtf 焚き火の「入る前の在室数」) — same read-only handler
         .route("/api/room/{id}/peers", get(room_presence))
+        // 文字起こしログ: POST=参加者ブラウザからのテキスト行 / GET=admin閲覧 (MEET_ADMIN_TOKEN)
+        .route("/api/room/{id}/transcript", post(room_transcript_post).get(room_transcript_get))
         .route("/ws/room/{id}", get(ws_room))
         .route("/yukiterm", get(yukiterm_script))
         .route("/chat", get(chat_page))

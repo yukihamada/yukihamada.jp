@@ -175,6 +175,7 @@
     <button class="ctl" id="btn-cam" title="カメラ">🎥</button>
     <button class="ctl" id="btn-screen" title="画面共有">🖥️</button>
     <button class="ctl" id="btn-chat" title="チャット">💬<span class="badge" id="chat-badge" hidden></span></button>
+    <button class="ctl" id="btn-transcript" title="文字起こし" hidden>📝</button>
     <button class="ctl leave" id="btn-leave" title="退出">📴</button>
   </div>
 
@@ -207,6 +208,7 @@
         notFoundTitle: '会議室が見つかりません', notFoundText: 'リンクをもう一度ご確認ください。',
         mic: 'マイク', cam: 'カメラ', leave: '退出',
         screen: '画面共有', chat: 'チャット', msgPh: 'メッセージ…', send: '送信', namePrompt: '名前を入力してください',
+        trOn: '📝 文字起こしON（自分の声のみ・タップでOFF）', trOff: '📝 文字起こしOFF（タップでON）',
       },
       en: {
         title: 'Video room — Yuki Hamada', app: 'Yuki Hamada · Meeting',
@@ -222,6 +224,7 @@
         notFoundTitle: 'Room not found', notFoundText: 'Please check the link and try again.',
         mic: 'Microphone', cam: 'Camera', leave: 'Leave',
         screen: 'Share screen', chat: 'Chat', msgPh: 'Message…', send: 'Send', namePrompt: 'Enter your name',
+        trOn: '📝 Transcript ON (your own voice only · tap to turn off)', trOff: '📝 Transcript OFF (tap to turn on)',
       },
     };
     const qLang = new URLSearchParams(location.search).get('lang');
@@ -360,6 +363,7 @@
       localV.srcObject = localStream;
       camVideoTrack = localStream.getVideoTracks()[0] || null;
       if (myName) setTileName(meTile, myName);
+      trStart();
 
       const proto = location.protocol === 'https:' ? 'wss' : 'ws';
       ws = new WebSocket(`${proto}://${location.host}/ws/room/${room}`);
@@ -443,8 +447,58 @@
       const on = localStream.getVideoTracks().some(t => (t.enabled = !t.enabled));
       this.classList.toggle('off', !on); this.textContent = on ? '🎥' : '🚫';
     };
+
+    // ── 文字起こし (own voice only) ────────────────────────────────────
+    // Audio stays peer-to-peer and never reaches the server; each participant's
+    // browser transcribes its OWN mic locally (Web Speech API) and posts text
+    // lines to /api/room/<id>/transcript. The 📝 button is always visible while
+    // active so everyone knows, and tapping it turns it off. Read access to the
+    // log is admin-only. Hidden entirely when the browser has no SpeechRecognition.
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const trBtn = document.getElementById('btn-transcript');
+    let trOn = localStorage.getItem('rtcTranscript') !== 'off';
+    let trRec = null, trActive = false;
+    function micLive() { return !!(localStream && localStream.getAudioTracks().some(t => t.enabled)); }
+    function trBadge() {
+      trBtn.hidden = !SR;
+      trBtn.classList.toggle('off', !trOn);
+      trBtn.title = trOn ? T.trOn : T.trOff;
+      trBtn.textContent = trOn ? '📝' : '🚫';
+    }
+    function trPost(text) {
+      if (!text) return;
+      fetch(`/api/room/${room}/transcript`, {
+        method: 'POST', headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ name: myName || '', text }), keepalive: true,
+      }).catch(() => {});
+    }
+    function trStart() {
+      if (!SR || !trOn || trActive || !localStream) return;
+      trRec = new SR();
+      trRec.lang = lang === 'ja' ? 'ja-JP' : (navigator.language || 'en-US');
+      trRec.continuous = true; trRec.interimResults = false;
+      trRec.onresult = (e) => {
+        if (!trOn || !micLive()) return; // muted mic ⇒ drop (privacy follows the 🎤 button)
+        for (let i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) trPost(e.results[i][0].transcript.trim());
+        }
+      };
+      // Chrome stops recognition every ~60s of silence — restart while ON.
+      trRec.onend = () => { trActive = false; if (trOn) setTimeout(trStart, 800); };
+      trRec.onerror = () => {};
+      try { trRec.start(); trActive = true; } catch (_) {}
+    }
+    function trStop() { if (trRec) { try { trRec.stop(); } catch (_) {} } trActive = false; }
+    trBtn.onclick = function () {
+      trOn = !trOn;
+      localStorage.setItem('rtcTranscript', trOn ? 'on' : 'off');
+      trBadge();
+      if (trOn) trStart(); else trStop();
+    };
+    trBadge();
     document.getElementById('btn-leave').onclick = function () {
       try { send({ t: 'leave' }); } catch (_) {}
+      trOn = false; trStop();
       peers.forEach(p => { try { p.pc.close(); } catch (_) {} });
       if (ws) ws.close();
       if (localStream) localStream.getTracks().forEach(t => t.stop());
