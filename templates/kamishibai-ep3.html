@@ -32,6 +32,9 @@
   #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
   #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
   #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #invite{position:absolute;left:0;right:0;bottom:96px;display:none;justify-content:center;opacity:0;transition:opacity 1.6s ease}
+  #invite.show{display:flex;opacity:1}
+  #invite a{padding:11px 26px;border:1px solid rgba(230,149,63,.55);color:var(--accent);font-size:13px;letter-spacing:.14em;border-radius:3px;text-decoration:none;background:rgba(13,13,13,.55);font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
@@ -51,7 +54,8 @@
     <div style="margin-top:2px;font-size:12px;letter-spacing:.1em;color:#e6953f;font-family:sans-serif;line-height:1.7">🔊 声が流れます ・ iPhoneは「マナーモード（消音）」を解除してね</div>
     <div class="start">タップで、はじまる</div>
   </div>
-  <div id="hint">クリック＝次へ ／ ←戻る</div>
+  <div id="invite"><a href="https://atsm.wtf" target="_blank" rel="noopener">🔥 この紙芝居は、焚き火で生まれました — 火を囲みに</a></div>
+<div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
 const SCENES=[{"sub": "白状", "title": "いちばん雑だったのは。", "text": "任せると、雑になる。だから、ぜんぶ自分でやった。——いちばん雑だったのは、ぼくでした。", "img": "/assets/kamishibai-v2/EP3/scene1.png", "audio": "/audio/v2/asoview-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "火のそば", "title": "「なんで自分でやってるんですか」", "text": "火を囲んで作る夜に、若いやつに言われたんです。「それ、なんで自分でやってるんですか」。返せなかった。理由なんて、なかったから。「自分のほうが上手いから」——本当に?", "img": "/assets/kamishibai-v2/EP3/scene2.png", "audio": "/audio/v2/asoview-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "任せ方、四つ", "title": "手が、空いてる。", "text": "そこから、任せ方を覚えました。雑でいい、まず投げろ。証拠を見せろ、言葉じゃなく。十回叩かせろ、一発で諦めるな。寝てる間に、終わらせろ。——四つやって、気づいた。手が、空いてる。", "img": "/assets/kamishibai-v2/EP3/scene3.png", "audio": "/audio/v2/asoview-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "裏返る", "title": "退屈はAIに。ワクワクは人に。", "text": "ここで、ひやっとした。手が空くって、要らないってことか? ——違った。空いた手のひらに、初めて、いちばん面白いものが落ちてきた。退屈は、AIに。ワクワクは、人に。——でも、それだけじゃ、まだ半分でした。", "img": "/assets/kamishibai-v2/EP3/scene4.png", "audio": "/audio/v2/asoview-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "空気のように", "title": "ここからが、人の番だ。", "text": "ぜんぶが、息を吸って吐くみたいに、出てくる。作るを、空気のように。——さあ、ここからが、人の番だ。", "img": "/assets/kamishibai-v2/EP3/scene5.png", "audio": "/audio/v2/asoview-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "芯", "title": "最後の魔法は、人がかける。", "text": "最後の魔法は、人がかける。何を作るかじゃない。なぜ作るか。誰を笑わせたいか。それだけは、誰にも任せられない。——握りしめてたぼくが、最後に手放さなかったのは、それでした。", "img": "/assets/kamishibai-v2/EP3/scene6.png", "audio": "/audio/v2/asoview-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "また、火の前で。", "text": "四つの任せ方は、ここに置いておきます。持っていって、好きに叩いてください。——また、火の前で。", "img": "/assets/kamishibai-v2/EP3/scene7.png", "audio": "/audio/v2/asoview-kam-7.mp3", "buy": "", "cta": ""}];
@@ -71,9 +75,15 @@ async function playAudio(i){
     if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
     if(idx!==i) return;
     asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
-    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); else if(idx===i && idx===SCENES.length-1) setTimeout(showInvite,1200); };
     asrc.start(0);
   }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+
+// 焚き火への誘い: 最終場面の声が終わったら一度だけ。見せたら二度と出ない(localStorage)
+function showInvite(){
+  try{ if(localStorage.getItem('kmb_takibi_invite_seen')) return; localStorage.setItem('kmb_takibi_invite_seen','1'); }catch(_){ return }
+  document.getElementById('invite').classList.add('show');
 }
 function play(i){
   if(i<0||i>=SCENES.length) return;

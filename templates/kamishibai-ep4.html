@@ -32,6 +32,9 @@
   #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
   #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
   #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #invite{position:absolute;left:0;right:0;bottom:96px;display:none;justify-content:center;opacity:0;transition:opacity 1.6s ease}
+  #invite.show{display:flex;opacity:1}
+  #invite a{padding:11px 26px;border:1px solid rgba(230,149,63,.55);color:var(--accent);font-size:13px;letter-spacing:.14em;border-radius:3px;text-decoration:none;background:rgba(13,13,13,.55);font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
@@ -51,7 +54,8 @@
     <div style="margin-top:2px;font-size:12px;letter-spacing:.1em;color:#e6953f;font-family:sans-serif;line-height:1.7">🔊 声が流れます ・ iPhoneは「マナーモード（消音）」を解除してね</div>
     <div class="start">タップで、はじまる</div>
   </div>
-  <div id="hint">クリック＝次へ ／ ←戻る</div>
+  <div id="invite"><a href="https://atsm.wtf" target="_blank" rel="noopener">🔥 この紙芝居は、焚き火で生まれました — 火を囲みに</a></div>
+<div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
 const SCENES=[{"sub": "査定", "title": "星、ふたつ。", "text": "星、ふたつ。——AIが、私の作ってきた全部に、つけた点数です。", "img": "/assets/kamishibai-v2/EP4/scene1.png", "audio": "/audio/v2/atsume-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "その夜", "title": "点数は、正しかった。", "text": "悔しくて、画面を閉じました。でも、その点数は、たぶん、正しかった。", "img": "/assets/kamishibai-v2/EP4/scene2.png", "audio": "/audio/v2/atsume-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "火をおこす", "title": "一本じゃ、燃えない。", "text": "夜、外に出て、火をおこしました。一本の薪が、なかなか、燃えなくて。", "img": "/assets/kamishibai-v2/EP4/scene3.png", "audio": "/audio/v2/atsume-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "裏返る", "title": "分け合って、燃え上がる。", "text": "そのとき、わかったんです。一本じゃ、燃えない。火は、分け合って、初めて、燃え上がる。", "img": "/assets/kamishibai-v2/EP4/scene4.png", "audio": "/audio/v2/atsume-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "芯", "title": "一人で、世界には届かない。", "text": "星ふたつは、出来の悪さじゃなかった。一人で、世界には届かない。それが、星ふたつの意味でした。", "img": "/assets/kamishibai-v2/EP4/scene5.png", "audio": "/audio/v2/atsume-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "空席", "title": "やさしい沈黙は、高くつく。", "text": "——やさしい沈黙は、いちばん高くつく。", "img": "/assets/kamishibai-v2/EP4/scene6.png", "audio": "/audio/v2/atsume-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "だから", "title": "くべるまで、ただの薪。", "text": "だから、作ったものを、火にくべることにしました。誰が作ったものでも、同じです。くべるまで、ただの薪。くべないと、燃えない。", "img": "/assets/kamishibai-v2/EP4/scene7.png", "audio": "/audio/v2/atsume-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "隣の席は、誰のために。", "text": "あなたの隣の席は、誰のために、空いていますか。", "img": "/assets/kamishibai-v2/EP4/scene8.png", "audio": "/audio/v2/atsume-kam-8.mp3", "buy": "https://atsm.wtf/community", "cta": "🔥 あなたの薪を、火に"}];
@@ -71,9 +75,15 @@ async function playAudio(i){
     if(!abuf[url]){ const r=await fetch(url); const ab=await r.arrayBuffer(); abuf[url]=await actx.decodeAudioData(ab); }
     if(idx!==i) return;
     asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
-    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
+    asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); else if(idx===i && idx===SCENES.length-1) setTimeout(showInvite,1200); };
     asrc.start(0);
   }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
+}
+
+// 焚き火への誘い: 最終場面の声が終わったら一度だけ。見せたら二度と出ない(localStorage)
+function showInvite(){
+  try{ if(localStorage.getItem('kmb_takibi_invite_seen')) return; localStorage.setItem('kmb_takibi_invite_seen','1'); }catch(_){ return }
+  document.getElementById('invite').classList.add('show');
 }
 function play(i){
   if(i<0||i>=SCENES.length) return;
