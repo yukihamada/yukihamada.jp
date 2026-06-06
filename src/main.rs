@@ -1403,7 +1403,8 @@ async fn room_presence(
         let rooms = state.rtc_rooms.lock().unwrap();
         rooms.get(&room).map(|t| t.receiver_count()).unwrap_or(0)
     };
-    (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "cap": 6 }))).into_response()
+    // "peers" duplicates "count" for external consumers that expect {"peers": N} (atsm.wtf 焚き火)
+    (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "peers": count, "cap": 6 }))).into_response()
 }
 
 // KOE — 声でつなぐ。相手の名前を入れるとルームを自動生成し、リンクをワンタップで共有。
@@ -7065,6 +7066,8 @@ async fn main() {
         .route("/k/{handle}", get(k_handle))
         .route("/api/room/ice", get(room_ice))
         .route("/api/room/{id}/presence", get(room_presence))
+        // alias for external consumers (atsm.wtf 焚き火の「入る前の在室数」) — same read-only handler
+        .route("/api/room/{id}/peers", get(room_presence))
         .route("/ws/room/{id}", get(ws_room))
         .route("/yukiterm", get(yukiterm_script))
         .route("/chat", get(chat_page))
