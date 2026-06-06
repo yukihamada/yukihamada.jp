@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>紙芝居 第8話『先に、渡す。』｜ギバーとテイカー、与え方の話 — 濱田優貴</title>
-<meta name="description" content="親切な人ほど損をする——ほんとうに? 組織の最下層も頂点も、じつは「与える人」だった。アダム・グラントのギバー/テイカー、バーニングマンの贈与、焚き火のLOVE&RESPECT。すり減らずに与える作法を、全9場面の紙芝居で。本人クローン声つき。">
-<meta property="og:title" content="紙芝居 第8話『先に、渡す。』ギバーとテイカー、与え方の話">
-<meta property="og:description" content="与える人が、いちばん遠くまで行く。ただし、すり減らずに。ギバー/テイカー/贈与/焚き火を、全9場面の紙芝居に。本人クローン声つき。">
-<meta property="og:image" content="https://yukihamada.jp/assets/give-kamishibai/scene9.png">
-<meta name="twitter:card" content="summary_large_image">
+<title>紙芝居 第8話『先に、渡す。』｜ギバー編 — 濱田優貴</title>
+<meta name="robots" content="index,follow" />
+<meta name="description" content="いちばん損するのも、いちばん遠くへ行くのも、先に渡す人。違いはひとつ——自分も守れるか。改稿版・全9場面。">
+<meta property="og:title" content="紙芝居 第8話『先に、渡す。』">
+<meta property="og:description" content="いちばん損するのも、いちばん遠くへ行くのも、先に渡す人。違いはひとつ——自分も守れるか。改稿版・全9場面。">
+<meta property="og:image" content="https://yukihamada.jp/assets/kamishibai-v2/EP8/scene9.png">
 <style>
   :root{ --ink:#ede8de; --dim:#9a958a; --bg:#0d0d0d; --accent:#e6953f; }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -21,20 +21,18 @@
   #cap{position:absolute;left:0;right:0;bottom:0;padding:30px 7vw 42px;text-align:center}
   #scene-sub{font-size:13px;letter-spacing:.34em;color:var(--accent);margin-bottom:9px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #scene-title{font-size:clamp(24px,4.2vw,46px);font-weight:600;letter-spacing:.06em;text-shadow:0 2px 18px rgba(0,0,0,.85);margin-bottom:15px}
-  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:880px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
-  #scene-link{display:none;margin-top:18px;padding:13px 34px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif;background:rgba(230,149,63,.06);cursor:pointer}
+  #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:860px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
+  #scene-link{display:none;margin-top:16px;padding:12px 32px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #scene-link.show{display:inline-block}
   #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
   #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
-  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;background:var(--bg);z-index:5;transition:opacity .9s;padding:0 22px}
+  #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:var(--bg);z-index:5;transition:opacity .9s}
   #title.hide{opacity:0;pointer-events:none}
-  #title .circle{width:78px;height:78px;border:3px solid var(--ink);border-radius:50%;position:relative}
-  #title .circle::after{content:"";position:absolute;inset:24px;border:2px solid var(--accent);border-radius:50%;opacity:.85}
-  #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.1em;font-weight:600;text-align:center;line-height:1.3}
-  #title .en{color:var(--dim);letter-spacing:.28em;font-size:12px;font-family:sans-serif}
-  #title p{color:var(--dim);letter-spacing:.2em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;line-height:1.8}
-  #title .start{margin-top:10px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
-  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.6}
+  #title .circle{width:80px;height:80px;border:3px solid var(--ink);border-radius:50%}
+  #title h1{font-size:clamp(26px,4.6vw,52px);letter-spacing:.12em;font-weight:600;text-align:center}
+  #title p{color:var(--dim);letter-spacing:.22em;font-size:13px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;text-align:center;padding:0 20px}
+  #title .start{margin-top:12px;padding:14px 44px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.4em;font-size:15px;border-radius:2px;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #hint{position:absolute;bottom:12px;right:18px;color:var(--dim);font-size:11px;letter-spacing:.2em;font-family:sans-serif;opacity:.65}
 </style>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
 </head>
@@ -49,24 +47,14 @@
   <div id="title">
     <div class="circle"></div>
     <h1>先に、渡す。</h1>
-    <div class="en">GIVE FIRST</div>
-    <p>紙芝居 第8話 ・ ギバーとテイカー、与え方の話。<br>全9場面 ・ 2026.06.05<br>声：濱田優貴（AIクローン）</p>
+    <p>紙芝居 第8話 ・ ギバー編 ・ 2026.06 改稿版<br>声：濱田優貴（AIクローン）</p>
+    <div style="margin-top:2px;font-size:12px;letter-spacing:.1em;color:#e6953f;font-family:sans-serif;line-height:1.7">🔊 声が流れます ・ iPhoneは「マナーモード（消音）」を解除してね</div>
     <div class="start">タップで、はじまる</div>
   </div>
   <div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
-const SCENES=[
-{"sub":"問い","title":"なぜ、いい人が、損をするの?","text":"親切な人ほど、貧乏くじを引く。よく、聞く話です。先に与える人は、いつも、損をする。ほんとうに、そうでしょうか。いくつもの職場を、いちばん下から、調べた人がいます。たしかに、最下層は、与えてばかりの、お人好しでした。ところが——。","img":"/assets/give-kamishibai/scene1.png","audio":"/audio/give-kam-1.mp3"},
-{"sub":"三人","title":"世の中には、三種類いる。","text":"アダム、グラントという研究者が、人を、三つに分けました。受け取るより、多く与える、ギバー。与えるより、多く受け取ろうとする、テイカー。損も得も、きっちり、半分ずつ、返す、マッチャー。多くの人は、まんなかの、マッチャーです。答えは、意外でした。まずは、いちばん、厄介な相手から。","img":"/assets/give-kamishibai/scene2.png","audio":"/audio/give-kam-2.mp3"},
-{"sub":"見分け方","title":"テイカーは、こう見分ける。","text":"テイカーは、見た目では、わかりません。愛想がいいことも、多い。でも、二つの癖が、出ます。ひとつ、自分から先には、与えない。ふたつ、もらえないと、怒る。当然もらえるはず、という顔をする。これを、特権意識、といいます。与えない人ほど、奪われると、声が大きい。","img":"/assets/give-kamishibai/scene3.png","audio":"/audio/give-kam-3.mp3"},
-{"sub":"落とし穴","title":"ただ与えるだけでは、食われる。","text":"問題は、ここから。なんでも、無条件に、与えるギバーは、テイカーの、いいカモになります。時間も、手柄も、吸い取られ、自分は、すり減っていく。さっきの、最下層。あれは、相手を選ばずに、与えつづけた、ギバーたちでした。優しさが、そのまま、弱さに、なってしまう。","img":"/assets/give-kamishibai/scene4.png","audio":"/audio/give-kam-4.mp3"},
-{"sub":"逆転","title":"でも、頂点も、ギバーだった。","text":"ところが、いちばん上。いちばん、結果を出したのも、また、ギバーでした。下と、上。同じ、与える人。違いは、たった一つ。自分も、ちゃんと、守るかどうか。相手のためだけでなく、自分の目的も、忘れない。これを、賢いギバー、と呼びます。燃え尽きずに、与えつづける人。","img":"/assets/give-kamishibai/scene5.png","audio":"/audio/give-kam-5.mp3"},
-{"sub":"作法","title":"テイカーには、与えさせろ。","text":"賢いギバーは、テイカーにも、まず気前よく、与えます。でも、相手が、奪うだけだと、わかったら——今度は、マッチャーに、なる。返すぶんだけ、返す。与えさせて、はじめて、また与える。優しさを、やめるのではなく、優しさを、向ける先を、選ぶ。これなら、食われません。","img":"/assets/give-kamishibai/scene6.png","audio":"/audio/give-kam-6.mp3"},
-{"sub":"砂漠","title":"売り買いの、ない街。","text":"砂漠のまんなかに、一週間だけ、できる街があります。バーニングマン。そこには、売り買いが、ありません。あるのは、贈ること、だけ。見返りを求めずに、ただ、手渡す。不思議なことに、奪うだけの人は、その輪に、いられなくなる。与え合いを、街のルールに、してしまえば、テイカーは、いつのまにか、いなくなる。","img":"/assets/give-kamishibai/scene7.png","audio":"/audio/give-kam-7.mp3"},
-{"sub":"焚き火","title":"薪を、くべ合う。","text":"わたしたちも、小さな焚き火を、囲んでいます。アツメ、という場所。合言葉は、ラブ、アンド、リスペクト。知見を、薪のように、くべ合う。一人の火は、すぐ消える。でも、みんなで、くべつづければ、火は、朝まで、もつ。一人で、世界には、届かない。だから、与え合う。","img":"/assets/give-kamishibai/scene8.png","audio":"/audio/give-kam-8.mp3"},
-{"sub":"着地","title":"先に、渡す。","text":"いい人で、いよう、という話では、ありません。遠くまで行く人は、みんな、先に渡してきました。ただし、自分を、すり減らさずに。テイカーには、与えさせて。仲間とは、くべ合って。その火は、いつか、海をこえる。さあ、あなたの、最初の一本を、どうぞ。先に、渡す。","img":"/assets/give-kamishibai/scene9.png","audio":"/audio/give-kam-9.mp3","cta":"🔥 焚き火にくべる（atsm.wtf）","href":"https://atsm.wtf"}
-];
+const SCENES=[{"sub": "常識", "title": "親切な人は、損をする?", "text": "「親切な人ほど、貧乏くじを引く」。本当に、そうでしょうか。組織の、いちばん下にいた人。調べたら、ほとんどが、人に与える人でした。", "img": "/assets/kamishibai-v2/EP8/scene1.png", "audio": "/audio/v2/give-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "三人", "title": "ギバー、テイカー、マッチャー。", "text": "世の中には、三人います。先に渡す人。先に奪う人。そして、もらった分だけ返す人。研究者は、ギバー、テイカー、マッチャーと呼びました。", "img": "/assets/kamishibai-v2/EP8/scene2.png", "audio": "/audio/v2/give-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "意外", "title": "いちばん上も、与える人。", "text": "ふつうに考えれば、奪う人が、得をしそうです。でも、成績のいちばん上。そこにいたのも、また、与える人でした。", "img": "/assets/kamishibai-v2/EP8/scene3.png", "audio": "/audio/v2/give-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "裏返る", "title": "自分も、守るかどうか。", "text": "同じ、与える人なのに。なぜ、底に沈む人と、遠くへ行く人に、分かれるのか。違いは、たった一つでした。自分も、守るかどうか。", "img": "/assets/kamishibai-v2/EP8/scene4.png", "audio": "/audio/v2/give-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "橋", "title": "向ける先を、選ぶ。", "text": "優しさを、やめるのではなく。向ける先を、選ぶ。", "img": "/assets/kamishibai-v2/EP8/scene5.png", "audio": "/audio/v2/give-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "作法", "title": "賢く、配る。", "text": "選んだら、まず、気前よく。奪うだけの相手だと、わかったら——返してくれたぶんだけ、返す側に回る。優しさは、無限じゃない。だから、賢く配る。", "img": "/assets/kamishibai-v2/EP8/scene6.png", "audio": "/audio/v2/give-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "砂漠の街", "title": "先に渡す、それだけ。", "text": "すり減らさずに渡す。それを、街まるごとでやった場所がある。砂漠のまんなか、お金を捨てた街。バーニングマン。あるのは、先に渡す、それだけ。一週間で街ができて、跡形もなく、消える。", "img": "/assets/kamishibai-v2/EP8/scene7.png", "audio": "/audio/v2/give-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "むすび", "title": "すり減らさずに。", "text": "貧乏くじを引くのは、優しさのせいじゃない。自分を、すり減らしたから。遠くまで行く人は、みんな、先に渡してきました。ただし、自分を、すり減らさずに。", "img": "/assets/kamishibai-v2/EP8/scene8.png", "audio": "/audio/v2/give-kam-8.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "かしこく、先に、渡す。", "text": "見返りは、考えなくていい。ただ、最初の一本を、誰かに。——かしこく、先に、渡す。", "img": "/assets/kamishibai-v2/EP8/scene9.png", "audio": "/audio/v2/give-kam-9.mp3", "buy": "https://atsm.wtf", "cta": "🔥 最初の一本を"}];
 let idx=-1, started=false;
 let actx=null, abuf={}, asrc=null;
 SCENES.forEach(s=>{ const i=new Image(); i.src=s.img; });
@@ -85,7 +73,7 @@ async function playAudio(i){
     asrc=actx.createBufferSource(); asrc.buffer=abuf[url]; asrc.connect(actx.destination);
     asrc.onended=()=>{ if(idx===i && idx<SCENES.length-1) setTimeout(()=>play(idx+1),900); };
     asrc.start(0);
-  }catch(e){ /* autoplay/codec fallback: hold the scene */ }
+  }catch(e){ /* autoplay/codec fallback: just hold the scene */ }
 }
 function play(i){
   if(i<0||i>=SCENES.length) return;
@@ -97,13 +85,13 @@ function play(i){
   document.getElementById('scene-title').textContent=s.title;
   document.getElementById('scene-text').textContent=s.text;
   const link=document.getElementById('scene-link');
-  if(s.cta){ link.textContent=s.cta; link.href=s.href||'#'; link.classList.add('show'); }
+  if(s.buy){ link.href=s.buy; link.textContent=s.cta||'→ ひらく'; link.classList.add('show'); }
   else link.classList.remove('show');
   document.getElementById('dots').textContent=(i+1)+' / '+SCENES.length;
   document.getElementById('progress').style.width=(((i+1)/SCENES.length)*100)+'%';
   playAudio(i);
 }
-document.getElementById('scene-link').addEventListener('click',e=>{ e.stopPropagation(); });
+document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('stage').addEventListener('click',()=>{
   if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
   if(idx<SCENES.length-1) play(idx+1);

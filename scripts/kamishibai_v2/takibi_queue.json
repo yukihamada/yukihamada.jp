@@ -1,0 +1,46 @@
+{
+ "note": "紙芝居v2 1日1話の薪キュー。takibi_post_next.py が毎日1件ずつ投稿しposted_atを記録。magmagは限定公開のため対象外",
+ "member_name": "yuki",
+ "queue": [
+  {
+   "ep": "EP1",
+   "posted_at": "2026-06-06T22:56:36.348429+09:00",
+   "text": "🔥紙芝居、全9話をAIジャッジ5軸×100点で「490+になるまで改稿」する天才脚本家ループを完走。今日から1日1話ずつくべます。\n\n1/8『あなたの中に、悪魔を1匹。』— 499/500(シリーズ最高)。愛は、感情じゃなく技術。「で、その人の好きな食べ物、言える?」\nhttps://yukihamada.jp/kamishibai"
+  },
+  {
+   "ep": "EP2",
+   "posted_at": null,
+   "text": "🔥紙芝居 2/8『いい奴らと、世界をつくる。』— 491/500。\nAIは速さ。専門家は深さ。でも真ん中にいるのは、ずっと、人でした。\nhttps://yukihamada.jp/kamishibai/2"
+  },
+  {
+   "ep": "EP3",
+   "posted_at": null,
+   "text": "🔥紙芝居 3/8『任せ方、ぜんぶ。』— 491/500。\n雑でいい、まず投げろ。証拠を見せろ。最後の魔法は、人がかける。\nhttps://yukihamada.jp/kamishibai/3"
+  },
+  {
+   "ep": "EP4",
+   "posted_at": null,
+   "text": "🔥紙芝居 4/8『薪は、プロダクトだ。』— 490/500。\nやさしい沈黙は、いちばん高くつく。くべないと、燃えない——この薪も、その実践です。\nhttps://yukihamada.jp/kamishibai/4"
+  },
+  {
+   "ep": "EP5",
+   "posted_at": null,
+   "text": "🔥紙芝居 5/8『鍵は、かけたつもり。』— 494/500。\n公開する前に、一度、泥棒になってください。確かめる人だけが、本当に速く走れる。\nhttps://yukihamada.jp/kamishibai/5"
+  },
+  {
+   "ep": "EP6",
+   "posted_at": null,
+   "text": "🔥紙芝居 6/8『一人でやらない、は、正しい。』— 491/500。\n情緒を抜いて計算だけで証明したら、答えはこの焚き火でした。わけても、減らない。\nhttps://yukihamada.jp/kamishibai/6"
+  },
+  {
+   "ep": "EP7",
+   "posted_at": null,
+   "text": "🔥紙芝居 7/8『注意こそ、すべて。』— 492/500。\nTransformerを数式ゼロの紙芝居に。むずかしい計算は機械に、だいじなのは、何をつくりたいか。\nhttps://yukihamada.jp/kamishibai/7"
+  },
+  {
+   "ep": "EP8",
+   "posted_at": null,
+   "text": "🔥紙芝居 8/8『先に、渡す。』— 491/500。\nかしこく、先に、渡す。8日間の薪、これで満貫。全9話490+達成🔥(限定公開の1話を含む)\nhttps://yukihamada.jp/kamishibai/8"
+  }
+ ]
+}
