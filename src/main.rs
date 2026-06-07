@@ -205,6 +205,10 @@ struct AppState {
     // Display names announced via {t:"profile"} signaling frames: room_id → (peer_id → name).
     // Read-only roster for allowlisted rooms (atsm.wtf 焚き火); entries die with the WS.
     rtc_names: Mutex<HashMap<String, HashMap<u64, String>>>,
+    // 声まとめ session window: room_id → (session start epoch, names seen this session).
+    // rtc_names forgets each peer on disconnect, so participants accumulate here and the
+    // whole entry is consumed when the room empties (→ push_voice_summary).
+    rtc_sessions: Mutex<HashMap<String, (i64, std::collections::BTreeSet<String>)>>,
 }
 
 const SESSIONS_FILE: &str = "/data/sessions.json";
@@ -1662,6 +1666,96 @@ async fn room_transcript_get(
     Json(serde_json::json!({ "room": room, "count": lines.len(), "lines": lines })).into_response()
 }
 
+// ── 声まとめ送り出し ──────────────────────────────────────────────
+// 全員退出でセッションが閉じた瞬間、そのセッション分の文字起こしを koe-mcp
+// POST /api/takibi/voice-summary へ送る(要約と「🎙 声まとめ」投稿は atsm.wtf 側)。
+// 許可ルームのみ(既定 atsmwtf) — /meet 商談ルームの会話は絶対に外へ出さない。
+// KOE_TAKIBI_SECRET 未設定なら fail-closed(送らないだけ・room 動作に影響なし)。
+fn voice_summary_room_allowed(room: &str) -> bool {
+    std::env::var("VOICE_SUMMARY_ROOMS")
+        .unwrap_or_else(|_| "atsmwtf".to_string())
+        .split(',')
+        .any(|r| r.trim() == room)
+}
+
+// セッション時間窓で room_transcripts.jsonl を読み「name: text」行に整形。
+// 長すぎる会話は古い行から落として末尾(最新)を優先(上限 100k 字)。
+fn collect_room_transcript(room: &str, since_epoch: i64) -> String {
+    let (_, file) = room_transcript_file();
+    let raw = std::fs::read_to_string(&file).unwrap_or_default();
+    let mut lines: Vec<String> = raw
+        .lines()
+        .filter_map(|l| serde_json::from_str::<serde_json::Value>(l).ok())
+        .filter(|v| v.get("room").and_then(|r| r.as_str()) == Some(room))
+        .filter(|v| {
+            v.get("ts")
+                .and_then(|t| t.as_str())
+                .and_then(|t| chrono::DateTime::parse_from_rfc3339(t).ok())
+                .map(|t| t.timestamp() >= since_epoch)
+                .unwrap_or(false)
+        })
+        .map(|v| {
+            format!(
+                "{}: {}",
+                v.get("name").and_then(|n| n.as_str()).unwrap_or("guest"),
+                v.get("text").and_then(|t| t.as_str()).unwrap_or("")
+            )
+        })
+        .collect();
+    let mut total: usize = lines.iter().map(|s| s.len() + 1).sum();
+    let mut skip = 0;
+    while total > 100_000 && skip < lines.len() {
+        total -= lines[skip].len() + 1;
+        skip += 1;
+    }
+    lines.split_off(skip).join("\n")
+}
+
+async fn push_voice_summary(room: String, started_epoch: i64, participants: Vec<String>) {
+    let secret = std::env::var("KOE_TAKIBI_SECRET").unwrap_or_default();
+    if secret.is_empty() {
+        eprintln!("voice-summary: KOE_TAKIBI_SECRET 未設定 — 送り出しスキップ (room={room})");
+        return;
+    }
+    let transcript = collect_room_transcript(&room, started_epoch);
+    if transcript.chars().count() < 10 {
+        return; // 無言/一言セッションは薪にしない
+    }
+    let url = std::env::var("KOE_VOICE_SUMMARY_URL")
+        .unwrap_or_else(|_| "https://mcp.koe.live/api/takibi/voice-summary".to_string());
+    let started_at = chrono::DateTime::<chrono::Utc>::from_timestamp(started_epoch, 0)
+        .map(|t| t.to_rfc3339())
+        .unwrap_or_default();
+    let body = serde_json::json!({
+        "room": room,
+        "transcript": transcript,
+        "participants": participants,
+        "started_at": started_at,
+        "ended_at": chrono::Utc::now().to_rfc3339(),
+    });
+    let client = match reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(30))
+        .build()
+    {
+        Ok(c) => c,
+        Err(e) => {
+            eprintln!("voice-summary: client build failed: {e}");
+            return;
+        }
+    };
+    match client.post(&url).bearer_auth(&secret).json(&body).send().await {
+        Ok(r) if r.status().is_success() => {
+            eprintln!("voice-summary: sent (room={room}, {} chars)", transcript.chars().count());
+        }
+        Ok(r) => {
+            let code = r.status();
+            let txt = r.text().await.unwrap_or_default();
+            eprintln!("voice-summary: koe-mcp {code}: {}", txt.chars().take(300).collect::<String>());
+        }
+        Err(e) => eprintln!("voice-summary: send failed: {e}"),
+    }
+}
+
 // KOE — 声でつなぐ。相手の名前を入れるとルームを自動生成し、リンクをワンタップで共有。
 // 相手が入室すると presence で「つながった」を表示。声/顔の実体は既存 /room（mesh WebRTC）。
 async fn connect_page() -> impl IntoResponse {
@@ -1819,6 +1913,15 @@ async fn handle_ws_room(
     }
     // Announce our arrival so an already-present peer initiates the offer.
     let _ = tx.send(format!("{{\"t\":\"join\",\"from\":{me}}}"));
+    // 声まとめ: 許可ルームならセッション窓を開く(最初の入室時刻が started_at)。
+    if voice_summary_room_allowed(&room) {
+        state
+            .rtc_sessions
+            .lock()
+            .unwrap()
+            .entry(room.clone())
+            .or_insert_with(|| (chrono::Utc::now().timestamp(), Default::default()));
+    }
 
     loop {
         tokio::select! {
@@ -1855,6 +1958,10 @@ async fn handle_ws_room(
                                     if let Some(n) = v.get("name").and_then(|n| n.as_str()) {
                                         let name = sanitize_roster_name(n);
                                         if !name.is_empty() {
+                                            // 声まとめ: このセッションに居た人として累積(切断後も残る)。
+                                            if let Some(s) = state.rtc_sessions.lock().unwrap().get_mut(&room) {
+                                                s.1.insert(name.clone());
+                                            }
                                             state.rtc_names.lock().unwrap().entry(room.clone()).or_default().insert(me, name);
                                         }
                                     }
@@ -1886,10 +1993,20 @@ async fn handle_ws_room(
             }
         }
     }
-    let mut rooms = state.rtc_rooms.lock().unwrap();
-    if let Some(t) = rooms.get(&room) {
-        if t.receiver_count() == 0 {
-            rooms.remove(&room);
+    let session_ended = {
+        let mut rooms = state.rtc_rooms.lock().unwrap();
+        match rooms.get(&room) {
+            Some(t) if t.receiver_count() == 0 => {
+                rooms.remove(&room);
+                true
+            }
+            _ => false,
+        }
+    };
+    // 声まとめ: 全員退出=セッション終了。窓を閉じて transcript を koe-mcp へ(非同期・room動作に影響なし)。
+    if session_ended {
+        if let Some((started, names)) = state.rtc_sessions.lock().unwrap().remove(&room) {
+            tokio::spawn(push_voice_summary(room.clone(), started, names.into_iter().collect()));
         }
     }
 }
@@ -7151,6 +7268,7 @@ async fn main() {
         gmail_access_token: Mutex::new(None),
         rtc_rooms: Mutex::new(HashMap::new()),
         rtc_names: Mutex::new(HashMap::new()),
+        rtc_sessions: Mutex::new(HashMap::new()),
     });
     std::fs::create_dir_all(VIDEO_DIR).ok();
 
@@ -7400,4 +7518,47 @@ async fn main() {
     println!("listening on http://{addr}");
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // 声まとめ: allowlist と transcript のセッション窓フィルタ(1テストに集約 —
+    // MEET_DATA_DIR はプロセス全体の env なので並列テストで分けない)。
+    #[test]
+    fn voice_summary_window_and_allowlist() {
+        // allowlist: 既定は atsmwtf のみ。/meet 商談ルームは外に出ない。
+        assert!(voice_summary_room_allowed("atsmwtf"));
+        assert!(!voice_summary_room_allowed("meet-abc123"));
+
+        let dir = std::env::temp_dir().join(format!("vs-test-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        std::env::set_var("MEET_DATA_DIR", dir.to_str().unwrap());
+        let file = dir.join("room_transcripts.jsonl");
+        std::fs::write(
+            &file,
+            concat!(
+                // セッション開始(epoch 1770000000 = 2026-02-02T01:20:00Z)より前 → 除外
+                "{\"ts\":\"2026-02-02T01:00:00+00:00\",\"room\":\"atsmwtf\",\"name\":\"old\",\"text\":\"前のセッション\"}\n",
+                // 窓内・対象ルーム → 含む
+                "{\"ts\":\"2026-02-02T01:30:00+00:00\",\"room\":\"atsmwtf\",\"name\":\"yuki\",\"text\":\"こんにちは\"}\n",
+                // 窓内だが別ルーム → 除外
+                "{\"ts\":\"2026-02-02T01:31:00+00:00\",\"room\":\"meet-abc\",\"name\":\"x\",\"text\":\"商談\"}\n",
+                // 壊れた行 → 黙って除外
+                "not-json\n",
+                "{\"ts\":\"2026-02-02T01:32:00+00:00\",\"room\":\"atsmwtf\",\"name\":\"kenny\",\"text\":\"焚き火いいね\"}\n",
+            ),
+        )
+        .unwrap();
+        let since = chrono::DateTime::parse_from_rfc3339("2026-02-02T01:20:00+00:00")
+            .unwrap()
+            .timestamp();
+        let t = collect_room_transcript("atsmwtf", since);
+        assert_eq!(t, "yuki: こんにちは\nkenny: 焚き火いいね");
+        assert!(!t.contains("商談"));
+        assert!(!t.contains("前のセッション"));
+        std::fs::remove_dir_all(&dir).ok();
+        std::env::remove_var("MEET_DATA_DIR");
+    }
 }
