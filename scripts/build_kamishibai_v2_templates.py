@@ -56,7 +56,7 @@ CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
 }
 
 CTA2 = {  # ep -> {scene_n: (href, label)}  2本目のリンク(最終場面のみ・控えめ)
- "BLANK": {9:("https://wearmu.com/shop/BLANKCAMP-AGENT-TEE-WHITE-375b9cd6","👕 席が遠い人は、白を着る — BLANK 001 Tee ¥4,900")},
+ "BLANK": {9:("https://wearmu.com/make","👕 参加費がまだ無い人は、Tシャツを売って作る — MU")},
 }
 
 SKELETON = open(f"{BASE}/templates/kamishibai-ep4.html").read()
