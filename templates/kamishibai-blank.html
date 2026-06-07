@@ -25,6 +25,8 @@
   #scene-text{font-size:clamp(14px,1.7vw,20px);line-height:1.95;max-width:860px;margin:0 auto;text-shadow:0 1px 10px rgba(0,0,0,.9);opacity:.94}
   #scene-link{display:none;margin-top:16px;padding:12px 32px;border:1px solid var(--accent);color:var(--accent);letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
   #scene-link.show{display:inline-block}
+  #scene-link2{display:none;margin-top:10px;margin-left:12px;padding:12px 32px;border:1px solid var(--ink,#888);color:inherit;opacity:.85;letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}
+  #scene-link2.show{display:inline-block}
   #progress{position:absolute;top:0;left:0;height:3px;background:var(--accent);width:0%;transition:width .4s linear;opacity:.85}
   #dots{position:absolute;top:16px;right:20px;font-size:12px;letter-spacing:.3em;color:var(--dim);font-family:sans-serif}
   #title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;background:var(--bg);z-index:5;transition:opacity .9s}
@@ -47,6 +49,7 @@
   <div id="cap">
     <div id="scene-sub"></div><div id="scene-title"></div><div id="scene-text"></div>
     <a id="scene-link" target="_blank" rel="noopener"></a>
+    <a id="scene-link2" target="_blank" rel="noopener"></a>
   </div>
   <div id="title">
     <div class="circle"></div>
@@ -59,7 +62,7 @@
 <div id="hint">クリック＝次へ ／ ←戻る</div>
 </div>
 <script>
-const SCENES=[{"sub": "白", "title": "同じ色を、してる。", "text": "白帯と、まっさらなエディタ。——同じ色を、してる。", "img": "/assets/kamishibai-v2/BLANK/scene1.png", "audio": "/audio/v2/blank-kam-1.mp3", "buy": "", "cta": ""}, {"sub": "誘い", "title": "「弟子屈、行かない？」", "text": "焚き火で、つい言った。「北海道、行かない？」——摩周湖の、霧の中。", "img": "/assets/kamishibai-v2/BLANK/scene2.png", "audio": "/audio/v2/blank-kam-2.mp3", "buy": "", "cta": ""}, {"sub": "四人", "title": "手が、挙がった。", "text": "手が挙がった。良蔵さん。村井さん。健太郎。それと、僕。——四人で、行くことになった。", "img": "/assets/kamishibai-v2/BLANK/scene3.png", "audio": "/audio/v2/blank-kam-3.mp3", "buy": "", "cta": ""}, {"sub": "北へ", "title": "街が、湖に変わる。", "text": "六月十四日。東京から、ジェットで、一気に北へ。窓の下で、街が、畑と湖に変わっていく。", "img": "/assets/kamishibai-v2/BLANK/scene4.png", "audio": "/audio/v2/blank-kam-4.mp3", "buy": "", "cta": ""}, {"sub": "朝", "title": "体の、一本。", "text": "朝は、体の一本。マットの上、受け身から。良蔵さんの手が、順番に、形を直していく。", "img": "/assets/kamishibai-v2/BLANK/scene5.png", "audio": "/audio/v2/blank-kam-5.mp3", "buy": "", "cta": ""}, {"sub": "夜", "title": "頭の、一本。", "text": "夜は、頭の一本。空のプロンプトと、組む。三日で「動くもの」をひとつ、世に出して帰る。", "img": "/assets/kamishibai-v2/BLANK/scene6.png", "audio": "/audio/v2/blank-kam-6.mp3", "buy": "", "cta": ""}, {"sub": "白だから", "title": "まだ、誰も知らない。", "text": "村井さんが、何を作るのか。健太郎が、何を取るのか。——まだ、誰も知らない。白だから、行く。", "img": "/assets/kamishibai-v2/BLANK/scene7.png", "audio": "/audio/v2/blank-kam-7.mp3", "buy": "", "cta": ""}, {"sub": "芯", "title": "動詞は、「組む」。", "text": "柔術と、もの作りは、同じ動詞でできている。——「組む」。白から積み上げた一本は、忘れない。", "img": "/assets/kamishibai-v2/BLANK/scene8.png", "audio": "/audio/v2/blank-kam-8.mp3", "buy": "", "cta": ""}, {"sub": "あなたへ", "title": "残りの席は、あなたの分。", "text": "六月十四日から、十七日。弟子屈・美留和、ぜんぶで十席。僕らは先に、火を起こしてる。——残りの席は、あなたの分。", "img": "/assets/kamishibai-v2/BLANK/scene9.png", "audio": "/audio/v2/blank-kam-9.mp3", "buy": "/blank", "cta": "⬜ 残りの席を見る — BLANK 001"}];
+const SCENES=[{"sub": "白", "title": "同じ色を、してる。", "text": "白帯と、まっさらなエディタ。——同じ色を、してる。", "img": "/assets/kamishibai-v2/BLANK/scene1.png", "audio": "/audio/v2/blank-kam-1.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "誘い", "title": "「弟子屈、行かない？」", "text": "焚き火で、つい言った。「北海道、行かない？」——摩周湖の、霧の中。", "img": "/assets/kamishibai-v2/BLANK/scene2.png", "audio": "/audio/v2/blank-kam-2.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "四人", "title": "手が、挙がった。", "text": "手が挙がった。良蔵さん。村井さん。健太郎。それと、僕。——四人で、行くことになった。", "img": "/assets/kamishibai-v2/BLANK/scene3.png", "audio": "/audio/v2/blank-kam-3.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "北へ", "title": "街が、湖に変わる。", "text": "六月十四日。東京から、ジェットで、一気に北へ。窓の下で、街が、畑と湖に変わっていく。", "img": "/assets/kamishibai-v2/BLANK/scene4.png", "audio": "/audio/v2/blank-kam-4.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "朝", "title": "体の、一本。", "text": "朝は、体の一本。マットの上、受け身から。良蔵さんの手が、順番に、形を直していく。", "img": "/assets/kamishibai-v2/BLANK/scene5.png", "audio": "/audio/v2/blank-kam-5.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "夜", "title": "頭の、一本。", "text": "夜は、頭の一本。空のプロンプトと、組む。三日で「動くもの」をひとつ、世に出して帰る。", "img": "/assets/kamishibai-v2/BLANK/scene6.png", "audio": "/audio/v2/blank-kam-6.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "白だから", "title": "まだ、誰も知らない。", "text": "村井さんが、何を作るのか。健太郎が、何を取るのか。——まだ、誰も知らない。白だから、行く。", "img": "/assets/kamishibai-v2/BLANK/scene7.png", "audio": "/audio/v2/blank-kam-7.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "芯", "title": "動詞は、「組む」。", "text": "柔術と、もの作りは、同じ動詞でできている。——「組む」。白から積み上げた一本は、忘れない。", "img": "/assets/kamishibai-v2/BLANK/scene8.png", "audio": "/audio/v2/blank-kam-8.mp3", "buy": "", "cta": "", "buy2": "", "cta2": ""}, {"sub": "あなたへ", "title": "残りの席は、あなたの分。", "text": "六月十四日から、十七日。弟子屈・美留和、ぜんぶで十席。僕らは先に、火を起こしてる。——残りの席は、あなたの分。", "img": "/assets/kamishibai-v2/BLANK/scene9.png", "audio": "/audio/v2/blank-kam-9.mp3", "buy": "/blank", "cta": "⬜ 残りの席を見る — BLANK 001", "buy2": "https://wearmu.com/shop/BLANKCAMP-AGENT-TEE-WHITE-375b9cd6", "cta2": "👕 席が遠い人は、白を着る — BLANK 001 Tee ¥4,900"}];
 let idx=-1, started=false;
 let actx=null, abuf={}, asrc=null;
 SCENES.forEach(s=>{ const i=new Image(); i.src=s.img; });
@@ -98,11 +101,15 @@ function play(i){
   const link=document.getElementById('scene-link');
   if(s.buy){ link.href=s.buy; link.textContent=s.cta||'→ ひらく'; link.classList.add('show'); }
   else link.classList.remove('show');
+  const link2=document.getElementById('scene-link2');
+  if(s.buy2){ link2.href=s.buy2; link2.textContent=s.cta2; link2.classList.add('show'); }
+  else link2.classList.remove('show');
   document.getElementById('dots').textContent=(i+1)+' / '+SCENES.length;
   document.getElementById('progress').style.width=(((i+1)/SCENES.length)*100)+'%';
   playAudio(i);
 }
 document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());
+document.getElementById('scene-link2').addEventListener('click',e=>e.stopPropagation());
 document.getElementById('stage').addEventListener('click',()=>{
   if(!started){ started=true; unlock(); document.getElementById('title').classList.add('hide'); play(0); return; }
   if(idx<SCENES.length-1) play(idx+1);
