@@ -37,6 +37,16 @@ STYLE_OVERRIDE = {
         "ABSOLUTELY NO text, NO letters, NO numbers, NO captions inside the image. "
         "Consistent characters: simple silhouetted figures (no facial detail). Mood follows the scene direction."
     ),
+    # RECAP編(ふたつの白=熱海・水上振り返り)もBLANKと同じ反転白パレット。海/湯気/森のモチーフ
+    "RECAP": (
+        "Japanese modern ink-art (sumi-e meets cinematic) keyframe for a digital kamishibai, INVERTED palette. "
+        "Palette: paper-white #f5f3ef base, morning fog grey #d9d6d0, sumi black #1a1714 silhouettes and linework, "
+        "vermilion #c0392b accents, cream #e9e4d8 soft glow, warm light #f5d9a8, sea/lake blue #3a6ea5 hints. "
+        "16:9 cinematic composition, vast negative space of white steam and fog (onsen town by the sea, forest hot-spring), "
+        "film grain, soft vignette. "
+        "ABSOLUTELY NO text, NO letters, NO numbers, NO captions inside the image. "
+        "Consistent characters: simple silhouetted figures (no facial detail). Mood follows the scene direction."
+    ),
 }
 
 

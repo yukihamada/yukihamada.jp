@@ -10,10 +10,10 @@ import json, re, os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V2 = lambda ep: json.load(open(f"{BASE}/scripts/kamishibai_v2/{ep}.json"))
 
-PREFIX = {"EP1":"ep1v2","EP2":"ep2v2","EP3":"asoview","EP4":"atsume","EP5":"kagi","EP6":"minna","EP7":"transformer","EP8":"give","BLANK":"blank"}
+PREFIX = {"EP1":"ep1v2","EP2":"ep2v2","EP3":"asoview","EP4":"atsume","EP5":"kagi","EP6":"minna","EP7":"transformer","EP8":"give","BLANK":"blank","RECAP":"recap"}
 FILE = {"EP1":"kamishibai.html","EP2":"kamishibai-ep2.html","EP3":"kamishibai-ep3.html","EP4":"kamishibai-ep4.html",
         "EP5":"kamishibai-ep5.html","EP6":"kamishibai-ep6.html","EP7":"kamishibai-ep7.html","EP8":"kamishibai-ep8.html",
-        "BLANK":"kamishibai-blank.html"}
+        "BLANK":"kamishibai-blank.html","RECAP":"kamishibai-recap.html"}
 
 META = {
  "EP1": dict(no=1, sub="トップオブマインド編", robots="noindex,nofollow", og=11,
@@ -32,6 +32,8 @@ META = {
    desc="いちばん損するのも、いちばん遠くへ行くのも、先に渡す人。違いはひとつ——自分も守れるか。改稿版・全9場面。"),
  "BLANK": dict(no=0, label="番外編", sub="BLANK 001 弟子屈編", robots="index,follow", og=4,
    desc="白帯と、空のプロンプトは同じ色。四人で弟子屈へ——3日で一本取って、一本作る。全9場面。"),
+ "RECAP": dict(no=0, label="番外編", sub="ふたつの白 — 熱海・水上 振り返り編", robots="index,follow", og=7,
+   desc="熱海で一泊、水上で二泊。三十分の会議で動かないものを、白にした三日で動かした——その記録。全8場面。"),
 }
 
 TITLES = {
@@ -44,6 +46,7 @@ TITLES = {
  "EP7": {1:("二〇一七年","注意こそ、すべて。"),2:("むかし","順番待ちで、遅い。"),3:("ひらめき","机の上に、ぜんぶ広げる。"),4:("アテンション","どこを見るか、自分で決める。"),5:("しくみ","似ているものに、惹かれる。"),6:("複数の目","一人で、見ない。"),7:("順番の情報","波の印を、そっと足す。"),8:("結果","順番待ちが、消えた。"),9:("それから","あの題名は、ほんとうだった。"),10:("きみへ","さいごに、一曲。")},
  "EP8": {1:("常識","親切な人は、損をする?"),2:("三人","ギバー、テイカー、マッチャー。"),3:("意外","いちばん上も、与える人。"),4:("裏返る","自分も、守るかどうか。"),5:("橋","向ける先を、選ぶ。"),6:("作法","賢く、配る。"),7:("砂漠の街","先に渡す、それだけ。"),8:("むすび","すり減らさずに。"),9:("あなたへ","かしこく、先に、渡す。")},
  "BLANK": {1:("白","同じ色を、してる。"),2:("誘い","「弟子屈、行かない？」"),3:("四人","手が、挙がった。"),4:("北へ","街が、湖に変わる。"),5:("朝","体の、一本。"),6:("夜","頭の、一本。"),7:("白だから","まだ、誰も知らない。"),8:("芯","動詞は、「組む」。"),9:("あなたへ","残りの席は、あなたの分。")},
+ "RECAP": {1:("予定","埋まって、いるのに。"),2:("白","二日だけ、白に。"),3:("熱海","決めて、進めた。"),4:("水上","ぜんぶ、広げた。"),5:("二日目","動いた。"),6:("芯","三十分より、三日。"),7:("思い出","日付を、着る。"),8:("あなたへ","どこを、白にする？")},
 }
 
 CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
@@ -53,6 +56,8 @@ CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
  "EP6": {11:("https://atsm.wtf","🔥 焚き火へ")},
  "EP8": {9:("https://atsm.wtf","🔥 最初の一本を")},
  "BLANK": {9:("/blank","⬜ 残りの席を見る — BLANK 001")},
+ "RECAP": {7:("https://wearmu.com/shop?brand=blank-camp","👕 思い出を、着る — Memory Tee"),
+           8:("/blank","⬜ 次の白へ — BLANK 001 弟子屈 6.14–17")},
 }
 
 CTA2 = {  # ep -> {scene_n: (href, label)}  2本目のリンク(最終場面のみ・控えめ)
