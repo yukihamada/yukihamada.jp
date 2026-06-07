@@ -56,12 +56,12 @@ CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
  "EP6": {11:("https://atsm.wtf","🔥 焚き火へ")},
  "EP8": {9:("https://atsm.wtf","🔥 最初の一本を")},
  "BLANK": {9:("/blank","⬜ 残りの席を見る — BLANK 001")},
- "RECAP": {8:("https://wearmu.com/shop?brand=blank-camp","👕 思い出を、着る — Memory Tee")},
+ "RECAP": {7:("https://wearmu.com/shop?brand=blank-camp","👕 思い出を、着る — Memory Tee"),
+           8:("/blank","⬜ 次の白へ — BLANK 001 弟子屈 6.14–17")},
 }
 
 CTA2 = {  # ep -> {scene_n: (href, label)}  2本目のリンク(最終場面のみ・控えめ)
  "BLANK": {9:("https://wearmu.com/make","👕 参加費がまだ無い人は、Tシャツを売って作る — MU")},
- "RECAP": {8:("/blank","⬜ 次の白へ — BLANK 001 弟子屈 6.14–17")},
 }
 
 SKELETON = open(f"{BASE}/templates/kamishibai-ep4.html").read()
