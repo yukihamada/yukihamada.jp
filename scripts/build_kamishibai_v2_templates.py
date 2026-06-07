@@ -55,6 +55,10 @@ CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
  "BLANK": {9:("/blank","⬜ 残りの席を見る — BLANK 001")},
 }
 
+CTA2 = {  # ep -> {scene_n: (href, label)}  2本目のリンク(最終場面のみ・控えめ)
+ "BLANK": {9:("https://wearmu.com/shop/BLANKCAMP-AGENT-TEE-WHITE-375b9cd6","👕 席が遠い人は、白を着る — BLANK 001 Tee ¥4,900")},
+}
+
 SKELETON = open(f"{BASE}/templates/kamishibai-ep4.html").read()
 
 def scenes_json(ep):
@@ -62,9 +66,11 @@ def scenes_json(ep):
     for sc in d["scenes"]:
         n = sc["n"]; sub, title = TITLES[ep][n]
         href, label = (CTA.get(ep) or {}).get(n, ("", ""))
+        href2, label2 = (CTA2.get(ep) or {}).get(n, ("", ""))
         out.append({"sub": sub, "title": title, "text": sc["narration"],
                     "img": f"/assets/kamishibai-v2/{ep}/scene{n}.png",
-                    "audio": f"/audio/v2/{pre}-kam-{n}.mp3", "buy": href, "cta": label})
+                    "audio": f"/audio/v2/{pre}-kam-{n}.mp3", "buy": href, "cta": label,
+                    "buy2": href2, "cta2": label2})
     return out
 
 def build_standard(ep):
@@ -91,8 +97,18 @@ def build_standard(ep):
     # SCENES
     html = re.sub(r"const SCENES=\[.*?\];",
         "const SCENES=" + json.dumps(sc, ensure_ascii=False) + ";", html, flags=re.S)
+    # 2本目のCTA (CTA2登録episodeのみ): 要素+CSS+JSを注入
+    if CTA2.get(ep):
+        html = html.replace('<a id="scene-link" target="_blank" rel="noopener"></a>',
+            '<a id="scene-link" target="_blank" rel="noopener"></a>\n    <a id="scene-link2" target="_blank" rel="noopener"></a>')
+        html = html.replace('#scene-link.show{display:inline-block}',
+            '#scene-link.show{display:inline-block}\n  #scene-link2{display:none;margin-top:10px;margin-left:12px;padding:12px 32px;border:1px solid var(--ink,#888);color:inherit;opacity:.85;letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}\n  #scene-link2.show{display:inline-block}')
+        html = html.replace("else link.classList.remove('show');",
+            "else link.classList.remove('show');\n  const link2=document.getElementById('scene-link2');\n  if(s.buy2){ link2.href=s.buy2; link2.textContent=s.cta2; link2.classList.add('show'); }\n  else link2.classList.remove('show');")
+        html = html.replace("document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());",
+            "document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());\ndocument.getElementById('scene-link2').addEventListener('click',e=>e.stopPropagation());")
     open(f"{BASE}/templates/{FILE[ep]}", "w").write(html)
-    print(f"{FILE[ep]}: {len(sc)} scenes")
+    print(f"{FILE[ep]}: {len(sc)} scenes" + (" +CTA2" if CTA2.get(ep) else ""))
 
 def build_ep7():
     d = V2("EP7"); sc = scenes_json("EP7")
