@@ -202,6 +202,9 @@ struct AppState {
     gmail_access_token: Mutex<Option<(String, u64)>>,
     // WebRTC 1:1 signaling rooms: room_id → broadcast sender relaying SDP/ICE between peers.
     rtc_rooms: Mutex<HashMap<String, broadcast::Sender<String>>>,
+    // Display names announced via {t:"profile"} signaling frames: room_id → (peer_id → name).
+    // Read-only roster for allowlisted rooms (atsm.wtf 焚き火); entries die with the WS.
+    rtc_names: Mutex<HashMap<String, HashMap<u64, String>>>,
 }
 
 const SESSIONS_FILE: &str = "/data/sessions.json";
@@ -1506,6 +1509,47 @@ async fn room_presence(
     (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "peers": count, "cap": 6 }))).into_response()
 }
 
+// Read-only roster: display names of the peers currently in a room, learned from
+// their {t:"profile"} signaling frames (self-declared, re-sent on every join).
+// Names are exposed ONLY for allowlisted rooms (ROOM_ROSTER_PUBLIC, comma-separated;
+// default "atsmwtf" for the atsm.wtf 焚き火) — /meet booking rooms stay count-only,
+// so a guessed room URL never leaks who is in a private call.
+async fn room_roster(
+    State(state): State<Arc<AppState>>,
+    Path(room_id): Path<String>,
+) -> impl IntoResponse {
+    let room: String = room_id
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric() || *c == '-')
+        .take(64)
+        .collect();
+    let public = std::env::var("ROOM_ROSTER_PUBLIC").unwrap_or_else(|_| "atsmwtf".to_string());
+    if !public.split(',').any(|r| r.trim() == room) {
+        return (
+            StatusCode::NOT_FOUND,
+            cors_headers_any(),
+            Json(serde_json::json!({ "ok": false, "error": "roster_not_public" })),
+        )
+            .into_response();
+    }
+    let count = {
+        let rooms = state.rtc_rooms.lock().unwrap();
+        rooms.get(&room).map(|t| t.receiver_count()).unwrap_or(0)
+    };
+    let names: Vec<String> = {
+        let names = state.rtc_names.lock().unwrap();
+        names
+            .get(&room)
+            .map(|nm| {
+                let mut entries: Vec<(&u64, &String)> = nm.iter().collect();
+                entries.sort_by_key(|(id, _)| **id); // stable join order
+                entries.into_iter().map(|(_, n)| n.clone()).collect()
+            })
+            .unwrap_or_default()
+    };
+    (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "names": names, "cap": 6 }))).into_response()
+}
+
 // ── 文字起こしログ ────────────────────────────────────────────────
 // Voice in /room is mesh WebRTC (P2P) — audio never reaches this server.
 // Each participant's browser transcribes its OWN mic locally (Web Speech API,
@@ -1789,7 +1833,20 @@ async fn handle_ws_room(
                         if s.len() > 64_000 { continue; } // guard oversized frames
                         // Re-stamp `from` with the server-assigned id (anti-spoof) and relay.
                         let relay = match serde_json::from_str::<serde_json::Value>(&s) {
-                            Ok(mut v) => { v["from"] = serde_json::json!(me); v.to_string() }
+                            Ok(mut v) => {
+                                v["from"] = serde_json::json!(me);
+                                // Learn this peer's display name from its profile announcement
+                                // (sent on join and whenever a newcomer arrives) for /roster.
+                                if v.get("t").and_then(|t| t.as_str()) == Some("profile") {
+                                    if let Some(n) = v.get("name").and_then(|n| n.as_str()) {
+                                        let name: String = n.chars().filter(|c| !c.is_control()).take(40).collect::<String>().trim().to_string();
+                                        if !name.is_empty() {
+                                            state.rtc_names.lock().unwrap().entry(room.clone()).or_default().insert(me, name);
+                                        }
+                                    }
+                                }
+                                v.to_string()
+                            }
                             Err(_) => continue,
                         };
                         let _ = tx.send(relay);
@@ -1805,6 +1862,16 @@ async fn handle_ws_room(
     // Tell the other side we left, then drop the room if we were the last one.
     let _ = tx.send(format!("{{\"t\":\"leave\",\"from\":{me}}}"));
     drop(rx);
+    // Forget this peer's roster name (and the room's map if it was the last entry).
+    {
+        let mut names = state.rtc_names.lock().unwrap();
+        if let Some(nm) = names.get_mut(&room) {
+            nm.remove(&me);
+            if nm.is_empty() {
+                names.remove(&room);
+            }
+        }
+    }
     let mut rooms = state.rtc_rooms.lock().unwrap();
     if let Some(t) = rooms.get(&room) {
         if t.receiver_count() == 0 {
@@ -7069,6 +7136,7 @@ async fn main() {
         gmail_email,
         gmail_access_token: Mutex::new(None),
         rtc_rooms: Mutex::new(HashMap::new()),
+        rtc_names: Mutex::new(HashMap::new()),
     });
     std::fs::create_dir_all(VIDEO_DIR).ok();
 
@@ -7267,6 +7335,7 @@ async fn main() {
         .route("/api/room/{id}/presence", get(room_presence))
         // alias for external consumers (atsm.wtf 焚き火の「入る前の在室数」) — same read-only handler
         .route("/api/room/{id}/peers", get(room_presence))
+        .route("/api/room/{id}/roster", get(room_roster))
         // 文字起こしログ: POST=参加者ブラウザからのテキスト行 / GET=admin閲覧 (MEET_ADMIN_TOKEN)
         .route("/api/room/{id}/transcript", post(room_transcript_post).get(room_transcript_get))
         .route("/ws/room/{id}", get(ws_room))
