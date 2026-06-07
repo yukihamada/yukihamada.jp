@@ -1326,6 +1326,11 @@ async fn kamishibai_ep8_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep8.html"))
 }
 
+// 番外編 BLANK 001 弟子屈編『白から、組む。』— /blank (LP) と対になる紙芝居 (marker: kamishibai-blank)
+async fn kamishibai_blank_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-blank.html"))
+}
+
 // ── 番組『一言、立つ。』第1話 ────────────────────────────────
 // 人間ひとりの一言を4体のAIが奪い合うマルチエージェント番組。声は全員AI
 // (koe声クローン×Qwen-TTS)。動画は同一オリジン /mv/ichigon-ep1.mp4。(marker: ichigon-1)
@@ -7879,6 +7884,8 @@ async fn main() {
         .route("/kamishibai/hi/{token}/hiraku", post(kamishibai_hiseki_open))
         .route("/give", get(kamishibai_ep8_page))
         .route("/saki", get(kamishibai_ep8_page))
+        .route("/kamishibai/blank", get(kamishibai_blank_page))
+        .route("/shirakara", get(kamishibai_blank_page))
         .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
@@ -7957,7 +7964,8 @@ async fn main() {
         .route("/api/takibi/react", post(takibi_react))
         // 弟子屈ビジョン『白から、組む。』(静的・自己完結HTML)
         .nest_service("/teshikaga", ServeDir::new("public/teshikaga"))
-        .nest_service("/anime", ServeDir::new("public/anime"))
+        .nest_service("/blank", ServeDir::new("public/blank"))
+                .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/kamisibai", ServeDir::new("public/kamisibai"))
         .nest_service("/mv", ServeDir::new("public/mv"))
         .route("/theater", get(theater_page))

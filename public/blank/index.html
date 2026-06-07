@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLANK 001 ｜ 柔術 × AI 合宿 in 弟子屈・摩周 — 3日で、一本取って、一本作る。</title>
+<meta name="description" content="北海道・弟子屈／摩周。村田良蔵 × 濱田優貴。柔術もAIも初めてでいい。プライベートジェットで東京から一気に。3泊4日のBLANK合宿。2026.6.14(日)–17(水)・全10席。">
+<meta property="og:title" content="BLANK 001 ｜ 柔術 × AI 合宿 — 白から、組む。">
+<meta property="og:description" content="霧の摩周で、3日で一本取って、一本作る。村田良蔵×濱田優貴。初心者歓迎。プライベートジェットで。全10席。">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0b0d10">
+<style>
+  :root{
+    --ink:#0b0d10; --fog:#f4f6f8; --line:#1c2026; --muted:#7d8794;
+    --accent:#c8a96a; --accent2:#e9e4d8; --white:#ffffff;
+    --maxw:1080px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--fog); background:var(--ink); line-height:1.75;
+    -webkit-font-smoothing:antialiased; letter-spacing:.02em;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  .mono{font-variant-numeric:tabular-nums;letter-spacing:.06em}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(11,13,16,.72);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
+  .brand{font-weight:700;letter-spacing:.34em;font-size:15px}
+  .brand small{color:var(--accent);letter-spacing:.2em;font-size:11px;margin-left:8px}
+  .navcta{font-size:13px;border:1px solid var(--accent);color:var(--accent2);
+    padding:8px 16px;border-radius:999px;transition:.2s}
+  .navcta:hover{background:var(--accent);color:var(--ink)}
+
+  /* hero */
+  header.hero{position:relative;min-height:92vh;display:flex;align-items:center;
+    background:
+      radial-gradient(120% 80% at 50% -10%, rgba(233,228,216,.10), transparent 60%),
+      radial-gradient(80% 60% at 20% 110%, rgba(200,169,106,.10), transparent 60%),
+      linear-gradient(180deg,#0b0d10 0%,#101418 55%,#0b0d10 100%);
+    overflow:hidden}
+  .fog{position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(60% 40% at 50% 40%, rgba(255,255,255,.06), transparent 70%);
+    filter:blur(2px)}
+  .hero .wrap{position:relative;z-index:2;padding:64px 22px}
+  .kicker{color:var(--accent);letter-spacing:.4em;font-size:12px;margin-bottom:22px}
+  h1{font-size:clamp(38px,7vw,82px);line-height:1.06;font-weight:800;letter-spacing:.02em}
+  h1 .thin{font-weight:300;color:var(--accent2)}
+  .lead{margin-top:26px;font-size:clamp(16px,2.4vw,21px);color:#cfd6dd;max-width:30em}
+  .meta-row{margin-top:34px;display:flex;flex-wrap:wrap;gap:14px 26px;font-size:14px;color:#aeb6bf}
+  .meta-row b{color:var(--white);font-weight:600}
+  .cta{margin-top:40px;display:flex;flex-wrap:wrap;gap:14px}
+  .btn{display:inline-block;padding:15px 30px;border-radius:999px;font-weight:700;font-size:15px;transition:.2s}
+  .btn-primary{background:var(--accent);color:var(--ink)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(200,169,106,.3)}
+  .btn-ghost{border:1px solid #39404a;color:var(--fog)}
+  .btn-ghost:hover{border-color:var(--accent)}
+  .scarcity{margin-top:18px;font-size:13px;color:var(--accent2)}
+  .scarcity .dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+    background:#ff6b5e;margin-right:7px;box-shadow:0 0 8px #ff6b5e}
+
+  /* sections */
+  section{padding:88px 0;border-top:1px solid var(--line)}
+  .eyebrow{color:var(--accent);letter-spacing:.32em;font-size:12px;margin-bottom:16px}
+  h2{font-size:clamp(26px,4vw,40px);font-weight:800;line-height:1.2;letter-spacing:.02em}
+  .sub{color:var(--muted);margin-top:14px;max-width:40em;font-size:16px}
+
+  /* concept */
+  .ippon{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:42px}
+  .ippon .card{background:linear-gradient(180deg,#12161b,#0e1115);border:1px solid var(--line);
+    border-radius:18px;padding:34px}
+  .ippon .num{color:var(--accent);font-size:13px;letter-spacing:.3em}
+  .ippon h3{font-size:24px;margin:12px 0 10px;font-weight:800}
+  .ippon p{color:#b9c1ca;font-size:15px}
+
+  /* teachers */
+  .teachers{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:42px}
+  .teacher{background:#0f1318;border:1px solid var(--line);border-radius:18px;padding:32px;display:flex;gap:20px;align-items:flex-start}
+  .ava{width:64px;height:64px;border-radius:50%;flex:0 0 64px;
+    background:linear-gradient(135deg,#2a3138,#171b20);border:1px solid #2e353d;
+    display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--accent)}
+  .teacher h3{font-size:20px;font-weight:800}
+  .teacher .role{color:var(--accent);font-size:13px;letter-spacing:.08em;margin:4px 0 10px}
+  .teacher p{color:#b9c1ca;font-size:14px}
+
+  /* plans */
+  .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:46px}
+  .plan{background:#0f1318;border:1px solid var(--line);border-radius:18px;padding:26px;display:flex;flex-direction:column;position:relative}
+  .plan.featured{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent), 0 20px 50px rgba(200,169,106,.12)}
+  .plan .tag{position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+    background:var(--accent);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.1em;
+    padding:4px 12px;border-radius:999px;white-space:nowrap}
+  .plan .pname{font-size:13px;letter-spacing:.18em;color:var(--accent2);font-weight:700}
+  .plan .price{font-size:30px;font-weight:800;margin:12px 0 2px}
+  .plan .price small{font-size:14px;color:var(--muted);font-weight:500}
+  .plan ul{list-style:none;margin:18px 0 22px;flex:1}
+  .plan li{font-size:13.5px;color:#c2cad2;padding:8px 0 8px 22px;position:relative;border-bottom:1px dashed #1a1e24}
+  .plan li::before{content:"›";position:absolute;left:4px;color:var(--accent)}
+  .plan .pbtn{text-align:center;padding:12px;border-radius:999px;font-weight:700;font-size:14px;border:1px solid #39404a}
+  .plan.featured .pbtn{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+  .plannote{color:var(--muted);font-size:12.5px;margin-top:18px;text-align:center}
+
+  /* availability */
+  .avail{margin-top:38px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--line)}
+  th{color:var(--muted);font-weight:600;font-size:12px;letter-spacing:.08em;background:#0e1216}
+  td .ok{color:#6fcf97;font-weight:700}
+  td .no{color:#ff7a6e}
+  td .pt{color:var(--accent)}
+
+  /* timeline */
+  .days{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:42px}
+  .day{background:#0f1318;border:1px solid var(--line);border-radius:16px;padding:26px}
+  .day .d{color:var(--accent);font-size:13px;letter-spacing:.2em;font-weight:700}
+  .day h4{font-size:18px;margin:8px 0 14px}
+  .day ul{list-style:none}
+  .day li{font-size:13.5px;color:#bcc4cc;padding:6px 0;display:flex;gap:10px}
+  .day li b{color:var(--accent2);min-width:48px;font-variant-numeric:tabular-nums}
+
+  /* copy strip */
+  .copystrip{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:42px}
+  .copy{border:1px solid var(--line);border-radius:14px;padding:22px;font-size:17px;color:#e6ebf0;
+    background:linear-gradient(180deg,#12161b,#0e1115)}
+  .copy span{color:var(--accent)}
+
+  /* faq */
+  details{border-bottom:1px solid var(--line);padding:18px 0}
+  summary{cursor:pointer;font-weight:700;font-size:16px;list-style:none;display:flex;justify-content:space-between}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--accent);font-weight:400}
+  details[open] summary::after{content:"–"}
+  details p{color:#b3bbc4;font-size:14.5px;margin-top:12px}
+
+  /* apply */
+  #apply{background:linear-gradient(180deg,#101418,#0b0d10);text-align:center}
+  #apply h2{margin-bottom:10px}
+  #apply .big{margin-top:30px}
+  .footnote{color:var(--muted);font-size:12px;margin-top:30px;line-height:1.9}
+
+  footer{padding:40px 0;border-top:1px solid var(--line);color:var(--muted);font-size:12.5px;text-align:center}
+
+  @media(max-width:860px){
+    .ippon,.teachers,.copystrip{grid-template-columns:1fr}
+    .plans{grid-template-columns:1fr 1fr}
+    .days{grid-template-columns:1fr}
+  }
+  @media(max-width:520px){ .plans{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="brand">BLANK <small>001 / 弟子屈</small></div>
+    <a href="#apply" class="navcta">残席を確認して申し込む</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="fog"></div>
+  <div class="wrap">
+    <div class="kicker">柔術 × AI 合宿 ／ 北海道・弟子屈・摩周</div>
+    <h1>白から、<span class="thin">組む。</span></h1>
+    <p class="lead">3日で、<b style="color:#fff">一本</b>取って、<b style="color:#fff">一本</b>作る。<br>
+      柔術は初めてでいい。AIも初めてでいい。だから <b style="color:#fff">BLANK</b>。</p>
+
+    <div class="meta-row">
+      <span>📅 <b>2026.6.14(日)–17(水)</b> 3泊4日</span>
+      <span>📍 <b>弟子屈・美留和</b>（摩周湖／屈斜路湖）</span>
+      <span>✈️ <b>プライベートジェット</b>で東京から一気に<small style="opacity:.65">（PRIVATE/法人プランに含む）</small></span>
+      <span>🥋 講師 <b>村田良蔵 × 濱田優貴</b></span>
+    </div>
+
+    <div class="cta">
+      <a href="#apply" class="btn btn-primary">いますぐ申し込む（全10席）</a>
+      <a href="#plans" class="btn btn-ghost">プランを見る ¥20万〜</a>
+    </div>
+    <div class="scarcity"><span class="dot"></span>定員 <b>10名</b>・少人数貸切。空き状況は下に実数で掲載しています。</div>
+  </div>
+</header>
+
+<!-- CONCEPT -->
+<section id="why">
+  <div class="wrap">
+    <div class="eyebrow">なぜ BLANK なのか</div>
+    <h2>"一本" を、ふたつ持って帰る。</h2>
+    <p class="sub">柔術ともの作りは、同じ動詞でできている——「組む」。白帯から、空のプロンプトから、反復で積み上げる。摩周の霧の中で、それを頭でなく体で理解する3日間。</p>
+
+    <div class="ippon">
+      <div class="card">
+        <div class="num">朝 ／ 体の一本</div>
+        <h3>マットで、一本取る。</h3>
+        <p>村田良蔵に習う、本物の柔術。初心者専用クラスから。受け身も、組み方も、ゼロから。撮ったスパーは JiuFlow に記録され、あなたの技ライブラリになる。</p>
+      </div>
+      <div class="card">
+        <div class="num">夜 ／ 頭の一本</div>
+        <h3>AIで、一本作る。</h3>
+        <p>濱田が伴走。Claude Code で、自分の柔術を復習するミニアプリでも、仕事のひと手間を自動化する道具でも——3日で「動くもの」を1つ世に出して帰る。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEACHERS -->
+<section id="teachers">
+  <div class="wrap">
+    <div class="eyebrow">講師</div>
+    <h2>教わるのは、本物。<br>初めての人のための、本気の3日。</h2>
+    <div class="teachers">
+      <div class="teacher">
+        <div class="ava">🥋</div>
+        <div>
+          <h3>村田 良蔵</h3>
+          <div class="role">柔術 黒帯 ／ 体の一本</div>
+          <p>日本の柔術シーンを切り拓いてきた本物。「初めてでも、本物に習える」——受け身から、丁寧に。技は Koe で多言語の口伝として残します。</p>
+        </div>
+      </div>
+      <div class="teacher">
+        <div class="ava">⌨️</div>
+        <div>
+          <h3>濱田 優貴</h3>
+          <div class="role">Enabler / 頭の一本</div>
+          <p>JiuFlow・wearmu・bim.house を作る連続起業家。「マットで組む人は、AIでも組める（作れる）」。あなたの隣で、公開までを伴走します。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section id="plans">
+  <div class="wrap">
+    <div class="eyebrow">プラン</div>
+    <h2>来やすさは、幅で。<br>¥20万から、法人貸切まで。</h2>
+    <p class="sub">全プラン 3泊4日・食事込み（地元食材）・柔術初心者歓迎。ジェットの席数には限りがあります。</p>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="pname">ENTRY</div>
+        <div class="price">¥200,000<small> /人</small></div>
+        <ul>
+          <li>自力来場（JR釧網本線 美留和駅 徒歩圏／中標津空港 送迎）</li>
+          <li>美留和ハウス 相部屋</li>
+          <li>柔術 初心者専用クラス</li>
+          <li>AIもくもく（Claude Code 入門）</li>
+          <li>BLANK 001 限定T（シリアル）</li>
+        </ul>
+        <a href="#apply" class="pbtn">このプランで申し込む</a>
+      </div>
+
+      <div class="plan">
+        <div class="pname">STANDARD</div>
+        <div class="price">¥450,000<small> /人</small></div>
+        <ul>
+          <li>各自来場＋空港送迎（ジェットは別オプション）</li>
+          <li>THE NEST 個室・天然温泉・サウナ</li>
+          <li>村田良蔵クラス＋スパー</li>
+          <li>自分の「技アプリ」を1本公開</li>
+          <li>BLANK 白帯 シリアル #k/N</li>
+        </ul>
+        <a href="#apply" class="pbtn">このプランで申し込む</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="tag">人気・ジェット込み</div>
+        <div class="pname">PRIVATE</div>
+        <div class="price">¥1,000,000<small> /人</small></div>
+        <ul>
+          <li><b>プライベートジェット往復</b>（東京↔中標津）</li>
+          <li>一棟貸し 優先・貸切寄り</li>
+          <li>村田良蔵 マンツーマン指導枠</li>
+          <li>濱田 伴走でプロダクト1本ローンチ</li>
+          <li>BLANK ドロップ フルセット＋真正性QR</li>
+        </ul>
+        <a href="#apply" class="pbtn">このプランで申し込む</a>
+      </div>
+
+      <div class="plan">
+        <div class="pname">CORPORATE 法人</div>
+        <div class="price">〜¥3,000,000<small> /社</small></div>
+        <ul>
+          <li><b>ジェット貸切（1機）</b>＋一棟まるごと貸切（最大6名）</li>
+          <li>研修：チームの「組む力」＋AI内製化</li>
+          <li>自社業務を3日で1本自動化して持ち帰る</li>
+          <li>請求書・領収書を法人発行（研修費計上可）</li>
+          <li>成果＆PR素材・NDA対応</li>
+        </ul>
+        <a href="#apply" class="pbtn">法人で相談する</a>
+      </div>
+    </div>
+    <p class="plannote">※ プライベートジェットは ホンダジェット（HA-420）を予定。運航会社・天候により機材／発着空港が変更になる場合があります。決済は申込確定後にご案内します。</p>
+  </div>
+</section>
+
+<!-- AVAILABILITY -->
+<section id="avail">
+  <div class="wrap">
+    <div class="eyebrow">空き状況（リアルタイム在庫より）</div>
+    <h2>6/14–17、いま空いている棟。</h2>
+    <p class="sub">弟子屈・美留和の自有棟。少人数だからこそ、埋まるのは早いです。</p>
+    <div class="avail">
+      <table>
+        <thead><tr><th>棟</th><th>タイプ</th><th>定員</th><th>6/14–17</th></tr></thead>
+        <tbody>
+          <tr><td>THE NEST 弟子屈</td><td>オフグリッド一棟貸し・サウナ</td><td>6</td><td><span class="ok">◎ 空き</span></td></tr>
+          <tr><td>Instant House A 美留和</td><td>少人数ハウス</td><td>2–4</td><td><span class="ok">◎ 空き</span></td></tr>
+          <tr><td>Instant House B 美留和</td><td>少人数ハウス</td><td>2–4</td><td><span class="ok">◎ 空き</span></td></tr>
+          <tr><td>THE LODGE 弟子屈</td><td>天然温泉・薪ストーブ</td><td>6</td><td><span class="pt">△ 一部のみ</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section id="schedule">
+  <div class="wrap">
+    <div class="eyebrow">3日のかたち</div>
+    <h2>朝は体、昼は頭、夜は焚き火。</h2>
+    <div class="days">
+      <div class="day">
+        <div class="d">DAY 1 ／ 着火</div>
+        <h4>白帯で、初ロール。</h4>
+        <ul>
+          <li><b>午後</b>東京発、ジェットで中標津へ</li>
+          <li><b>夕</b>チェックイン・受け身入門</li>
+          <li><b>夜</b>「なぜ作るのか」＋焚き火＋温泉</li>
+        </ul>
+      </div>
+      <div class="day">
+        <div class="d">DAY 2 ／ 没頭</div>
+        <h4>取って、撮って、作る。</h4>
+        <ul>
+          <li><b>朝</b>ドリル＋スパー（JiuFlow記録）</li>
+          <li><b>昼</b>もくもく＋ミニ講座2本</li>
+          <li><b>夜</b>中間デモ＋timelock封印＋サウナ</li>
+        </ul>
+      </div>
+      <div class="day">
+        <div class="d">DAY 3–4 ／ 世に出す</div>
+        <h4>一本、公開して帰る。</h4>
+        <ul>
+          <li><b>午前</b>ラストスパート（公開が必達）</li>
+          <li><b>昼</b>成果LT大会＋BLANK帯 授与</li>
+          <li><b>夕</b>クロージング・帰京</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COPY -->
+<section id="voice">
+  <div class="wrap">
+    <div class="eyebrow">あなたへ</div>
+    <h2>こんな人に、来てほしい。</h2>
+    <div class="copystrip">
+      <div class="copy">柔術、ずっと気になってた。<span>でも一歩が出なかった人。</span></div>
+      <div class="copy">AIで何か作りたい。<span>けど一人だと続かない人。</span></div>
+      <div class="copy">東京の景色に、<span>少し詰まっている人。</span></div>
+      <div class="copy">チームで、<span>本気の3日を共有したい会社。</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">FAQ</div>
+    <h2>よくある質問</h2>
+    <details open><summary>柔術はまったくの初めてですが大丈夫？</summary>
+      <p>大丈夫です。むしろ初めての人のための合宿です。受け身から、村田良蔵が丁寧に教えます。道着はレンタルあり。動ける服装でお越しください。</p></details>
+    <details><summary>AIやプログラミングの経験は必要？</summary>
+      <p>不要です。Claude Code を使って、ことばで作ります。「作りたいもの」を一つ持ってきてくれれば、濱田が公開まで伴走します。</p></details>
+    <details><summary>プライベートジェットは全プランに付く？</summary>
+      <p>PRIVATE／CORPORATE に含まれます。ENTRY／STANDARD は自力来場（JR釧網本線 美留和駅が徒歩圏、または中標津・釧路・女満別空港から送迎）。ジェットはオプション追加も可能です。</p></details>
+    <details><summary>急な日程ですが、本当に開催される？</summary>
+      <p>会場（自有棟）は確保済み。最少催行 4名から開催します。定員10名・先着順です。</p></details>
+    <details><summary>キャンセルは？</summary>
+      <p>お申し込み確定後にキャンセルポリシーをご案内します。ジェット手配の都合上、確定後の変更には制限があります。</p></details>
+  </div>
+</section>
+
+<!-- APPLY -->
+<section id="apply">
+  <div class="wrap">
+    <div class="eyebrow">申し込み</div>
+    <h2>白帯で、行こう。</h2>
+    <p class="sub" style="margin:14px auto 0">全10席・少人数貸切。先着＋一言応募（柔術歴は不問・「作りたいもの」を一言だけ）。</p>
+    <div class="big">
+      <a class="btn btn-primary" style="font-size:17px;padding:18px 40px"
+         href="mailto:mail@yukihamada.jp?subject=BLANK%20001%20%E5%BF%9C%E5%8B%9F&body=%E2%96%A0%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%E2%96%A0%E3%81%94%E5%B8%8C%E6%9C%9B%E3%83%97%E3%83%A9%E3%83%B3%EF%BC%88ENTRY%2FSTANDARD%2FPRIVATE%2F%E6%B3%95%E4%BA%BA%EF%BC%89%EF%BC%9A%0A%E2%96%A0%E6%9F%94%E8%A1%93%E6%AD%B4%EF%BC%88%E4%B8%8D%E5%95%8F%EF%BC%89%EF%BC%9A%0A%E2%96%A0%E4%BD%9C%E3%82%8A%E3%81%9F%E3%81%84%E3%82%82%E3%81%AE%EF%BC%88%E4%B8%80%E8%A8%80%EF%BC%89%EF%BC%9A%0A%E2%96%A0%E5%87%BA%E7%99%BA%E5%9C%B0%EF%BC%9A">
+        メールで応募する（30秒）</a>
+    </div>
+    <p class="footnote">
+      主催：株式会社イネブラ（Enabler Inc.）／ BLANK 柔術 × AI 合宿シリーズ<br>
+      お問い合わせ：mail@yukihamada.jp<br>
+      ※ 価格・日程・機材は予告なく変更する場合があります。決済方法はお申し込み確定後にご案内します。
+    </p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">BLANK 001 ／ 弟子屈・摩周 ・ 2026.6.14–17 — 白から、組む。</div>
+</footer>
+
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</body>
+</html>
