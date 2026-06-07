@@ -1265,6 +1265,11 @@ async fn kamishibai_blank_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-blank.html"))
 }
 
+// 番外編『ふたつの白。』— 熱海・水上 振り返り編。/blank/recap (記録ページ) と対になる紙芝居
+async fn kamishibai_recap_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-recap.html"))
+}
+
 // ── 紙芝居・試写席: 一回見たら燃え尽きるリンク ────────────────────────
 // GET  /kamishibai/hi/{token}        … 未燃焼=幕ページ(まだ燃やさない=bot先読み対策) / 燃焼済み=燃え尽きページ
 // POST /kamishibai/hi/{token}/hiraku … 「幕を、開ける」で初めて燃焼(O_EXCLで原子的)。2人目以降は410
@@ -7189,6 +7194,8 @@ async fn main() {
         .route("/saki", get(kamishibai_ep8_page))
         .route("/kamishibai/blank", get(kamishibai_blank_page))
         .route("/shirakara", get(kamishibai_blank_page))
+        .route("/kamishibai/recap", get(kamishibai_recap_page))
+        .route("/futatsu", get(kamishibai_recap_page))
         .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
