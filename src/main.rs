@@ -1509,6 +1509,20 @@ async fn room_presence(
     (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "peers": count, "cap": 6 }))).into_response()
 }
 
+// Sanitize a self-declared display name before it can appear in the public roster.
+// Names are display-only (never used as data), so we neutralize the XSS-relevant
+// characters at ingestion: removing < > " ' makes the value safe to render even if
+// a consumer (atsm.wtf) forgets to HTML-escape it — defense in depth, not a
+// replacement for output escaping. Also drops control chars and caps at 40 chars.
+fn sanitize_roster_name(raw: &str) -> String {
+    raw.chars()
+        .filter(|c| !c.is_control() && !matches!(c, '<' | '>' | '"' | '\'' | '`'))
+        .take(40)
+        .collect::<String>()
+        .trim()
+        .to_string()
+}
+
 // Read-only roster: display names of the peers currently in a room, learned from
 // their {t:"profile"} signaling frames (self-declared, re-sent on every join).
 // Names are exposed ONLY for allowlisted rooms (ROOM_ROSTER_PUBLIC, comma-separated;
@@ -1839,7 +1853,7 @@ async fn handle_ws_room(
                                 // (sent on join and whenever a newcomer arrives) for /roster.
                                 if v.get("t").and_then(|t| t.as_str()) == Some("profile") {
                                     if let Some(n) = v.get("name").and_then(|n| n.as_str()) {
-                                        let name: String = n.chars().filter(|c| !c.is_control()).take(40).collect::<String>().trim().to_string();
+                                        let name = sanitize_roster_name(n);
                                         if !name.is_empty() {
                                             state.rtc_names.lock().unwrap().entry(room.clone()).or_default().insert(me, name);
                                         }
