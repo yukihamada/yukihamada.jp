@@ -47,7 +47,7 @@ TITLES = {
 }
 
 CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
- "TBOT": {8:("https://atsm.wtf","🔥 火に、/help とくべる")},
+ "TBOT": {8:("https://atsm.wtf","🔥 atsm.wtf を開いて /help とくべる")},
  "EP2": {8:("https://atsm.wtf","🔥 火を囲みに")},
  "EP4": {8:("https://atsm.wtf/community","🔥 あなたの薪を、火に")},
  "EP5": {11:("/security-gate","🔑 その七つの質問は、ここに")},
