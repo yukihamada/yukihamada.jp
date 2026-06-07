@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 KEY = os.environ.get("GEMINI_API_KEY", "")
 MODEL = "gemini-3-pro-image-preview"
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EPS = ["EP1", "EP2", "EP3", "EP4", "EP5", "EP6", "EP7", "EP8"]
+EPS = ["EP1", "EP2", "EP3", "EP4", "EP5", "EP6", "EP7", "EP8", "TBOT"]
 
 STYLE = (
     "Japanese modern ink-art (sumi-e meets cinematic) keyframe for a digital kamishibai. "

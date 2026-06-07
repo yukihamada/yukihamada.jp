@@ -10,9 +10,10 @@ import json, re, os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V2 = lambda ep: json.load(open(f"{BASE}/scripts/kamishibai_v2/{ep}.json"))
 
-PREFIX = {"EP1":"ep1v2","EP2":"ep2v2","EP3":"asoview","EP4":"atsume","EP5":"kagi","EP6":"minna","EP7":"transformer","EP8":"give"}
+PREFIX = {"EP1":"ep1v2","EP2":"ep2v2","EP3":"asoview","EP4":"atsume","EP5":"kagi","EP6":"minna","EP7":"transformer","EP8":"give","TBOT":"tbot"}
 FILE = {"EP1":"kamishibai.html","EP2":"kamishibai-ep2.html","EP3":"kamishibai-ep3.html","EP4":"kamishibai-ep4.html",
-        "EP5":"kamishibai-ep5.html","EP6":"kamishibai-ep6.html","EP7":"kamishibai-ep7.html","EP8":"kamishibai-ep8.html"}
+        "EP5":"kamishibai-ep5.html","EP6":"kamishibai-ep6.html","EP7":"kamishibai-ep7.html","EP8":"kamishibai-ep8.html",
+        "TBOT":"kamishibai-takibi-bot.html"}
 
 META = {
  "EP1": dict(no=1, sub="トップオブマインド編", robots="noindex,nofollow", og=11,
@@ -27,6 +28,8 @@ META = {
    desc="作る速さが100倍なら、鍵のかけ忘れも100倍。公開する前に、一度、泥棒になってください。改稿版・全11場面。"),
  "EP6": dict(no=6, sub="協力の証明編", robots="index,follow", og=10,
    desc="情緒をぜんぶ抜いて、計算だけで「一人でやる」を証明しようとしたら、正反対が証明された。改稿版・全11場面。"),
+ "TBOT": dict(no=9, sub="焚き火コマンド編", robots="index,follow", og=5,
+   desc="焚き火に話しかけたら、返事が来た。スラッシュ一本で売上も死活も家も声も薪で返る——操作盤を共有の火に置いた話。全8場面。"),
  "EP8": dict(no=8, sub="ギバー編", robots="index,follow", og=9,
    desc="いちばん損するのも、いちばん遠くへ行くのも、先に渡す人。違いはひとつ——自分も守れるか。改稿版・全9場面。"),
 }
@@ -39,10 +42,12 @@ TITLES = {
  "EP5": {1:("玄関","かけた、はず。"),2:("速さ百倍","すごい時代です。"),3:("裏返る","かけ忘れも、百倍。"),4:("白状","七つのうち、三つ。"),5:("芯","できたつもりが、いちばん危ない。"),6:("その一","迷ったら、閉じる。"),7:("その二","合鍵を、マットの下に置かない。"),8:("その三","一度、泥棒になる。"),9:("見える","開いてる窓が、見つかる。"),10:("思想","安全は、速さの一部。"),11:("むすび","かけて、確かめてから。")},
  "EP6": {1:("宣言","一人でやる人間です。"),2:("前提","計算だけで、考える。"),3:("証明 一","十倍、早い。"),4:("証明 二","盲点は、掛け算で消える。"),5:("証明 三","当たりは、人の数だけ。"),6:("証明 四","計算が、おかしい。"),7:("証明 五","下手な人がいて、最大になれる。"),8:("証明 六","わけても、減らない。"),9:("反転","正反対でした。"),10:("むすび","みんなの火は、朝まで。"),11:("あなたへ","火のそばで、会いましょう。")},
  "EP7": {1:("二〇一七年","注意こそ、すべて。"),2:("むかし","順番待ちで、遅い。"),3:("ひらめき","机の上に、ぜんぶ広げる。"),4:("アテンション","どこを見るか、自分で決める。"),5:("しくみ","似ているものに、惹かれる。"),6:("複数の目","一人で、見ない。"),7:("順番の情報","波の印を、そっと足す。"),8:("結果","順番待ちが、消えた。"),9:("それから","あの題名は、ほんとうだった。"),10:("きみへ","さいごに、一曲。")},
+ "TBOT": {1:("ある夜","返事が、来た。"),2:("タブの山","確認だけで、夜が終わる。"),3:("合図","スラッシュ、一本。"),4:("くべる","薪が、答える。"),5:("驚き","ほんとうに、建つ。"),6:("声","火を囲んだまま、聴ける。"),7:("芯","操作盤を、火のそばに。"),8:("あなたへ","火に向かって、ヘルプ。")},
  "EP8": {1:("常識","親切な人は、損をする?"),2:("三人","ギバー、テイカー、マッチャー。"),3:("意外","いちばん上も、与える人。"),4:("裏返る","自分も、守るかどうか。"),5:("橋","向ける先を、選ぶ。"),6:("作法","賢く、配る。"),7:("砂漠の街","先に渡す、それだけ。"),8:("むすび","すり減らさずに。"),9:("あなたへ","かしこく、先に、渡す。")},
 }
 
 CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
+ "TBOT": {8:("https://atsm.wtf","🔥 火に、/help とくべる")},
  "EP2": {8:("https://atsm.wtf","🔥 火を囲みに")},
  "EP4": {8:("https://atsm.wtf/community","🔥 あなたの薪を、火に")},
  "EP5": {11:("/security-gate","🔑 その七つの質問は、ここに")},
@@ -103,7 +108,11 @@ def build_ep7():
     print(f"kamishibai-ep7.html: {len(sc)} scenes (DIAG/MV維持)")
 
 if __name__ == "__main__":
-    for ep in ["EP1","EP2","EP3","EP4","EP5","EP6","EP8"]:
-        build_standard(ep)
-    build_ep7()
+    import sys
+    targets = sys.argv[1:] or ["EP1","EP2","EP3","EP4","EP5","EP6","EP7","EP8","TBOT"]
+    for ep in targets:
+        if ep == "EP7":
+            build_ep7()
+        else:
+            build_standard(ep)
     print("done")

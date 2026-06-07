@@ -1264,6 +1264,13 @@ async fn kamishibai_ep8_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep8.html"))
 }
 
+// ── 紙芝居 第9話『焚き火に、話しかけろ。』焚き火コマンド編 ──────────────
+// 薪の先頭に「/」でボットが応える使い方を全8場面で。/tension /house /koe → /help。
+// 画像 /assets/kamishibai-v2/TBOT/、音声 /audio/v2/tbot-kam-N.mp3 を WebAudio で。(marker: kamishibai-9)
+async fn kamishibai_tbot_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-takibi-bot.html"))
+}
+
 // ── 紙芝居・試写席: 一回見たら燃え尽きるリンク ────────────────────────
 // GET  /kamishibai/hi/{token}        … 未燃焼=幕ページ(まだ燃やさない=bot先読み対策) / 燃焼済み=燃え尽きページ
 // POST /kamishibai/hi/{token}/hiraku … 「幕を、開ける」で初めて燃焼(O_EXCLで原子的)。2人目以降は410
@@ -7296,6 +7303,8 @@ async fn main() {
         .route("/transformer", get(kamishibai_ep7_page))
         .route("/attention", get(kamishibai_ep7_page))
         .route("/kamishibai/8", get(kamishibai_ep8_page))
+        .route("/kamishibai/9", get(kamishibai_tbot_page))
+        .route("/kamishibai/takibi-bot", get(kamishibai_tbot_page))
         .route("/kamishibai/hi/{token}", get(kamishibai_hiseki_page))
         .route("/kamishibai/hi/{token}/hiraku", post(kamishibai_hiseki_open))
         .route("/give", get(kamishibai_ep8_page))
