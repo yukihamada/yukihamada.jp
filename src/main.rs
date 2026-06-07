@@ -1260,6 +1260,11 @@ async fn kamishibai_ep8_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep8.html"))
 }
 
+// 番外編 BLANK 001 弟子屈編『白から、組む。』— /blank (LP) と対になる紙芝居 (marker: kamishibai-blank)
+async fn kamishibai_blank_page() -> impl IntoResponse {
+    Html(include_str!("../templates/kamishibai-blank.html"))
+}
+
 // ── 紙芝居・試写席: 一回見たら燃え尽きるリンク ────────────────────────
 // GET  /kamishibai/hi/{token}        … 未燃焼=幕ページ(まだ燃やさない=bot先読み対策) / 燃焼済み=燃え尽きページ
 // POST /kamishibai/hi/{token}/hiraku … 「幕を、開ける」で初めて燃焼(O_EXCLで原子的)。2人目以降は410
@@ -7182,6 +7187,8 @@ async fn main() {
         .route("/kamishibai/hi/{token}/hiraku", post(kamishibai_hiseki_open))
         .route("/give", get(kamishibai_ep8_page))
         .route("/saki", get(kamishibai_ep8_page))
+        .route("/kamishibai/blank", get(kamishibai_blank_page))
+        .route("/shirakara", get(kamishibai_blank_page))
         .route("/kamishibai/magmag", get(kamishibai_magmag_page).post(kamishibai_magmag_login))
         .route("/arigatou", get(thanks_asoview_page))
         .route("/asoview/thanks", get(thanks_asoview_page))
@@ -7254,6 +7261,7 @@ async fn main() {
         .route("/api/takibi/feed", get(takibi_feed))
         .route("/api/takibi/speak", post(takibi_speak))
         .route("/api/takibi/react", post(takibi_react))
+        .nest_service("/blank", ServeDir::new("public/blank"))
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))

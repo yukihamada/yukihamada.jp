@@ -17,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor
 KEY = os.environ.get("GEMINI_API_KEY", "")
 MODEL = "gemini-3-pro-image-preview"
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-EPS = ["EP1", "EP2", "EP3", "EP4", "EP5", "EP6", "EP7", "EP8"]
+EPS = sys.argv[1:] or ["EP1", "EP2", "EP3", "EP4", "EP5", "EP6", "EP7", "EP8"]
 
 STYLE = (
     "Japanese modern ink-art (sumi-e meets cinematic) keyframe for a digital kamishibai. "
@@ -26,6 +26,18 @@ STYLE = (
     "ABSOLUTELY NO text, NO letters, NO numbers, NO captions inside the image. "
     "Consistent character: a simple silhouetted figure (no facial detail). Mood follows the scene direction."
 )
+
+# BLANK編は反転パレット(紙白基調・霧)。視覚文法はv2共通(文字ゼロ・シルエット)
+STYLE_OVERRIDE = {
+    "BLANK": (
+        "Japanese modern ink-art (sumi-e meets cinematic) keyframe for a digital kamishibai, INVERTED palette. "
+        "Palette: paper-white #f5f3ef base, morning fog grey #d9d6d0, sumi black #1a1714 silhouettes and linework, "
+        "vermilion #c0392b accents, ember orange #e6953f for fire, warm light #f5d9a8, lake blue #3a6ea5 hints. "
+        "16:9 cinematic composition, vast negative space of white fog (Lake Mashu, Hokkaido), film grain, soft vignette. "
+        "ABSOLUTELY NO text, NO letters, NO numbers, NO captions inside the image. "
+        "Consistent characters: simple silhouetted figures (no facial detail). Mood follows the scene direction."
+    ),
+}
 
 
 def gen_image(prompt: str, out_path: str, retries: int = 3) -> bool:
@@ -61,7 +73,7 @@ def scene_jobs():
             if os.path.exists(out) and os.path.getsize(out) > 30000:
                 continue  # レジューム可
             prompt = (
-                f"{STYLE}\n\nEpisode theme: {d['logline']}\n"
+                f"{STYLE_OVERRIDE.get(ep, STYLE)}\n\nEpisode theme: {d['logline']}\n"
                 f"Scene direction (Japanese, follow precisely): {sc['visual'][:600]}\n"
                 f"Emotional tone of narration: {sc['narration'][:160]}"
             )
