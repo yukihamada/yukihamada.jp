@@ -41,6 +41,7 @@ PREFIX = {
     "EP1": "ep1v2", "EP2": "ep2v2",  # EP1/2は元が一本mp3。v2はシーン分割の新規プレフィックス
     "EP3": "asoview", "EP4": "atsume", "EP5": "kagi", "EP6": "minna",
     "EP7": "transformer", "EP8": "give", "magmag": "mg-14b7a2be",
+    "BLANK": "blank",
 }
 
 TAG_RE = re.compile(r"\[[a-z ]+\]")
@@ -121,6 +122,9 @@ def gen_episode(ep_id: str, model_key: str, takes: int, speed: float = 1.0):
         nxt = strip_tags(scenes[i + 1].get("tts", ""))[:280] if i < len(scenes) - 1 else ""
         expected = strip_tags(sc.get("tts", ""))
         out = os.path.join(OUTDIR, f"{prefix}-kam-{sc['n']}.mp3")
+        if os.path.exists(out) and os.path.getsize(out) > 10000:
+            print(f"  scene{sc['n']}: skip (既存mp3あり — 再生成は先にmp3を削除)")
+            continue
         best, best_score = None, -2.0
         for t in range(takes):
             try:
