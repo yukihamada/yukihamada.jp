@@ -40,7 +40,7 @@ os.makedirs(OUTDIR, exist_ok=True)
 PREFIX = {
     "EP1": "ep1v2", "EP2": "ep2v2",  # EP1/2は元が一本mp3。v2はシーン分割の新規プレフィックス
     "EP3": "asoview", "EP4": "atsume", "EP5": "kagi", "EP6": "minna",
-    "EP7": "transformer", "EP8": "give", "magmag": "mg-14b7a2be",
+    "EP7": "transformer", "EP8": "give", "TBOT": "tbot", "magmag": "mg-14b7a2be",
 }
 
 TAG_RE = re.compile(r"\[[a-z ]+\]")
