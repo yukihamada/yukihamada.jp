@@ -729,6 +729,8 @@ async fn redirect_root() -> Redirect {
 
 async fn redirect_terminal() -> Redirect { Redirect::permanent("/#terminal") }
 async fn redirect_projects() -> Redirect { Redirect::permanent("/#projects") }
+// /takibi → 焚き火本体 takibi.wtf。暫定着地のため temporary(307) で固定キャッシュを避ける。
+async fn redirect_takibi() -> Redirect { Redirect::temporary("https://takibi.wtf") }
 async fn redirect_career()   -> Redirect { Redirect::permanent("/#career") }
 async fn redirect_music()    -> Redirect { Redirect::permanent("/#music") }
 async fn redirect_browser()  -> Redirect { Redirect::permanent("/#browser") }
@@ -7316,9 +7318,11 @@ async fn main() {
         // 焚き火トップの別名URL — どれも同じともしびの焚き火を表示する
         .route("/campfire", get(community::page))
         .route("/tomoshibi", get(community::page))
-        // NOTE: /takibi は PWA 静的配信（下の nest_service("/takibi")）に譲る。
-        // route と nest_service を同一パスに二重登録すると axum が起動時 panic するため、
-        // ここでは別名から外す（焚き火トップは /campfire /tomoshibi /bonfire /fire で到達可）。
+        // /takibi は焚き火本体 takibi.wtf へ転送する（入口の一本化）。
+        // takibi.wtf の Cloudflare 設定が完了するまでの暫定着地が PARTY LP のため、
+        // permanent(308) でブラウザに固定させず temporary で転送する。
+        .route("/takibi", get(redirect_takibi))
+        .route("/takibi/{*rest}", get(redirect_takibi))
         .route("/bonfire", get(community::page))
         .route("/fire", get(community::page))
         // 日本語パスはブラウザが percent-encode して送るため、その形で登録する
@@ -7381,7 +7385,6 @@ async fn main() {
         .route("/api/takibi/feed", get(takibi_feed))
         .route("/api/takibi/speak", post(takibi_speak))
         .route("/api/takibi/react", post(takibi_react))
-        .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
         .route("/api/fanclub/verify", post(fanclub_verify))
