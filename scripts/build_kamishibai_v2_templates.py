@@ -47,12 +47,12 @@ TITLES = {
 }
 
 CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
- "TBOT": {8:("https://atsm.wtf","🔥 atsm.wtf を開いて /help とくべる")},
- "EP2": {8:("https://atsm.wtf","🔥 火を囲みに")},
- "EP4": {8:("https://atsm.wtf/community","🔥 あなたの薪を、火に")},
+ "TBOT": {8:("https://takibi.wtf","🔥 takibi.wtf を開いて /help とくべる")},
+ "EP2": {8:("https://takibi.wtf","🔥 火を囲みに")},
+ "EP4": {8:("https://takibi.wtf/","🔥 あなたの薪を、火に")},
  "EP5": {11:("/security-gate","🔑 その七つの質問は、ここに")},
- "EP6": {11:("https://atsm.wtf","🔥 焚き火へ")},
- "EP8": {9:("https://atsm.wtf","🔥 最初の一本を")},
+ "EP6": {11:("https://takibi.wtf","🔥 焚き火へ")},
+ "EP8": {9:("https://takibi.wtf","🔥 最初の一本を")},
 }
 
 SKELETON = open(f"{BASE}/templates/kamishibai-ep4.html").read()

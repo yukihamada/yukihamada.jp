@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""紙芝居v2の薪キューから「次の1話」をatsm.wtf焚き火にくべる(1日1話のドリップ配信用)。
+"""紙芝居v2の薪キューから「次の1話」をtakibi.wtf焚き火にくべる(1日1話のドリップ配信用)。
 
 - キュー: 同ディレクトリ takibi_queue.json (posted_atで進行管理・冪等)
 - 認証: ~/.claude.json の mcpServers.atsm.headers.Authorization を使用(値は表示しない)
@@ -29,7 +29,7 @@ body = {
                "arguments": {"text": nxt["text"], "member_name": q["member_name"]}},
 }
 res = subprocess.run(
-    ["curl", "-s", "-X", "POST", "https://atsm.wtf/mcp",
+    ["curl", "-s", "-X", "POST", "https://takibi.wtf/mcp",
      "-H", f"Authorization: {auth}",
      "-H", "Content-Type: application/json",
      "-H", "Accept: application/json",

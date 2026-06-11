@@ -203,7 +203,7 @@ struct AppState {
     // WebRTC 1:1 signaling rooms: room_id → broadcast sender relaying SDP/ICE between peers.
     rtc_rooms: Mutex<HashMap<String, broadcast::Sender<String>>>,
     // Display names announced via {t:"profile"} signaling frames: room_id → (peer_id → name).
-    // Read-only roster for allowlisted rooms (atsm.wtf 焚き火); entries die with the WS.
+    // Read-only roster for allowlisted rooms (takibi.wtf 焚き火); entries die with the WS.
     rtc_names: Mutex<HashMap<String, HashMap<u64, String>>>,
     // 声まとめ session window: room_id → (session start epoch, names seen this session).
     // rtc_names forgets each peer on disconnect, so participants accumulate here and the
@@ -1223,7 +1223,7 @@ async fn kamishibai_ep3_page() -> impl IntoResponse {
 // 紙芝居 第4話『薪は、プロダクトだ。』（ATSUME 焚き火編 2026.06.04）。
 // AI辛口査定★2の告白 → みんなで使って育てる方針 → 「あなたのプロダクトもMCPで焚き火へ」。
 // 全9場面、画像 /assets/atsume-kamishibai/、音声 /audio/atsume-kam-N.mp3 を WebAudio で再生。
-// 8・9場面目に atsm.wtf/community への CTA。(marker: kamishibai-4)
+// 8・9場面目に takibi.wtf/ への CTA。(marker: kamishibai-4)
 async fn kamishibai_ep4_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep4.html"))
 }
@@ -1243,7 +1243,7 @@ async fn security_gate_page() -> impl IntoResponse {
 
 // 紙芝居 第6話『一人でやらない、は、正しい。』(なぜみんなでやるのか 2026.06.04)。
 // 情緒を抜いて計算だけで「協力が最適解」を証明: 並列探索/無相関の盲点/打席数/
-// メトカーフ/比較優位/知識の非競合性/超合理性 → 焚き火(atsm.wtf)に着地。EP4情緒版の対。
+// メトカーフ/比較優位/知識の非競合性/超合理性 → 焚き火(takibi.wtf)に着地。EP4情緒版の対。
 // 全9場面、画像 /assets/minna-kamishibai/、音声 /audio/minna-kam-N.mp3 を WebAudio で。(marker: kamishibai-6)
 async fn kamishibai_ep6_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep6.html"))
@@ -1258,7 +1258,7 @@ async fn kamishibai_ep7_page() -> impl IntoResponse {
 
 // 紙芝居 第8話『先に、渡す。』(ギバー/テイカー、与え方の話)。Adam Grant の GIVE&TAKE +
 // バーニングマンの贈与 + 焚き火 LOVE&RESPECT を全9場面で。最下層も頂点もギバー→賢いギバー
-// (otherish)→テイカーには与えさせろ→焚き火(atsm.wtf)に着地。EP4情緒/EP6計算の続き。
+// (otherish)→テイカーには与えさせろ→焚き火(takibi.wtf)に着地。EP4情緒/EP6計算の続き。
 // 画像 /assets/give-kamishibai/、音声 /audio/give-kam-N.mp3 を WebAudio で。(marker: kamishibai-8)
 async fn kamishibai_ep8_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep8.html"))
@@ -1341,7 +1341,7 @@ async fn kamishibai_hiseki_page(axum::extract::Path(token): axum::extract::Path<
         return (StatusCode::GONE, Html(hiseki_shell(
             r#"<div class="fire">🪵</div><h1>この薪は、燃え尽きました。</h1>
 <p>最初の一人が、もう幕を開けました。<br>でも、火は毎晩くべられます——21時、焚き火に次の一話。</p>
-<a class="b" href="https://atsm.wtf" rel="noopener">🔥 火を囲みに</a>
+<a class="b" href="https://takibi.wtf" rel="noopener">🔥 火を囲みに</a>
 <div class="dim">薪は、一度しか燃えない。だから、あたたかい。</div>"#,
         ))).into_response();
     }
@@ -1516,14 +1516,14 @@ async fn room_presence(
         let rooms = state.rtc_rooms.lock().unwrap();
         rooms.get(&room).map(|t| t.receiver_count()).unwrap_or(0)
     };
-    // "peers" duplicates "count" for external consumers that expect {"peers": N} (atsm.wtf 焚き火)
+    // "peers" duplicates "count" for external consumers that expect {"peers": N} (takibi.wtf 焚き火)
     (cors_headers_any(), Json(serde_json::json!({ "room": room, "count": count, "peers": count, "cap": 6 }))).into_response()
 }
 
 // Sanitize a self-declared display name before it can appear in the public roster.
 // Names are display-only (never used as data), so we neutralize the XSS-relevant
 // characters at ingestion: removing < > " ' makes the value safe to render even if
-// a consumer (atsm.wtf) forgets to HTML-escape it — defense in depth, not a
+// a consumer (takibi.wtf) forgets to HTML-escape it — defense in depth, not a
 // replacement for output escaping. Also drops control chars and caps at 40 chars.
 fn sanitize_roster_name(raw: &str) -> String {
     raw.chars()
@@ -1537,7 +1537,7 @@ fn sanitize_roster_name(raw: &str) -> String {
 // Read-only roster: display names of the peers currently in a room, learned from
 // their {t:"profile"} signaling frames (self-declared, re-sent on every join).
 // Names are exposed ONLY for allowlisted rooms (ROOM_ROSTER_PUBLIC, comma-separated;
-// default "atsmwtf" for the atsm.wtf 焚き火) — /meet booking rooms stay count-only,
+// default "atsmwtf" for the takibi.wtf 焚き火) — /meet booking rooms stay count-only,
 // so a guessed room URL never leaks who is in a private call.
 async fn room_roster(
     State(state): State<Arc<AppState>>,
@@ -1675,7 +1675,7 @@ async fn room_transcript_get(
 
 // ── 声まとめ送り出し ──────────────────────────────────────────────
 // 全員退出でセッションが閉じた瞬間、そのセッション分の文字起こしを koe-mcp
-// POST /api/takibi/voice-summary へ送る(要約と「🎙 声まとめ」投稿は atsm.wtf 側)。
+// POST /api/takibi/voice-summary へ送る(要約と「🎙 声まとめ」投稿は takibi.wtf 側)。
 // 許可ルームのみ(既定 atsmwtf) — /meet 商談ルームの会話は絶対に外へ出さない。
 // KOE_TAKIBI_SECRET 未設定なら fail-closed(送らないだけ・room 動作に影響なし)。
 fn voice_summary_room_allowed(room: &str) -> bool {
@@ -2591,7 +2591,7 @@ fn cors_headers() -> HeaderMap {
 }
 
 // The /room mesh (WS signaling + ICE/presence) is intentionally shareable across
-// our other properties (e.g. atsm.wtf 焚き火 page joins the same room=atsmwtf call
+// our other properties (e.g. takibi.wtf 焚き火 page joins the same room=atsmwtf call
 // in-page). The WS upgrade has no Origin check, but the ICE/presence JSON is read
 // via fetch — so those two endpoints need a permissive CORS origin. They expose no
 // PII (public STUN servers + short-lived TURN creds + a peer headcount), so `*` is
@@ -7474,7 +7474,7 @@ async fn main() {
         .route("/k/{handle}", get(k_handle))
         .route("/api/room/ice", get(room_ice))
         .route("/api/room/{id}/presence", get(room_presence))
-        // alias for external consumers (atsm.wtf 焚き火の「入る前の在室数」) — same read-only handler
+        // alias for external consumers (takibi.wtf 焚き火の「入る前の在室数」) — same read-only handler
         .route("/api/room/{id}/peers", get(room_presence))
         .route("/api/room/{id}/roster", get(room_roster))
         // 文字起こしログ: POST=参加者ブラウザからのテキスト行 / GET=admin閲覧 (MEET_ADMIN_TOKEN)
