@@ -7383,6 +7383,7 @@ async fn main() {
         .route("/api/takibi/react", post(takibi_react))
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
+        .nest_service("/kamisibai", ServeDir::new("public/kamisibai"))
         .nest_service("/mv", ServeDir::new("public/mv"))
         .route("/api/fanclub/verify", post(fanclub_verify))
         .route("/api/fanclub/verify", axum::routing::options(options_cors))
