@@ -54,8 +54,7 @@ header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:
 .card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
 .card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
 .card p.ja{font-size:.95rem;line-height:1.9}
-.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;transition:box-shadow .3s}
-.reading .kanso{box-shadow:0 0 0 2px rgba(232,131,58,.35)}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
 .kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
 .kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
 .sent{transition:background .25s}
@@ -142,7 +141,7 @@ const SLIDES=[
       "June 8, WWDC. Apple announced it is rebuilding Siri from the ground up on a custom Google Gemini model (reportedly 1.2 trillion parameters, licensed for about $1B a year). After years of 'that's just a web search, isn't it?', this is the biggest career change of Siri's life. And Tim Cook gave his final keynote — Apple announced he hands the CEO role to John Ternus on September 1."],
   kanso:["Appleほどの会社でも、AIを自前で抱え込まずに「借りる」決断をした。完璧に作るより、速く組む。僕も全部そのやり方です。むしろAppleが僕のやり方に寄せてきた、と思うことにしています。",
       "Even Apple decided to borrow AI rather than build it all in-house. Assemble fast instead of perfecting slowly — that's how I build everything too. I choose to believe Apple is the one copying my playbook."],
-  srcs:[{t:"Apple Newsroom (公式)",u:"https://www.apple.com/newsroom/2026/06/apple-unveils-next-generation-of-apple-intelligence-siri-ai-and-more/"},{t:"TechCrunch: WWDC 2026まとめ",u:"https://techcrunch.com/2026/06/09/wwdc-2026-everything-announced-on-siri-ai-os-27-apple-intelligence-and-more/"},{t:"Build Fast with AI (パラメータ数・金額の報道)",u:"https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026"}]},
+  srcs:[{t:"Apple Newsroom (公式)",u:"https://www.apple.com/newsroom/2026/06/apple-unveils-next-generation-of-apple-intelligence-siri-ai-and-more/"},{t:"TechCrunch: WWDC 2026まとめ",u:"https://techcrunch.com/2026/06/09/wwdc-2026-everything-announced-on-siri-ai-os-27-apple-intelligence-and-more/"},{t:"9to5Mac (Bloomberg報道: 1.2兆パラメータ・年約10億ドル)",u:"https://9to5mac.com/2025/11/05/google-gemini-1-billion-deal-apple-siri/"}]},
  {b:"03_choice",audio:"audio/03.mp3",no:["第三枚","Card 3"],
   alt:"夜の三叉路。緑の渦・青い星・橙の太陽の精霊が浮かぶ三本の道の前で、人がスマホを提灯のように掲げて選んでいる",
   title:["AIを「選ぶ」時代","The Age of Choosing Your AI"],
@@ -166,7 +165,7 @@ const SLIDES=[
       "The model race stayed gridlocked: Claude Opus 4.8 with a 1M-token context, GPT-5.5 going GA, Gemini 3.5 Flash competing on speed, Grok 4.3 on price. Meanwhile, under the river, MCP reportedly passed 97 million cumulative installs (as counted in March) and became the lingua franca of AI agents."],
   kanso:["派手な殴り合いより、川の下で糸がつながったことが本命だと思う。僕もKoe・AdFlow・bim.houseなど自分のサービスを全部MCP対応にしました。エージェントから使えないサービスは、これから「存在しない」のと同じになる。",
       "The real story isn't the flashy brawl — it's the threads connecting under the water. I've made all my services MCP-ready: Koe, AdFlow, bim.house. A service agents can't reach will soon be a service that doesn't exist."],
-  srcs:[{t:"Build Fast with AI (モデル各種)",u:"https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026"},{t:"Crescendo.ai (MCP 9,700万・3月時点)",u:"https://www.crescendo.ai/news/latest-ai-news-and-updates"}]},
+  srcs:[{t:"Build Fast with AI (モデル各種)",u:"https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026"},{t:"byteiota: MCP 9,700万インストール(3/25付)",u:"https://byteiota.com/model-context-protocol-hits-97m-installs-standard-wins/"},{t:"Digital Applied: MCP 97M(3月集計)",u:"https://www.digitalapplied.com/blog/mcp-97-million-downloads-model-context-protocol-mainstream"}]},
  {b:"06_physical",audio:"audio/06.mp3",no:["第六枚","Card 6"],
   alt:"夕暮れのスペインの広場。センサードームを載せ運転席が空の無人タクシーが走り、工房の戸口から丸いロボットが手を振る。地平線にデータセンター建設のクレーン",
   title:["画面の外へ","Out of the Screen"],
@@ -176,7 +175,7 @@ const SLIDES=[
       "AI is moving from words into the physical world. My own work is building houses from words — not just the design, but code-compliance checks, ordering and construction, all connected by language. My bet: houses will be built from words before the taxis finish learning the streets."],
   srcs:[{t:"GlobeNewswire: WeRide/Uber/AVOMO公式発表(6/2)",u:"https://www.globenewswire.com/news-release/2026/06/02/3304896/0/en/weride-uber-and-avomo-bring-robotaxis-to-madrid.html"},{t:"CnEVPost: BYDヒューマノイド参入(6/3)",u:"https://cnevpost.com/2026/06/03/byd-enters-humanoid-robot-market/"},{t:"Fortune: Meta 2026 capex引き上げ(4/29)",u:"https://fortune.com/2026/04/29/meta-zuckerberg-145-billion-ai-spending-roi/"}]},
  {b:"07_rules",audio:"audio/07.mp3",no:["第七枚","Card 7"],
-  alt:"夏祭りの参道。鳥居に天秤が掛かり、裁き役が本の形の灯籠を掲げる。屋台では光る精霊たちが店番をしている",
+  alt:"夏祭りの参道。鳥居に天秤が掛かり、裁き役が本の形の灯籠を掲げる。人々が屋台に集まり、光る精霊たちが通りに浮かんでいる",
   title:["ルールの夏、延長戦","Regulation Summer, Extra Innings"],
   ja:["規制も動きました——主に、後ろへ。EUのAI法は8月2日に全面適用日を迎えますが、目玉のハイリスク義務は2027年末〜2028年へ延期する政治合意が直前に成立。米コロラド州のAI法も、6月30日施行のはずが5月の改正で2027年1月へ延期+内容も縮小されました。世界そろって「先生、宿題の提出期限を延ばしてください」の夏です。",
       "Regulation moved too — mostly backwards. The EU AI Act hits its general application date on August 2, but a last-minute political agreement postpones the headline high-risk obligations to late 2027–2028. Colorado's AI Act, due June 30, was amended in May: delayed to January 2027 and scaled back. The whole world, in unison: 'Teacher, can we have an extension on the homework?'"],
@@ -244,7 +243,6 @@ function renderText(){
  [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));if(k===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
  artTop.alt=SLIDES[i].alt;
  titleplate.classList.toggle("on",i===0);
- history.replaceState(null,"",`?card=${i+1}`);
 }
 function preloadAdjacent(){
  [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
@@ -258,6 +256,7 @@ function show(k,dir){
  busy=true;
  setImg(artUnder,SLIDES[n].b);
  i=n;renderText();
+ history.replaceState(null,"",`?card=${i+1}`);
  artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
  artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
  setTimeout(()=>{
@@ -303,7 +302,10 @@ function shareCard(){
  if(navigator.share){navigator.share({title,url}).catch(()=>{})}
  else{navigator.clipboard.writeText(url).then(()=>showToast(UI.copied[L]))}
 }
-function toggleLang(){L=1-L;renderText();clearHighlight()}
+function toggleLang(){
+ if(voice){setVoice(false);player.currentTime=0;audioFor=-1}
+ L=1-L;renderText();clearHighlight();
+}
 function go(d){show(i+d,d)}
 document.addEventListener("keydown",e=>{
  if(e.key==="ArrowRight")go(1);
