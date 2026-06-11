@@ -3,160 +3,276 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
 <title>AIの、いま。— 2026年6月の紙芝居 | yukihamada.jp</title>
-<meta name="description" content="2026年6月のAIニュースを8枚の紙芝居に。濱田優貴の感想つき・本人声AIクローンの読み上げ対応。WWDCのSiri再構築、iPhoneでAIを選ぶ時代、Anthropic IPO申請、モデル戦争、AI規制の夏。">
+<meta name="description" content="2026年6月のAIニュースを8枚の紙芝居に。濱田優貴の感想つき・本人声AIクローンの読み上げ対応。WWDCのSiri再構築、iPhoneでAIを選ぶ時代、Anthropic IPO申請、モデル戦争、規制の延長戦。">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/ai20260611/">
 <meta property="og:title" content="AIの、いま。— 2026年6月の紙芝居">
 <meta property="og:description" content="最近のAIニュースを8枚の紙芝居で。僕の感想と声つき。はじまり、はじまり〜">
 <meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
 <meta property="og:url" content="https://yukihamada.jp/kamisibai/ai20260611/">
 <meta property="og:image" content="https://yukihamada.jp/kamisibai/ai20260611/img/01_title.jpg">
+<meta property="og:image:width" content="1400">
+<meta property="og:image:height" content="1050">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://yukihamada.jp/kamisibai/ai20260611/img/01_title.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Article","headline":"AIの、いま。— 2026年6月の紙芝居","alternativeHeadline":"AI Now — A Kamishibai of June 2026","datePublished":"2026-06-11","dateModified":"2026-06-11","inLanguage":["ja","en"],"author":{"@type":"Person","name":"濱田優貴","alternateName":"Yuki Hamada","url":"https://yukihamada.jp"},"publisher":{"@type":"Person","name":"濱田優貴","url":"https://yukihamada.jp"},"mainEntityOfPage":"https://yukihamada.jp/kamisibai/ai20260611/",
+"image":["https://yukihamada.jp/kamisibai/ai20260611/img/01_title.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/02_wwdc.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/03_choice.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/04_anthropic.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/05_models.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/06_physical.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/07_rules.jpg","https://yukihamada.jp/kamisibai/ai20260611/img/08_end.jpg"],
+"audio":{"@type":"AudioObject","contentUrl":"https://yukihamada.jp/kamisibai/ai20260611/audio/01.mp3","encodingFormat":"audio/mpeg","inLanguage":"ja","description":"濱田優貴の声のAIクローンによる朗読(全8枚)"}}
+</script>
 <script defer src="https://enabler-analytics.fly.dev/t.js"></script>
 <style>
 :root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64}
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--paper);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
-header{padding:14px 16px 0;text-align:center}
+header{padding:14px 16px 0;text-align:center;width:min(96vw,860px)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topline .spacer{width:64px}
 header h1{font-size:1.05rem;font-weight:600;letter-spacing:.18em;color:var(--paper)}
-header p{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px}
+header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;text-align:center}
+.langbtn{font-family:-apple-system,sans-serif;font-size:.7rem;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:5px 12px;cursor:pointer;width:64px}
+.langbtn:hover{color:var(--paper);border-color:var(--paper)}
 .voicebar{display:flex;justify-content:center;margin-top:10px}
 .voicebar button{font-family:inherit;font-size:.82rem;letter-spacing:.08em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(232,131,58,.35)}
 .voicebar button.playing{background:#6b4a2a}
 .stage{position:relative;width:min(96vw,860px);margin:12px auto 0;user-select:none}
 .frame{position:relative;background:#3a2c1c;border-radius:10px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 0 2px rgba(245,236,217,.08)}
-.frame img{display:block;width:100%;border-radius:4px;aspect-ratio:4/3;object-fit:cover;background:#241b10}
-.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.art-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#241b10}
+.art-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#artTop{z-index:2}
+#artUnder{z-index:1}
+.titleplate{position:absolute;z-index:3;top:8%;left:6%;writing-mode:vertical-rl;font-size:clamp(1.6rem,5.5vw,3rem);font-weight:800;letter-spacing:.22em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 3px rgba(0,0,0,.9);opacity:0;transition:opacity .4s;pointer-events:none}
+.titleplate.on{opacity:1}
+.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;border:none;z-index:4}
+.nav-half:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
 .nav-prev{left:0}.nav-next{right:0}
 .card{background:var(--paper);color:var(--ink);width:min(96vw,860px);margin:14px auto;border-radius:10px;padding:20px 22px 16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 .card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
 .card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
 .card p.ja{font-size:.95rem;line-height:1.9}
-.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;transition:box-shadow .3s}
+.reading .kanso{box-shadow:0 0 0 2px rgba(232,131,58,.35)}
 .kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
 .kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
-.card p.en{font-size:.72rem;color:var(--muted);margin-top:10px;font-family:-apple-system,sans-serif;line-height:1.5}
+details.srcs{margin-top:12px;font-family:-apple-system,sans-serif}
+details.srcs summary{font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em}
+details.srcs ul{margin:6px 0 0 18px;font-size:.74rem;line-height:1.8}
+details.srcs a{color:#a05a20;word-break:break-all}
+details.srcs .note{font-size:.7rem;color:var(--muted);margin-top:4px}
 .dots{display:flex;gap:8px;justify-content:center;margin:4px 0 10px}
 .dots button{width:9px;height:9px;border-radius:50%;border:none;background:rgba(245,236,217,.25);cursor:pointer;padding:0}
 .dots button.on{background:var(--accent)}
 .hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:.08em;padding:0 16px}
-.sources{display:none;font-size:.78rem;line-height:1.8;margin-top:12px;border-top:1px solid rgba(42,33,24,.18);padding-top:10px;font-family:-apple-system,sans-serif}
-.sources a{color:#a05a20;word-break:break-all}
-.show-sources .sources{display:block}
 footer{padding:10px 16px 28px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.7;font-family:-apple-system,sans-serif}
 footer a{color:var(--muted)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3a2c1c;color:var(--paper);font-size:.8rem;font-family:-apple-system,sans-serif;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;z-index:50}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast button{background:var(--accent);border:none;color:#fff;border-radius:6px;padding:4px 10px;margin-left:10px;cursor:pointer;font-size:.75rem}
 @media (max-width:480px){.card h2{font-size:1.02rem}.card p.ja{font-size:.88rem}.kanso p{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.art-wrap img{transition:none !important}}
 </style>
 </head>
 <body>
 <header>
-  <h1>AIの、いま。</h1>
-  <p>2026年6月の紙芝居 ・ 全8枚 ・ 濱田優貴の感想と声つき</p>
+  <div class="topline">
+    <span class="spacer" aria-hidden="true"></span>
+    <div><h1 id="h1">AIの、いま。</h1></div>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" aria-label="Switch language">EN</button>
+  </div>
+  <p class="sub" id="sub">2026年6月の紙芝居 ・ 全8枚 ・ 濱田優貴の感想と声つき</p>
   <div class="voicebar"><button id="voiceBtn" onclick="toggleVoice()">▶ 僕の声で読み上げる</button></div>
 </header>
 
 <div class="stage">
   <div class="frame">
-    <img id="art" src="img/01_title.jpg" alt="紙芝居">
-    <div class="nav-half nav-prev" onclick="go(-1)" aria-label="前へ"></div>
-    <div class="nav-half nav-next" onclick="go(1)" aria-label="次へ"></div>
+    <div class="art-wrap">
+      <img id="artTop" src="img/01_title.jpg" width="1400" height="1050" alt="" fetchpriority="high">
+      <img id="artUnder" src="img/01_title.jpg" width="1400" height="1050" alt="" aria-hidden="true">
+      <div class="titleplate on" id="titleplate">AIの、いま。</div>
+    </div>
+    <button class="nav-half nav-prev" onclick="go(-1)" aria-label="前の枚へ" id="navPrev"></button>
+    <button class="nav-half nav-next" onclick="go(1)" aria-label="次の枚へ" id="navNext"></button>
   </div>
 </div>
 
-<div class="card" id="card">
+<div class="card" id="card" aria-live="polite">
   <div class="no" id="no">第一枚</div>
   <h2 id="title"></h2>
   <p class="ja" id="ja"></p>
-  <div class="kanso"><div class="who">🔥 ぼくの感想</div><p id="kanso"></p></div>
-  <p class="en" id="en"></p>
-  <div class="sources" id="sources">
-    <strong>出典(2026-06-11 調査)</strong><br>
-    ・<a href="https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026" rel="noopener">AI News Today — June 8, 2026 (Build Fast with AI)</a><br>
-    ・<a href="https://www.crescendo.ai/news/latest-ai-news-and-updates" rel="noopener">Latest AI News and Breakthroughs (Crescendo.ai)</a><br>
-    ・<a href="https://radicaldatascience.wordpress.com/2026/06/04/ai-news-briefs-bulletin-board-for-june-2026/" rel="noopener">AI News Briefs June 2026 (Radical Data Science)</a><br>
-    ※評価額・設備投資額などは各報道ベースの数字です。
-  </div>
+  <div class="kanso"><div class="who" id="who">🔥 ぼくの感想</div><p id="kanso"></p></div>
+  <details class="srcs" id="srcs"><summary id="srcsum">出典 ▸</summary><ul id="srclist"></ul><div class="note" id="srcnote"></div></details>
 </div>
 
-<div class="dots" id="dots"></div>
-<p class="hint">▶を押すと僕の声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー</p>
+<div class="dots" id="dots" role="tablist" aria-label="枚の選択"></div>
+<p class="hint" id="hint">▶で僕の声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー</p>
 
-<footer>
+<footer id="foot">
   絵: Gemini ・ 声: 濱田優貴のAIクローン(Koe) ・ 文: Claude + 濱田優貴 ・ <a href="https://yukihamada.jp">yukihamada.jp</a>
 </footer>
+<div id="toast" role="status"></div>
+<noscript><p style="color:#f5ecd9;text-align:center;padding:20px">この紙芝居の閲覧にはJavaScriptが必要です / This kamishibai requires JavaScript.</p></noscript>
 
 <script>
 const SLIDES=[
- {img:"img/01_title.jpg",audio:"audio/01.mp3",no:"第一枚",title:"はじまり、はじまり〜",
-  ja:"2026年6月。AIのニュースが、毎日のように世界を駆けめぐる。今月なにが起きたのか、8枚の紙芝居でお届けします。",
-  kanso:"僕も毎日AIと一緒にプロダクトを作っている当事者として、今月は「時代の節目」を感じました。ちなみにこの読み上げの声も、僕の声のAIクローンです。",
-  en:"June 2026. A month of AI news, told in eight kamishibai cards — with my own commentary, narrated by my AI voice clone."},
- {img:"img/02_wwdc.jpg",audio:"audio/02.mp3",no:"第二枚",title:"林檎、Siriを作り直す",
-  ja:"6月8日、WWDC。AppleはSiriをGoogle特注のGemini(1.2兆パラメータ・年およそ10億ドルのライセンス)で根本から作り直すと発表。そしてTim Cookはこれが最後の基調講演に——9月1日、CEOをJohn Ternusへ。",
-  kanso:"Appleほどの会社でも、AIを自前で抱え込まずに「借りる」決断をした。完璧に作るより、速く組む。僕も全部そのやり方です。",
-  en:"Apple rebuilt Siri on a custom 1.2T-parameter Gemini (~$1B/yr). Tim Cook's final keynote. My take: even Apple chose to borrow, not build — speed over perfection."},
- {img:"img/03_choice.jpg",audio:"audio/03.mp3",no:"第三枚",title:"AIを「選ぶ」時代",
-  ja:"iOS 27の新しいExtensionsで、iPhoneのAIをChatGPT・Gemini・Claudeから選べるように。ClaudeがiPhoneの標準の選択肢になるのは初めて。",
-  kanso:"OSが土管になって、AIは「ユーザーが選ぶもの」になった。選ばれる側は大変だけど、使う側には最高の時代。僕のプロダクトも、特定のAIに縛らない設計にしています。",
-  en:"iOS 27 lets users pick ChatGPT, Gemini, or Claude. My take: AI became something you choose — so I build my products AI-agnostic."},
- {img:"img/04_anthropic.jpg",audio:"audio/04.mp3",no:"第四枚",title:"灯籠、空へ",
-  ja:"Anthropicは6月1日、IPOを機密申請(直近の評価額は約9,650億ドルとの報道)。同時に「Project Glasswing」を開始——未公開モデルClaude Mythos PreviewをAWS・Apple・Google・Microsoftらと共有し、悪い人より先に重大な脆弱性を見つけて直す試み。",
-  kanso:"最強のモデルをまず「守る側」に配る、この発想が好きです。強い技術ほど、先に盾として使う。",
-  en:"Anthropic filed for IPO (~$965B reported) and launched Project Glasswing. My take: deploying your strongest model as a shield first — I love that."},
- {img:"img/05_models.jpg",audio:"audio/05.mp3",no:"第五枚",title:"四艘の舟、一本の川",
-  ja:"モデル競争は止まらない。Claude Opus 4.8は100万トークンの文脈、GPT-5.5は正式提供開始、Gemini 3.5 Flashは速さで、Grok 4.3は値段で勝負。その川の下では、MCPが累計9,700万インストールを超え、AIエージェントの「共通語」になった。",
-  kanso:"派手なモデル競争より、MCPが共通語になったことが本命だと思う。僕もKoe・AdFlow・bim.houseなど自分のサービスをぜんぶMCP対応にしました。エージェントから使えないサービスは、これから「存在しない」のと同じになる。",
-  en:"Opus 4.8, GPT-5.5, Gemini 3.5 Flash, Grok 4.3 — but the real story is MCP passing 97M installs. My take: I made all my services MCP-ready; unreachable-by-agents soon means invisible."},
- {img:"img/06_physical.jpg",audio:"audio/06.mp3",no:"第六枚",title:"画面の外へ",
-  ja:"AIは物理世界へ歩き出す。マドリードではスペイン初の商用ロボタクシーが走り出し(Uber×WeRide×AVOMO)、BYDはヒューマノイドロボット参入を表明。Metaは2026年に1,150〜1,350億ドルをAIインフラに注ぐと報じられた。",
-  kanso:"AIが言葉から物理世界へ出ていく。僕がbim.houseでやっている「言葉から家を建てる」も同じ流れです。設計だけでなく、法規チェックから発注・施工まで、言葉でつなげたい。",
-  en:"Robotaxis in Madrid, BYD humanoids, Meta's $115–135B capex. My take: AI walking into the physical world is exactly what I'm doing with bim.house — words that become buildings."},
- {img:"img/07_rules.jpg",audio:"audio/07.mp3",no:"第七枚",title:"ルールの夏",
-  ja:"米コロラド州AI法は6月30日に施行、EUのAI法は8月2日から執行段階へ——違反すれば最大3,500万ユーロ、または世界売上の7%。作る側に「責任」という名札がつく夏。",
-  kanso:"ルールは敵ではなく、長く使われるための土台。うちは「AIは提案まで、最後のスイッチは人が押す」を全プロダクト共通の原則にしています。広告も決済も、人間の承認ゲート付き。",
-  en:"Colorado June 30, EU AI Act Aug 2. My take: rules aren't the enemy. My products all follow one principle — AI proposes, humans press the final switch."},
- {img:"img/08_end.jpg",audio:"audio/08.mp3",no:"第八枚",title:"おしまい——どうしていくべきか",
-  ja:"AIは「すごい道具」から、「選んで、使って、責任を持つ道具」になった。じゃあ、どうしていくべきか。僕の答えは3つ。",
-  kanso:"①特定のモデルに依存しない作りにする。②すべてのサービスをMCPでエージェントに開く。③スピードはAIに任せて、最後の判断と責任は人間が持つ。AIは火吹き棒、火を点けるのはあなた。一人で世界には届かない——仲間と、作っていきましょう。……おしまい、おしまい。",
-  en:"My three answers: stay model-agnostic, open every service to agents via MCP, and let AI bring the speed while humans keep the final call. AI is the fire-blowing pipe; you light the fire.",sources:true},
+ {b:"01_title",audio:"audio/01.mp3",no:["第一枚","Card 1"],
+  alt:"夕暮れの東京の路地。自転車に載った木の紙芝居舞台が回路のように光り、子どもと大人が集まっている",
+  title:["はじまり、はじまり〜","Here we go—"],
+  ja:["2026年6月。AIのニュースは、1週間休むと浦島太郎になれる速さで流れていきます。今月なにが起きたのか、8枚にぎゅっと絞ってお届けします。まずは、あの林檎の話から。",
+      "June 2026. AI news now moves so fast that skipping one week feels like missing a decade. What happened this month? Eight cards, tightly packed. Let's start with that apple."],
+  kanso:["毎日AIと一緒にプロダクトを作っている僕でも、今月は「あ、時代のページがめくれた」と感じました。ちなみにこの読み上げも僕の声のAIクローンです。本人は隣でお茶を飲んでいます。",
+      "I build products with AI every single day, and even I felt the page of an era turn this month. By the way, this narration is an AI clone of my voice — the real me is sitting next to it, drinking tea."],
+  srcs:[]},
+ {b:"02_wwdc",audio:"audio/02.mp3",no:["第二枚","Card 2"],
+  alt:"劇場の舞台で白髪の登壇者がお辞儀し、背後に宝石を抱いた林檎のシルエットが光る。観客は温かい拍手",
+  title:["林檎、Siriを作り直す","The Apple Rebuilds Siri"],
+  ja:["6月8日、WWDC。AppleはSiriを、Google特注のGemini(報道では1.2兆パラメータ・ライセンス料は年およそ10億ドル)で根本から作り直すと発表しました。長年「それ、ただの検索結果ですよね」と言われ続けたSiri、人生最大の転職です。そしてTim Cookはこれが最後の基調講演——9月1日にCEOをJohn Ternusへ引き継ぐと発表されています。",
+      "June 8, WWDC. Apple announced it is rebuilding Siri from the ground up on a custom Google Gemini model (reportedly 1.2 trillion parameters, licensed for about $1B a year). After years of 'that's just a web search, isn't it?', this is the biggest career change of Siri's life. And Tim Cook gave his final keynote — Apple announced he hands the CEO role to John Ternus on September 1."],
+  kanso:["Appleほどの会社でも、AIを自前で抱え込まずに「借りる」決断をした。完璧に作るより、速く組む。僕も全部そのやり方です。むしろAppleが僕のやり方に寄せてきたと思っています(冗談です)。",
+      "Even Apple decided to borrow AI rather than build it all in-house. Assemble fast instead of perfecting slowly — that's how I build everything too. Honestly, I'd say Apple is copying my playbook (kidding)."],
+  srcs:[{t:"Apple Newsroom (公式)",u:"https://www.apple.com/newsroom/2026/06/apple-unveils-next-generation-of-apple-intelligence-siri-ai-and-more/"},{t:"TechCrunch: WWDC 2026まとめ",u:"https://techcrunch.com/2026/06/09/wwdc-2026-everything-announced-on-siri-ai-os-27-apple-intelligence-and-more/"},{t:"Build Fast with AI (パラメータ数・金額の報道)",u:"https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026"}]},
+ {b:"03_choice",audio:"audio/03.mp3",no:["第三枚","Card 3"],
+  alt:"夜の三叉路。緑の渦・青い星・橙の太陽の精霊が浮かぶ三本の道の前で、人がスマホを提灯のように掲げて選んでいる",
+  title:["AIを「選ぶ」時代","The Age of Choosing Your AI"],
+  ja:["そのiOS 27では、新しいExtensionsでiPhoneのAIをChatGPT・Gemini・Claudeから選べるようになります。ClaudeがiPhoneの標準選択肢に入るのは初めて。携帯キャリアを乗り換えるように、AIを乗り換える時代が来ました。",
+      "In iOS 27, the new Extensions let you choose your iPhone's AI: ChatGPT, Gemini, or Claude. It's Claude's first time as a native option on iPhone. Switching AIs is becoming like switching phone carriers."],
+  kanso:["OSが土管になって、AIは「ユーザーが選ぶもの」になった。浮気し放題とも言う。選ばれる側は大変だけど、使う側には最高の時代です。",
+      "The OS became a pipe, and AI became something users choose. You could also call it guilt-free switching. Tough if you're the one being chosen — wonderful if you're the one choosing."],
+  srcs:[{t:"Apple Newsroom (公式)",u:"https://www.apple.com/newsroom/2026/06/apple-unveils-next-generation-of-apple-intelligence-siri-ai-and-more/"},{t:"TechCrunch: WWDC 2026まとめ",u:"https://techcrunch.com/2026/06/09/wwdc-2026-everything-announced-on-siri-ai-os-27-apple-intelligence-and-more/"}]},
+ {b:"04_anthropic",audio:"audio/04.mp3",no:["第四枚","Card 4"],
+  alt:"夜明けの街の上空へ職人が大きな橙色の灯籠を放ち、下では人々が城壁を補強している",
+  title:["灯籠、空へ","A Lantern, Released to the Sky"],
+  ja:["6月1日、AnthropicはSECにIPOを機密申請しました(直前の資金調達での評価額は9,650億ドルと報じられています)。あわせて報じられた「Project Glasswing」では、未公開モデルClaude Mythos PreviewをAWS・Apple・Google・Microsoftなどと共有し、悪用される前に重大な脆弱性を見つけて直しにいくとのこと。",
+      "On June 1, Anthropic confidentially filed for an IPO with the SEC (its latest funding round reportedly valued it at $965B). Alongside, reports describe 'Project Glasswing': sharing the unreleased Claude Mythos Preview with AWS, Apple, Google, Microsoft and others to find and fix critical vulnerabilities before bad actors do."],
+  kanso:["最強の新型をまず「守る側」に配る発想が好きです。強い技術ほど、先に盾として使う。ちなみにこの紙芝居の文章を書いているのも、当のClaudeです。本人はたぶん照れています。",
+      "I love the idea of handing your strongest new model to the defenders first. The stronger the technology, the sooner it should serve as a shield. By the way, the very Claude in this story helped write this kamishibai. It's probably blushing."],
+  srcs:[{t:"Anthropic公式: S-1機密提出",u:"https://www.anthropic.com/news/confidential-draft-s1-sec"},{t:"CNBC: IPO申請報道",u:"https://www.cnbc.com/2026/06/01/anthropic-ipo-s1-prospectus.html"},{t:"Crescendo.ai (Glasswing報道)",u:"https://www.crescendo.ai/news/latest-ai-news-and-updates"}]},
+ {b:"05_models",audio:"audio/05.mp3",no:["第五枚","Card 5"],
+  alt:"夜の川を橙・緑・青・白の炎を載せた4艘の紙の舟が下り、水面下では光る無数の糸が舟と橋脚をつないでいる",
+  title:["四艘の舟、一本の川","Four Boats, One River"],
+  ja:["モデル競争は今月も大渋滞。Claude Opus 4.8は100万トークンの文脈、GPT-5.5は正式提供開始、Gemini 3.5 Flashは速さで、Grok 4.3は値段で殴り合い。一方その川の下では、MCPが累計9,700万インストール(3月時点の集計の報道)を超え、AIエージェントの「共通語」になりました。",
+      "The model race stayed gridlocked: Claude Opus 4.8 with a 1M-token context, GPT-5.5 going GA, Gemini 3.5 Flash competing on speed, Grok 4.3 on price. Meanwhile, under the river, MCP reportedly passed 97 million cumulative installs (as counted in March) and became the lingua franca of AI agents."],
+  kanso:["派手な殴り合いより、川の下で糸がつながったことが本命だと思う。僕もKoe・AdFlow・bim.houseなど自分のサービスを全部MCP対応にしました。エージェントから使えないサービスは、これから「存在しない」のと同じになる。",
+      "The real story isn't the flashy brawl — it's the threads connecting under the water. I've made all my services MCP-ready: Koe, AdFlow, bim.house. A service agents can't reach will soon be a service that doesn't exist."],
+  srcs:[{t:"Build Fast with AI (モデル各種)",u:"https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026"},{t:"Crescendo.ai (MCP 9,700万・3月時点)",u:"https://www.crescendo.ai/news/latest-ai-news-and-updates"}]},
+ {b:"06_physical",audio:"audio/06.mp3",no:["第六枚","Card 6"],
+  alt:"夕暮れのスペインの広場をやさしい目の自動運転タクシーが走り、工房の戸口から丸いロボットが手を振る。地平線にはデータセンターの建設クレーン",
+  title:["画面の外へ","Out of the Screen"],
+  ja:["AIは画面の外へ歩き出します。マドリードではスペイン初の商用ロボタクシー計画が発表され(Uber×WeRide×AVOMO)、BYDはヒューマノイドロボット参入を表明。Metaは2026年のAI設備投資を1,150〜1,350億ドル規模とした、と報じられています。もはや家一軒ではなく、国家予算の風格です。",
+      "AI is walking out of the screen. Madrid announced Spain's first commercial robotaxi plan (Uber × WeRide × AVOMO), BYD declared its entry into humanoid robots, and Meta reportedly guided 2026 AI capex at $115–135B. That's not a house budget — that's national-budget energy."],
+  kanso:["AIが言葉から物理世界へ出ていく。僕がbim.houseでやっている「言葉から家を建てる」も同じ流れです。設計だけでなく、法規チェックから発注・施工まで言葉でつなげたい。タクシーより先に、家が言葉で建つ未来に賭けています。",
+      "AI is moving from words into the physical world. That's exactly what I'm doing with bim.house — building houses from words. Not just the design: code-compliance checks, ordering, construction, all connected by language. My bet is that houses get built from words before taxis finish learning the streets."],
+  srcs:[{t:"Crescendo.ai (ロボタクシー/BYD/Meta設備投資の報道)",u:"https://www.crescendo.ai/news/latest-ai-news-and-updates"}]},
+ {b:"07_rules",audio:"audio/07.mp3",no:["第七枚","Card 7"],
+  alt:"夏祭りの参道。鳥居に天秤が掛かり、裁き役が本の形の灯籠を掲げる。屋台では光る精霊たちが店番をしている",
+  title:["ルールの夏、延長戦","Regulation Summer, Extra Innings"],
+  ja:["規制も動きました——主に、後ろへ。EUのAI法は8月2日に全面適用日を迎えますが、目玉のハイリスク義務は2027年末〜2028年へ延期する政治合意が直前に成立。米コロラド州のAI法も、6月30日施行のはずが5月の改正で2027年1月へ延期+内容も縮小されました。世界そろって「先生、宿題の提出期限を延ばしてください」の夏です。",
+      "Regulation moved too — mostly backwards. The EU AI Act hits its general application date on August 2, but a last-minute political agreement postpones the headline high-risk obligations to late 2027–2028. Colorado's AI Act, due June 30, was amended in May: delayed to January 2027 and scaled back. The whole world, in unison: 'Teacher, can we have an extension on the homework?'"],
+  kanso:["笑い話に見えて、実は重い話。技術が速すぎて、ルールを書いている間に前提が変わってしまう。だから僕は法律を待たずに「AIは提案まで、最後のスイッチは人が押す」を全プロダクト共通の原則にしています。今日も僕の広告AIの提案を、僕が承認してから流しました。",
+      "It sounds like a joke, but it's heavy: technology now outruns the ink of the law. So I don't wait for legislation — every product I run follows one rule: AI proposes, a human presses the final switch. Just today, my ad-ops AI drafted a plan, and I approved it before it went live."],
+  srcs:[{t:"欧州委員会: AI Act (公式)",u:"https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai"},{t:"Gibson Dunn: Omnibus合意でハイリスク義務延期",u:"https://www.gibsondunn.com/eu-ai-act-omnibus-agreement-postponed-high-risk-deadlines-and-other-key-changes/"},{t:"コロラド州議会: SB24-205 (公式)",u:"https://leg.colorado.gov/bills/sb24-205"},{t:"Hunton: SB189で2027年1月に延期・縮小",u:"https://www.hunton.com/privacy-and-cybersecurity-law-blog/colorado-ai-act-amended-and-effective-date-delayed"}]},
+ {b:"08_end",audio:"audio/08.mp3",no:["第八枚","Card 8"],
+  alt:"夜の路地で紙芝居屋が舞台の扉を閉じ、観客が回路の星座の下を歩いて帰る。少女が手のひらの小さな火を見せて微笑む",
+  title:["おしまい——どうしていくべきか","The End — So, What Do We Do?"],
+  ja:["AIは「すごい道具」から、「選んで、使って、責任を持つ道具」になりました。じゃあ、僕らはどうするか。僕の答えは3つあります。",
+      "AI has gone from 'an amazing tool' to 'a tool you choose, use, and answer for.' So what do we do? I carry three answers."],
+  kanso:["ひとつ、特定のモデルに依存しない作りにする(明日には順位が入れ替わるので)。ふたつ、すべてのサービスをMCPでエージェントに開く。みっつ、スピードはAIに任せて、最後の判断と責任は人間が持つ。AIは火吹き棒、火を点けるのはあなた。一人で世界には届かない——仲間と、作っていきましょう。おあとがよろしいようで。",
+      "One: build model-agnostic, because tomorrow the leaderboard flips. Two: open every service to agents via MCP. Three: let AI bring the speed, while humans keep the final call and the responsibility. AI is the fire-blowing pipe — you are the one who lights the fire. No one reaches the world alone; let's build it with friends. And that, as the rakugo masters say, is where I take my bow."],
+  srcs:[{t:"Build Fast with AI: AI News June 8, 2026",u:"https://www.buildfastwithai.com/blogs/ai-news-today-june-8-2026"},{t:"Crescendo.ai: Latest AI News",u:"https://www.crescendo.ai/news/latest-ai-news-and-updates"}],final:true},
 ];
-let i=0,voice=false;
-const art=document.getElementById("art"),no=document.getElementById("no"),
- title=document.getElementById("title"),ja=document.getElementById("ja"),
- en=document.getElementById("en"),kanso=document.getElementById("kanso"),
- card=document.getElementById("card"),dots=document.getElementById("dots"),
- voiceBtn=document.getElementById("voiceBtn");
-const player=new Audio();
-player.preload="auto";
-player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1){show(i+1)}else if(voice){setVoice(false)}});
-SLIDES.forEach((_,k)=>{const b=document.createElement("button");b.onclick=()=>show(k);dots.appendChild(b)});
-function show(k){
- i=(k+SLIDES.length)%SLIDES.length;const s=SLIDES[i];
- art.src=s.img;no.textContent=s.no;title.textContent=s.title;ja.textContent=s.ja;
- kanso.textContent=s.kanso;en.textContent=s.en;
- card.classList.toggle("show-sources",!!s.sources);
- [...dots.children].forEach((d,k2)=>d.classList.toggle("on",k2===i));
- if(voice){player.src=SLIDES[i].audio;player.play().catch(()=>setVoice(false))}
+const UI={
+ sub:["2026年6月の紙芝居 ・ 全8枚 ・ 濱田優貴の感想と声つき","A kamishibai of June 2026 ・ 8 cards ・ with Yuki Hamada's commentary & voice"],
+ voice:["▶ 僕の声で読み上げる","▶ Narrate in my voice (JA)"],
+ voiceStop:["⏸ 読み上げをとめる","⏸ Stop narration"],
+ who:["🔥 ぼくの感想","🔥 My take"],
+ hint:["▶で僕の声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー","Press ▶ for narration by my AI voice clone (Japanese) — cards turn automatically when it ends. Manual: tap left/right on the art, or use ←→ keys."],
+ srcsum:["出典 ▸","Sources ▸"],
+ srcnote:["※調査日2026-06-11。評価額・設備投資額・パラメータ数などは各報道ベースの数字です。","Researched 2026-06-11. Valuations, capex and parameter counts are as reported by the cited outlets."],
+ foot:['絵: Gemini ・ 声: 濱田優貴のAIクローン(Koe) ・ 文: Claude + 濱田優貴 ・ <a href="https://yukihamada.jp">yukihamada.jp</a>','Art: Gemini ・ Voice: AI clone of Yuki Hamada (Koe) ・ Words: Claude + Yuki Hamada ・ <a href="https://yukihamada.jp">yukihamada.jp</a>'],
+ prev:["前の枚へ","Previous card"],next:["次の枚へ","Next card"],
+ dot:["第%枚へ","Go to card %"],
+ audioErr:["音声を読み込めませんでした","Could not load the audio"],retry:["⟳ もう一度","⟳ Retry"],
+};
+let i=0,L=0,voice=false,busy=false,audioFor=-1;
+const $=id=>document.getElementById(id);
+const artTop=$("artTop"),artUnder=$("artUnder"),titleplate=$("titleplate"),
+ no=$("no"),title=$("title"),ja=$("ja"),kanso=$("kanso"),who=$("who"),card=$("card"),
+ dots=$("dots"),voiceBtn=$("voiceBtn"),hint=$("hint"),sub=$("sub"),foot=$("foot"),
+ srcs=$("srcs"),srcsum=$("srcsum"),srclist=$("srclist"),srcnote=$("srcnote"),
+ toast=$("toast"),langBtn=$("langBtn");
+const player=new Audio();player.preload="none";
+function srcset(b){return `img/${b}-700.webp 700w, img/${b}-1400.webp 1400w`}
+function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840px";el.src=`img/${b}.jpg`}
+SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.onclick=()=>show(k);btn.setAttribute("role","tab");dots.appendChild(btn)});
+function renderText(){
+ const s=SLIDES[i];
+ no.textContent=s.no[L];title.textContent=s.title[L];ja.textContent=s.ja[L];kanso.textContent=s.kanso[L];
+ who.textContent=UI.who[L];hint.textContent=UI.hint[L];sub.textContent=UI.sub[L];foot.innerHTML=UI.foot[L];
+ srcsum.textContent=UI.srcsum[L];srcnote.textContent=UI.srcnote[L];
+ voiceBtn.textContent=voice?UI.voiceStop[L]:UI.voice[L];
+ $("navPrev").setAttribute("aria-label",UI.prev[L]);$("navNext").setAttribute("aria-label",UI.next[L]);
+ langBtn.textContent=L?"日本語":"EN";document.documentElement.lang=L?"en":"ja";
+ srclist.innerHTML="";
+ if(s.srcs.length){srcs.style.display="";s.srcs.forEach(x=>{const li=document.createElement("li");const a=document.createElement("a");a.href=x.u;a.rel="noopener";a.target="_blank";a.textContent=x.t;li.appendChild(a);srclist.appendChild(li)})}
+ else srcs.style.display="none";
+ [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));d.setAttribute("aria-selected",k===i)});
+ artTop.alt=SLIDES[i].alt;
+ titleplate.classList.toggle("on",i===0);
+ history.replaceState(null,"","#"+(i+1));
 }
-function setVoice(on){
- voice=on;
- voiceBtn.classList.toggle("playing",on);
- voiceBtn.textContent=on?"⏸ 読み上げをとめる":"▶ 僕の声で読み上げる";
- if(!on)player.pause();
+function preloadAdjacent(){
+ [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
+ if(voice&&i+1<SLIDES.length){const a=new Audio();a.preload="auto";a.src=SLIDES[i+1].audio}
 }
+function show(k,dir){
+ if(busy)return;
+ const n=(k+SLIDES.length)%SLIDES.length;
+ if(n===i){renderText();return}
+ dir=dir||(n>i?1:-1);
+ busy=true;
+ setImg(artUnder,SLIDES[n].b);
+ i=n;renderText();
+ artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
+ artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
+ setTimeout(()=>{
+  setImg(artTop,SLIDES[i].b);
+  artTop.style.transition="none";artTop.style.transform="none";
+  busy=false;preloadAdjacent();
+ },470);
+ playCurrent();
+}
+function playCurrent(){
+ if(!voice)return;
+ if(audioFor!==i){player.src=SLIDES[i].audio;audioFor=i}
+ player.play().catch(()=>{setVoice(false);showToast()});
+}
+player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
+function setVoice(on){voice=on;voiceBtn.classList.toggle("playing",on);voiceBtn.textContent=on?UI.voiceStop[L]:UI.voice[L];card.classList.toggle("reading",on);if(!on)player.pause()}
 function toggleVoice(){
  if(voice){setVoice(false);return}
  setVoice(true);
- player.src=SLIDES[i].audio;
- player.play().catch(()=>{setVoice(false);alert("音声を再生できませんでした")});
+ if(audioFor!==i){player.src=SLIDES[i].audio;audioFor=i}
+ player.play().then(()=>preloadAdjacent()).catch(()=>{setVoice(false);showToast()});
 }
-function go(d){show(i+d)}
-document.addEventListener("keydown",e=>{if(e.key==="ArrowRight"||e.key===" ")go(1);if(e.key==="ArrowLeft")go(-1)});
+function showToast(){
+ toast.innerHTML="";toast.append(UI.audioErr[L]);
+ const b=document.createElement("button");b.textContent=UI.retry[L];b.onclick=()=>{toast.classList.remove("on");toggleVoice()};
+ toast.appendChild(b);toast.classList.add("on");
+ setTimeout(()=>toast.classList.remove("on"),6000);
+}
+function toggleLang(){L=1-L;renderText()}
+function go(d){show(i+d,d)}
+document.addEventListener("keydown",e=>{if(e.key==="ArrowRight")go(1);if(e.key==="ArrowLeft")go(-1)});
 let tx=null;
-document.querySelector(".frame").addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
-document.querySelector(".frame").addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
-SLIDES.forEach(s=>{const im=new Image();im.src=s.img});
-show(0);
+const wrap=document.querySelector(".art-wrap");
+wrap.addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+wrap.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
+const h=parseInt(location.hash.slice(1),10);
+if(h>=1&&h<=SLIDES.length)i=h-1;
+setImg(artTop,SLIDES[i].b);setImg(artUnder,SLIDES[i].b);
+renderText();preloadAdjacent();
 </script>
 </body>
 </html>
