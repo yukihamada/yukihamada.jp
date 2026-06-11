@@ -157,7 +157,7 @@ const SLIDES=[
       "On June 1, Anthropic confidentially filed for an IPO with the SEC (its latest funding round reportedly valued it at $965B). Alongside, reports describe 'Project Glasswing': sharing the unreleased Claude Mythos Preview with AWS, Apple, Google, Microsoft and others to find and fix critical vulnerabilities before bad actors do. And while the lantern climbs — the river below keeps flowing."],
   kanso:["最強の新型をまず「守る側」に配る発想が好きです。強い技術ほど、先に盾として使う。ちなみにこの紙芝居の文章を書いているのも、当のClaudeです。本人はたぶん照れています。",
       "I love the idea of handing your strongest new model to the defenders first. The stronger the technology, the sooner it should serve as a shield. By the way, the very Claude in this story helped write this kamishibai. It's probably blushing."],
-  srcs:[{t:"Anthropic公式: S-1機密提出",u:"https://www.anthropic.com/news/confidential-draft-s1-sec"},{t:"CNBC: IPO申請報道",u:"https://www.cnbc.com/2026/06/01/anthropic-ipo-s1-prospectus.html"},{t:"Crescendo.ai (Glasswing報道)",u:"https://www.crescendo.ai/news/latest-ai-news-and-updates"}]},
+  srcs:[{t:"Anthropic公式: S-1機密提出",u:"https://www.anthropic.com/news/confidential-draft-s1-sec"},{t:"Anthropic公式: Project Glasswing",u:"https://www.anthropic.com/glasswing"},{t:"CNBC: IPO申請報道",u:"https://www.cnbc.com/2026/06/01/anthropic-ipo-s1-prospectus.html"},{t:"Engadget: Mythos Preview続報",u:"https://www.engadget.com/2180028/anthropic-claude-mythos-preview-project-glasswing-update/"}]},
  {b:"05_models",audio:"audio/05.mp3",no:["第五枚","Card 5"],
   alt:"夜の川を橙・緑・青・白の炎を載せた4艘の紙の舟が下り、水面下では光る無数の糸が舟と橋脚をつないでいる",
   title:["四艘の舟、一本の川","Four Boats, One River"],
@@ -222,7 +222,9 @@ function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840p
 SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.className="dot";btn.onclick=()=>show(k);dots.appendChild(btn)});
 function splitSent(text,el){
  el.innerHTML="";
- const parts=text.split(/(?<=[。!?.?!])\s*/).filter(x=>x.length);
+ const parts=[];let buf="";
+ for(const ch of text){buf+=ch;if("。!?.?!".includes(ch)){parts.push(buf);buf=""}}
+ if(buf.trim())parts.push(buf);
  return parts.map(p=>{const sp=document.createElement("span");sp.className="sent";sp.textContent=p;el.appendChild(sp);return sp});
 }
 function renderText(){
@@ -270,7 +272,7 @@ function playCurrent(){
  if(!voice)return;
  if(audioFor!==i){player.src=SLIDES[i].audio;audioFor=i}
  player.playbackRate=rate;
- player.play().catch(()=>{setVoice(false);showToast(UI.audioErr[L],true)});
+ player.play().catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
 }
 player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
 player.addEventListener("timeupdate",()=>{
@@ -287,7 +289,7 @@ function toggleVoice(){
  setVoice(true);
  if(audioFor!==i){player.src=SLIDES[i].audio;audioFor=i}
  player.playbackRate=rate;
- player.play().then(()=>preloadAdjacent()).catch(()=>{setVoice(false);showToast(UI.audioErr[L],true)});
+ player.play().then(()=>preloadAdjacent()).catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
 }
 function cycleRate(){rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];rateBtn.textContent=rate+"x";player.playbackRate=rate}
 function showToast(msg,withRetry){
