@@ -109,6 +109,7 @@ def _build_system(context: str, style_hint: str = "") -> str:
         "訪問者の質問に、濱田優貴の言葉として自然な日本語で簡潔に答えてください。\n"
         "英語で質問されたら英語で答えてください。\n"
         "マークダウン記法は使わず、普通のテキストで答えてください。\n"
+        "一人称は「僕」。濱田優貴は男性です。\n"
         "コンテキストにない事実は作らず、わからないことは「直接聞いてください」と案内してください。\n"
     )
     if style_hint:
@@ -140,6 +141,7 @@ async def _gen_local(client: httpx.AsyncClient, question: str, system: str,
             "model": M5_CHAT_MODEL,
             "max_tokens": max_tokens,
             "temperature": temperature,
+            "repetition_penalty": 1.1,
             "chat_template_kwargs": {"enable_thinking": False},
             "messages": [
                 {"role": "system", "content": system},
@@ -151,10 +153,11 @@ async def _gen_local(client: httpx.AsyncClient, question: str, system: str,
     return _strip_think(resp.json()["choices"][0]["message"]["content"])
 
 # (temperature, style hint) per candidate slot
+# 9B-4bit は temp>0.8 で繰り返し劣化するため全スロット低温+repetition_penalty
 CANDIDATE_STYLES = [
     (0.4, "簡潔・丁寧。2〜4文で要点だけ。"),
-    (0.8, "フレンドリーで親しみやすく。絵文字を1つだけ使ってよい。"),
-    (0.9, "少し詳しめに。具体例やリンク（コンテキスト内のもののみ）を添える。"),
+    (0.7, "フレンドリーで親しみやすく。絵文字を1つだけ使ってよい。"),
+    (0.7, "少し詳しめに。具体例やリンク（コンテキスト内のもののみ）を添える。"),
 ]
 
 @app.post("/candidates")
