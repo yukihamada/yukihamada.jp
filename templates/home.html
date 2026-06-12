@@ -476,6 +476,46 @@
   .ai-m5dash    { background: linear-gradient(145deg,#fcd34d 0%,#d97706 50%,#78350f 100%); }
   .ai-mail      { background: linear-gradient(145deg,#67e8f9 0%,#0284c7 50%,#0c4a6e 100%); }
   .ai-camera    { background: linear-gradient(145deg,#f1f5f9 0%,#94a3b8 50%,#0f172a 100%); }
+  .ai-launchpad { background: linear-gradient(145deg,#475569 0%,#1e293b 55%,#0f172a 100%); }
+  /* ── Launchpad (all apps, one button) ── */
+  #launchpad {
+    position: fixed; inset: 0; z-index: 8800;
+    background: rgba(8,8,18,0.78);
+    backdrop-filter: blur(30px) saturate(1.2); -webkit-backdrop-filter: blur(30px) saturate(1.2);
+    display: none; opacity: 0; transition: opacity 0.22s ease;
+    overflow-y: auto; padding: 64px 20px 110px;
+  }
+  #launchpad.show { display: block; }
+  #launchpad.visible { opacity: 1; }
+  #lp-search {
+    display: block; margin: 0 auto 36px; width: min(380px, 84vw);
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+    border-radius: 10px; padding: 9px 16px; color: #fff; font-size: 14px;
+    font-family: inherit; outline: none; text-align: center;
+  }
+  #lp-search::placeholder { color: rgba(255,255,255,0.35); }
+  #lp-search:focus { border-color: rgba(255,255,255,0.3); background: rgba(255,255,255,0.12); }
+  #lp-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+    gap: 30px 8px; max-width: 760px; margin: 0 auto;
+  }
+  .lp-app {
+    display: flex; flex-direction: column; align-items: center; gap: 9px;
+    cursor: pointer; user-select: none; -webkit-user-select: none;
+    transition: transform 0.15s ease;
+  }
+  .lp-app:hover { transform: scale(1.08); }
+  .lp-app:active { transform: scale(0.94); }
+  .lp-app .ai { width: 62px; height: 62px; border-radius: 15px; box-shadow: 0 8px 22px rgba(0,0,0,0.45); }
+  .lp-label { font-size: 11.5px; color: rgba(255,255,255,0.85); text-shadow: 0 1px 4px rgba(0,0,0,0.6); white-space: nowrap; }
+  .lp-app.lp-hidden { display: none; }
+  .lp-app.dock-admin { display: none; }
+  body.admin-user .lp-app.dock-admin { display: flex; }
+  @media (max-width: 767px) {
+    #launchpad { padding: 46px 14px 90px; }
+    #lp-grid { gap: 22px 4px; grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+    .lp-app .ai { width: 56px; height: 56px; }
+  }
   .mail-folder-btn { display:flex;align-items:center;gap:8px;background:none;border:none;color:rgba(255,255,255,0.55);cursor:pointer;padding:7px 14px;border-radius:6px;margin:0 6px;font-size:12.5px;text-align:left;transition:background 0.12s,color 0.12s; }
   .mail-folder-btn:hover { background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.85); }
   .mail-folder-btn.active { background:rgba(2,132,199,0.25);color:#7dd3fc; }
@@ -2206,122 +2246,6 @@
       </div></div>
       <div class="desk-icon-label">Projects</div>
     </div>
-    <div class="desk-icon" data-app="career"   onclick="openApp('career')">
-      <div class="desk-icon-img"><div class="ai ai-career">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M12 2l2.6 7.9H22.5l-6.7 4.9 2.6 7.9L12 18.5l-6.4 4.2 2.6-7.9L1.5 9.9H9.4z" fill="rgba(255,255,255,0.92)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Career</div>
-    </div>
-    <div class="desk-icon" data-app="music"    onclick="openApp('music')">
-      <div class="desk-icon-img"><div class="ai ai-music">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="9.5" fill="rgba(20,5,15,0.65)"/>
-          <circle cx="12" cy="12" r="7.5" stroke="rgba(255,255,255,0.12)" stroke-width="1.2" fill="none"/>
-          <circle cx="12" cy="12" r="5.5" stroke="rgba(255,255,255,0.09)" stroke-width="1" fill="none"/>
-          <circle cx="12" cy="12" r="3.5" stroke="rgba(255,255,255,0.07)" stroke-width="0.8" fill="none"/>
-          <circle cx="12" cy="12" r="2.6" fill="rgba(255,255,255,0.92)"/>
-          <circle cx="12" cy="12" r="1" fill="rgba(190,24,93,0.9)"/>
-          <path d="M4.5 7.5 A8.5 8.5 0 0 1 19.5 7.5" stroke="rgba(255,255,255,0.28)" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">DJ</div>
-    </div>
-    <div class="desk-icon" data-app="soluna"   onclick="openApp('soluna')">
-      <div class="desk-icon-img"><div class="ai ai-soluna">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="rgba(255,255,255,0.92)"/>
-          <circle cx="17.5" cy="5" r="1.3" fill="rgba(255,255,255,0.9)"/>
-          <circle cx="20.8" cy="8.5" r="0.9" fill="rgba(255,255,255,0.75)"/>
-          <circle cx="19.5" cy="3" r="0.6" fill="rgba(255,255,255,0.65)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Soluna</div>
-    </div>
-    <div class="desk-icon" data-app="game" onclick="openApp('game')">
-      <div class="desk-icon-img"><div class="ai ai-game">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="6" width="20" height="13" rx="3" fill="rgba(255,255,255,0.88)"/>
-          <rect x="6" y="10" width="1.5" height="5" rx=".75" fill="rgba(50,50,50,0.7)"/>
-          <rect x="4.25" y="11.75" width="5" height="1.5" rx=".75" fill="rgba(50,50,50,0.7)"/>
-          <circle cx="16" cy="11" r="1.1" fill="rgba(220,50,50,0.8)"/>
-          <circle cx="18.5" cy="13" r="1.1" fill="rgba(50,50,220,0.8)"/>
-          <circle cx="16" cy="15" r="1.1" fill="rgba(50,180,50,0.8)"/>
-          <circle cx="13.5" cy="13" r="1.1" fill="rgba(220,180,50,0.8)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Game</div>
-    </div>
-    <div class="desk-icon" data-app="anime"    onclick="openApp('anime')">
-      <div class="desk-icon-img"><div class="ai ai-anime">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="8.5" width="20" height="13" rx="2.2" fill="rgba(255,255,255,0.9)"/>
-          <rect x="2" y="4" width="20" height="5.5" rx="2" fill="rgba(255,255,255,0.65)"/>
-          <clipPath id="cc"><rect x="2" y="4" width="20" height="5.5" rx="2"/></clipPath>
-          <g clip-path="url(#cc)">
-            <rect x="3.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/>
-            <rect x="9.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/>
-            <rect x="15.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/>
-          </g>
-          <polygon points="9,13 9,18.5 17,15.75" fill="rgba(160,20,20,0.65)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Anime</div>
-    </div>
-    <div class="desk-icon" data-app="uta"      onclick="openApp('uta')">
-      <div class="desk-icon-img"><div class="ai ai-uta">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="9" fill="rgba(255,255,255,0.12)"/>
-          <circle cx="12" cy="12" r="3.5" fill="rgba(255,255,255,0.9)"/>
-          <path d="M12 3 Q17 7 16 12 Q15 17 12 21" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/>
-          <path d="M12 3 Q7 7 8 12 Q9 17 12 21" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/>
-          <path d="M3 12 Q7 8 12 8 Q17 8 21 12" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/>
-          <path d="M3 12 Q7 16 12 16 Q17 16 21 12" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Uta</div>
-    </div>
-    <div class="desk-icon" data-app="news"     onclick="openApp('news')">
-      <div class="desk-icon-img"><div class="ai ai-news">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <rect x="2" y="4" width="20" height="16" rx="2.5" fill="rgba(255,255,255,0.9)"/>
-          <rect x="5" y="7.5" width="14" height="2" rx="1" fill="rgba(146,64,14,0.7)"/>
-          <rect x="5" y="11" width="9" height="1.5" rx="0.75" fill="rgba(146,64,14,0.45)"/>
-          <rect x="5" y="13.5" width="11" height="1.5" rx="0.75" fill="rgba(146,64,14,0.35)"/>
-          <rect x="5" y="16" width="7" height="1.5" rx="0.75" fill="rgba(146,64,14,0.25)"/>
-          <rect x="16" y="11" width="3" height="6.5" rx="0.75" fill="rgba(146,64,14,0.3)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">News</div>
-    </div>
-    <div class="desk-icon" data-app="koe"      onclick="openApp('koe')">
-      <div class="desk-icon-img"><div class="ai ai-koe">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="10" r="4.5" fill="rgba(255,255,255,0.92)"/>
-          <rect x="10" y="14" width="4" height="4" rx="0" fill="rgba(255,255,255,0.92)"/>
-          <rect x="8.5" y="17.5" width="7" height="2" rx="1" fill="rgba(255,255,255,0.92)"/>
-          <path d="M7 10c0 2.76 2.24 5 5 5s5-2.24 5-5" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-          <circle cx="12" cy="10" r="1.8" fill="rgba(124,58,237,0.9)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Koe</div>
-    </div>
-    <div class="desk-icon" data-app="terminal" onclick="openApp('terminal')">
-      <div class="desk-icon-img"><div class="ai ai-terminal">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <rect x="1.5" y="3" width="21" height="18" rx="3.5" fill="rgba(5,8,14,0.85)"/>
-          <rect x="1.5" y="3" width="21" height="6" rx="3.5" fill="rgba(35,42,55,0.95)"/>
-          <rect x="1.5" y="7" width="21" height="2" fill="rgba(35,42,55,0.95)"/>
-          <circle cx="5.8" cy="6" r="1.4" fill="rgba(255,95,87,0.95)"/>
-          <circle cx="10" cy="6" r="1.4" fill="rgba(254,188,46,0.95)"/>
-          <circle cx="14.2" cy="6" r="1.4" fill="rgba(40,200,64,0.95)"/>
-          <path d="M4.5 14.5l3.8 2.5-3.8 2.5" stroke="rgba(255,255,255,0.88)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
-          <rect x="11.5" y="18.5" width="5.5" height="1.8" rx="0.9" fill="rgba(255,255,255,0.45)"/>
-        </svg>
-      </div></div>
-      <div class="desk-icon-label">Terminal</div>
-    </div>
     <div class="desk-icon" data-app="chat" onclick="openApp('chat')">
       <div class="desk-icon-img"><div class="ai ai-chat">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
@@ -2332,14 +2256,11 @@
       </div></div>
       <div class="desk-icon-label">Chat</div>
     </div>
-    <div class="desk-icon" data-app="browser" onclick="openApp('browser')">
-      <div class="desk-icon-img"><div class="ai ai-browser">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-          <circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.92)"/>
-          <path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20M2 12h20M12 2c-2.5 2.5-4 6-4 10s1.5 7.5 4 10M12 2c2.5 2.5 4 6 4 10s-1.5 7.5-4 10" stroke="rgba(30,58,138,0.7)" stroke-width="1.5" fill="none"/>
-        </svg>
+    <div class="desk-icon" data-app="launchpad" onclick="lpToggle()">
+      <div class="desk-icon-img"><div class="ai ai-launchpad">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="5" rx="1.4" fill="rgba(251,191,36,0.95)"/><rect x="9.5" y="3" width="5" height="5" rx="1.4" fill="rgba(248,113,113,0.95)"/><rect x="16" y="3" width="5" height="5" rx="1.4" fill="rgba(96,165,250,0.95)"/><rect x="3" y="9.5" width="5" height="5" rx="1.4" fill="rgba(74,222,128,0.95)"/><rect x="9.5" y="9.5" width="5" height="5" rx="1.4" fill="rgba(255,255,255,0.92)"/><rect x="16" y="9.5" width="5" height="5" rx="1.4" fill="rgba(244,114,182,0.95)"/><rect x="3" y="16" width="5" height="5" rx="1.4" fill="rgba(167,139,250,0.95)"/><rect x="9.5" y="16" width="5" height="5" rx="1.4" fill="rgba(252,211,77,0.95)"/><rect x="16" y="16" width="5" height="5" rx="1.4" fill="rgba(103,232,249,0.95)"/></svg>
       </div></div>
-      <div class="desk-icon-label">Browser</div>
+      <div class="desk-icon-label">Launchpad</div>
     </div>
   </div>
 
@@ -2347,7 +2268,7 @@
   <div id="win-layer"></div>
   <!-- First-visit hint -->
   <div id="first-hint" style="position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(12,12,22,0.93);border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-radius:12px;padding:10px 20px;font-size:11.5px;color:#7a7a8a;pointer-events:none;white-space:nowrap;z-index:50;transition:opacity 0.5s;display:flex;align-items:center;gap:14px;">
-    <span>👆 ドックからアプリを開く</span>
+    <span>👆 全アプリは Launchpad に</span>
     <span style="color:#484858;">|</span>
     <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#505060;">⌘1 Blog &nbsp;⌘2 About &nbsp;⌘3 Projects &nbsp;⌘Space Search</span>
   </div>
@@ -2358,24 +2279,6 @@
 
 <!-- Dock -->
 <div id="dock">
-  <div class="dock-app" data-app="blog"     onclick="dockClick('blog')"     title="Blog">
-    <div class="dock-icon-wrap ai ai-blog"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2.5" fill="rgba(255,255,255,0.92)"/><rect x="7" y="7" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.55)"/><rect x="7" y="11" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.4)"/><rect x="7" y="15" width="6" height="1.8" rx="0.9" fill="rgba(120,60,0,0.3)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Blog</span>
-  </div>
-  <div class="dock-app" data-app="about"    onclick="dockClick('about')"    title="About">
-    <div class="dock-icon-wrap ai ai-about"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="4.2" fill="rgba(255,255,255,0.95)"/><path d="M3.5 21c0-4.142 3.806-7.5 8.5-7.5s8.5 3.358 8.5 7.5" fill="rgba(255,255,255,0.88)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">About</span>
-  </div>
-  <div class="dock-app" data-app="projects" onclick="dockClick('projects')" title="Projects">
-    <div class="dock-icon-wrap ai ai-projects"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 5.2 8 8.8 8 12h8c0-3.2-1-6.8-4-10z" fill="rgba(255,255,255,0.92)"/><circle cx="12" cy="10" r="2.2" fill="rgba(200,40,20,0.85)"/><path d="M8 14L5.5 17H8.5L10 19H14L15.5 17H18.5L16 14" fill="rgba(255,255,255,0.78)"/><path d="M10 19 Q12 22.5 14 19" fill="rgba(255,200,80,0.75)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Projects</span>
-  </div>
-  <div class="dock-app" data-app="career"   onclick="dockClick('career')"   title="Career">
-    <div class="dock-icon-wrap ai ai-career"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 7.9H22.5l-6.7 4.9 2.6 7.9L12 18.5l-6.4 4.2 2.6-7.9L1.5 9.9H9.4z" fill="rgba(255,255,255,0.92)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Career</span>
-  </div>
-  <div class="dock-app" data-app="music"    onclick="dockClick('music')"    title="DJ Studio">
-    <div class="dock-icon-wrap ai ai-music"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="rgba(20,5,15,0.65)"/><circle cx="12" cy="12" r="7.5" stroke="rgba(255,255,255,0.12)" stroke-width="1.2" fill="none"/><circle cx="12" cy="12" r="5.5" stroke="rgba(255,255,255,0.09)" stroke-width="1" fill="none"/><circle cx="12" cy="12" r="2.6" fill="rgba(255,255,255,0.92)"/><circle cx="12" cy="12" r="1" fill="rgba(190,24,93,0.9)"/><path d="M4.5 7.5 A8.5 8.5 0 0 1 19.5 7.5" stroke="rgba(255,255,255,0.28)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">DJ</span>
-  </div>
-  <div class="dock-app" data-app="soluna"   onclick="dockClick('soluna')"   title="Soluna">
-    <div class="dock-icon-wrap ai ai-soluna"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="rgba(255,255,255,0.92)"/><circle cx="17.5" cy="5" r="1.3" fill="rgba(255,255,255,0.9)"/><circle cx="20.8" cy="8.5" r="0.9" fill="rgba(255,255,255,0.75)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Soluna</span>
-  </div>
   <div class="dock-app" data-app="finder" onclick="dockClick('finder')" title="Finder">
     <div class="dock-icon-wrap" style="background:linear-gradient(145deg,#60d8f0 0%,#2563eb 60%,#1e3a8a 100%);">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -2387,29 +2290,23 @@
       </svg>
     </div><div class="dock-dot"></div><span class="dock-label" style="display:none">Finder</span>
   </div>
-  <div class="dock-app" data-app="game" onclick="dockClick('game')" title="Game">
-    <div class="dock-icon-wrap ai ai-game"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="3" fill="rgba(255,255,255,0.88)"/><rect x="6" y="10" width="1.5" height="5" rx=".75" fill="rgba(50,50,50,0.7)"/><rect x="4.25" y="11.75" width="5" height="1.5" rx=".75" fill="rgba(50,50,50,0.7)"/><circle cx="16" cy="11" r="1.1" fill="rgba(220,50,50,0.8)"/><circle cx="18.5" cy="13" r="1.1" fill="rgba(50,50,220,0.8)"/><circle cx="16" cy="15" r="1.1" fill="rgba(50,180,50,0.8)"/><circle cx="13.5" cy="13" r="1.1" fill="rgba(220,180,50,0.8)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Game</span>
+  <div class="dock-app" id="dock-launchpad" onclick="lpToggle()" title="Launchpad — 全アプリ">
+    <div class="dock-icon-wrap ai ai-launchpad"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="5" height="5" rx="1.4" fill="rgba(251,191,36,0.95)"/><rect x="9.5" y="3" width="5" height="5" rx="1.4" fill="rgba(248,113,113,0.95)"/><rect x="16" y="3" width="5" height="5" rx="1.4" fill="rgba(96,165,250,0.95)"/><rect x="3" y="9.5" width="5" height="5" rx="1.4" fill="rgba(74,222,128,0.95)"/><rect x="9.5" y="9.5" width="5" height="5" rx="1.4" fill="rgba(255,255,255,0.92)"/><rect x="16" y="9.5" width="5" height="5" rx="1.4" fill="rgba(244,114,182,0.95)"/><rect x="3" y="16" width="5" height="5" rx="1.4" fill="rgba(167,139,250,0.95)"/><rect x="9.5" y="16" width="5" height="5" rx="1.4" fill="rgba(252,211,77,0.95)"/><rect x="16" y="16" width="5" height="5" rx="1.4" fill="rgba(103,232,249,0.95)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Apps</span>
   </div>
-  <div class="dock-app" data-app="anime"    onclick="dockClick('anime')"    title="Anime">
-    <div class="dock-icon-wrap ai ai-anime"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="2" y="8.5" width="20" height="13" rx="2.2" fill="rgba(255,255,255,0.9)"/><rect x="2" y="4" width="20" height="5.5" rx="2" fill="rgba(255,255,255,0.65)"/><clipPath id="cd"><rect x="2" y="4" width="20" height="5.5" rx="2"/></clipPath><g clip-path="url(#cd)"><rect x="3.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/><rect x="9.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/><rect x="15.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/></g><polygon points="9,13 9,18.5 17,15.75" fill="rgba(160,20,20,0.65)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Anime</span>
+  <div class="dock-app" data-app="blog"     onclick="dockClick('blog')"     title="Blog">
+    <div class="dock-icon-wrap ai ai-blog"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2.5" fill="rgba(255,255,255,0.92)"/><rect x="7" y="7" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.55)"/><rect x="7" y="11" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.4)"/><rect x="7" y="15" width="6" height="1.8" rx="0.9" fill="rgba(120,60,0,0.3)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Blog</span>
   </div>
-  <div class="dock-app" data-app="koe" onclick="dockClick('koe')" title="Koe">
-    <div class="dock-icon-wrap ai ai-koe"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="4.5" fill="rgba(255,255,255,0.92)"/><rect x="10" y="14" width="4" height="4" fill="rgba(255,255,255,0.92)"/><rect x="8.5" y="17.5" width="7" height="2" rx="1" fill="rgba(255,255,255,0.92)"/><path d="M7 10c0 2.76 2.24 5 5 5s5-2.24 5-5" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="10" r="1.8" fill="rgba(124,58,237,0.9)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Koe</span>
+  <div class="dock-app" data-app="about"    onclick="dockClick('about')"    title="About">
+    <div class="dock-icon-wrap ai ai-about"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="4.2" fill="rgba(255,255,255,0.95)"/><path d="M3.5 21c0-4.142 3.806-7.5 8.5-7.5s8.5 3.358 8.5 7.5" fill="rgba(255,255,255,0.88)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">About</span>
   </div>
-  <div class="dock-app" data-app="terminal" onclick="dockClick('terminal')" title="Terminal">
-    <div class="dock-icon-wrap ai ai-terminal"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="1.5" y="3" width="21" height="18" rx="3.5" fill="rgba(5,8,14,0.85)"/><rect x="1.5" y="3" width="21" height="6" rx="3.5" fill="rgba(35,42,55,0.95)"/><rect x="1.5" y="7" width="21" height="2" fill="rgba(35,42,55,0.95)"/><circle cx="5.8" cy="6" r="1.4" fill="rgba(255,95,87,0.95)"/><circle cx="10" cy="6" r="1.4" fill="rgba(254,188,46,0.95)"/><circle cx="14.2" cy="6" r="1.4" fill="rgba(40,200,64,0.95)"/><path d="M4.5 14.5l3.8 2.5-3.8 2.5" stroke="rgba(255,255,255,0.88)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><rect x="11.5" y="18.5" width="5.5" height="1.8" rx="0.9" fill="rgba(255,255,255,0.45)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Term</span>
+  <div class="dock-app" data-app="projects" onclick="dockClick('projects')" title="Projects">
+    <div class="dock-icon-wrap ai ai-projects"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 5.2 8 8.8 8 12h8c0-3.2-1-6.8-4-10z" fill="rgba(255,255,255,0.92)"/><circle cx="12" cy="10" r="2.2" fill="rgba(200,40,20,0.85)"/><path d="M8 14L5.5 17H8.5L10 19H14L15.5 17H18.5L16 14" fill="rgba(255,255,255,0.78)"/><path d="M10 19 Q12 22.5 14 19" fill="rgba(255,200,80,0.75)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Projects</span>
   </div>
   <div class="dock-app" data-app="chat" onclick="dockClick('chat')" title="Chat">
     <div class="dock-icon-wrap ai ai-chat"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,0.92)"/><rect x="7" y="8" width="10" height="1.5" rx="0.75" fill="rgba(5,70,60,0.55)"/><rect x="7" y="11.5" width="7" height="1.5" rx="0.75" fill="rgba(5,70,60,0.4)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Chat</span>
   </div>
-  <div class="dock-app" data-app="browser" onclick="dockClick('browser')" title="Browser">
-    <div class="dock-icon-wrap ai ai-browser"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.92)"/><path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20M2 12h20M12 2c-2.5 2.5-4 6-4 10s1.5 7.5 4 10M12 2c2.5 2.5 4 6 4 10s-1.5 7.5-4 10" stroke="rgba(30,58,138,0.7)" stroke-width="1.5" fill="none"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Browser</span>
-  </div>
-  <div class="dock-app" data-app="uta" onclick="dockClick('uta')" title="Uta">
-    <div class="dock-icon-wrap ai ai-uta"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="rgba(255,255,255,0.12)"/><circle cx="12" cy="12" r="3.5" fill="rgba(255,255,255,0.9)"/><path d="M12 3 Q17 7 16 12 Q15 17 12 21" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/><path d="M12 3 Q7 7 8 12 Q9 17 12 21" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/><path d="M3 12 Q7 8 12 8 Q17 8 21 12" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/><path d="M3 12 Q7 16 12 16 Q17 16 21 12" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Uta</span>
-  </div>
-  <div class="dock-app" data-app="news" onclick="dockClick('news')" title="News">
-    <div class="dock-icon-wrap ai ai-news"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="rgba(255,255,255,0.9)"/><rect x="5" y="7.5" width="14" height="2" rx="1" fill="rgba(146,64,14,0.7)"/><rect x="5" y="11" width="9" height="1.5" rx="0.75" fill="rgba(146,64,14,0.45)"/><rect x="5" y="13.5" width="11" height="1.5" rx="0.75" fill="rgba(146,64,14,0.35)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">News</span>
+  <div class="dock-app" data-app="terminal" onclick="dockClick('terminal')" title="Terminal">
+    <div class="dock-icon-wrap ai ai-terminal"><svg width="23" height="23" viewBox="0 0 24 24" fill="none"><rect x="1.5" y="3" width="21" height="18" rx="3.5" fill="rgba(5,8,14,0.85)"/><rect x="1.5" y="3" width="21" height="6" rx="3.5" fill="rgba(35,42,55,0.95)"/><rect x="1.5" y="7" width="21" height="2" fill="rgba(35,42,55,0.95)"/><circle cx="5.8" cy="6" r="1.4" fill="rgba(255,95,87,0.95)"/><circle cx="10" cy="6" r="1.4" fill="rgba(254,188,46,0.95)"/><circle cx="14.2" cy="6" r="1.4" fill="rgba(40,200,64,0.95)"/><path d="M4.5 14.5l3.8 2.5-3.8 2.5" stroke="rgba(255,255,255,0.88)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><rect x="11.5" y="18.5" width="5.5" height="1.8" rx="0.9" fill="rgba(255,255,255,0.45)"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Term</span>
   </div>
   <div class="dock-app" data-app="settings" onclick="dockClick('settings')" title="設定">
     <div class="dock-icon-wrap ai ai-settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="rgba(255,255,255,0.9)"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">設定</span>
@@ -2427,15 +2324,116 @@
   <div class="dock-admin dock-app" data-app="m5dash" onclick="dockClick('m5dash')" title="M5 Dashboard">
     <div class="dock-icon-wrap ai ai-m5dash"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2.5" fill="rgba(255,255,255,0.15)"/><rect x="2" y="3" width="20" height="14" rx="2.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/><rect x="9" y="17" width="6" height="3" rx="0.5" fill="rgba(255,255,255,0.6)"/><rect x="6" y="20" width="12" height="1" rx="0.5" fill="rgba(255,255,255,0.6)"/><circle cx="12" cy="10" r="3.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/><path d="M12 10 L12 7" stroke="rgba(255,200,50,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">M5</span>
   </div>
-  <div class="dock-app" data-app="camera" onclick="dockClick('camera')" title="Camera">
-    <div class="dock-icon-wrap ai ai-camera"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M23 7l-7 5 7 5V7z" fill="rgba(255,255,255,0.9)"/><rect x="1" y="5" width="15" height="14" rx="2.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="8.5" cy="12" r="3" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">Camera</span>
-  </div>
-  <div class="dock-sep"></div>
-  <div class="dock-app" onclick="externalOpen('https://x.com/yukihamada')" title="Twitter/X">
-    <div class="dock-icon-wrap ai ai-x"><svg width="20" height="20" viewBox="0 0 24 24" fill="rgba(255,255,255,0.92)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">X</span>
-  </div>
-  <div class="dock-app" onclick="externalOpen('https://github.com/yukihamada')" title="GitHub">
-    <div class="dock-icon-wrap ai ai-github"><svg width="22" height="22" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></div><div class="dock-dot"></div><span class="dock-label" style="display:none">GitHub</span>
+</div>
+
+<!-- Launchpad (all apps) -->
+<div id="launchpad" onclick="if(event.target===this)lpClose()">
+  <input id="lp-search" placeholder="アプリを検索" autocomplete="off" oninput="lpFilter(this.value)" onkeydown="lpKey(event)">
+  <div id="lp-grid">
+    <div class="lp-app" data-name="blog blog ブログ 記事" onclick="lpLaunch('blog')">
+      <div class="ai ai-blog"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2.5" fill="rgba(255,255,255,0.92)"/><rect x="7" y="7" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.55)"/><rect x="7" y="11" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.4)"/><rect x="7" y="15" width="6" height="1.8" rx="0.9" fill="rgba(120,60,0,0.3)"/></svg></div>
+      <div class="lp-label">Blog</div>
+    </div>
+    <div class="lp-app" data-name="about about 濱田優貴 プロフィール" onclick="lpLaunch('about')">
+      <div class="ai ai-about"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8.5" r="4.2" fill="rgba(255,255,255,0.95)"/><path d="M3.5 21c0-4.142 3.806-7.5 8.5-7.5s8.5 3.358 8.5 7.5" fill="rgba(255,255,255,0.88)"/></svg></div>
+      <div class="lp-label">About</div>
+    </div>
+    <div class="lp-app" data-name="projects projects プロダクト 一覧" onclick="lpLaunch('projects')">
+      <div class="ai ai-projects"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2C9 5.2 8 8.8 8 12h8c0-3.2-1-6.8-4-10z" fill="rgba(255,255,255,0.92)"/><circle cx="12" cy="10" r="2.2" fill="rgba(200,40,20,0.85)"/><path d="M8 14L5.5 17H8.5L10 19H14L15.5 17H18.5L16 14" fill="rgba(255,255,255,0.78)"/><path d="M10 19 Q12 22.5 14 19" fill="rgba(255,200,80,0.75)"/></svg></div>
+      <div class="lp-label">Projects</div>
+    </div>
+    <div class="lp-app" data-name="career career 経歴" onclick="lpLaunch('career')">
+      <div class="ai ai-career"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 7.9H22.5l-6.7 4.9 2.6 7.9L12 18.5l-6.4 4.2 2.6-7.9L1.5 9.9H9.4z" fill="rgba(255,255,255,0.92)"/></svg></div>
+      <div class="lp-label">Career</div>
+    </div>
+    <div class="lp-app" data-name="chat chat ai チャット 話す" onclick="lpLaunch('chat')">
+      <div class="ai ai-chat"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="rgba(255,255,255,0.92)"/><rect x="7" y="8" width="10" height="1.5" rx="0.75" fill="rgba(5,70,60,0.55)"/><rect x="7" y="11.5" width="7" height="1.5" rx="0.75" fill="rgba(5,70,60,0.4)"/></svg></div>
+      <div class="lp-label">Chat</div>
+    </div>
+    <div class="lp-app" data-name="now now 近況 いま" onclick="lpLaunch('now')">
+      <div class="ai ai-soluna"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg></div>
+      <div class="lp-label">Now</div>
+    </div>
+    <div class="lp-app" data-name="dj dj music 音楽 楽曲" onclick="lpLaunch('music')">
+      <div class="ai ai-music"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="rgba(20,5,15,0.65)"/><circle cx="12" cy="12" r="7.5" stroke="rgba(255,255,255,0.12)" stroke-width="1.2" fill="none"/><circle cx="12" cy="12" r="5.5" stroke="rgba(255,255,255,0.09)" stroke-width="1" fill="none"/><circle cx="12" cy="12" r="3.5" stroke="rgba(255,255,255,0.07)" stroke-width="0.8" fill="none"/><circle cx="12" cy="12" r="2.6" fill="rgba(255,255,255,0.92)"/><circle cx="12" cy="12" r="1" fill="rgba(190,24,93,0.9)"/><path d="M4.5 7.5 A8.5 8.5 0 0 1 19.5 7.5" stroke="rgba(255,255,255,0.28)" stroke-width="1.2" fill="none" stroke-linecap="round"/></svg></div>
+      <div class="lp-label">DJ</div>
+    </div>
+    <div class="lp-app" data-name="uta uta 歌 uta.live" onclick="lpLaunch('uta')">
+      <div class="ai ai-uta"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" fill="rgba(255,255,255,0.12)"/><circle cx="12" cy="12" r="3.5" fill="rgba(255,255,255,0.9)"/><path d="M12 3 Q17 7 16 12 Q15 17 12 21" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/><path d="M12 3 Q7 7 8 12 Q9 17 12 21" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/><path d="M3 12 Q7 8 12 8 Q17 8 21 12" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/><path d="M3 12 Q7 16 12 16 Q17 16 21 12" stroke="rgba(255,255,255,0.6)" stroke-width="1.3" fill="none"/></svg></div>
+      <div class="lp-label">Uta</div>
+    </div>
+    <div class="lp-app" data-name="podcast podcast 音声 ポッドキャスト" onclick="lpLaunch('podcast')">
+      <div class="ai ai-music"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg></div>
+      <div class="lp-label">Podcast</div>
+    </div>
+    <div class="lp-app" data-name="soluna soluna 弟子屈 北海道" onclick="lpLaunch('soluna')">
+      <div class="ai ai-soluna"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="rgba(255,255,255,0.92)"/><circle cx="17.5" cy="5" r="1.3" fill="rgba(255,255,255,0.9)"/><circle cx="20.8" cy="8.5" r="0.9" fill="rgba(255,255,255,0.75)"/><circle cx="19.5" cy="3" r="0.6" fill="rgba(255,255,255,0.65)"/></svg></div>
+      <div class="lp-label">Soluna</div>
+    </div>
+    <div class="lp-app" data-name="anime anime アニメ" onclick="lpLaunch('anime')">
+      <div class="ai ai-anime"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="2" y="8.5" width="20" height="13" rx="2.2" fill="rgba(255,255,255,0.9)"/><rect x="2" y="4" width="20" height="5.5" rx="2" fill="rgba(255,255,255,0.65)"/><clipPath id="cc"><rect x="2" y="4" width="20" height="5.5" rx="2"/></clipPath><g clip-path="url(#cc)"><rect x="3.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/><rect x="9.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/><rect x="15.5" y="3" width="3.2" height="7" fill="rgba(160,20,20,0.8)"/></g><polygon points="9,13 9,18.5 17,15.75" fill="rgba(160,20,20,0.65)"/></svg></div>
+      <div class="lp-label">Anime</div>
+    </div>
+    <div class="lp-app" data-name="game game voxel ゲーム" onclick="lpLaunch('game')">
+      <div class="ai ai-game"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="2" y="6" width="20" height="13" rx="3" fill="rgba(255,255,255,0.88)"/><rect x="6" y="10" width="1.5" height="5" rx=".75" fill="rgba(50,50,50,0.7)"/><rect x="4.25" y="11.75" width="5" height="1.5" rx=".75" fill="rgba(50,50,50,0.7)"/><circle cx="16" cy="11" r="1.1" fill="rgba(220,50,50,0.8)"/><circle cx="18.5" cy="13" r="1.1" fill="rgba(50,50,220,0.8)"/><circle cx="16" cy="15" r="1.1" fill="rgba(50,180,50,0.8)"/><circle cx="13.5" cy="13" r="1.1" fill="rgba(220,180,50,0.8)"/></svg></div>
+      <div class="lp-label">Game</div>
+    </div>
+    <div class="lp-app" data-name="news news ニュース news.xyz" onclick="lpLaunch('news')">
+      <div class="ai ai-news"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="rgba(255,255,255,0.9)"/><rect x="5" y="7.5" width="14" height="2" rx="1" fill="rgba(146,64,14,0.7)"/><rect x="5" y="11" width="9" height="1.5" rx="0.75" fill="rgba(146,64,14,0.45)"/><rect x="5" y="13.5" width="11" height="1.5" rx="0.75" fill="rgba(146,64,14,0.35)"/><rect x="5" y="16" width="7" height="1.5" rx="0.75" fill="rgba(146,64,14,0.25)"/><rect x="16" y="11" width="3" height="6.5" rx="0.75" fill="rgba(146,64,14,0.3)"/></svg></div>
+      <div class="lp-label">News</div>
+    </div>
+    <div class="lp-app" data-name="koe koe 声 voice" onclick="lpLaunch('koe')">
+      <div class="ai ai-koe"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="10" r="4.5" fill="rgba(255,255,255,0.92)"/><rect x="10" y="14" width="4" height="4" rx="0" fill="rgba(255,255,255,0.92)"/><rect x="8.5" y="17.5" width="7" height="2" rx="1" fill="rgba(255,255,255,0.92)"/><path d="M7 10c0 2.76 2.24 5 5 5s5-2.24 5-5" stroke="rgba(255,255,255,0.75)" stroke-width="1.5" fill="none" stroke-linecap="round"/><circle cx="12" cy="10" r="1.8" fill="rgba(124,58,237,0.9)"/></svg></div>
+      <div class="lp-label">Koe</div>
+    </div>
+    <div class="lp-app" data-name="camera camera カメラ 録画" onclick="lpLaunch('camera')">
+      <div class="ai ai-camera"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M23 7l-7 5 7 5V7z" fill="rgba(255,255,255,0.9)"/><rect x="1" y="5" width="15" height="14" rx="2.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="rgba(255,255,255,0.1)"/><circle cx="8.5" cy="12" r="3" stroke="rgba(255,255,255,0.8)" stroke-width="1.2" fill="none"/></svg></div>
+      <div class="lp-label">Camera</div>
+    </div>
+    <div class="lp-app" data-name="finder finder ファイル" onclick="lpLaunch('finder')">
+      <div class="ai" style="background:linear-gradient(145deg,#60d8f0 0%,#2563eb 60%,#1e3a8a 100%);"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2.5" fill="rgba(255,255,255,0.92)"/><rect x="2" y="4" width="6" height="16" rx="2.5" fill="rgba(0,0,0,0.08)"/><rect x="9" y="8" width="9" height="1.4" rx=".7" fill="rgba(37,99,235,0.7)"/><rect x="9" y="11" width="7" height="1.4" rx=".7" fill="rgba(37,99,235,0.5)"/><rect x="9" y="14" width="5" height="1.4" rx=".7" fill="rgba(37,99,235,0.35)"/></svg></div>
+      <div class="lp-label">Finder</div>
+    </div>
+    <div class="lp-app" data-name="terminal terminal ターミナル cli" onclick="lpLaunch('terminal')">
+      <div class="ai ai-terminal"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="1.5" y="3" width="21" height="18" rx="3.5" fill="rgba(5,8,14,0.85)"/><rect x="1.5" y="3" width="21" height="6" rx="3.5" fill="rgba(35,42,55,0.95)"/><rect x="1.5" y="7" width="21" height="2" fill="rgba(35,42,55,0.95)"/><circle cx="5.8" cy="6" r="1.4" fill="rgba(255,95,87,0.95)"/><circle cx="10" cy="6" r="1.4" fill="rgba(254,188,46,0.95)"/><circle cx="14.2" cy="6" r="1.4" fill="rgba(40,200,64,0.95)"/><path d="M4.5 14.5l3.8 2.5-3.8 2.5" stroke="rgba(255,255,255,0.88)" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><rect x="11.5" y="18.5" width="5.5" height="1.8" rx="0.9" fill="rgba(255,255,255,0.45)"/></svg></div>
+      <div class="lp-label">Terminal</div>
+    </div>
+    <div class="lp-app" data-name="browser browser ブラウザ safari" onclick="lpLaunch('browser')">
+      <div class="ai ai-browser"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" fill="rgba(255,255,255,0.92)"/><path d="M12 2a10 10 0 0 1 0 20M12 2a10 10 0 0 0 0 20M2 12h20M12 2c-2.5 2.5-4 6-4 10s1.5 7.5 4 10M12 2c2.5 2.5 4 6 4 10s-1.5 7.5-4 10" stroke="rgba(30,58,138,0.7)" stroke-width="1.5" fill="none"/></svg></div>
+      <div class="lp-label">Browser</div>
+    </div>
+    <div class="lp-app" data-name="contact contact 連絡 メール 問い合わせ" onclick="lpLaunch('contact')">
+      <div class="ai ai-mail"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.92)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+      <div class="lp-label">Contact</div>
+    </div>
+    <div class="lp-app" data-name="設定 settings 設定 壁紙 スキン" onclick="lpLaunch('settings')">
+      <div class="ai ai-settings"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3.2" fill="rgba(255,255,255,0.9)"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/></svg></div>
+      <div class="lp-label">設定</div>
+    </div>
+    <div class="lp-app" data-name="x x twitter ツイッター" onclick="lpExt('https://x.com/yukihamada')">
+      <div class="ai ai-x"><svg width="26" height="26" viewBox="0 0 24 24" fill="rgba(255,255,255,0.92)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></div>
+      <div class="lp-label">X</div>
+    </div>
+    <div class="lp-app" data-name="github github コード" onclick="lpExt('https://github.com/yukihamada')">
+      <div class="ai ai-github"><svg width="28" height="28" viewBox="0 0 24 24" fill="rgba(255,255,255,0.9)"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0 1 12 6.844a9.59 9.59 0 0 1 2.504.337c1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.02 10.02 0 0 0 22 12.017C22 6.484 17.522 2 12 2z"/></svg></div>
+      <div class="lp-label">GitHub</div>
+    </div>
+    <div class="lp-app dock-admin" data-name="dashboard dashboard 案件" onclick="lpLaunch('overview')">
+      <div class="ai ai-overview"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.9)"/><rect x="14" y="3" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.9)"/><rect x="3" y="14" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.55)"/><rect x="14" y="14" width="7" height="7" rx="1.5" fill="rgba(255,255,255,0.55)"/></svg></div>
+      <div class="lp-label">Dashboard</div>
+    </div>
+    <div class="lp-app dock-admin" data-name="analytics analytics 解析" onclick="lpLaunch('analytics')">
+      <div class="ai ai-analytics"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="3" y="12" width="4" height="9" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="10" y="7" width="4" height="14" rx="1" fill="rgba(255,255,255,0.9)"/><rect x="17" y="3" width="4" height="18" rx="1" fill="rgba(255,255,255,0.9)"/></svg></div>
+      <div class="lp-label">Analytics</div>
+    </div>
+    <div class="lp-app dock-admin" data-name="mail mail メール" onclick="lpLaunch('mail')">
+      <div class="ai ai-mail"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="rgba(255,255,255,0.12)"/><polyline points="22,6 12,13 2,6" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/></svg></div>
+      <div class="lp-label">Mail</div>
+    </div>
+    <div class="lp-app dock-admin" data-name="m5 m5 dashboard" onclick="lpLaunch('m5dash')">
+      <div class="ai ai-m5dash"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="20" height="14" rx="2.5" fill="rgba(255,255,255,0.15)"/><rect x="2" y="3" width="20" height="14" rx="2.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/><rect x="9" y="17" width="6" height="3" rx="0.5" fill="rgba(255,255,255,0.6)"/><rect x="6" y="20" width="12" height="1" rx="0.5" fill="rgba(255,255,255,0.6)"/><circle cx="12" cy="10" r="3.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" fill="none"/><path d="M12 10 L12 7" stroke="rgba(255,200,50,0.9)" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="lp-label">M5</div>
+    </div>
   </div>
 </div>
 
@@ -4957,6 +4955,39 @@ function dockClick(id) {
   if (activeId === id) { minWin(id); } else { bringFront(id); }
 }
 
+// ── Launchpad: every app, one button ──
+function lpToggle() {
+  const lp = document.getElementById('launchpad');
+  lp.classList.contains('show') ? lpClose() : lpOpen();
+}
+function lpOpen() {
+  const lp = document.getElementById('launchpad');
+  lp.classList.add('show');
+  requestAnimationFrame(() => lp.classList.add('visible'));
+  const inp = document.getElementById('lp-search');
+  if (inp) { inp.value = ''; lpFilter(''); if (!isMobile()) setTimeout(() => inp.focus(), 60); }
+}
+function lpClose() {
+  const lp = document.getElementById('launchpad');
+  if (!lp || !lp.classList.contains('show')) return;
+  lp.classList.remove('visible');
+  setTimeout(() => lp.classList.remove('show'), 230);
+}
+function lpLaunch(id) { lpClose(); openApp(id); }
+function lpExt(url) { lpClose(); externalOpen(url); }
+function lpFilter(q) {
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('#lp-grid .lp-app').forEach(el => {
+    el.classList.toggle('lp-hidden', !!q && !(el.dataset.name || '').toLowerCase().includes(q));
+  });
+}
+function lpKey(e) {
+  if (e.key === 'Enter') {
+    const first = document.querySelector('#lp-grid .lp-app:not(.lp-hidden)');
+    if (first) first.click();
+  }
+}
+
 const isMobile = () => window.innerWidth < 768;
 
 // Drag (desktop only; mobile gets swipe-down-to-close)
@@ -6276,7 +6307,14 @@ const _svgJJ       = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none
 const _svgAI       = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6M9 12h6M9 15h4"/></svg>';
 const _svgChat     = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>';
 
+const _svgGrid  = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>';
+const _svgGame  = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="3"/><line x1="7" y1="10" x2="7" y2="14"/><line x1="5" y1="12" x2="9" y2="12"/><circle cx="16" cy="11" r="0.6"/><circle cx="18.5" cy="13" r="0.6"/></svg>';
+const _svgMic   = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="2" width="6" height="11" rx="3"/><path d="M5 10v1a7 7 0 0 0 14 0v-1"/><line x1="12" y1="18" x2="12" y2="22"/></svg>';
+const _svgGlobe = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>';
+const _svgCam   = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>';
+const _svgGear  = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.2 4.2l2.8 2.8M17 17l2.8 2.8M1 12h4M19 12h4M4.2 19.8L7 17M17 7l2.8-2.8"/></svg>';
 const SP_ITEMS = [
+  { icon: spIco('ai-launchpad',_svgGrid),    title:'Launchpad',   desc:'全アプリ一覧',              action:()=>lpOpen() },
   { icon: spIco('ai-blog',     _svgBlog),     title:'Blog',        desc:'最近考えていること · ⌘1',  action:()=>openApp('blog') },
   { icon: spIco('ai-about',    _svgAbout),    title:'About',       desc:'濱田優貴について · ⌘2',    action:()=>openApp('about') },
   { icon: spIco('ai-projects', _svgProjects), title:'Projects',    desc:'プロダクト一覧 · ⌘3',      action:()=>openApp('projects') },
@@ -6296,6 +6334,13 @@ const SP_ITEMS = [
   { icon: spIco('ai-about',   _svgAbout),    title:'Contact',     desc:'取材・協業・採用のご相談',   action:()=>openApp('contact') },
   { icon: spIco('ai-blog',    _svgBlog),     title:'Now',         desc:'今やっていること',            action:()=>openApp('now') },
   { icon: spIco('ai-blog',    _svgBlog),     title:'Podcast',     desc:'ブログ記事を音声で',          action:()=>openApp('podcast') },
+  { icon: spIco('ai-game',    _svgGame),     title:'Game',        desc:'Voxel World',                action:()=>openApp('game') },
+  { icon: spIco('ai-koe',     _svgMic),      title:'Koe',         desc:'声で話す',                    action:()=>openApp('koe') },
+  { icon: spIco('ai-uta',     _svgMusic),    title:'Uta',         desc:'uta.live — AI楽曲',           action:()=>openApp('uta') },
+  { icon: spIco('ai-news',    _svgAI),       title:'News',        desc:'news.xyz — AIニュース',       action:()=>openApp('news') },
+  { icon: spIco('ai-browser', _svgGlobe),    title:'Browser',     desc:'ウェブブラウザ',              action:()=>openApp('browser') },
+  { icon: spIco('ai-camera',  _svgCam),      title:'Camera',      desc:'カメラ・録画',                action:()=>openApp('camera') },
+  { icon: spIco('ai-settings',_svgGear),     title:'設定',         desc:'壁紙・スキン・言語',          action:()=>openApp('settings') },
 ];
 let spIdx = 0, spItems = [];
 
@@ -6390,7 +6435,7 @@ function spKey(e) {
 
 document.addEventListener('keydown', e => {
   if ((e.metaKey||e.ctrlKey) && e.key===' ') { e.preventDefault(); spOpen(); return; }
-  if (e.key==='Escape') { spClose(); return; }
+  if (e.key==='Escape') { spClose(); lpClose(); return; }
 
   // ⌘+1-4: open main apps (Hertzfeld)
   if ((e.metaKey||e.ctrlKey) && e.key==='1') { e.preventDefault(); openApp('blog'); return; }
