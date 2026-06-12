@@ -154,7 +154,7 @@ async def _gen_local(client: httpx.AsyncClient, question: str, system: str,
 CANDIDATE_STYLES = [
     (0.4, "簡潔・丁寧。2〜4文で要点だけ。"),
     (0.8, "フレンドリーで親しみやすく。絵文字を1つだけ使ってよい。"),
-    (1.0, "少し詳しめに。具体例やリンク（コンテキスト内のもののみ）を添える。"),
+    (0.9, "少し詳しめに。具体例やリンク（コンテキスト内のもののみ）を添える。"),
 ]
 
 @app.post("/candidates")
