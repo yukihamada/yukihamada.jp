@@ -2497,18 +2497,27 @@ async fn security_headers(
 
 // ── devil.pub 読者リード ──
 // 本(devil.pub/inner-devil)の途中メールゲートから POST される受け口。
-// 保存 /data/devil_leads.jsonl + Telegram 通知。CORS は devil.pub 限定。
+// 保存 /data/devil_leads.jsonl + Telegram 通知。CORS は本のサイト限定
+// (devil.pub は atsume.pub へ移転済みのため両ドメインを許可し、リクエスト Origin をエコーバック)。
 
-fn devil_cors_headers() -> HeaderMap {
+const DEVIL_ALLOWED_ORIGINS: [&str; 2] = ["https://atsume.pub", "https://devil.pub"];
+
+fn devil_cors_headers(headers: &HeaderMap) -> HeaderMap {
+    let origin = headers
+        .get(header::ORIGIN)
+        .and_then(|v| v.to_str().ok())
+        .filter(|o| DEVIL_ALLOWED_ORIGINS.contains(o))
+        .unwrap_or(DEVIL_ALLOWED_ORIGINS[0]);
     let mut h = HeaderMap::new();
-    h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://devil.pub".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, origin.parse().unwrap());
     h.insert(header::ACCESS_CONTROL_ALLOW_METHODS, "POST,OPTIONS".parse().unwrap());
     h.insert(header::ACCESS_CONTROL_ALLOW_HEADERS, "content-type".parse().unwrap());
+    h.insert(header::VARY, "origin".parse().unwrap());
     h
 }
 
-async fn devil_lead_options() -> Response {
-    (StatusCode::NO_CONTENT, devil_cors_headers()).into_response()
+async fn devil_lead_options(headers: HeaderMap) -> Response {
+    (StatusCode::NO_CONTENT, devil_cors_headers(&headers)).into_response()
 }
 
 #[derive(serde::Deserialize)]
@@ -2531,7 +2540,7 @@ async fn devil_lead(
     if rate_limited(&state.otp_rate_limit, &format!("devil:{ip}"), 5, 3600) {
         return (
             StatusCode::TOO_MANY_REQUESTS,
-            devil_cors_headers(),
+            devil_cors_headers(&headers),
             Json(serde_json::json!({"ok": false, "error": "送信が多すぎます。しばらくしてからお試しください。"})),
         )
             .into_response();
@@ -2540,7 +2549,7 @@ async fn devil_lead(
     if !email.contains('@') || email.len() > 120 {
         return (
             StatusCode::BAD_REQUEST,
-            devil_cors_headers(),
+            devil_cors_headers(&headers),
             Json(serde_json::json!({"ok": false, "error": "メールアドレスの形式が正しくありません。"})),
         )
             .into_response();
@@ -2577,7 +2586,7 @@ async fn devil_lead(
                 .await;
         });
     }
-    (StatusCode::OK, devil_cors_headers(), Json(serde_json::json!({"ok": true}))).into_response()
+    (StatusCode::OK, devil_cors_headers(&headers), Json(serde_json::json!({"ok": true}))).into_response()
 }
 
 // ── Fan Club API ──

@@ -1,5 +1,5 @@
 /*!
- * devil-reader.js — devil.pub/inner-devil 用ドロップイン (1行で導入)
+ * devil-reader.js — atsume.pub(旧devil.pub)/inner-devil 用ドロップイン (1行で導入)
  *   <script src="https://yukihamada.jp/assets/devil-reader.js" defer></script>
  *
  * 入るもの:
