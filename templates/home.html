@@ -506,6 +506,8 @@
   }
   .lp-app:hover { transform: scale(1.08); }
   .lp-app:active { transform: scale(0.94); }
+  .lp-app:focus { outline: none; }
+  .lp-app:focus-visible { outline: 2px solid rgba(255,255,255,0.8); outline-offset: 4px; border-radius: 14px; }
   .lp-app .ai { width: 62px; height: 62px; border-radius: 15px; box-shadow: 0 8px 22px rgba(0,0,0,0.45); }
   .lp-label { font-size: 11.5px; color: rgba(255,255,255,0.85); text-shadow: 0 1px 4px rgba(0,0,0,0.6); white-space: nowrap; }
   .lp-app.lp-hidden { display: none; }
@@ -1975,6 +1977,27 @@
     border-top:2px solid !important; border-color:#fff #808080 #808080 #fff !important;
   }
   body[data-skin="win95"] .dock-icon-wrap { border-radius:0 !important; }
+
+  /* Retro skins: Launchpad follows the theme */
+  body[data-skin="win31"] #launchpad, body[data-skin="win95"] #launchpad {
+    background:rgba(192,192,192,0.97) !important;
+    backdrop-filter:none !important; -webkit-backdrop-filter:none !important;
+  }
+  body[data-skin="win31"] .lp-app .ai, body[data-skin="win95"] .lp-app .ai {
+    border-radius:0 !important; box-shadow:none !important; border:1px solid #808080 !important;
+  }
+  body[data-skin="win31"] .lp-label, body[data-skin="win95"] .lp-label {
+    color:#000 !important; text-shadow:none !important;
+  }
+  body[data-skin="win31"] #lp-search {
+    background:#fff !important; color:#000 !important;
+    border:1px solid #808080 !important; border-radius:0 !important;
+  }
+  body[data-skin="win95"] #lp-search {
+    background:#fff !important; color:#000 !important;
+    border:2px inset #808080 !important; border-radius:0 !important;
+  }
+  body[data-skin="win31"] #lp-search::placeholder, body[data-skin="win95"] #lp-search::placeholder { color:#808080 !important; }
 
   /* Skin switcher button */
   #skin-btn { font-size:11px; color:rgba(255,255,255,0.6); padding:0 6px; cursor:pointer; letter-spacing:.02em; white-space:nowrap; }
@@ -4787,8 +4810,19 @@ mbUpdateMenu('_finder');
 
 const ADMIN_APPS = new Set(['m5dash', 'analytics', 'mail', 'overview']);
 
+// enabler-analytics: kind は whitelist (click 等) のみ受理されるため
+// カスタムイベントは k='click' + label に寄せる (label に PII を入れない)
+function trackEv(label) {
+  try {
+    if (!navigator.sendBeacon) return;
+    var body = JSON.stringify({ s: location.hostname, p: location.pathname, k: 'click', v: 1, l: label });
+    navigator.sendBeacon('https://enabler-analytics.fly.dev/api/event', new Blob([body], { type: 'application/json' }));
+  } catch (e) {}
+}
+
 function openApp(id) {
   if (ADMIN_APPS.has(id) && !document.body.classList.contains('admin-user')) return;
+  trackEv('app_open:' + id);
   if (wins[id]) {
     wins[id].min ? restoreWin(id) : bringFront(id);
     return;
@@ -4961,6 +4995,7 @@ function lpToggle() {
   lp.classList.contains('show') ? lpClose() : lpOpen();
 }
 function lpOpen() {
+  trackEv('launchpad_open');
   const lp = document.getElementById('launchpad');
   lp.classList.add('show');
   requestAnimationFrame(() => lp.classList.add('visible'));
@@ -4986,7 +5021,40 @@ function lpKey(e) {
     const first = document.querySelector('#lp-grid .lp-app:not(.lp-hidden)');
     if (first) first.click();
   }
+  if (e.key === 'ArrowDown') {
+    const first = document.querySelector('#lp-grid .lp-app:not(.lp-hidden)');
+    if (first) { first.focus(); e.preventDefault(); }
+  }
 }
+
+// Launchpad keyboard access: tiles are focusable, arrows move, Enter/Space launch
+(function lpInitKeys() {
+  const grid = document.getElementById('lp-grid');
+  if (!grid) return;
+  grid.querySelectorAll('.lp-app').forEach(el => {
+    el.tabIndex = 0;
+    el.setAttribute('role', 'button');
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+    });
+  });
+  grid.addEventListener('keydown', e => {
+    if (!['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) return;
+    const vis = [...grid.querySelectorAll('.lp-app:not(.lp-hidden)')];
+    if (!vis.length) return;
+    const i = vis.indexOf(document.activeElement);
+    if (i === -1) { vis[0].focus(); e.preventDefault(); return; }
+    // 1行あたりのタイル数を実レイアウトから推定して上下移動
+    const cols = Math.max(1, vis.filter(el => el.offsetTop === vis[0].offsetTop).length);
+    let j = i;
+    if (e.key === 'ArrowLeft') j = i - 1;
+    if (e.key === 'ArrowRight') j = i + 1;
+    if (e.key === 'ArrowUp') j = i - cols;
+    if (e.key === 'ArrowDown') j = i + cols;
+    if (j === i - cols && j < 0) { document.getElementById('lp-search').focus(); e.preventDefault(); return; }
+    if (vis[j]) { vis[j].focus(); e.preventDefault(); }
+  });
+})();
 
 const isMobile = () => window.innerWidth < 768;
 
@@ -6365,7 +6433,7 @@ function spGetAllSearchItems() {
       icon: spIco('ai-about', _svgCal),
       title: ev.title,
       desc: '📅 ' + ev.date + (ev.desc ? ' · ' + ev.desc : ''),
-      action: function() { openApp('calendar'); }
+      action: function() { setTimeout(openCal, 0); } // クリックのバブリングで mbClose が走った後に開く
     });
   });
   // Projects

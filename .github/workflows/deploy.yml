@@ -13,7 +13,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: Swatinem/rust-cache@v2
       - name: Build (release)
         run: cargo build --release
@@ -54,14 +54,14 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       # 限定コンテンツ(まぐまぐ紙芝居等)はprivate repoが正本。デプロイ時にoverlayを
       # リポジトリルートへ重ねてイメージに焼き込む(=デプロイで消えない)。
       # 鍵はread-only deploy key。repo/鍵が無くてもデプロイ自体は続行(continue-on-error)
       # — その場合は該当ルートが404(fail-closed)になるだけ。
       - name: Overlay private content
         continue-on-error: true
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: yukihamada/yukihamada-private-content
           ssh-key: ${{ secrets.PRIVATE_CONTENT_DEPLOY_KEY }}
