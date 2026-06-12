@@ -5559,6 +5559,95 @@ fn log_chat(ip: &str, question: &str, answer: &str) {
         .and_then(|mut f| { use std::io::Write; f.write_all(line.as_bytes()) });
 }
 
+// Append a turn to the per-user chat memory (bounded) and save to disk.
+fn persist_chat_memory(state: &Arc<AppState>, user_id: &Option<String>, query: &str, text: &str) {
+    if let Some(uid) = user_id {
+        let mut mem = state.user_memory.lock().unwrap();
+        let entry = mem.entry(uid.clone()).or_default();
+        entry.push(ChatMsg { role: "user".to_string(), content: query.to_string() });
+        entry.push(ChatMsg { role: "assistant".to_string(), content: text.to_string() });
+        if entry.len() > USER_MEMORY_LIMIT {
+            let drop = entry.len() - USER_MEMORY_LIMIT;
+            entry.drain(..drop);
+        }
+        enforce_user_limit(&mut mem);
+        save_user_memory(&mem);
+    }
+}
+
+// Seconds the owner gets to pick/edit one of the m5 candidate replies
+// before the first candidate auto-sends.
+const CANDIDATE_PICK_WINDOW_SECS: u64 = 20;
+
+// Visitor-facing copy when no LLM backend (m5 / Anthropic) could answer.
+const CHAT_UNAVAILABLE_MSG: &str = "すみません、ただいまAI応答が利用できません。メッセージは記録され濱田に届きます。お急ぎの場合は mail@yukihamada.jp までご連絡ください。";
+
+// Shared persona + RAG + history context sent to the m5 local-LLM server.
+fn build_m5_context(state: &Arc<AppState>, query: &str, initial_msgs: &[serde_json::Value]) -> String {
+    let rag = rag_context(&state.posts, &query.to_lowercase());
+    let history = initial_msgs.iter()
+        .rev().skip(1).take(4).rev()
+        .filter(|m| m["role"].as_str() == Some("user") || m["role"].as_str() == Some("assistant"))
+        .filter_map(|m| {
+            let role = m["role"].as_str().unwrap_or("");
+            let content = m["content"].as_str()?;
+            Some(format!("{}: {}", role, content.chars().take(200).collect::<String>()))
+        })
+        .collect::<Vec<_>>().join("\n");
+
+    let mut m5_context = String::new();
+    m5_context.push_str("# 濱田優貴について\n");
+    m5_context.push_str("- Enabler CEO、元メルカリ CPO、元NOT A HOTEL 共同創業者、柔術青帯\n");
+    m5_context.push_str("- モットー: 建てて、残して、いいやつらと。\n");
+    m5_context.push_str("- プロダクト: Soluna(solun.art), JiuFlow(jiuflow.art), Koe Device(koe.live), chatweb.ai, パシャ(pasha.run)\n");
+    m5_context.push_str("- 連絡: mail@yukihamada.jp / X: @yukihamada\n\n");
+    if !rag.is_empty() {
+        m5_context.push_str("# 関連ブログ記事（RAG）\n");
+        m5_context.push_str(&rag);
+        m5_context.push_str("\n");
+    }
+    if !history.is_empty() {
+        m5_context.push_str("# 直近の会話\n");
+        m5_context.push_str(&history);
+        m5_context.push_str("\n");
+    }
+    m5_context
+}
+
+// Ask the m5 local-LLM server for 3 candidate replies.
+// None ⇒ m5 not registered / unreachable / returned nothing usable.
+async fn m5_fetch_candidates(
+    state: &Arc<AppState>,
+    query: &str,
+    initial_msgs: &[serde_json::Value],
+) -> Option<Vec<String>> {
+    let m5_base = state.m5_url.lock().unwrap().clone()?
+        .trim_end_matches('/').to_string();
+    let body = serde_json::json!({
+        "question": query,
+        "context": build_m5_context(state, query, initial_msgs),
+        "n": 3,
+        "site": "yuki",
+    });
+    let mut req = reqwest::Client::new()
+        .post(format!("{}/candidates", m5_base))
+        .timeout(std::time::Duration::from_secs(90))
+        .json(&body);
+    if let Some(tok) = state.m5_hitl_token.as_deref() {
+        req = req.header("Authorization", format!("Bearer {}", tok));
+    }
+    let v: serde_json::Value = req.send().await.ok()?
+        .error_for_status().ok()?
+        .json().await.ok()?;
+    let cands: Vec<String> = v["candidates"].as_array()?
+        .iter()
+        .filter_map(|c| c.as_str())
+        .map(|s| s.trim().to_string())
+        .filter(|s| !s.is_empty())
+        .collect();
+    if cands.is_empty() { None } else { Some(cands) }
+}
+
 // Try m5 HITL first, fall back to Anthropic Claude.
 async fn run_agentic_chat(
     api_key: &str,
@@ -5586,33 +5675,7 @@ async fn run_agentic_chat_with_progress(
     // ── Try m5 HITL first ──
     let m5_url = state.m5_url.lock().unwrap().clone();
     if let Some(url) = m5_url {
-        let rag = rag_context(&state.posts, &query.to_lowercase());
-        let history = initial_msgs.iter()
-            .rev().skip(1).take(4).rev()
-            .filter(|m| m["role"].as_str() == Some("user") || m["role"].as_str() == Some("assistant"))
-            .filter_map(|m| {
-                let role = m["role"].as_str().unwrap_or("");
-                let content = m["content"].as_str()?;
-                Some(format!("{}: {}", role, content.chars().take(200).collect::<String>()))
-            })
-            .collect::<Vec<_>>().join("\n");
-
-        let mut m5_context = String::new();
-        m5_context.push_str("# 濱田優貴について\n");
-        m5_context.push_str("- Enabler CEO、元メルカリ CPO、元NOT A HOTEL 共同創業者、柔術青帯\n");
-        m5_context.push_str("- モットー: 建てて、残して、いいやつらと。\n");
-        m5_context.push_str("- プロダクト: Soluna(solun.art), JiuFlow(jiuflow.art), Koe Device(koe.live), chatweb.ai, パシャ(pasha.run)\n");
-        m5_context.push_str("- 連絡: mail@yukihamada.jp / X: @yukihamada\n\n");
-        if !rag.is_empty() {
-            m5_context.push_str("# 関連ブログ記事（RAG）\n");
-            m5_context.push_str(&rag);
-            m5_context.push_str("\n");
-        }
-        if !history.is_empty() {
-            m5_context.push_str("# 直近の会話\n");
-            m5_context.push_str(&history);
-            m5_context.push_str("\n");
-        }
+        let m5_context = build_m5_context(state, query, &initial_msgs);
 
         let http = reqwest::Client::new();
         let m5_base = url.trim_end_matches('/').to_string();
@@ -5677,6 +5740,9 @@ async fn run_agentic_chat_with_progress(
     }
 
     // ── Fallback: Anthropic Claude with tools ──
+    if api_key.is_empty() {
+        return Err(CHAT_UNAVAILABLE_MSG.to_string());
+    }
     let client = reqwest::Client::new();
     let mut msgs = initial_msgs;
 
@@ -6086,7 +6152,8 @@ async fn chat_handler(
         if !messages.iter().any(|m| m.role == "user") {
             return Err("ユーザーメッセージが必要です".into());
         }
-        let api_key = state.anthropic_key.clone().ok_or_else(|| "AI not configured".to_string())?;
+        // Empty key is OK — the m5 local-LLM path doesn't need Anthropic.
+        let api_key = state.anthropic_key.clone().unwrap_or_default();
         let query = messages.iter().rev()
             .find(|m| m.role == "user").map(|m| m.content.clone()).unwrap_or_default();
         let all_titles = state.posts.iter()
@@ -6169,6 +6236,69 @@ async fn chat_handler(
             }
         }
 
+        // ── m5 3-candidate flow ──
+        // The m5 local LLM drafts three candidate replies. If the owner is
+        // online he gets CANDIDATE_PICK_WINDOW_SECS to pick or edit one
+        // (delivered via the existing admin-reply channel); when the window
+        // lapses — or he is offline — the first draft auto-sends.
+        yield Ok::<_, Infallible>(Event::default()
+            .data(serde_json::json!({"waiting": "回答を考えています…"}).to_string()));
+        if let Some(cands) = m5_fetch_candidates(&state_clone, &query, &init_msgs).await {
+            let owner_online = {
+                let last = state_clone.owner_last_seen.load(Ordering::Relaxed);
+                last > 0 && (now_secs() - last) < 90
+            };
+            let mut picked_by_owner = false;
+            let text = if owner_online {
+                let (reply_tx, mut reply_rx) = tokio::sync::mpsc::unbounded_channel::<String>();
+                state_clone.pending_live_chats.lock().unwrap()
+                    .insert(session_id.clone(), reply_tx);
+                // Push the drafts to the admin inbox for one-tap pick/edit
+                let _ = state_clone.chat_notify_tx.send(serde_json::json!({
+                    "session_id": session_id,
+                    "message": query.chars().take(300).collect::<String>(),
+                    "candidates": cands,
+                    "pick_window_secs": CANDIDATE_PICK_WINDOW_SECS,
+                    "ts": now_secs(),
+                }).to_string());
+                yield Ok::<_, Infallible>(Event::default()
+                    .data(serde_json::json!({"waiting": "濱田が回答を確認しています…"}).to_string()));
+                let picked = tokio::time::timeout(
+                    tokio::time::Duration::from_secs(CANDIDATE_PICK_WINDOW_SECS),
+                    reply_rx.recv()
+                ).await;
+                state_clone.pending_live_chats.lock().unwrap().remove(&session_id);
+                match picked {
+                    Ok(Some(t)) => { picked_by_owner = true; t }
+                    _ => cands[0].clone(),
+                }
+            } else {
+                cands[0].clone()
+            };
+
+            persist_chat_memory(&state_clone, &user_id, &query, &text);
+            log_chat(&ip_clone, &query, &text);
+
+            if picked_by_owner {
+                yield Ok::<_, Infallible>(Event::default()
+                    .data(serde_json::json!({"delta": "✍️ 本人確認済みの回答です\n", "done": false}).to_string()));
+            }
+            let words: Vec<&str> = text.split_inclusive(|c: char|
+                c.is_whitespace() || c == '。' || c == '、' || c == '.' || c == '\n'
+            ).collect();
+            for (i, chunk) in words.iter().enumerate() {
+                let is_last = i == words.len() - 1;
+                yield Ok::<_, Infallible>(Event::default()
+                    .data(serde_json::json!({"delta": chunk, "done": is_last}).to_string()));
+                if !is_last {
+                    tokio::time::sleep(tokio::time::Duration::from_millis(25)).await;
+                }
+            }
+            yield Ok::<_, Infallible>(Event::default()
+                .data(serde_json::json!({"done": true}).to_string()));
+            return;
+        }
+
         // ── Owner live-chat mode ──
         // If Yuki is online (heartbeat within 90s), wait for his direct reply
         // instead of running the LLM.
@@ -6204,7 +6334,10 @@ async fn chat_handler(
                     run_agentic_chat_with_progress(
                         &api_key, &system, &tools, init_msgs.clone(), &state_clone,
                         &query, user_id.clone(), None
-                    ).await.unwrap_or_else(|e| format!("エラー: {}", e))
+                    ).await.unwrap_or_else(|e| {
+                        eprintln!("chat fallback error: {}", e);
+                        CHAT_UNAVAILABLE_MSG.to_string()
+                    })
                 }
             };
 
@@ -6232,25 +6365,17 @@ async fn chat_handler(
                         .data(serde_json::json!({"waiting": msg}).to_string()));
                 }
                 res = &mut work => {
-                    text = res.unwrap_or_else(|e| format!("エラー: {}", e));
+                    text = res.unwrap_or_else(|e| {
+                        eprintln!("chat fallback error: {}", e);
+                        CHAT_UNAVAILABLE_MSG.to_string()
+                    });
                     break;
                 }
             }
         }
 
         // Persist memory + log
-        if let Some(uid) = &user_id {
-            let mut mem = state_clone.user_memory.lock().unwrap();
-            let entry = mem.entry(uid.clone()).or_default();
-            entry.push(ChatMsg { role: "user".to_string(), content: query.clone() });
-            entry.push(ChatMsg { role: "assistant".to_string(), content: text.clone() });
-            if entry.len() > USER_MEMORY_LIMIT {
-                let drop = entry.len() - USER_MEMORY_LIMIT;
-                entry.drain(..drop);
-            }
-            enforce_user_limit(&mut mem);
-            save_user_memory(&mem);
-        }
+        persist_chat_memory(&state_clone, &user_id, &query, &text);
         log_chat(&ip_clone, &query, &text);
 
         // Stream final text word by word

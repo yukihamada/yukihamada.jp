@@ -8597,6 +8597,74 @@ function showToast(msg, ms) {
     msgsEl.scrollTop = msgsEl.scrollHeight;
   }
 
+  var candTimer = null;
+
+  // Render the 3 m5 candidate replies: tap = send, ✏️ = edit in the input.
+  // A countdown bar shows the auto-send window; on expiry 案1 has already
+  // been auto-sent by the server, so the cards just gray out.
+  function renderCandidates(cands, windowSecs) {
+    if (candTimer) { clearInterval(candTimer); candTimer = null; }
+    var wrap = document.createElement('div');
+    wrap.id = 'admin-cand-wrap';
+    wrap.style.cssText = 'display:flex;flex-direction:column;gap:6px;';
+
+    var bar = document.createElement('div');
+    bar.style.cssText = 'height:3px;border-radius:2px;background:rgba(94,234,212,0.15);overflow:hidden;';
+    var fill = document.createElement('div');
+    fill.style.cssText = 'height:100%;width:100%;background:rgba(94,234,212,0.8);transition:width 1s linear;';
+    bar.appendChild(fill);
+    wrap.appendChild(bar);
+
+    var note = document.createElement('div');
+    note.style.cssText = 'font-size:10px;color:rgba(94,234,212,0.7);';
+    note.textContent = '⏱ ' + windowSecs + '秒以内に選択/編集 — 過ぎると案1を自動送信';
+    wrap.appendChild(note);
+
+    function finish(label) {
+      if (candTimer) { clearInterval(candTimer); candTimer = null; }
+      wrap.querySelectorAll('.cand-card').forEach(function(c) {
+        c.style.opacity = '0.45'; c.style.pointerEvents = 'none';
+      });
+      note.textContent = label;
+    }
+
+    cands.forEach(function(c, i) {
+      var card = document.createElement('div');
+      card.className = 'cand-card';
+      card.style.cssText = 'background:rgba(94,234,212,0.07);border:1px solid rgba(94,234,212,0.25);border-radius:8px;padding:8px 30px 8px 10px;font-size:12px;color:#d0f0e8;cursor:pointer;position:relative;';
+      var label = document.createElement('div');
+      label.style.cssText = 'font-size:10px;color:rgba(94,234,212,0.7);margin-bottom:3px;font-weight:700;';
+      label.textContent = '案' + (i + 1) + (i === 0 ? '（無操作なら自動送信）' : '') + ' — タップで送信';
+      var body = document.createElement('div');
+      body.textContent = c.length > 220 ? c.slice(0, 220) + '…' : c;
+      var editBtn = document.createElement('button');
+      editBtn.textContent = '✏️';
+      editBtn.title = '編集してから送信';
+      editBtn.style.cssText = 'position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;font-size:13px;padding:2px;';
+      editBtn.onclick = function(ev) {
+        ev.stopPropagation();
+        input.value = c;
+        input.focus();
+      };
+      card.onclick = function() {
+        sendText(c);
+        finish('✅ 案' + (i + 1) + ' を送信しました');
+      };
+      card.appendChild(label); card.appendChild(body); card.appendChild(editBtn);
+      wrap.appendChild(card);
+    });
+
+    var remain = windowSecs;
+    candTimer = setInterval(function() {
+      remain -= 1;
+      fill.style.width = Math.max(0, (remain / windowSecs) * 100) + '%';
+      if (remain <= 0) finish('⏱ 時間切れ — 案1を自動送信済み');
+    }, 1000);
+
+    msgsEl.appendChild(wrap);
+    msgsEl.scrollTop = msgsEl.scrollHeight;
+  }
+
   function startAdminStream(token) {
     if (es) { es.close(); }
     es = new EventSource('/api/chat/admin-stream?token=' + encodeURIComponent(token));
@@ -8608,6 +8676,9 @@ function showToast(msg, ms) {
           currentSession = d.session_id;
           msgsEl.innerHTML = '';
           addInboxMsg('visitor', d.message);
+          if (d.candidates && d.candidates.length) {
+            renderCandidates(d.candidates, d.pick_window_secs || 20);
+          }
           inbox.style.display = 'flex';
           // Haptic on mobile
           if (navigator.vibrate) navigator.vibrate([30, 10, 30]);
@@ -8621,8 +8692,7 @@ function showToast(msg, ms) {
     };
   }
 
-  function sendReply() {
-    var text = input.value.trim();
+  function sendText(text) {
     if (!text || !currentSession) return;
     var token = getUserToken();
     fetch('/api/chat/admin-reply?token=' + encodeURIComponent(token), {
@@ -8631,8 +8701,21 @@ function showToast(msg, ms) {
       body: JSON.stringify({session_id: currentSession, text: text})
     }).then(function() {
       addInboxMsg('admin', text);
-      input.value = '';
     }).catch(function() {});
+  }
+
+  function sendReply() {
+    var text = input.value.trim();
+    if (!text) return;
+    sendText(text);
+    input.value = '';
+    var wrap = document.getElementById('admin-cand-wrap');
+    if (wrap && candTimer) { clearInterval(candTimer); candTimer = null; }
+    if (wrap) {
+      wrap.querySelectorAll('.cand-card').forEach(function(c) {
+        c.style.opacity = '0.45'; c.style.pointerEvents = 'none';
+      });
+    }
   }
 
   sendBtn.addEventListener('click', sendReply);
