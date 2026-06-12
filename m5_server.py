@@ -29,6 +29,20 @@ app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], all
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 PORT = int(os.environ.get("M5_PORT", "8888"))
 
+# Local mlx-lm OpenAI-compatible server + chat model
+M5_LLM_URL    = os.environ.get("M5_LLM_URL", "http://localhost:8780/v1/chat/completions")
+M5_CHAT_MODEL = os.environ.get("M5_CHAT_MODEL", "mlx-community/Qwen3.5-9B-4bit")
+# Optional shared secret — when set, /ask and /candidates require
+# "Authorization: Bearer <M5_HITL_TOKEN>" (yukihamada.jp sends it).
+M5_HITL_TOKEN = os.environ.get("M5_HITL_TOKEN", "")
+
+def check_auth(request: Request):
+    if not M5_HITL_TOKEN:
+        return
+    auth = request.headers.get("authorization", "")
+    if auth != f"Bearer {M5_HITL_TOKEN}":
+        raise HTTPException(status_code=401, detail="unauthorized")
+
 # ── State tracking ──
 _state = {"status": "idle", "last_query": "", "last_updated": 0}
 _state_lock = threading.Lock()
@@ -83,26 +97,24 @@ class AskReq(BaseModel):
     site: Optional[str] = "yuki"
     user_id: Optional[str] = None
 
-@app.post("/ask")
-async def ask(req: AskReq):
-    """Chat endpoint — called by yukihamada.jp Rust server."""
-    set_state("thinking", req.question)
-    try:
-        answer = await _ask_claude(req.question, req.context or "")
-        set_state("idle")
-        return {"text": answer, "ok": True}
-    except Exception as e:
-        set_state("idle")
-        raise HTTPException(status_code=500, detail=str(e))
+class CandidatesReq(BaseModel):
+    question: str
+    context: Optional[str] = ""
+    site: Optional[str] = "yuki"
+    n: Optional[int] = 3
 
-async def _ask_claude(question: str, context: str) -> str:
-    set_state("waiting_slow")
+def _build_system(context: str, style_hint: str = "") -> str:
     system = (
         "あなたは濱田優貴（Yuki Hamada）のパーソナルサイト yukihamada.jp のAIアシスタントです。\n"
         "訪問者の質問に、濱田優貴の言葉として自然な日本語で簡潔に答えてください。\n"
         "英語で質問されたら英語で答えてください。\n"
-        "マークダウン記法は使わず、普通のテキストで答えてください。\n\n"
-        "# 濱田優貴について\n"
+        "マークダウン記法は使わず、普通のテキストで答えてください。\n"
+        "コンテキストにない事実は作らず、わからないことは「直接聞いてください」と案内してください。\n"
+    )
+    if style_hint:
+        system += f"\n# 回答スタイル\n{style_hint}\n"
+    system += (
+        "\n# 濱田優貴について\n"
         "- Enabler（イネブラ）代表取締役CEO\n"
         "- 元メルカリ 取締役 CPO/CINO（2014〜2021）\n"
         "- 元NOT A HOTEL 共同創業者（2018〜2024）\n"
@@ -112,24 +124,80 @@ async def _ask_claude(question: str, context: str) -> str:
     )
     if context:
         system += f"\n\n{context}"
+    return system
 
-    async with httpx.AsyncClient(timeout=120.0) as client:
-        set_state("editing")
-        # Use local Qwen3 via mlx_lm OpenAI-compatible server (port 5010)
-        resp = await client.post(
-            "http://localhost:5010/v1/chat/completions",
-            json={
-                "model": "mlx-community/Qwen3.5-9B-4bit",
-                "max_tokens": 800,
-                "messages": [
-                    {"role": "system", "content": system},
-                    {"role": "user", "content": question},
-                ],
-            },
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        return data["choices"][0]["message"]["content"].strip()
+def _strip_think(text: str) -> str:
+    # Qwen may emit <think>…</think> even with enable_thinking=false
+    if "</think>" in text:
+        text = text.split("</think>", 1)[1]
+    return text.strip()
+
+async def _gen_local(client: httpx.AsyncClient, question: str, system: str,
+                     temperature: float, max_tokens: int = 320) -> str:
+    resp = await client.post(
+        M5_LLM_URL,
+        json={
+            "model": M5_CHAT_MODEL,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "chat_template_kwargs": {"enable_thinking": False},
+            "messages": [
+                {"role": "system", "content": system},
+                {"role": "user", "content": question},
+            ],
+        },
+    )
+    resp.raise_for_status()
+    return _strip_think(resp.json()["choices"][0]["message"]["content"])
+
+# (temperature, style hint) per candidate slot
+CANDIDATE_STYLES = [
+    (0.4, "簡潔・丁寧。2〜4文で要点だけ。"),
+    (0.8, "フレンドリーで親しみやすく。絵文字を1つだけ使ってよい。"),
+    (1.0, "少し詳しめに。具体例やリンク（コンテキスト内のもののみ）を添える。"),
+]
+
+@app.post("/candidates")
+async def candidates(req: CandidatesReq, request: Request):
+    """Generate N candidate replies in parallel — called by yukihamada.jp.
+
+    The Rust side shows these to Yuki who has ~20s to pick/edit one;
+    otherwise candidates[0] auto-sends, so slot 0 is the safest style.
+    """
+    check_auth(request)
+    n = max(1, min(req.n or 3, len(CANDIDATE_STYLES)))
+    set_state("editing", req.question)
+    try:
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            results = await asyncio.gather(*[
+                _gen_local(client, req.question,
+                           _build_system(req.context or "", style),
+                           temp)
+                for temp, style in CANDIDATE_STYLES[:n]
+            ], return_exceptions=True)
+        cands = [r for r in results if isinstance(r, str) and r.strip()]
+        if not cands:
+            errs = "; ".join(str(r) for r in results if isinstance(r, Exception))
+            raise HTTPException(status_code=502, detail=f"all generations failed: {errs}")
+        return {"candidates": cands, "ok": True}
+    finally:
+        set_state("idle")
+
+@app.post("/ask")
+async def ask(req: AskReq, request: Request):
+    """Single-answer chat endpoint — kept for older yukihamada.jp builds."""
+    check_auth(request)
+    set_state("thinking", req.question)
+    try:
+        system = _build_system(req.context or "")
+        async with httpx.AsyncClient(timeout=120.0) as client:
+            set_state("editing")
+            answer = await _gen_local(client, req.question, system, 0.7, max_tokens=800)
+        set_state("idle")
+        return {"text": answer, "ok": True}
+    except Exception as e:
+        set_state("idle")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/transcribe")
 async def transcribe(audio: UploadFile = File(...)):
