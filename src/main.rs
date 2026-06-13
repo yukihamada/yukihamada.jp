@@ -4288,12 +4288,26 @@ fn parse_ua_device(ua: &str) -> (&'static str, &'static str, &'static str) {
     (device, os, app)
 }
 
+/// 文字列を最大 `max` バイトに、UTF-8 文字境界を割らずに切り詰める。
+/// `&s[..max]` は max がマルチバイト文字の途中だと panic する（UA/referrer 等
+/// untrusted ヘッダで起こりうる）ため、その安全な代替。
+fn floor_char_boundary(s: &str, max: usize) -> &str {
+    if s.len() <= max {
+        return s;
+    }
+    let mut end = max;
+    while end > 0 && !s.is_char_boundary(end) {
+        end -= 1;
+    }
+    &s[..end]
+}
+
 fn extract_lang_from_ua(ua: &str) -> &str {
     // Facebook UA contains FBLC/ja_JP or FBLC/en_US
     if let Some(pos) = ua.find("FBLC/") {
         let rest = &ua[pos+5..];
         if rest.len() >= 2 {
-            let lang = &rest[..2];
+            let lang = floor_char_boundary(rest, 2);
             if lang == "ja" { return "ja"; }
             if lang == "en" { return "en"; }
         }
@@ -4500,7 +4514,7 @@ async fn analytics_dashboard(State(state): State<Arc<AppState>>, headers: Header
         *page_counts.entry(path.to_string()).or_insert(0) += 1;
 
         // UA-based metrics
-        let ua_key = if ua.len() > 80 { &ua[..80] } else { ua };
+        let ua_key = floor_char_boundary(ua, 80);
         unique_uas.insert(ua_key.to_string());
 
         let (device, os, app) = parse_ua_device(ua);
@@ -4536,7 +4550,7 @@ async fn analytics_dashboard(State(state): State<Arc<AppState>>, headers: Header
 
         // Raw referrer
         if !referrer.is_empty() && referrer != "/" {
-            let r = if referrer.len() > 60 { &referrer[..60] } else { referrer };
+            let r = floor_char_boundary(referrer, 60);
             *referrer_counts.entry(r.to_string()).or_insert(0) += 1;
         }
 
