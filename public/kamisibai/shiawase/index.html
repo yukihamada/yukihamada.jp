@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
+<title>科学的に、しあわせになる。— 8枚の紙芝居 | yukihamada.jp</title>
+<meta name="description" content="再現性の高い研究だけで「幸せになる方法」を8枚の紙芝居に。一番効くのは地味な4つ——関係・運動・睡眠・自然。感謝や親切は本物だが小さい。『40%は自分次第』は神話。濱田優貴の声(AIクローン)つき・出典実打。">
+<meta property="og:title" content="科学的に、しあわせになる。">
+<meta property="og:description" content="再現性の高い研究だけで「幸せになる方法」を8枚の紙芝居に。一番効くのは地味な4つ——関係・運動・睡眠・自然。感謝や親切は本物だが小さい。『40%は自分次第』は神話。濱田優貴の声(AIクローン)つき・出典実打。">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://yukihamada.jp/kamisibai/shiawase/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yukihamada.jp/kamisibai/shiawase/og.jpg">
+<meta property="og:url" content="https://yukihamada.jp/kamisibai/shiawase/">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/shiawase/">
+<style>
+:root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--paper);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+header{padding:14px 16px 0;text-align:center;width:min(96vw,860px)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topline .spacer{width:64px}
+header h1{font-size:1.05rem;font-weight:600;letter-spacing:.18em;color:var(--paper)}
+header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;text-align:center}
+.langbtn{font-family:-apple-system,sans-serif;font-size:.7rem;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:5px 12px;cursor:pointer;width:64px}
+.langbtn:hover{color:var(--paper);border-color:var(--paper)}
+.voicebar{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px}
+.voicebar .vmain{font-family:inherit;font-size:.82rem;letter-spacing:.08em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(232,131,58,.35)}
+.voicebar .vmain.playing{background:#6b4a2a}
+.voicebar .vrate{font-family:-apple-system,sans-serif;font-size:.7rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:6px 10px;cursor:pointer}
+.stage{position:relative;width:min(96vw,860px);margin:12px auto 0;user-select:none}
+.frame{position:relative;background:#3a2c1c;border-radius:10px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 0 2px rgba(245,236,217,.08)}
+.art-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#241b10}
+.art-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#artTop{z-index:2}
+#artUnder{z-index:1}
+.titleplate{position:absolute;z-index:3;top:8%;left:6%;writing-mode:vertical-rl;font-size:clamp(1.6rem,5.5vw,3rem);font-weight:800;letter-spacing:.22em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 3px rgba(0,0,0,.9);opacity:0;transition:opacity .4s;pointer-events:none}
+.titleplate.on{opacity:1}
+.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;border:none;z-index:4}
+.nav-half:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.nav-prev{left:0}.nav-next{right:0}
+.card{background:var(--paper);color:var(--ink);width:min(96vw,860px);margin:14px auto;border-radius:10px;padding:20px 22px 16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
+.card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
+.card p.ja{font-size:.95rem;line-height:1.9}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
+.kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
+.kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
+.sent{transition:background .25s}
+.sent.on{background:rgba(232,131,58,.26);border-radius:3px}
+details.srcs{margin-top:12px;font-family:-apple-system,sans-serif}
+details.srcs summary{font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em}
+details.srcs ul{margin:6px 0 0 18px;font-size:.74rem;line-height:1.8}
+details.srcs a{color:#a05a20;word-break:break-all}
+details.srcs .note{font-size:.7rem;color:var(--muted);margin-top:4px}
+.dotrow{display:flex;gap:8px;justify-content:center;align-items:center;margin:4px 0 10px}
+.dotrow .dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(245,236,217,.25);cursor:pointer;padding:0}
+.dotrow .dot.on{background:var(--accent)}
+.dotrow .share{font-family:-apple-system,sans-serif;font-size:.68rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:4px 10px;cursor:pointer;margin-left:8px}
+.hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:.08em;padding:0 16px}
+footer{padding:10px 16px 28px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.7;font-family:-apple-system,sans-serif}
+footer a{color:var(--muted)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3a2c1c;color:var(--paper);font-size:.8rem;font-family:-apple-system,sans-serif;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;z-index:50}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast button{background:var(--accent);border:none;color:#fff;border-radius:6px;padding:4px 10px;margin-left:10px;cursor:pointer;font-size:.75rem}
+@media (max-width:480px){.card h2{font-size:1.02rem}.card p.ja{font-size:.88rem}.kanso p{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.art-wrap img{transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topline">
+    <span class="spacer" aria-hidden="true"></span>
+    <div><h1 id="h1">科学的に、しあわせ。</h1></div>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" aria-label="Switch language">EN</button>
+  </div>
+  <p class="sub" id="sub">8枚の紙芝居 ・ 盛らずに、再現性の高いものだけ ・ ぼくの声つき</p>
+  <div class="voicebar">
+    <button id="voiceBtn" class="vmain" onclick="toggleVoice()">▶ ぼくの声で読み上げる</button>
+    <button id="rateBtn" class="vrate" onclick="cycleRate()" aria-label="再生速度">1x</button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="frame">
+    <div class="art-wrap">
+      <img id="artTop" src="img/01_title.jpg" width="1400" height="1050" alt="" fetchpriority="high">
+      <img id="artUnder" src="img/01_title.jpg" width="1400" height="1050" alt="" aria-hidden="true">
+      <div class="titleplate on" id="titleplate">しあわせの科学</div>
+    </div>
+    <button class="nav-half nav-prev" onclick="go(-1)" aria-label="前の枚へ" id="navPrev"></button>
+    <button class="nav-half nav-next" onclick="go(1)" aria-label="次の枚へ" id="navNext"></button>
+  </div>
+</div>
+
+<div class="card" id="card" aria-live="polite">
+  <div class="no" id="no"></div>
+  <h2 id="title"></h2>
+  <p class="ja" id="ja"></p>
+  <div class="kanso"><div class="who" id="who"></div><p id="kanso"></p></div>
+  <details class="srcs" id="srcs"><summary id="srcsum"></summary><ul id="srclist"></ul><div class="note" id="srcnote"></div></details>
+</div>
+
+<div class="dotrow" id="dotrow">
+  <span id="dots" style="display:contents"></span>
+  <button class="share" id="shareBtn" onclick="shareCard()">🔗</button>
+</div>
+<p class="hint" id="hint"></p>
+
+<footer id="foot"></footer>
+<div id="toast" role="status"></div>
+<noscript><p style="color:#f5ecd9;text-align:center;padding:20px">この紙芝居の閲覧にはJavaScriptが必要です / This kamishibai requires JavaScript.</p></noscript>
+
+<script>
+const SLIDES=[{"b": "01_title", "scene": "At dusk, people of many ages sit close together in a circle around a small warm campfire, sharing tea from cups, soft paper lanterns glowing, gentle mountains behind; a feeling of warmth and belonging, no faces in detail", "no": ["第一枚", "Card 1"], "alt": "夕暮れ、たき火を囲んで老若男女が身を寄せ合いお茶を分け合う。提灯がやわらかく灯り、奥に山なみ", "title": ["はじまり、はじまり〜", "Here we go—"], "ja": ["「科学的に幸せになる方法」と聞くと、あやしい自己啓発を思い浮かべるかもしれません。だからこの紙芝居は、何度も再現されている研究だけを選びました。数字は盛りません。効くものは効く、あやしいものはあやしい、とそのまま申し上げます。", "\"Scientifically proven ways to be happy\" can sound like shady self-help. So this kamishibai uses only findings that have been replicated again and again. No inflated numbers. What works, works; what's shaky, I'll call shaky."], "kanso": ["先に結論を言うと——一番効くのは、地味な四つでした。派手な裏ワザではありません。順番に、めくっていきましょう。", "The conclusion up front: the things that work best are four quiet, unglamorous ones — not flashy tricks. Let's turn the cards."], "yomi": ["「科学的にしあわせになる方法」と聞くと、あやしい自己啓発を思い浮かべるかもしれません。だからこの紙芝居は、何度もサイゲンされている研究だけを選びました。数字は盛りません。効くものは効く、あやしいものはあやしい、とそのまま申し上げます。さきに結論を言うと、いちばん効くのは、じみな四つでした。はでな裏ワザではありません。順番に、めくっていきましょう。", "Scientifically proven ways to be happy can sound like shady self-help. So this kamishibai uses only findings that have been replicated again and again. No inflated numbers. What works, works; what is shaky, I'll call shaky. The conclusion up front: the things that work best are four quiet, unglamorous ones, not flashy tricks. Let's turn the cards."], "srcs": [], "audio": ["audio/01.mp3", "audio/01.mp3"]}, {"b": "02_relationships", "scene": "A long winding riverside path at golden sunset, the same two friends shown walking side by side at several points along it from young to old, hands sometimes joined; warmth, lifelong companionship, soft watercolor", "no": ["第二枚", "Card 2"], "alt": "夕陽の川沿いの長い小道。同じ二人連れが若い頃から年老いるまで並んで歩く姿が点々と描かれ、人生の伴走を表す", "title": ["一番効くのは「人とのつながり」", "What Helps Most: Relationships"], "ja": ["ハーバード大学は、同じ人たちを約85年間ずっと追いかけました。お金・名声・IQ——どれよりも、その人の晩年の健康と幸福をよく言い当てたのは、「親しい人との関係の温かさ」でした。良い関係の人は、心臓も、記憶も、長もちしていたのです。", "Harvard followed the same people for about 85 years. Better than money, fame, or IQ, the thing that best predicted health and happiness in old age was the warmth of close relationships. People with good relationships kept healthier hearts and sharper memories."], "kanso": ["ただし正直に言うと、これは「観察」研究。関係が原因だと完全に証明したわけではありません。でも85年という長さは本物。孤独は静かに効いてくる毒、つながりは静かに効いてくる薬です。", "Honestly, though: this is an observational study — it shows a strong link, not airtight proof of cause. But 85 years is no small thing. Loneliness is a quiet poison; connection is a quiet medicine."], "yomi": ["ハーバード大学は、おなじ人たちを、やく85年間ずっと追いかけました。お金、名声、アイキュー。どれよりも、その人のばんねんの健康と幸福をよく言い当てたのは、「したしい人との関係のあたたかさ」でした。良い関係の人は、心臓も、記憶も、ながもちしていたのです。ただし正直に言うと、これは「観察」研究。関係が原因だと完全に証明したわけではありません。でも85年というながさは本物。こどくは静かに効いてくる毒、つながりは静かに効いてくる薬です。", "Harvard followed the same people for about 85 years. Better than money, fame, or I Q, the thing that best predicted health and happiness in old age was the warmth of close relationships. People with good relationships kept healthier hearts and sharper memories. Honestly, though: this is an observational study. It shows a strong link, not airtight proof of cause. But 85 years is no small thing. Loneliness is a quiet poison; connection is a quiet medicine."], "srcs": [{"t": "Harvard Study of Adult Development (公式・Waldinger)", "u": "https://www.robertwaldinger.com/harvard-study/"}, {"t": "Harvard Gazette: 80年の追跡まとめ", "u": "https://news.harvard.edu/gazette/story/2017/04/over-nearly-80-years-harvard-study-has-been-showing-how-to-live-a-healthy-and-happy-life/"}], "audio": ["audio/02.mp3", "audio/02.mp3"]}, {"b": "03_body", "scene": "A triptych mood in one frame: a person jogging a misty forest trail at dawn, the same calm figure sleeping peacefully under a window full of stars, and green trees and a sunlit meadow; vitality and rest, soft gouache", "no": ["第三枚", "Card 3"], "alt": "霧の森を朝に走る人、星空の窓辺で安らかに眠る人、陽のさす緑の草地——体を整える三つを一枚に", "title": ["体が、土台。運動・睡眠・自然", "The Body Is the Foundation"], "ja": ["地味ですが、エビデンスが一番固いのが体の三つ。運動は、うつの症状を中くらいの強さで軽くする——薬に近いほどの効果が出た研究もあります。睡眠が削られると、気分は確実に沈みます。そして自然の中で過ごす時間。週に合計2時間ほど緑に触れる人は、健康と幸福感が高い傾向がありました。", "Unglamorous, but the strongest evidence belongs to the body. Exercise eases depression with a moderate, sometimes near-medication-level effect. Cut your sleep and your mood reliably sinks. And time in nature: people who spend about two hours a week in green space tend to report better health and well-being."], "kanso": ["走る、眠る、外に出る。お金もアプリもいりません。自然の研究は相関なので「絶対」ではないけれど、損は何もない。今日できる、一番たしかな一手です。", "Run, sleep, step outside. No money or app required. The nature finding is correlational, so not a guarantee — but there's no downside. It's the surest move you can make today."], "yomi": ["じみですが、エビデンスがいちばん固いのが体の三つ。運動は、うつの症状を中くらいの強さでかるくする。薬にちかいほどの効果が出た研究もあります。すいみんが削られると、気分はかくじつに沈みます。そして自然の中で過ごす時間。週に合計にじかんほど緑にふれる人は、健康と幸福感が高いケイコウがありました。走る、ねむる、外に出る。お金もアプリもいりません。自然の研究はそうかんなので「ぜったい」ではないけれど、損は何もない。今日できる、いちばんたしかな一手です。", "Unglamorous, but the strongest evidence belongs to the body. Exercise eases depression with a moderate, sometimes near medication level effect. Cut your sleep and your mood reliably sinks. And time in nature: people who spend about two hours a week in green space tend to report better health and well-being. Run, sleep, step outside. No money or app required. The nature finding is correlational, so not a guarantee, but there's no downside. It's the surest move you can make today."], "srcs": [{"t": "Cochrane: 運動はうつに有効 (CD004366)", "u": "https://www.cochrane.org/evidence/CD004366_exercise-effective-treating-depression"}, {"t": "White et al. 2019: 自然週120分 (Scientific Reports)", "u": "https://www.nature.com/articles/s41598-019-44097-3"}, {"t": "睡眠不足と気分のメタ分析 (PMC)", "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8193556/"}], "audio": ["audio/03.mp3", "audio/03.mp3"]}, {"b": "04_habits", "scene": "A person at night writing in a small notebook by candlelight, three little glowing motes rising from the page; in the same scene, a hand offering a warm wrapped rice ball to a neighbor at a doorway; gentle gratitude and kindness, watercolor", "no": ["第四枚", "Card 4"], "alt": "夜、ろうそくの灯りで小さな帳面に書きつける人。頁から三つの光がのぼる。戸口で隣人に温かい握り飯を手渡す手も", "title": ["小さな習慣——本物、でも小さい", "Small Habits — Real, but Small"], "ja": ["寝る前に「今日よかったこと三つ」を書く。だれかに親切にする。自分のためでなく人のためにお金を使う。これらは確かに幸福度を上げます。ただし正直に——効果は小さく、しばらくすると薄れがちです。感謝の手紙は一番効くけれど、その輝きは1か月ほどで消えていきました。", "Before bed, write down three good things. Do someone a kindness. Spend money on others, not yourself. These genuinely lift happiness — but honestly, the effects are small and tend to fade. The gratitude letter gives the biggest boost, yet its glow faded within about a month."], "kanso": ["最近の精密な再検証では、昔いわれたほど大きくはない、とわかってきました。だから「魔法の習慣」ではなく「小さなビタミン」。毎日ちょっとずつ、が正解です。", "Careful re-analyses show these are smaller than once claimed. So: not magic habits — small vitamins. A little, every day, is the right dose."], "yomi": ["寝る前に「今日よかったこと三つ」を書く。だれかに親切にする。自分のためでなく人のためにお金を使う。これらは確かに幸福度を上げます。ただし正直に。効果は小さく、しばらくするとうすれがちです。感謝の手紙はいちばん効くけれど、その輝きは、いっかげつほどで消えていきました。さいきんのせいみつな再検証では、むかし言われたほど大きくはない、とわかってきました。だから「魔法の習慣」ではなく「小さなビタミン」。毎日ちょっとずつ、が正解です。", "Before bed, write down three good things. Do someone a kindness. Spend money on others, not yourself. These genuinely lift happiness, but honestly, the effects are small and tend to fade. The gratitude letter gives the biggest boost, yet its glow faded within about a month. Careful re-analyses show these are smaller than once claimed. So: not magic habits, small vitamins. A little, every day, is the right dose."], "srcs": [{"t": "Emmons & McCullough 2003: 感謝 (PubMed)", "u": "https://pubmed.ncbi.nlm.nih.gov/12585811/"}, {"t": "Seligman et al. 2005: 三つの良いこと/感謝の訪問", "u": "https://greatergood.berkeley.edu/images/uploads/Seligman-PosPsychProgress.pdf"}, {"t": "Dunn, Aknin & Norton 2008: 人に使うお金 (Science)", "u": "https://www.science.org/doi/10.1126/science.1150952"}, {"t": "White, Uttl & Holder 2019: 効果は従来より小さい (PubMed)", "u": "https://pubmed.ncbi.nlm.nih.gov/31141537/"}], "audio": ["audio/04.mp3", "audio/04.mp3"]}, {"b": "05_meditation", "scene": "A person sitting calmly cross-legged beside a still pond at dawn, faint concentric ripples on the water, modest soft morning light — calm and ordinary, deliberately NOT a glowing magical halo, honest and grounded watercolor", "no": ["第五枚", "Card 5"], "alt": "夜明けの静かな池のほとりで静かに坐る人。水面にかすかな波紋。控えめな朝の光——魔法めいた後光ではなく、地に足のついた静けさ", "title": ["瞑想は、魔法じゃない", "Meditation Is Not Magic"], "ja": ["瞑想やマインドフルネスは、不安やうつ、痛みを「中くらい」軽くします。ちゃんと効きます。でも、質の高い研究をまとめると——運動や他の方法と比べて、特別に優れているわけではありませんでした。", "Meditation and mindfulness reduce anxiety, depression, and pain by a moderate amount. They do work. But pooling the high-quality trials: they were no better than exercise or other active approaches."], "kanso": ["「瞑想こそ最強」という宣伝は盛りすぎ。合う人には良い道具、くらいが正直なところ。まれに不調が出る人もいるので、万能薬ではありません。", "The \"meditation is the ultimate fix\" hype is overblown. A good tool for those it suits — that's the honest level. It rarely causes distress in some, so it's no panacea."], "yomi": ["瞑想やマインドフルネスは、不安やうつ、痛みを「中くらい」かるくします。ちゃんと効きます。でも、質の高い研究をまとめると、運動や他の方法とくらべて、とくべつに優れているわけではありませんでした。「瞑想こそ最強」という宣伝は盛りすぎ。あう人には良い道具、くらいが正直なところ。まれに不調が出る人もいるので、万能薬ではありません。", "Meditation and mindfulness reduce anxiety, depression, and pain by a moderate amount. They do work. But pooling the high quality trials, they were no better than exercise or other active approaches. The meditation is the ultimate fix hype is overblown. A good tool for those it suits, that's the honest level. It rarely causes distress in some, so it's no panacea."], "srcs": [{"t": "Goyal et al. 2014: 瞑想プログラムのメタ分析 (JAMA Intern Med)", "u": "https://jamanetwork.com/journals/jamainternalmedicine/fullarticle/1809754"}], "audio": ["audio/05.mp3", "audio/05.mp3"]}, {"b": "06_myths", "scene": "A misty marketplace at dusk where a wise robed judge holds up a balance scale; on one pan a torn paper pie-chart drifts apart into pieces, fog clearing to reveal clearer sky behind; a motif of separating myth from truth, no text in image", "no": ["第六枚", "Card 6"], "alt": "夕霧の市。賢い裁き役が天秤を掲げ、片方の皿で破れた円グラフがばらばらに散る。奥の霧が晴れていく——神話と真実を分ける図", "title": ["神話に、ご用心", "Beware the Myths"], "ja": ["よく聞く「幸福の40%は自分の行動しだい」という円グラフ。実はこれ、計算の仕方が間違っていると指摘され、提唱者自身もほぼ認めました。正しい割合は誰にもわかりません。「お金の幸福は年収750万円で頭打ち」も有名でしたが、2023年の再検証で、多くの人ではその後も上がり続ける、と覆りました。", "You've heard the pie chart: \"40% of happiness is up to your actions.\" Its math was shown to be wrong, and even its authors largely conceded. The true share is unknown. \"Money stops buying happiness around $75k\" was famous too — but a 2023 re-analysis overturned it: for most people, happiness keeps rising."], "kanso": ["科学のいいところは、自分の間違いを自分で直すこと。だから「○○%」「これだけやれば幸せ」という言い切りは、まず疑ってください。きれいな数字ほど、あやしい。", "The beauty of science is that it corrects itself. So distrust any \"it's X%\" or \"just do this and you'll be happy.\" The tidier the number, the more suspicious it is."], "yomi": ["よく聞く「幸福のよんじゅっパーセントは自分の行動しだい」という円グラフ。じつはこれ、計算のしかたが間違っていると指摘され、ていしょう者じしんもほぼ認めました。正しい割合はだれにもわかりません。「お金の幸福はねんしゅう、ななひゃくごじゅうまんえんで頭打ち」も有名でしたが、にせんにじゅうさん年の再検証で、おおくの人ではその後も上がりつづける、とくつがえりました。科学のいいところは、自分の間違いを自分で直すこと。だから「まるまるパーセント」「これだけやれば幸せ」という言い切りは、まず疑ってください。きれいな数字ほど、あやしい。", "You've heard the pie chart: forty percent of happiness is up to your actions. Its math was shown to be wrong, and even its authors largely conceded. The true share is unknown. Money stops buying happiness around seventy five thousand dollars was famous too, but a twenty twenty three re-analysis overturned it: for most people, happiness keeps rising. The beauty of science is that it corrects itself. So distrust any it's X percent, or just do this and you'll be happy. The tidier the number, the more suspicious it is."], "srcs": [{"t": "Brown & Rohrer 2019: 『幸福パイ』の再検証", "u": "https://link.springer.com/article/10.1007/s10902-019-00128-4"}, {"t": "Killingsworth, Kahneman & Mellers 2023: お金と幸福の和解 (PNAS)", "u": "https://www.pnas.org/doi/abs/10.1073/pnas.2208661120"}], "audio": ["audio/06.mp3", "audio/06.mp3"]}, {"b": "07_howto", "scene": "A sturdy small wooden house being raised on four large stone foundation blocks, builders working together; on the finished roof a few small warm lanterns are being hung as gentle finishing touches; foundation vs decoration metaphor, warm dusk watercolor", "no": ["第七枚", "Card 7"], "alt": "四つの大きな石の土台の上に小さな木の家が建てられ、人々が力を合わせる。屋根には仕上げの小さな提灯——土台と飾りのたとえ", "title": ["じゃあ、どうする", "So, What Do We Do?"], "ja": ["順番が大事です。まず土台の四つ——人との関係、運動、睡眠、自然——を生活に置く。これが家でいう基礎。その上に、感謝や親切という小さな飾りを足す。逆にしてはいけません。基礎のないところに飾りだけ載せても、家は建ちません。", "Order matters. First lay the four foundation stones — relationships, exercise, sleep, nature — into your life. Those are the footings. Then add the small decorations: gratitude, kindness. Don't reverse it. Ornaments on no foundation won't make a house stand."], "kanso": ["そして、一発逆転や「これだけ」を探すのをやめる。幸福は、地味で確かなものの積み重ねでした。派手な近道はだいたい、だれかが何かを売りたいときの言葉です。", "And stop hunting for a silver bullet or a \"just this.\" Happiness turned out to be a stack of quiet, reliable things. Flashy shortcuts are usually the words of someone who wants to sell you something."], "yomi": ["順番が大事です。まず土台の四つ。人との関係、運動、すいみん、自然。これを生活に置く。これが家でいう基礎。その上に、感謝や親切という小さな飾りを足す。逆にしてはいけません。基礎のないところに飾りだけ載せても、家は建ちません。そして、いっぱつ逆転や「これだけ」を探すのをやめる。幸福は、じみでたしかなものの積み重ねでした。はでな近道はだいたい、だれかが何かを売りたいときの言葉です。", "Order matters. First lay the four foundation stones, relationships, exercise, sleep, nature, into your life. Those are the footings. Then add the small decorations: gratitude, kindness. Don't reverse it. Ornaments on no foundation won't make a house stand. And stop hunting for a silver bullet or a just this. Happiness turned out to be a stack of quiet, reliable things. Flashy shortcuts are usually the words of someone who wants to sell you something."], "srcs": [], "audio": ["audio/07.mp3", "audio/07.mp3"]}, {"b": "08_end", "scene": "Night: the same campfire from the first card, people walking home along a path under a sky full of stars, one small figure looking back with a warm smile, cupping a tiny glowing ember in their hands; gentle closing, watercolor", "no": ["第八枚", "Card 8"], "alt": "夜、最初のたき火。人々が星空の道を家へ帰る。小さな人影がふり返って微笑み、手のひらに小さな熾火を包む", "title": ["おしまい", "The End"], "ja": ["科学が教えてくれた幸せは、サプリでもアプリでもありませんでした。よく眠り、体を動かし、外に出て、そして——だれかと一緒にいること。とても古くて、とても新しい結論です。", "The happiness the science points to wasn't a supplement or an app. Sleep well, move your body, get outside, and — be with someone. A very old, and very new, conclusion."], "kanso": ["幸せは、火に似ています。一人でも灯せるけれど、囲むと暖かい。今日、だれかに一言かけるところから。おあとがよろしいようで。", "Happiness is like a fire: you can light it alone, but it's warm when shared. Start today, with one word to someone. And that's where I take my bow."], "yomi": ["科学が教えてくれた幸せは、サプリでもアプリでもありませんでした。よく眠り、体を動かし、外に出て、そして、だれかと一緒にいること。とても古くて、とても新しい結論です。幸せは、火に似ています。ひとりでも灯せるけれど、かこむとあたたかい。今日、だれかに一言かけるところから。おあとがよろしいようで。", "The happiness the science points to wasn't a supplement or an app. Sleep well, move your body, get outside, and, be with someone. A very old, and very new, conclusion. Happiness is like a fire: you can light it alone, but it's warm when shared. Start today, with one word to someone. And that, is where I take my bow."], "srcs": [], "final": true, "audio": ["audio/08.mp3", "audio/08.mp3"]}];
+const UI={"sub": ["8枚の紙芝居 ・ 盛らずに、再現性の高いものだけ ・ ぼくの声つき", "8 cards ・ only the well-replicated science, no hype ・ with my voice"], "voice": ["▶ ぼくの声で読み上げる", "▶ Narrate in my voice"], "voiceStop": ["⏸ 読み上げをとめる", "⏸ Stop narration"], "who": ["🧠 ここが大事", "🧠 The point"], "hint": ["▶でぼくの声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー ・ Escで停止", "Press ▶ for narration by my AI voice clone — cards turn automatically. Manual: tap left/right on the art, ←→ keys. Esc stops."], "srcsum": ["出典・根拠 ▸", "Sources ▸"], "srcnote": ["※相関研究は「相関であって因果ではない」と明記。効果量は盛らず、再現性の弱いものは弱いと書いています。", "Correlational studies are flagged as association, not proof. Effect sizes are not inflated; weak findings are called weak."], "foot": ["絵: Gemini ・ 声: 濱田優貴のAIクローン ・ 文: Claude + 濱田優貴 ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>", "Art: Gemini ・ Voice: AI clone of Yuki Hamada ・ Words: Claude + Yuki Hamada ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>"], "prev": ["前の枚へ", "Previous card"], "next": ["次の枚へ", "Next card"], "dot": ["第%枚へ", "Go to card %"], "share": ["この枚のリンクを共有", "Share this card"], "copied": ["リンクをコピーしました", "Link copied"], "audioErr": ["音声を読み込めませんでした", "Could not load the audio"], "retry": ["⟳ もう一度", "⟳ Retry"]};
+let i=0,L=0,voice=false,busy=false,audioFor=-1,rate=1;
+const RATES=[1,1.25,1.5];
+const $=id=>document.getElementById(id);
+const artTop=$("artTop"),artUnder=$("artUnder"),titleplate=$("titleplate"),
+ no=$("no"),title=$("title"),ja=$("ja"),kanso=$("kanso"),who=$("who"),card=$("card"),
+ dots=$("dots"),voiceBtn=$("voiceBtn"),rateBtn=$("rateBtn"),hint=$("hint"),sub=$("sub"),foot=$("foot"),
+ srcs=$("srcs"),srcsum=$("srcsum"),srclist=$("srclist"),srcnote=$("srcnote"),
+ toast=$("toast"),langBtn=$("langBtn"),shareBtn=$("shareBtn");
+const player=new Audio();player.preload="metadata";
+let prefetcher=null;
+let sentEls=[],sentW=[],sentTotal=0;
+function srcset(b){return `img/${b}-700.webp 700w, img/${b}-1400.webp 1400w`}
+function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840px";el.src=`img/${b}.jpg`}
+SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.className="dot";btn.onclick=()=>show(k);dots.appendChild(btn)});
+function splitSent(text,el){
+ el.innerHTML="";
+ const parts=[];let buf="";
+ for(const ch of text){buf+=ch;if("。！？.?!".includes(ch)){parts.push(buf);buf=""}}
+ if(buf.trim())parts.push(buf);
+ return parts.map(p=>{const sp=document.createElement("span");sp.className="sent";sp.textContent=p;el.appendChild(sp);return sp});
+}
+function renderText(){
+ const s=SLIDES[i];
+ no.textContent=s.no[L];title.textContent=s.title[L];
+ const jaSp=splitSent(s.ja[L],ja),kSp=splitSent(s.kanso[L],kanso);
+ sentEls=[...jaSp,...kSp];
+ sentW=sentEls.map(e=>e.textContent.length);sentTotal=sentW.reduce((a,b)=>a+b,0);
+ who.textContent=UI.who[L];hint.textContent=UI.hint[L];sub.textContent=UI.sub[L];foot.innerHTML=UI.foot[L];
+ srcsum.textContent=UI.srcsum[L];srcnote.textContent=UI.srcnote[L];
+ voiceBtn.textContent=voice?UI.voiceStop[L]:UI.voice[L];
+ $("navPrev").setAttribute("aria-label",UI.prev[L]);$("navNext").setAttribute("aria-label",UI.next[L]);
+ shareBtn.setAttribute("aria-label",UI.share[L]);shareBtn.title=UI.share[L];
+ langBtn.textContent=L?"日本語":"EN";document.documentElement.lang=L?"en":"ja";
+ srclist.innerHTML="";
+ if(s.srcs&&s.srcs.length){srcs.style.display="";s.srcs.forEach(x=>{const li=document.createElement("li");const a=document.createElement("a");a.href=x.u;a.rel="noopener";a.target="_blank";a.textContent=x.t;li.appendChild(a);srclist.appendChild(li)})}
+ else srcs.style.display="none";
+ [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));if(k===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
+ artTop.alt=SLIDES[i].alt;
+ titleplate.classList.toggle("on",i===0);
+}
+function preloadAdjacent(){
+ [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
+ if(voice&&i+1<SLIDES.length){if(!prefetcher)prefetcher=new Audio();prefetcher.preload="auto";prefetcher.src=SLIDES[i+1].audio[L]}
+}
+function show(k,dir){
+ if(busy)return;
+ const n=(k+SLIDES.length)%SLIDES.length;
+ if(n===i){renderText();return}
+ dir=dir||(n>i?1:-1);
+ busy=true;
+ setImg(artUnder,SLIDES[n].b);
+ i=n;renderText();
+ try{history.replaceState(null,"",`?card=${i+1}`)}catch(e){}
+ artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
+ artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
+ setTimeout(()=>{
+  setImg(artTop,SLIDES[i].b);
+  artTop.style.transition="none";artTop.style.transform="none";
+  busy=false;preloadAdjacent();
+ },470);
+ playCurrent();
+}
+function playCurrent(){
+ if(!voice)return;
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
+player.addEventListener("timeupdate",()=>{
+ if(!voice||!player.duration||!sentTotal)return;
+ const p=player.currentTime/player.duration;
+ let acc=0,active=sentEls.length-1;
+ for(let k=0;k<sentW.length;k++){acc+=sentW[k]/sentTotal;if(p<acc){active=k;break}}
+ sentEls.forEach((e,k)=>e.classList.toggle("on",k===active));
+});
+function clearHighlight(){sentEls.forEach(e=>e.classList.remove("on"))}
+function setVoice(on){voice=on;voiceBtn.classList.toggle("playing",on);voiceBtn.textContent=on?UI.voiceStop[L]:UI.voice[L];if(!on){player.pause();clearHighlight()}}
+function toggleVoice(){
+ if(voice){setVoice(false);return}
+ setVoice(true);
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().then(()=>preloadAdjacent()).catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+function cycleRate(){rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];rateBtn.textContent=rate+"x";player.playbackRate=rate}
+function showToast(msg,withRetry){
+ toast.innerHTML="";toast.append(msg);
+ if(withRetry){const b=document.createElement("button");b.textContent=UI.retry[L];b.onclick=()=>{toast.classList.remove("on");toggleVoice()};toast.appendChild(b)}
+ toast.classList.add("on");
+ setTimeout(()=>toast.classList.remove("on"),5000);
+}
+function shareCard(){
+ const url=location.href.split("?")[0]+`?card=${i+1}`;
+ const title=SLIDES[i].title[L];
+ if(navigator.share){navigator.share({title,url}).catch(()=>{})}
+ else{navigator.clipboard.writeText(url).then(()=>showToast(UI.copied[L])).catch(()=>showToast(UI.copied[L]))}
+}
+function toggleLang(){
+ if(voice){setVoice(false);player.currentTime=0;audioFor=-1}
+ L=1-L;renderText();clearHighlight();
+}
+function go(d){show(i+d,d)}
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight")go(1);
+ if(e.key==="ArrowLeft")go(-1);
+ if(e.key==="Escape"&&voice)setVoice(false);
+});
+let tx=null;
+const wrap=document.querySelector(".art-wrap");
+wrap.addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+wrap.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
+const qp=parseInt(new URLSearchParams(location.search).get("card"),10);
+const start=qp>=1&&qp<=SLIDES.length?qp:1;
+i=start-1;
+setImg(artTop,SLIDES[i].b);setImg(artUnder,SLIDES[i].b);
+renderText();preloadAdjacent();
+</script>
+</body>
+</html>
