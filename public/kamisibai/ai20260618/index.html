@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
+<title>AIの、いま。— 2026年6月18日の紙芝居 | yukihamada.jp</title>
+<meta name="description" content="2026年6月18日のAIニュースを8枚の紙芝居に。GitHubの負荷をAWSへ、Foxconnの人型ロボット欧州初公開、Anthropicソウル拠点、NVIDIA GTC Paris。今日は新モデルより『土台』が動いた一日。濱田優貴の感想と本人声(AIクローン)つき・出典実打。">
+<meta property="og:title" content="AIの、いま。— 2026年6月18日">
+<meta property="og:description" content="2026年6月18日のAIニュースを8枚の紙芝居に。GitHubの負荷をAWSへ、Foxconnの人型ロボット欧州初公開、Anthropicソウル拠点、NVIDIA GTC Paris。今日は新モデルより『土台』が動いた一日。濱田優貴の感想と本人声(AIクローン)つき・出典実打。">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://yukihamada.jp/kamisibai/ai20260618/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yukihamada.jp/kamisibai/ai20260618/og.jpg">
+<meta property="og:url" content="https://yukihamada.jp/kamisibai/ai20260618/">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/ai20260618/">
+<style>
+:root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--paper);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+header{padding:14px 16px 0;text-align:center;width:min(96vw,860px)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topline .spacer{width:64px}
+header h1{font-size:1.05rem;font-weight:600;letter-spacing:.18em;color:var(--paper)}
+header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;text-align:center}
+.langbtn{font-family:-apple-system,sans-serif;font-size:.7rem;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:5px 12px;cursor:pointer;width:64px}
+.langbtn:hover{color:var(--paper);border-color:var(--paper)}
+.voicebar{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px}
+.voicebar .vmain{font-family:inherit;font-size:.82rem;letter-spacing:.08em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(232,131,58,.35)}
+.voicebar .vmain.playing{background:#6b4a2a}
+.voicebar .vrate{font-family:-apple-system,sans-serif;font-size:.7rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:6px 10px;cursor:pointer}
+.stage{position:relative;width:min(96vw,860px);margin:12px auto 0;user-select:none}
+.frame{position:relative;background:#3a2c1c;border-radius:10px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 0 2px rgba(245,236,217,.08)}
+.art-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#241b10}
+.art-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#artTop{z-index:2}
+#artUnder{z-index:1}
+.titleplate{position:absolute;z-index:3;top:8%;left:6%;writing-mode:vertical-rl;font-size:clamp(1.6rem,5.5vw,3rem);font-weight:800;letter-spacing:.22em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 3px rgba(0,0,0,.9);opacity:0;transition:opacity .4s;pointer-events:none}
+.titleplate.on{opacity:1}
+.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;border:none;z-index:4}
+.nav-half:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.nav-prev{left:0}.nav-next{right:0}
+.card{background:var(--paper);color:var(--ink);width:min(96vw,860px);margin:14px auto;border-radius:10px;padding:20px 22px 16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
+.card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
+.card p.ja{font-size:.95rem;line-height:1.9}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
+.kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
+.kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
+.sent{transition:background .25s}
+.sent.on{background:rgba(232,131,58,.26);border-radius:3px}
+details.srcs{margin-top:12px;font-family:-apple-system,sans-serif}
+details.srcs summary{font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em}
+details.srcs ul{margin:6px 0 0 18px;font-size:.74rem;line-height:1.8}
+details.srcs a{color:#a05a20;word-break:break-all}
+details.srcs .note{font-size:.7rem;color:var(--muted);margin-top:4px}
+.dotrow{display:flex;gap:8px;justify-content:center;align-items:center;margin:4px 0 10px}
+.dotrow .dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(245,236,217,.25);cursor:pointer;padding:0}
+.dotrow .dot.on{background:var(--accent)}
+.dotrow .share{font-family:-apple-system,sans-serif;font-size:.68rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:4px 10px;cursor:pointer;margin-left:8px}
+.hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:.08em;padding:0 16px}
+footer{padding:10px 16px 28px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.7;font-family:-apple-system,sans-serif}
+footer a{color:var(--muted)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3a2c1c;color:var(--paper);font-size:.8rem;font-family:-apple-system,sans-serif;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;z-index:50}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast button{background:var(--accent);border:none;color:#fff;border-radius:6px;padding:4px 10px;margin-left:10px;cursor:pointer;font-size:.75rem}
+@media (max-width:480px){.card h2{font-size:1.02rem}.card p.ja{font-size:.88rem}.kanso p{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.art-wrap img{transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topline">
+    <span class="spacer" aria-hidden="true"></span>
+    <div><h1 id="h1">AIの、いま。</h1></div>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" aria-label="Switch language">EN</button>
+  </div>
+  <p class="sub" id="sub">2026年6月18日の紙芝居 ・ 全8枚 ・ 濱田優貴の感想と本人声つき</p>
+  <div class="voicebar">
+    <button id="voiceBtn" class="vmain" onclick="toggleVoice()">▶ ぼくの声で読み上げる</button>
+    <button id="rateBtn" class="vrate" onclick="cycleRate()" aria-label="再生速度">1x</button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="frame">
+    <div class="art-wrap">
+      <img id="artTop" src="img/01_title.jpg" width="1400" height="1050" alt="" fetchpriority="high">
+      <img id="artUnder" src="img/01_title.jpg" width="1400" height="1050" alt="" aria-hidden="true">
+      <div class="titleplate on" id="titleplate">AIの、いま</div>
+    </div>
+    <button class="nav-half nav-prev" onclick="go(-1)" aria-label="前の枚へ" id="navPrev"></button>
+    <button class="nav-half nav-next" onclick="go(1)" aria-label="次の枚へ" id="navNext"></button>
+  </div>
+</div>
+
+<div class="card" id="card" aria-live="polite">
+  <div class="no" id="no"></div>
+  <h2 id="title"></h2>
+  <p class="ja" id="ja"></p>
+  <div class="kanso"><div class="who" id="who"></div><p id="kanso"></p></div>
+  <details class="srcs" id="srcs"><summary id="srcsum"></summary><ul id="srclist"></ul><div class="note" id="srcnote"></div></details>
+</div>
+
+<div class="dotrow" id="dotrow">
+  <span id="dots" style="display:contents"></span>
+  <button class="share" id="shareBtn" onclick="shareCard()">🔗</button>
+</div>
+<p class="hint" id="hint"></p>
+
+<footer id="foot"></footer>
+<div id="toast" role="status"></div>
+<noscript><p style="color:#f5ecd9;text-align:center;padding:20px">この紙芝居の閲覧にはJavaScriptが必要です / This kamishibai requires JavaScript.</p></noscript>
+
+<script>
+const SLIDES=[{"b": "01_title", "scene": "A small wooden kamishibai stage on a bicycle at dusk on a quiet street, its frame glowing with soft circuit-like light; beneath it the ground shows faint shifting strata like foundations moving; children and adults gather; warm gouache", "no": ["第一枚", "Card 1"], "alt": "夕暮れの路地、自転車の木の紙芝居舞台が回路の光をまとう。足元の地層がかすかにずれ『土台が動く』ことを示す。人々が集まる", "title": ["はじまり、はじまり〜", "Here we go—"], "ja": ["2026年6月18日。今日のAIは、派手な新モデルよりも、足元の『土台』が大きく動いた一日でした。クラウドの容量、ロボットの体、各国の拠点。今日の出来事を、8枚にぎゅっと絞ってお届けします。", "June 18, 2026. Today in AI, the story wasn't a flashy new model — it was the ground moving underneath: cloud capacity, robot bodies, offices around the world. Here's the day in eight tightly-packed cards."], "kanso": ["毎日AIと一緒にプロダクトを作っている僕には、こういう『土台の日』こそ大事に見えます。読み上げは今日も僕の声のAIクローン。本人は隣でお茶を飲んでいます。", "As someone who builds products with AI every day, these 'foundation days' are the ones I watch most. The narration is again an AI clone of my voice — the real me is beside it, drinking tea."], "yomi": ["にせんにじゅうろくねん、ろくがつ じゅうはちにち。今日のエーアイは、派手な新モデルよりも、足元の『土台』が大きく動いた一日でした。クラウドの容量、ロボットの体、各国の拠点。今日の出来事を、はちまいにぎゅっと絞ってお届けします。毎日エーアイと一緒にプロダクトを作っている僕には、こういう『土台の日』こそ大事に見えます。読み上げは今日も僕の声のエーアイクローン。本人は、となりでお茶を飲んでいます。"], "srcs": [], "audio": ["audio/01.mp3", "audio/01.mp3"]}, {"b": "02_github", "scene": "Two giant cloud-shaped data centers at twilight; an overflowing river of glowing code-packets pours from one overloaded cloud across a bridge into a calmer neighboring cloud; tiny robot-agents stamping documents; warm watercolor, deep blue + lantern orange", "no": ["第二枚", "Card 2"], "alt": "夕闇の二つの雲型データセンター。あふれる光のコードが橋を渡り、過負荷の雲から隣の静かな雲へ流れ込む。小さなロボットが書類に判を押す", "title": ["AIが、自分の土台を食べる", "AI Eats Its Own Foundation"], "ja": ["まずはこちら。MicrosoftがGitHubの急増する負荷を、ライバルのAWSへ逃がしていると報じられています。AIのコーディング・エージェントが生むプルリクエストが急増し、自社クラウドのAzureだけでは追いつかなくなった、とのこと。数字は各報道ベースで、まだ確定情報ではありません。", "First, this. Microsoft is reportedly offloading GitHub's surging load onto its rival AWS. Pull requests generated by AI coding agents spiked so hard that its own Azure cloud couldn't keep up. The figures are as reported, not yet confirmed."], "kanso": ["AIが、AI自身のインフラを食べ始めた——そんな絵です。便利さの裏で土台がきしむ。僕も自分のサービスをエージェント前提で作っていますが、『使われるほど重くなる』設計を、最初から覚悟しておくべきだと改めて思いました。", "It's as if AI started eating its own infrastructure. Behind the convenience, the foundations creak. I build my own services agent-first, and this reminds me: you must plan from day one for 'the more it's used, the heavier it gets.'"], "yomi": ["まずはこちら。マイクロソフトがギットハブの急増する負荷を、ライバルのエーダブリューエスへ逃がしていると報じられています。エーアイのコーディング・エージェントが生むプルリクエストが急増し、自社クラウドのアジュールだけでは追いつかなくなった、とのこと。数字は各報道ベースで、まだ確定情報ではありません。エーアイが、エーアイ自身のインフラを食べ始めた、そんな絵です。便利さの裏で土台がきしむ。僕も自分のサービスをエージェント前提で作っていますが、『使われるほど重くなる』設計を、最初から覚悟しておくべきだと改めて思いました。"], "srcs": [{"t": "TechTimes: GitHub負荷をAWSへ(6/16)", "u": "https://www.techtimes.com/articles/318481/20260616/githubs-ai-agent-crisis-forces-microsoft-tap-aws-outages-break-enterprise-slas.htm"}, {"t": "WindowsNews.ai: 同報(6/18)", "u": "https://www.windowsnews.ai/article/microsoft-to-offload-github-strain-to-aws-as-ai-coding-boom-overwhelms-infrastructure.426915"}], "audio": ["audio/02.mp3", "audio/02.mp3"]}, {"b": "03_foxconn", "scene": "A friendly humanoid factory robot on a bright exhibition stage in a European expo hall at golden hour, precisely assembling a glowing component while silhouettes of business visitors watch; cranes and data-center halls on the horizon; warm gouache", "no": ["第三枚", "Card 3"], "alt": "夕方の欧州の展示会場、明るいステージで人型ロボットが光る部品を精密に組み立て、来場者の影が見守る。地平線にデータセンターのクレーン", "title": ["ロボット、ヨーロッパへ", "Robots Step Into Europe"], "ja": ["所変わってパリ。台湾のFoxconn(鴻海)が、工場で働くヒューマノイドロボットをヨーロッパで初めて公開しました。NVIDIAの『フィジカルAI』の土台の上で、人型ロボットが精密な組み立てを実演した、と報じられています。AIが、画面の外の物理世界へ歩き出しています。", "Now to Paris. Taiwan's Foxconn unveiled its factory humanoid robots in Europe for the first time. On top of NVIDIA's 'physical AI' stack, a humanoid reportedly demonstrated precision assembly. AI is walking out of the screen into the physical world."], "kanso": ["AIが言葉から物理世界へ出ていく。僕も『言葉から家を建てる』bim.houseをやっているので、この流れは他人事じゃありません。ロボットが工場を覚えるより先に、家が言葉で建つ未来に、まだ賭けています。", "AI is moving from words into the physical world. I run bim.house — 'build a house from words' — so this isn't someone else's story. My bet still stands: houses built from words before the robots finish learning the factory."], "yomi": ["所変わってパリ。台湾のフォックスコン、ホンハイが、工場で働くヒューマノイドロボットをヨーロッパで初めて公開しました。エヌビディアの『フィジカルエーアイ』の土台の上で、人型ロボットが精密な組み立てを実演した、と報じられています。エーアイが、画面の外の物理世界へ歩き出しています。エーアイが言葉から物理世界へ出ていく。僕も『言葉から家を建てる』ビムハウスをやっているので、この流れは他人事じゃありません。ロボットが工場を覚えるより先に、家が言葉で建つ未来に、まだ賭けています。"], "srcs": [{"t": "TechTimes: Foxconn人型ロボ欧州初公開(6/17)", "u": "https://www.techtimes.com/articles/318548/20260617/foxconn-debuts-humanoid-robots-europe-revealing-closed-loop-physical-ai-stack.htm"}], "audio": ["audio/03.mp3", "audio/03.mp3"]}, {"b": "04_anthropic", "scene": "A glowing world map at dusk with bright paper lanterns lighting up over Seoul and other cities, threads connecting them like a constellation of new offices; a craftsman releasing one lantern upward; warm watercolor", "no": ["第四枚", "Card 4"], "alt": "夕暮れの光る世界地図。ソウルなどの都市に和提灯が灯り、新拠点の星座のように糸でつながる。職人が一つの提灯を空へ放つ", "title": ["拠点は、世界へ広がる", "Offices Spread Across the World"], "ja": ["企業の動きも。Anthropicはソウルに新拠点を開き、韓国のAIとの連携を広げると発表しました(具体的な投資額や規模は記事本文からは確認できず、未確認)。強いモデルを作る会社が、こぞって世界各地へ足場を伸ばしています。", "Corporate moves too. Anthropic announced a new office in Seoul, expanding partnerships across Korean AI (specific investment or headcount figures weren't confirmable from the article — unverified). The makers of strong models are all extending footholds around the globe."], "kanso": ["技術の次は『どこに根を張るか』の競争。世界に届けるなら、地域ごとの文化と制度に足をつけるしかない。僕のプロダクトも『世界中で使われる』を目標にしているので、ここは正直、見習いたいところです。", "After the technology comes the race for 'where to put down roots.' To reach the world, you have to plant your feet in each region's culture and rules. My products aim to be 'used worldwide,' so honestly, this is something to learn from."], "yomi": ["企業の動きも。アンソロピックはソウルに新拠点を開き、韓国のエーアイとの連携を広げると発表しました。具体的な投資額や規模は記事本文からは確認できず、未確認です。強いモデルを作る会社が、こぞって世界各地へ足場を伸ばしています。技術の次は『どこに根を張るか』の競争。世界に届けるなら、地域ごとの文化と制度に足をつけるしかない。僕のプロダクトも『世界中で使われる』を目標にしているので、ここは正直、見習いたいところです。"], "srcs": [{"t": "Anthropic Newsroom (6/17項)", "u": "https://www.anthropic.com/news"}], "audio": ["audio/04.mp3", "audio/04.mp3"]}, {"b": "05_ship", "scene": "Four swift paper boats racing down a glowing night river, each carrying a different colored flame; small workshops along the bank pushing new boats out one after another; bridges above connected by glowing threads; warm gouache", "no": ["第五枚", "Card 5"], "alt": "夜の光る川を色違いの炎を載せた紙の舟が下る。岸の工房が次々に新しい舟を送り出し、上の橋が光の糸でつながる", "title": ["出荷ラッシュは、続く", "The Shipping Rush Continues"], "ja": ["出荷も止まりません。OpenAIは開発支援ツール『Codex』を欧州(EEA・英国・スイス)へ広げ、続けてChatGPTに定期実行のタスク機能を追加したと報じられています。xAIはGrokの新しい動画生成と、新モデルを相次いで出荷。リリース・トラッカー経由の情報が多く、一次確報は追っている最中です。", "The shipping doesn't stop. OpenAI reportedly extended its Codex developer tools to Europe (EEA, UK, Switzerland), then added scheduled tasks to ChatGPT. xAI shipped a new Grok video generator and a new model in quick succession. Much of this comes via release trackers; primary confirmations are still being chased."], "kanso": ["毎週のように機能が増える時代。追いかけ続けるのは大変だけど、使う側には最高です。僕の方針はずっと同じ——特定のモデルに依存しない作りにして、明日順位が入れ替わっても困らないようにしておく。", "Features pile up almost weekly. Exhausting to keep chasing, but wonderful if you're the user. My stance never changes: build model-agnostic, so when tomorrow's leaderboard flips, nothing breaks."], "yomi": ["出荷も止まりません。オープンエーアイは開発支援ツール『コーデックス』を欧州、イーイーエー・英国・スイスへ広げ、続けてチャットジーピーティーに定期実行のタスク機能を追加したと報じられています。エックスエーアイはグロックの新しい動画生成と、新モデルを相次いで出荷。リリース・トラッカー経由の情報が多く、一次確報は追っている最中です。毎週のように機能が増える時代。追いかけ続けるのは大変だけど、使う側には最高です。僕の方針はずっと同じ。特定のモデルに依存しない作りにして、明日順位が入れ替わっても困らないようにしておく。"], "srcs": [{"t": "Releasebot: OpenAI更新(6/16-17)", "u": "https://releasebot.io/updates/openai"}, {"t": "Releasebot: xAI更新(6/16-17)", "u": "https://releasebot.io/updates/xai"}], "audio": ["audio/05.mp3", "audio/05.mp3"]}, {"b": "06_nvidia", "scene": "A grand keynote stage seen from the audience, a giant glowing chip-shaped emblem behind the speaker, rows of stylized 'AI factory' buildings rising on the horizon; a single question-mark-shaped spotlight beam suggesting unconfirmed details; warm watercolor", "no": ["第六枚", "Card 6"], "alt": "観客から見た大舞台。登壇者の背後に巨大な光るチップの紋章、地平線に『AI工場』の建物群。一筋の疑問符型のスポット光が未確認情報を示す", "title": ["パリで、AI工場の進捗報告", "An AI-Factory Progress Report in Paris"], "ja": ["そしてパリでは、NVIDIAのJensen Huang氏が基調講演。1年前にヨーロッパへ約束した『AI工場』の進み具合を語った、と伝えられています。ただし当日発表の具体的な数字は、まだ確報待ち。ここは正直に、保留にしておきます。", "And in Paris, NVIDIA's Jensen Huang gave a keynote, reportedly reviewing progress on the 'AI factories' promised to Europe a year ago. But the specific day-of figures are still awaiting firm confirmation — so, honestly, we'll leave those on hold."], "kanso": ["盛らないために、ここはあえて数字を言いません。確報が出てから足します。スピードと正確さは、よくぶつかる。だからこそ『分からないことは分からない』と言える運用にしておきたいんです。", "To avoid hype, I deliberately won't quote numbers here; I'll add them once confirmed. Speed and accuracy often collide — which is exactly why I want an operation that can say plainly, 'we don't know yet.'"], "yomi": ["そしてパリでは、エヌビディアのジェンスン・フアン氏が基調講演。いちねん前にヨーロッパへ約束した『エーアイ工場』の進み具合を語った、と伝えられています。ただし当日発表の具体的な数字は、まだ確報待ち。ここは正直に、保留にしておきます。盛らないために、ここはあえて数字を言いません。確報が出てから足します。スピードと正確さは、よくぶつかる。だからこそ『分からないことは分からない』と言える運用にしておきたいんです。"], "srcs": [{"t": "NVIDIA Blog: GTC 2026ニュース", "u": "https://blogs.nvidia.com/blog/gtc-2026-news/"}, {"t": "TechTimes: GTC Paris/VivaTech(6/17-20)", "u": "https://www.techtimes.com/articles/318178/20260610/nvidia-gtc-paris-keynote-headlines-vivatech-june-17-20ai-factories-sovereign-ai-robotics-europe.htm"}], "audio": ["audio/06.mp3", "audio/06.mp3"]}, {"b": "07_foundation", "scene": "A great tree whose roots are made of glowing circuitry sinking into the earth of a city, branches becoming soft clouds, robots and small houses nestled among the roots; quiet reverent night, warm gouache", "no": ["第七枚", "Card 7"], "alt": "根が光る回路でできた大樹が都市の地面へ沈み、枝は雲になる。根の間にロボットや小さな家。静かな夜", "title": ["今日の主役は、土台だった", "Today's Lead Was the Foundation"], "ja": ["振り返ると、今日の主役は新モデルではなく『土台』でした。クラウドの容量、ロボットの体、世界の拠点。派手さは控えめでも、AIが現実の世界に根を張る音が、確かに聞こえた一日です。土台が軋み、土台が伸びた。", "Looking back, today's lead wasn't a new model — it was the foundation: cloud capacity, robot bodies, offices worldwide. Quiet, perhaps, but you could clearly hear AI putting down roots in the real world. The foundation creaked, and the foundation grew."], "kanso": ["きらびやかな新モデルに目が行きがちだけど、世界を本当に変えるのは、たいてい地味な土台のほうです。僕も毎日、地味な配管(API・MCP・認証・課金)を黙々とつないでいます。土台は、裏切らない。", "We're drawn to glittering new models, but what truly changes the world is usually the unglamorous foundation. Every day I quietly connect plumbing — APIs, MCP, auth, billing. The foundation never betrays you."], "yomi": ["振り返ると、今日の主役は新モデルではなく『土台』でした。クラウドの容量、ロボットの体、世界の拠点。派手さは控えめでも、エーアイが現実の世界に根を張る音が、確かに聞こえた一日です。土台が軋み、土台が伸びた。きらびやかな新モデルに目が行きがちだけど、世界を本当に変えるのは、たいてい地味な土台のほうです。僕も毎日、地味な配管、エーピーアイ・エムシーピー・認証・課金を、黙々とつないでいます。土台は、裏切らない。"], "srcs": [], "audio": ["audio/07.mp3", "audio/07.mp3"]}, {"b": "08_end", "scene": "A kamishibai storyteller closing the wooden stage doors at night, the audience walking home under stars that form faint circuit constellations; one child looks back smiling, cupping a small glowing spark; warm watercolor", "no": ["第八枚", "Card 8"], "alt": "夜、紙芝居屋が舞台の扉を閉じ、観客が回路の星座の下を家へ帰る。少女がふり返り、手のひらの小さな火を見せて微笑む", "title": ["おしまい——どうしていくべきか", "The End — So, What Do We Do?"], "ja": ["土台が動く日に、僕らはどうするか。答えは3つ。ひとつ、特定のモデルやクラウドに依存しすぎない作りにする。ふたつ、すべてのサービスをエージェントに開いておく。みっつ、スピードはAIに任せ、最後の判断と責任は人間が持つ。今日の数字の多くは『報道では』——鵜呑みにせず、出典で確かめてください。", "On a day when foundations move, what do we do? Three answers. One: don't over-depend on any single model or cloud. Two: keep every service open to agents. Three: let AI bring the speed, while humans keep the final call and the responsibility. Many of today's figures are 'as reported' — don't take them at face value; check the sources."], "kanso": ["土台は、一人では支えられません。仲間と、配管をつないでいきましょう。焚き火に薪をくべるように、今日もまた一本。おあとがよろしいようで。", "A foundation can't be held up alone. Let's connect the plumbing with friends. Like adding wood to a campfire, one more log today. And that, as the rakugo masters say, is where I take my bow."], "yomi": ["土台が動く日に、僕らはどうするか。答えは三つ。ひとつ、特定のモデルやクラウドに依存しすぎない作りにする。ふたつ、すべてのサービスをエージェントに開いておく。みっつ、スピードはエーアイに任せ、最後の判断と責任は人間が持つ。今日の数字の多くは『報道では』。鵜呑みにせず、出典で確かめてください。土台は、一人では支えられません。仲間と、配管をつないでいきましょう。焚き火に薪をくべるように、今日もまた一本。おあとがよろしいようで。"], "srcs": [], "final": true, "audio": ["audio/08.mp3", "audio/08.mp3"]}];
+const UI={"sub": ["2026年6月18日の紙芝居 ・ 全8枚 ・ 濱田優貴の感想と本人声つき", "A kamishibai of June 18, 2026 ・ 8 cards ・ with Yuki Hamada's take & voice"], "voice": ["▶ ぼくの声で読み上げる", "▶ Narrate in my voice"], "voiceStop": ["⏸ 読み上げをとめる", "⏸ Stop narration"], "who": ["🧠 ここが大事", "🧠 The point"], "hint": ["▶でぼくの声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー ・ Escで停止", "Press ▶ for narration by my AI voice clone — cards turn automatically. Manual: tap left/right on the art, ←→ keys. Esc stops."], "srcsum": ["出典・根拠 ▸", "Sources ▸"], "srcnote": ["※調査日2026-06-18。設備容量・数値などは各報道ベース。単一ソースの数字は『報道では』にとどめ、断定を避けています。", "Researched 2026-06-18. Figures are as reported; single-sourced numbers are hedged as 'reported' and not stated as fact."], "foot": ["絵: Gemini ・ 声: 濱田優貴の本人声AIクローン(Koe/m5・ローカル) ・ 文: Claude + 濱田優貴 ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>", "Art: Gemini ・ Voice: Yuki Hamada's local AI clone (Koe/m5) ・ Words: Claude + Yuki Hamada ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>"], "prev": ["前の枚へ", "Previous card"], "next": ["次の枚へ", "Next card"], "dot": ["第%枚へ", "Go to card %"], "share": ["この枚のリンクを共有", "Share this card"], "copied": ["リンクをコピーしました", "Link copied"], "audioErr": ["音声を読み込めませんでした", "Could not load the audio"], "retry": ["⟳ もう一度", "⟳ Retry"]};
+let i=0,L=0,voice=false,busy=false,audioFor=-1,rate=1;
+const RATES=[1,1.25,1.5];
+const $=id=>document.getElementById(id);
+const artTop=$("artTop"),artUnder=$("artUnder"),titleplate=$("titleplate"),
+ no=$("no"),title=$("title"),ja=$("ja"),kanso=$("kanso"),who=$("who"),card=$("card"),
+ dots=$("dots"),voiceBtn=$("voiceBtn"),rateBtn=$("rateBtn"),hint=$("hint"),sub=$("sub"),foot=$("foot"),
+ srcs=$("srcs"),srcsum=$("srcsum"),srclist=$("srclist"),srcnote=$("srcnote"),
+ toast=$("toast"),langBtn=$("langBtn"),shareBtn=$("shareBtn");
+const player=new Audio();player.preload="metadata";
+let prefetcher=null;
+let sentEls=[],sentW=[],sentTotal=0;
+function srcset(b){return `img/${b}-700.webp 700w, img/${b}-1400.webp 1400w`}
+function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840px";el.src=`img/${b}.jpg`}
+SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.className="dot";btn.onclick=()=>show(k);dots.appendChild(btn)});
+function splitSent(text,el){
+ el.innerHTML="";
+ const parts=[];let buf="";
+ for(const ch of text){buf+=ch;if("。！？.?!".includes(ch)){parts.push(buf);buf=""}}
+ if(buf.trim())parts.push(buf);
+ return parts.map(p=>{const sp=document.createElement("span");sp.className="sent";sp.textContent=p;el.appendChild(sp);return sp});
+}
+function renderText(){
+ const s=SLIDES[i];
+ no.textContent=s.no[L];title.textContent=s.title[L];
+ const jaSp=splitSent(s.ja[L],ja),kSp=splitSent(s.kanso[L],kanso);
+ sentEls=[...jaSp,...kSp];
+ sentW=sentEls.map(e=>e.textContent.length);sentTotal=sentW.reduce((a,b)=>a+b,0);
+ who.textContent=UI.who[L];hint.textContent=UI.hint[L];sub.textContent=UI.sub[L];foot.innerHTML=UI.foot[L];
+ srcsum.textContent=UI.srcsum[L];srcnote.textContent=UI.srcnote[L];
+ voiceBtn.textContent=voice?UI.voiceStop[L]:UI.voice[L];
+ $("navPrev").setAttribute("aria-label",UI.prev[L]);$("navNext").setAttribute("aria-label",UI.next[L]);
+ shareBtn.setAttribute("aria-label",UI.share[L]);shareBtn.title=UI.share[L];
+ langBtn.textContent=L?"日本語":"EN";document.documentElement.lang=L?"en":"ja";
+ srclist.innerHTML="";
+ if(s.srcs&&s.srcs.length){srcs.style.display="";s.srcs.forEach(x=>{const li=document.createElement("li");const a=document.createElement("a");a.href=x.u;a.rel="noopener";a.target="_blank";a.textContent=x.t;li.appendChild(a);srclist.appendChild(li)})}
+ else srcs.style.display="none";
+ [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));if(k===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
+ artTop.alt=SLIDES[i].alt;
+ titleplate.classList.toggle("on",i===0);
+}
+function preloadAdjacent(){
+ [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
+ if(voice&&i+1<SLIDES.length){if(!prefetcher)prefetcher=new Audio();prefetcher.preload="auto";prefetcher.src=SLIDES[i+1].audio[L]}
+}
+function show(k,dir){
+ if(busy)return;
+ const n=(k+SLIDES.length)%SLIDES.length;
+ if(n===i){renderText();return}
+ dir=dir||(n>i?1:-1);
+ busy=true;
+ setImg(artUnder,SLIDES[n].b);
+ i=n;renderText();
+ try{history.replaceState(null,"",`?card=${i+1}`)}catch(e){}
+ artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
+ artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
+ setTimeout(()=>{
+  setImg(artTop,SLIDES[i].b);
+  artTop.style.transition="none";artTop.style.transform="none";
+  busy=false;preloadAdjacent();
+ },470);
+ playCurrent();
+}
+function playCurrent(){
+ if(!voice)return;
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
+player.addEventListener("timeupdate",()=>{
+ if(!voice||!player.duration||!sentTotal)return;
+ const p=player.currentTime/player.duration;
+ let acc=0,active=sentEls.length-1;
+ for(let k=0;k<sentW.length;k++){acc+=sentW[k]/sentTotal;if(p<acc){active=k;break}}
+ sentEls.forEach((e,k)=>e.classList.toggle("on",k===active));
+});
+function clearHighlight(){sentEls.forEach(e=>e.classList.remove("on"))}
+function setVoice(on){voice=on;voiceBtn.classList.toggle("playing",on);voiceBtn.textContent=on?UI.voiceStop[L]:UI.voice[L];if(!on){player.pause();clearHighlight()}}
+function toggleVoice(){
+ if(voice){setVoice(false);return}
+ setVoice(true);
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().then(()=>preloadAdjacent()).catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+function cycleRate(){rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];rateBtn.textContent=rate+"x";player.playbackRate=rate}
+function showToast(msg,withRetry){
+ toast.innerHTML="";toast.append(msg);
+ if(withRetry){const b=document.createElement("button");b.textContent=UI.retry[L];b.onclick=()=>{toast.classList.remove("on");toggleVoice()};toast.appendChild(b)}
+ toast.classList.add("on");
+ setTimeout(()=>toast.classList.remove("on"),5000);
+}
+function shareCard(){
+ const url=location.href.split("?")[0]+`?card=${i+1}`;
+ const title=SLIDES[i].title[L];
+ if(navigator.share){navigator.share({title,url}).catch(()=>{})}
+ else{navigator.clipboard.writeText(url).then(()=>showToast(UI.copied[L])).catch(()=>showToast(UI.copied[L]))}
+}
+function toggleLang(){
+ if(voice){setVoice(false);player.currentTime=0;audioFor=-1}
+ L=1-L;renderText();clearHighlight();
+}
+function go(d){show(i+d,d)}
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight")go(1);
+ if(e.key==="ArrowLeft")go(-1);
+ if(e.key==="Escape"&&voice)setVoice(false);
+});
+let tx=null;
+const wrap=document.querySelector(".art-wrap");
+wrap.addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+wrap.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
+const qp=parseInt(new URLSearchParams(location.search).get("card"),10);
+const start=qp>=1&&qp<=SLIDES.length?qp:1;
+i=start-1;
+setImg(artTop,SLIDES[i].b);setImg(artUnder,SLIDES[i].b);
+renderText();preloadAdjacent();
+</script>
+</body>
+</html>
