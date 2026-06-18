@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
+<title>信じる力の、ほんとう。— ピグマリオンとプラセボの紙芝居 | yukihamada.jp</title>
+<meta name="description" content="「期待すれば人は伸びる」ピグマリオン効果を、盛らずに科学で検証。本物だが小さく脆い。だが同じ家系に頑健な英雄がいた——プラセボ効果。そしてAIへ:『あなたは天才』は正解率を上げない。信じる力の正しい使い方を8枚の紙芝居に。濱田優貴の声つき・出典実打。">
+<meta property="og:title" content="信じる力の、ほんとう。">
+<meta property="og:description" content="「期待すれば人は伸びる」ピグマリオン効果を、盛らずに科学で検証。本物だが小さく脆い。だが同じ家系に頑健な英雄がいた——プラセボ効果。そしてAIへ:『あなたは天才』は正解率を上げない。信じる力の正しい使い方を8枚の紙芝居に。濱田優貴の声つき・出典実打。">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://yukihamada.jp/kamisibai/shinjiru/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yukihamada.jp/kamisibai/shinjiru/og.jpg">
+<meta property="og:url" content="https://yukihamada.jp/kamisibai/shinjiru/">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/shinjiru/">
+<style>
+:root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--paper);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+header{padding:14px 16px 0;text-align:center;width:min(96vw,860px)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topline .spacer{width:64px}
+header h1{font-size:1.05rem;font-weight:600;letter-spacing:.18em;color:var(--paper)}
+header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;text-align:center}
+.langbtn{font-family:-apple-system,sans-serif;font-size:.7rem;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:5px 12px;cursor:pointer;width:64px}
+.langbtn:hover{color:var(--paper);border-color:var(--paper)}
+.voicebar{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px}
+.voicebar .vmain{font-family:inherit;font-size:.82rem;letter-spacing:.08em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(232,131,58,.35)}
+.voicebar .vmain.playing{background:#6b4a2a}
+.voicebar .vrate{font-family:-apple-system,sans-serif;font-size:.7rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:6px 10px;cursor:pointer}
+.stage{position:relative;width:min(96vw,860px);margin:12px auto 0;user-select:none}
+.frame{position:relative;background:#3a2c1c;border-radius:10px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 0 2px rgba(245,236,217,.08)}
+.art-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#241b10}
+.art-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#artTop{z-index:2}
+#artUnder{z-index:1}
+.titleplate{position:absolute;z-index:3;top:8%;left:6%;writing-mode:vertical-rl;font-size:clamp(1.6rem,5.5vw,3rem);font-weight:800;letter-spacing:.22em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 3px rgba(0,0,0,.9);opacity:0;transition:opacity .4s;pointer-events:none}
+.titleplate.on{opacity:1}
+.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;border:none;z-index:4}
+.nav-half:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.nav-prev{left:0}.nav-next{right:0}
+.card{background:var(--paper);color:var(--ink);width:min(96vw,860px);margin:14px auto;border-radius:10px;padding:20px 22px 16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
+.card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
+.card p.ja{font-size:.95rem;line-height:1.9}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
+.kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
+.kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
+.sent{transition:background .25s}
+.sent.on{background:rgba(232,131,58,.26);border-radius:3px}
+details.srcs{margin-top:12px;font-family:-apple-system,sans-serif}
+details.srcs summary{font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em}
+details.srcs ul{margin:6px 0 0 18px;font-size:.74rem;line-height:1.8}
+details.srcs a{color:#a05a20;word-break:break-all}
+details.srcs .note{font-size:.7rem;color:var(--muted);margin-top:4px}
+.dotrow{display:flex;gap:8px;justify-content:center;align-items:center;margin:4px 0 10px}
+.dotrow .dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(245,236,217,.25);cursor:pointer;padding:0}
+.dotrow .dot.on{background:var(--accent)}
+.dotrow .share{font-family:-apple-system,sans-serif;font-size:.68rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:4px 10px;cursor:pointer;margin-left:8px}
+.hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:.08em;padding:0 16px}
+footer{padding:10px 16px 28px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.7;font-family:-apple-system,sans-serif}
+footer a{color:var(--muted)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3a2c1c;color:var(--paper);font-size:.8rem;font-family:-apple-system,sans-serif;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;z-index:50}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast button{background:var(--accent);border:none;color:#fff;border-radius:6px;padding:4px 10px;margin-left:10px;cursor:pointer;font-size:.75rem}
+@media (max-width:480px){.card h2{font-size:1.02rem}.card p.ja{font-size:.88rem}.kanso p{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.art-wrap img{transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topline">
+    <span class="spacer" aria-hidden="true"></span>
+    <div><h1 id="h1">信じる力の、ほんとう。</h1></div>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" aria-label="Switch language">EN</button>
+  </div>
+  <p class="sub" id="sub">8枚の紙芝居 ・ ピグマリオン・プラセボ・AIへの応用 ・ ぼくの声つき</p>
+  <div class="voicebar">
+    <button id="voiceBtn" class="vmain" onclick="toggleVoice()">▶ ぼくの声で読み上げる</button>
+    <button id="rateBtn" class="vrate" onclick="cycleRate()" aria-label="再生速度">1x</button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="frame">
+    <div class="art-wrap">
+      <img id="artTop" src="img/01_title.jpg" width="1400" height="1050" alt="" fetchpriority="high">
+      <img id="artUnder" src="img/01_title.jpg" width="1400" height="1050" alt="" aria-hidden="true">
+      <div class="titleplate on" id="titleplate">信じる力</div>
+    </div>
+    <button class="nav-half nav-prev" onclick="go(-1)" aria-label="前の枚へ" id="navPrev"></button>
+    <button class="nav-half nav-next" onclick="go(1)" aria-label="次の枚へ" id="navNext"></button>
+  </div>
+</div>
+
+<div class="card" id="card" aria-live="polite">
+  <div class="no" id="no"></div>
+  <h2 id="title"></h2>
+  <p class="ja" id="ja"></p>
+  <div class="kanso"><div class="who" id="who"></div><p id="kanso"></p></div>
+  <details class="srcs" id="srcs"><summary id="srcsum"></summary><ul id="srclist"></ul><div class="note" id="srcnote"></div></details>
+</div>
+
+<div class="dotrow" id="dotrow">
+  <span id="dots" style="display:contents"></span>
+  <button class="share" id="shareBtn" onclick="shareCard()">🔗</button>
+</div>
+<p class="hint" id="hint"></p>
+
+<footer id="foot"></footer>
+<div id="toast" role="status"></div>
+<noscript><p style="color:#f5ecd9;text-align:center;padding:20px">この紙芝居の閲覧にはJavaScriptが必要です / This kamishibai requires JavaScript.</p></noscript>
+
+<script>
+const SLIDES=[{"b": "01_title", "scene": "A nostalgic Showa-era classroom at golden hour, a kind teacher gazing warmly toward students; faint glowing threads of light run from the teacher's eyes to a few children who are gently blooming like flowers at their small wooden desks; expectation as warm light, no text", "no": ["第一枚", "Card 1"], "alt": "昭和の教室、夕暮れの金色の光。先生のまなざしから光の糸が数人の子へ伸び、その子たちが机で花のようにほころぶ——期待を光で表す", "title": ["はじまり、はじまり〜", "Here we go—"], "ja": ["「期待すれば、人は伸びる」。ピグマリオン効果、という有名な話です。先生に「この子は伸びる」と思われた子は、本当に伸びる——。では、これは科学的に証明されているのか? 答えは「半分本当で、半分は神話」。今日は盛らずに、最後まで正直にお話しします。", "\"Expect great things, and people rise.\" That's the famous Pygmalion effect: a child a teacher believes in really does improve. But is it scientifically proven? The answer is \"half true, half myth.\" Today, no hype — I'll be honest all the way through."], "kanso": ["そして本物の主役は、ピグマリオンではなく、その親戚でした。さらにこの話は、AIの使い方にもまっすぐつながります。順番に、めくっていきましょう。", "And the real star turns out to be not Pygmalion, but its cousin. The story also runs straight into how we should use AI. Let's turn the cards."], "yomi": ["「期待すれば、人はのびる」。ピグマリオン効果、という有名な話です。先生に「この子はのびる」と思われた子は、本当にのびる。では、これは科学的に証明されているのか? 答えは「半分本当で、半分はしんわ」。今日は盛らずに、最後まで正直にお話しします。そして本物の主役は、ピグマリオンではなく、そのしんせきでした。さらにこの話は、エーアイの使い方にもまっすぐつながります。順番に、めくっていきましょう。", "Expect great things, and people rise. That's the famous Pygmalion effect: a child a teacher believes in really does improve. But is it scientifically proven? The answer is half true, half myth. Today, no hype, I'll be honest all the way through. And the real star turns out to be not Pygmalion, but its cousin. The story also runs straight into how we should use A I. Let's turn the cards."], "srcs": [], "audio": ["audio/01.mp3", "audio/01.mp3"]}, {"b": "02_experiment", "scene": "A 1960s classroom: a teacher holding a paper list and looking hopefully at a handful of young children whose desks sprout tiny seedlings and flowers; soft golden expectation light on just those few; warm watercolor, no text", "no": ["第二枚", "Card 2"], "alt": "1960年代の教室。名簿を手にした先生が数人の幼い子を期待のまなざしで見つめ、その子たちの机から芽や花が伸びる", "title": ["有名な実験——1968年", "The Famous Experiment — 1968"], "ja": ["1968年、心理学者ローゼンタールが小学校で実験をしました。全員にテストを受けさせ、先生にこう告げます——「この2割の子は、今年ぐんと伸びます」。でも本当は、その子たちは「くじ引きで適当に選んだだけ」。差は何もありません。ところが学年末、その子たちのIQは、ほかの子より伸びていたのです。", "In 1968, the psychologist Rosenthal ran a study at an elementary school. Everyone took a test, and teachers were told: \"These 20% of children will bloom this year.\" In truth, those children were picked purely at random — no real difference at all. Yet by year's end, their IQ scores had risen more than the others."], "kanso": ["先生の「期待」だけが変えた。ドラマチックですよね。世界中の教科書に載りました。……でも、ここで拍手して終わるのは、ちょっと待ってください。", "Only the teachers' expectations differed. Dramatic, right? It went into textbooks worldwide. But before we applaud and close the book — hold on."], "yomi": ["せんきゅうひゃくろくじゅうはち年、心理学者ローゼンタールが小学校で実験をしました。全員にテストを受けさせ、先生にこう告げます。「この二割の子は、今年ぐんとのびます」。でも本当は、その子たちは、くじびきで適当に選んだだけ。差は何もありません。ところが学年末、その子たちのアイキューは、ほかの子よりのびていたのです。先生の「期待」だけが変えた。ドラマチックですよね。世界中の教科書に載りました。でも、ここで拍手して終わるのは、ちょっと待ってください。", "In nineteen sixty eight, the psychologist Rosenthal ran a study at an elementary school. Everyone took a test, and teachers were told: these twenty percent of children will bloom this year. In truth, those children were picked purely at random, no real difference at all. Yet by year's end, their I Q scores had risen more than the others. Only the teachers' expectations differed. Dramatic, right? It went into textbooks worldwide. But before we applaud and close the book, hold on."], "srcs": [{"t": "Rosenthal & Jacobson 1968: Pygmalion in the Classroom (PDF)", "u": "https://bpb-us-e1.wpmucdn.com/sites.tufts.edu/dist/d/804/files/2017/02/Pygmalion-in-the-Classroom.pdf"}, {"t": "Wikipedia: Pygmalion effect", "u": "https://en.wikipedia.org/wiki/Pygmalion_effect"}], "audio": ["audio/02.mp3", "audio/02.mp3"]}, {"b": "03_doubt", "scene": "The same classroom now with cool mist rolling in; a wise figure examines a cracked, bent measuring ruler with a magnifying glass; the earlier glowing flowers are now small and faint; an oversized old clock on the wall with hands just past twelve; honest, sober watercolor, no text", "no": ["第三枚", "Card 3"], "alt": "霧の入った同じ教室。賢者が虫めがねでひびの入った物差しを調べる。さきほどの花は小さくかすみ、壁の大時計の針は十二時を過ぎたあたり", "title": ["……でも、正直に言うと", "But, Honestly"], "ja": ["この実験、あとで厳しく検証されました。大きく伸びたのは、ほぼ一・二年生の幼い子だけ。しかも使ったIQテストの使い方に難があり、再現実験はなかなか成功しませんでした。35年分の研究をまとめた結論はこうです——効果は「本物。でも小さく、脆く、時間とともに消えやすい」。", "This study was later scrutinized hard. The big gains were almost entirely in young first- and second-graders, the IQ test was misused, and replications often failed. The verdict from 35 years of research: the effect is real — but small, fragile, and prone to fading over time."], "kanso": ["そして大事な一点。先生の期待と結果の関係の多くは、魔法ではなく「先生が本当の伸びしろを正しく見抜いていた」だけ。ただし——立場の弱い子には、期待がいちばん効く。ここは覚えておいてください。", "And a crucial point: most of the link between expectation and outcome isn't magic — it's teachers accurately reading who would grow. But for disadvantaged kids, expectation matters most. Remember that one."], "yomi": ["この実験、あとできびしく検証されました。大きくのびたのは、ほぼ一・二年生のおさない子だけ。しかも使ったアイキューテストの使い方に難があり、さいげん実験はなかなか成功しませんでした。さんじゅうご年分の研究をまとめた結論はこうです。効果は「本物。でも小さく、もろく、時間とともに消えやすい」。そして大事な一点。先生の期待と結果の関係のおおくは、魔法ではなく「先生が本当ののびしろを正しく見抜いていた」だけ。ただし、立場の弱い子には、期待がいちばん効く。ここは覚えておいてください。", "This study was later scrutinized hard. The big gains were almost entirely in young first and second graders, the I Q test was misused, and replications often failed. The verdict from thirty five years of research: the effect is real, but small, fragile, and prone to fading over time. And a crucial point: most of the link between expectation and outcome isn't magic, it's teachers accurately reading who would grow. But for disadvantaged kids, expectation matters most. Remember that one."], "srcs": [{"t": "Jussim & Harber 2005: 35年の総説 (PDF)", "u": "http://nwkpsych.rutgers.edu/~kharber/publications/Jussim.&.Harber.2005.%20Teacher%20Expectations%20and%20Self-Fulfilling%20Prophesies.pdf"}, {"t": "Elashoff & Snow 1971: Pygmalion Reconsidered (PDF)", "u": "https://gwern.net/doc/statistics/bias/1971-elashoff-pygmalionreconsidered.pdf"}, {"t": "Raudenbush 1984: 期待効果のメタ分析", "u": "https://wviechtb.github.io/metadat/reference/dat.raudenbush1985.html"}], "audio": ["audio/03.mp3", "audio/03.mp3"]}, {"b": "04_placebo", "scene": "A warm dim room at night: a doctor gently handing a single softly-glowing white pill to a seated patient by candlelight; a gentle warm glow spreads over the patient's chest and head as relief; folk-medicine tenderness, watercolor, no text", "no": ["第四枚", "Card 4"], "alt": "夜の暖かな部屋。医師がろうそくの灯りで、ほのかに光る白い錠剤を患者にそっと手渡す。患者の胸と頭に安らぎの光が広がる", "title": ["本物の親戚——プラセボ効果", "The Real Cousin — Placebo"], "ja": ["信じる力の家系で、いちばん頑健な英雄がこれ。プラセボ効果です。「効く」と思って飲んだ薬は、たとえ中身がただの砂糖でも、痛みを和らげ、パーキンソン病では脳が本当にドーパミンを出すことが画像で確かめられています。気のせい、ではない。体が本当に反応するのです。", "In the family of belief, the most robust hero is this: the placebo effect. A pill you believe in — even if it's just sugar — eases pain, and in Parkinson's, brain scans show it makes the brain genuinely release dopamine. Not 'all in your head': the body really responds."], "kanso": ["驚きはここから。「これは偽薬、ただの砂糖です」と正直に伝えても、ちゃんと効くという実験が、複数の病気で再現されています。信じる力、おそるべし。", "Here's the kicker: even when patients are told honestly, 'this is a placebo, just sugar,' it still works — replicated across several conditions. The power of belief is no joke."], "yomi": ["信じる力の家系で、いちばんがんけんな英雄がこれ。プラセボ効果です。「効く」と思って飲んだ薬は、たとえ中身がただの砂糖でも、痛みをやわらげ、パーキンソン病では脳が本当にドーパミンを出すことが、画像で確かめられています。気のせい、ではない。体が本当に反応するのです。おどろきはここから。「これはぎやく、ただの砂糖です」と正直に伝えても、ちゃんと効くという実験が、複数の病気で再現されています。信じる力、おそるべし。", "In the family of belief, the most robust hero is this: the placebo effect. A pill you believe in, even if it's just sugar, eases pain, and in Parkinson's, brain scans show it makes the brain genuinely release dopamine. Not all in your head: the body really responds. Here's the kicker: even when patients are told honestly, this is a placebo, just sugar, it still works, replicated across several conditions. The power of belief is no joke."], "srcs": [{"t": "Kaptchuk et al. 2010: オープンラベル・プラセボ/IBS (PLOS ONE)", "u": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0015591"}, {"t": "Carvalho et al. 2016: 偽薬と公言しても効く/腰痛 (Pain)", "u": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5113234/"}, {"t": "de la Fuente-Fernández et al. 2001: 期待がドーパミン放出 (Science)", "u": "https://www.science.org/doi/10.1126/science.1060937"}], "audio": ["audio/04.mp3", "audio/04.mp3"]}, {"b": "05_boundary", "scene": "A large balance scale at dusk: on the left pan, a person with a warm glow over heart and head (relief, subjective); on the right pan, a cold grey solid stone unchanged (the body/tumor); behind, a faint shadowy twin figure whispering, casting a wince on another person; honest watercolor, no text", "no": ["第五枚", "Card 5"], "alt": "夕暮れの大きな天秤。左の皿に胸と頭が温かく光る人(主観の安らぎ)、右の皿に変わらない冷たい灰色の石(体)。背後に囁く影の双子が別の人をしかめさせる", "title": ["ただし、境界線がある", "But There's a Boundary"], "ja": ["ここが一番大事。プラセボが動かせるのは「主観」——痛み・吐き気・気分まで。けれど腫瘍は縮みません。検査の数値も、命の長さも、変えられない。信じる力は「つらさの感じ方」を変える薬であって、病気そのものを治す薬ではないのです。", "This is the key. A placebo moves the subjective — pain, nausea, mood. But it does not shrink a tumor. It won't change your lab numbers or your lifespan. Belief is medicine for how suffering feels, not medicine that cures the disease itself."], "kanso": ["そして逆もあります。「副作用が出るぞ」と思うと、本当に副作用が出る——ノセボ効果。しかもこちらは、プラセボより強くしつこいことも。期待は、良くも悪くも本物。だから扱いは慎重に。", "And it runs both ways. Expect side effects, and real side effects appear — the nocebo effect, sometimes stronger and stickier than placebo. Expectation is real for better and worse. Handle it with care."], "yomi": ["ここが一番大事。プラセボが動かせるのは「しゅかん」。痛み・吐き気・気分まで。けれどしゅよう、腫瘍はちぢみません。検査の数値も、命のながさも、変えられない。信じる力は、つらさの感じ方を変える薬であって、病気そのものを治す薬ではないのです。そして逆もあります。「ふくさようが出るぞ」と思うと、本当にふくさようが出る。ノセボ効果。しかもこちらは、プラセボより強くしつこいことも。期待は、よくも悪くも本物。だから扱いは慎重に。", "This is the key. A placebo moves the subjective: pain, nausea, mood. But it does not shrink a tumor. It won't change your lab numbers or your lifespan. Belief is medicine for how suffering feels, not medicine that cures the disease itself. And it runs both ways. Expect side effects, and real side effects appear, the nocebo effect, sometimes stronger and stickier than placebo. Expectation is real for better and worse. Handle it with care."], "srcs": [{"t": "Hróbjartsson & Gøtzsche 2001: プラセボは無力か (NEJM)", "u": "https://www.nejm.org/doi/full/10.1056/NEJM200105243442106"}, {"t": "Spille et al. 2023: 主観に効き客観はゼロ (Scientific Reports)", "u": "https://www.nature.com/articles/s41598-023-30362-z"}, {"t": "ノセボ効果の総説 (Annual Review of Pharmacol. & Toxicol.)", "u": "https://www.annualreviews.org/content/journals/10.1146/annurev-pharmtox-022723-112425"}], "audio": ["audio/05.mp3", "audio/05.mp3"]}, {"b": "06_ai", "scene": "A person at a wooden desk speaking grandly with a sweeping gesture toward a glowing lantern-spirit (an AI); the spirit's reply-scroll stays the same short length; in a second beat, the person instead hands the spirit a clear map and example cards, and the spirit brightens and unfurls a longer, finer scroll; flattery versus information, watercolor, no text", "no": ["第六枚", "Card 6"], "alt": "机の人が光る提灯の精霊(AI)に大げさに語りかけるが、精霊の巻物は短いまま。次の場面では地図と例の札を手渡すと、精霊が明るくなり長く精緻な巻物を広げる——お世辞と情報の対比", "title": ["AIにも、同じ線が引ける", "The Same Line Runs Through AI"], "ja": ["では本題。AIに「あなたは天才です」と期待をかければ、賢くなるのか? 研究の答えは——ほぼ、ノー。「あなたは専門家だ」という役割づけは、正解率をほとんど上げません。これは、AI版の都市伝説です。励ましの言葉で出力が変わる研究もありますが、新しい大きなモデルでは不安定でした。", "Now the heart of it. If you tell an AI 'you're a genius,' does it get smarter? Research says — mostly no. Assigning an expert persona barely improves accuracy. It's an AI urban legend. Some studies show emotional encouragement shifts outputs, but on newer, larger models the effect is unreliable."], "kanso": ["お世辞では賢くならない。でも「具体的な文脈・お手本・手順」を渡すと、AIははっきり良くなります。つまり効くのは「情報」であって「期待」じゃない。プラセボと同じ——フレーミングは口調や自信は変えても、正解そのものは変えにくいのです。", "Flattery won't make it smarter. But give it concrete context, examples, and steps, and it clearly improves. What works is information, not expectation. Just like placebo: framing changes tone and confidence, but rarely the correctness itself."], "yomi": ["では本題。エーアイに「あなたは天才です」と期待をかければ、かしこくなるのか? 研究の答えは、ほぼ、ノー。「あなたは専門家だ」という役割づけは、正解率をほとんど上げません。これは、エーアイ版の都市伝説です。はげましの言葉で出力が変わる研究もありますが、新しい大きなモデルでは不安定でした。お世辞では賢くなりません。でも、具体的な文脈・お手本・手順を渡すと、エーアイははっきり良くなります。つまり効くのは「情報」であって「期待」じゃない。プラセボと同じ。フレーミングは口調や自信は変えても、正解そのものは変えにくいのです。", "Now the heart of it. If you tell an A I you're a genius, does it get smarter? Research says, mostly no. Assigning an expert persona barely improves accuracy. It's an A I urban legend. Some studies show emotional encouragement shifts outputs, but on newer, larger models the effect is unreliable. Flattery won't make it smarter. But give it concrete context, examples, and steps, and it clearly improves. What works is information, not expectation. Just like placebo: framing changes tone and confidence, but rarely the correctness itself."], "srcs": [{"t": "Zheng et al. 2024: ペルソナは正解率を上げない", "u": "https://arxiv.org/abs/2311.10054"}, {"t": "Li et al. 2023: EmotionPrompt (感情で出力が変わる)", "u": "https://arxiv.org/abs/2307.11760"}, {"t": "Wharton 2025: 脅し/チップは性能を上げない", "u": "https://arxiv.org/abs/2508.00614"}], "audio": ["audio/06.mp3", "audio/06.mp3"]}, {"b": "07_howto", "scene": "A warm workshop: a mentor and a young apprentice work side by side at a bench, and a friendly lantern-spirit (AI) assists; the mentor hangs one clear bright target-lantern high (a clear standard) and offers warm encouraging feedback; four small steady lights glow around them; collaboration and clear expectation, watercolor, no text", "no": ["第七枚", "Card 7"], "alt": "暖かな工房。師匠と若い弟子が並んで作業し、人なつこい提灯の精霊(AI)が手伝う。師匠は明るい目標の提灯を高く掲げ、温かい励ましを送る。まわりに四つの小さな灯", "title": ["じゃあ、どう使う", "So, How Do We Use It?"], "ja": ["正しい使い方はこうです。人にもAIにも、空っぽのお世辞ではなく「明確で具体的な期待」を渡す。何を、どの水準で、なぜ。そして温かい雰囲気と、ちゃんとしたフィードバック。これがローゼンタールの言う、期待が伝わる四つの道——雰囲気・与える量・話す機会・返し方です。", "Here's the right way. For people and AI alike, give not empty flattery but clear, concrete expectations: what, to what standard, and why. Add a warm climate and real feedback. These are Rosenthal's four channels by which expectation travels — climate, input, opportunity, and feedback."], "kanso": ["ただし忘れないで。期待は小さな追い風。舟を前に進めるのは、結局その人自身、その仕事の中身です。そしてAIは提案まで。最後のスイッチは、人が確かめて押す。これがぼくの全プロダクト共通のルールです。", "But don't forget: expectation is a small tailwind. What moves the boat is the person, and the substance of the work. And AI proposes — a human checks and presses the final switch. That's the rule across every product I build."], "yomi": ["正しい使い方はこうです。人にもエーアイにも、空っぽのお世辞ではなく「明確で具体的な期待」を渡す。何を、どの水準で、なぜ。そして温かい雰囲気と、ちゃんとしたフィードバック。これがローゼンタールの言う、期待が伝わる四つの道。雰囲気・あたえる量・話す機会・返しかたです。ただし忘れないで。期待は小さな追い風。舟を前に進めるのは、けっきょくその人自身、その仕事の中身です。そしてエーアイは提案まで。最後のスイッチは、人が確かめて押す。これがぼくの全プロダクト共通のルールです。", "Here's the right way. For people and A I alike, give not empty flattery but clear, concrete expectations: what, to what standard, and why. Add a warm climate and real feedback. These are Rosenthal's four channels by which expectation travels: climate, input, opportunity, and feedback. But don't forget: expectation is a small tailwind. What moves the boat is the person, and the substance of the work. And A I proposes; a human checks and presses the final switch. That's the rule across every product I build."], "srcs": [{"t": "Jussim & Harber 2005: 期待効果の到達点 (PDF)", "u": "http://nwkpsych.rutgers.edu/~kharber/publications/Jussim.&.Harber.2005.%20Teacher%20Expectations%20and%20Self-Fulfilling%20Prophesies.pdf"}, {"t": "Rosenthalの四要因(climate/input/output/feedback)解説", "u": "http://edpsycinteractive.org/files/teacherexpect.html"}], "audio": ["audio/07.mp3", "audio/07.mp3"]}, {"b": "08_end", "scene": "Dusk on a calm river: a person rowing a small boat with a gentle tailwind behind them (a soft following breeze shown as faint streaks of light); above, stars forming faint gentle patterns; one looks forward with quiet resolve; warm closing watercolor, no text", "no": ["第八枚", "Card 8"], "alt": "夕暮れの穏やかな川。追い風(光の筋)を受けて小舟を漕ぐ人。空にやわらかな星のつらなり。静かな決意で前を見る", "title": ["おしまい", "The End"], "ja": ["信じる力は、魔法ではありませんでした。でも、ゼロでもない。期待は背中を押す小さな追い風。プラセボのように、感じ方を確かに変える。けれど、事実そのものを変える杖ではない。だからこそ——盛らずに、正しく使う。", "The power of belief turned out to be no magic. But it isn't nothing, either. Expectation is a small tailwind at your back. Like a placebo, it truly changes how things feel — but it's no wand that rewrites the facts. Which is exactly why we use it honestly."], "kanso": ["人にもAIにも、温かい期待をかけよう。そのうえで、舟は自分で漕ごう。期待は風、櫂はあなた。仲間と漕げば、もっと遠くへ。おあとがよろしいようで。", "Give people — and AI — warm expectations. Then row your own boat. Expectation is the wind; the oar is you. Row with friends, and you'll go farther. And that's where I take my bow."], "yomi": ["信じる力は、魔法ではありませんでした。でも、ゼロでもない。期待は背中を押す小さな追い風。プラセボのように、感じ方を確かに変える。けれど、事実そのものを変える杖ではない。だからこそ、盛らずに、正しく使う。人にもエーアイにも、あたたかい期待をかけよう。そのうえで、舟は自分で漕ごう。期待は風、櫂はあなた。仲間と漕げば、もっと遠くへ。おあとがよろしいようで。", "The power of belief turned out to be no magic. But it isn't nothing, either. Expectation is a small tailwind at your back. Like a placebo, it truly changes how things feel, but it's no wand that rewrites the facts. Which is exactly why we use it honestly. Give people, and A I, warm expectations. Then row your own boat. Expectation is the wind; the oar is you. Row with friends, and you'll go farther. And that's where I take my bow."], "srcs": [], "final": true, "audio": ["audio/08.mp3", "audio/08.mp3"]}];
+const UI={"sub": ["8枚の紙芝居 ・ ピグマリオン・プラセボ・AIへの応用 ・ ぼくの声つき", "8 cards ・ Pygmalion, placebo, and how it applies to AI ・ with my voice"], "voice": ["▶ ぼくの声で読み上げる", "▶ Narrate in my voice"], "voiceStop": ["⏸ 読み上げをとめる", "⏸ Stop narration"], "who": ["🧠 ここが大事", "🧠 The point"], "hint": ["▶でぼくの声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー ・ Escで停止", "Press ▶ for narration by my AI voice clone — cards turn automatically. Manual: tap left/right on the art, ←→ keys. Esc stops."], "srcsum": ["出典・根拠 ▸", "Sources ▸"], "srcnote": ["※効果量は盛らず、再現性の弱いものは弱いと明記。元のピグマリオン実験は再現性が弱く、強いのはプラセボ(主観症状)です。", "Effect sizes are not inflated; weak findings are called weak. The original Pygmalion study replicates poorly; the robust one is the placebo (for subjective symptoms)."], "foot": ["絵: Gemini ・ 声: 濱田優貴のAIクローン ・ 文: Claude + 濱田優貴 ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>", "Art: Gemini ・ Voice: AI clone of Yuki Hamada ・ Words: Claude + Yuki Hamada ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>"], "prev": ["前の枚へ", "Previous card"], "next": ["次の枚へ", "Next card"], "dot": ["第%枚へ", "Go to card %"], "share": ["この枚のリンクを共有", "Share this card"], "copied": ["リンクをコピーしました", "Link copied"], "audioErr": ["音声を読み込めませんでした", "Could not load the audio"], "retry": ["⟳ もう一度", "⟳ Retry"]};
+let i=0,L=0,voice=false,busy=false,audioFor=-1,rate=1;
+const RATES=[1,1.25,1.5];
+const $=id=>document.getElementById(id);
+const artTop=$("artTop"),artUnder=$("artUnder"),titleplate=$("titleplate"),
+ no=$("no"),title=$("title"),ja=$("ja"),kanso=$("kanso"),who=$("who"),card=$("card"),
+ dots=$("dots"),voiceBtn=$("voiceBtn"),rateBtn=$("rateBtn"),hint=$("hint"),sub=$("sub"),foot=$("foot"),
+ srcs=$("srcs"),srcsum=$("srcsum"),srclist=$("srclist"),srcnote=$("srcnote"),
+ toast=$("toast"),langBtn=$("langBtn"),shareBtn=$("shareBtn");
+const player=new Audio();player.preload="metadata";
+let prefetcher=null;
+let sentEls=[],sentW=[],sentTotal=0;
+function srcset(b){return `img/${b}-700.webp 700w, img/${b}-1400.webp 1400w`}
+function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840px";el.src=`img/${b}.jpg`}
+SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.className="dot";btn.onclick=()=>show(k);dots.appendChild(btn)});
+function splitSent(text,el){
+ el.innerHTML="";
+ const parts=[];let buf="";
+ for(const ch of text){buf+=ch;if("。！？.?!".includes(ch)){parts.push(buf);buf=""}}
+ if(buf.trim())parts.push(buf);
+ return parts.map(p=>{const sp=document.createElement("span");sp.className="sent";sp.textContent=p;el.appendChild(sp);return sp});
+}
+function renderText(){
+ const s=SLIDES[i];
+ no.textContent=s.no[L];title.textContent=s.title[L];
+ const jaSp=splitSent(s.ja[L],ja),kSp=splitSent(s.kanso[L],kanso);
+ sentEls=[...jaSp,...kSp];
+ sentW=sentEls.map(e=>e.textContent.length);sentTotal=sentW.reduce((a,b)=>a+b,0);
+ who.textContent=UI.who[L];hint.textContent=UI.hint[L];sub.textContent=UI.sub[L];foot.innerHTML=UI.foot[L];
+ srcsum.textContent=UI.srcsum[L];srcnote.textContent=UI.srcnote[L];
+ voiceBtn.textContent=voice?UI.voiceStop[L]:UI.voice[L];
+ $("navPrev").setAttribute("aria-label",UI.prev[L]);$("navNext").setAttribute("aria-label",UI.next[L]);
+ shareBtn.setAttribute("aria-label",UI.share[L]);shareBtn.title=UI.share[L];
+ langBtn.textContent=L?"日本語":"EN";document.documentElement.lang=L?"en":"ja";
+ srclist.innerHTML="";
+ if(s.srcs&&s.srcs.length){srcs.style.display="";s.srcs.forEach(x=>{const li=document.createElement("li");const a=document.createElement("a");a.href=x.u;a.rel="noopener";a.target="_blank";a.textContent=x.t;li.appendChild(a);srclist.appendChild(li)})}
+ else srcs.style.display="none";
+ [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));if(k===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
+ artTop.alt=SLIDES[i].alt;
+ titleplate.classList.toggle("on",i===0);
+}
+function preloadAdjacent(){
+ [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
+ if(voice&&i+1<SLIDES.length){if(!prefetcher)prefetcher=new Audio();prefetcher.preload="auto";prefetcher.src=SLIDES[i+1].audio[L]}
+}
+function show(k,dir){
+ if(busy)return;
+ const n=(k+SLIDES.length)%SLIDES.length;
+ if(n===i){renderText();return}
+ dir=dir||(n>i?1:-1);
+ busy=true;
+ setImg(artUnder,SLIDES[n].b);
+ i=n;renderText();
+ try{history.replaceState(null,"",`?card=${i+1}`)}catch(e){}
+ artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
+ artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
+ setTimeout(()=>{
+  setImg(artTop,SLIDES[i].b);
+  artTop.style.transition="none";artTop.style.transform="none";
+  busy=false;preloadAdjacent();
+ },470);
+ playCurrent();
+}
+function playCurrent(){
+ if(!voice)return;
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
+player.addEventListener("timeupdate",()=>{
+ if(!voice||!player.duration||!sentTotal)return;
+ const p=player.currentTime/player.duration;
+ let acc=0,active=sentEls.length-1;
+ for(let k=0;k<sentW.length;k++){acc+=sentW[k]/sentTotal;if(p<acc){active=k;break}}
+ sentEls.forEach((e,k)=>e.classList.toggle("on",k===active));
+});
+function clearHighlight(){sentEls.forEach(e=>e.classList.remove("on"))}
+function setVoice(on){voice=on;voiceBtn.classList.toggle("playing",on);voiceBtn.textContent=on?UI.voiceStop[L]:UI.voice[L];if(!on){player.pause();clearHighlight()}}
+function toggleVoice(){
+ if(voice){setVoice(false);return}
+ setVoice(true);
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().then(()=>preloadAdjacent()).catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+function cycleRate(){rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];rateBtn.textContent=rate+"x";player.playbackRate=rate}
+function showToast(msg,withRetry){
+ toast.innerHTML="";toast.append(msg);
+ if(withRetry){const b=document.createElement("button");b.textContent=UI.retry[L];b.onclick=()=>{toast.classList.remove("on");toggleVoice()};toast.appendChild(b)}
+ toast.classList.add("on");
+ setTimeout(()=>toast.classList.remove("on"),5000);
+}
+function shareCard(){
+ const url=location.href.split("?")[0]+`?card=${i+1}`;
+ const title=SLIDES[i].title[L];
+ if(navigator.share){navigator.share({title,url}).catch(()=>{})}
+ else{navigator.clipboard.writeText(url).then(()=>showToast(UI.copied[L])).catch(()=>showToast(UI.copied[L]))}
+}
+function toggleLang(){
+ if(voice){setVoice(false);player.currentTime=0;audioFor=-1}
+ L=1-L;renderText();clearHighlight();
+}
+function go(d){show(i+d,d)}
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight")go(1);
+ if(e.key==="ArrowLeft")go(-1);
+ if(e.key==="Escape"&&voice)setVoice(false);
+});
+let tx=null;
+const wrap=document.querySelector(".art-wrap");
+wrap.addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+wrap.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
+const qp=parseInt(new URLSearchParams(location.search).get("card"),10);
+const start=qp>=1&&qp<=SLIDES.length?qp:1;
+i=start-1;
+setImg(artTop,SLIDES[i].b);setImg(artUnder,SLIDES[i].b);
+renderText();preloadAdjacent();
+</script>
+</body>
+</html>
