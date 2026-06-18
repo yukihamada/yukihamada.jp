@@ -742,6 +742,8 @@ async fn redirect_finder()   -> Redirect { Redirect::permanent("/#finder") }
 async fn redirect_contact()  -> Redirect { Redirect::permanent("/#contact") }
 async fn redirect_now()      -> Redirect { Redirect::permanent("/#now") }
 async fn redirect_podcast()  -> Redirect { Redirect::permanent("/#podcast") }
+// AI合宿の席(MU参加T)への安定リンク。SKUを作り直してもここ1行だけ直せばよい(リンクが死なない)。temporary=302。
+async fn redirect_seki()     -> Redirect { Redirect::temporary("https://wearmu.com/shop/AICAMPIKU-AGENT-TEE-a970ed48") }
 
 async fn about() -> impl IntoResponse {
     Html(AboutTemplate.render().unwrap_or_default())
@@ -7492,6 +7494,7 @@ async fn main() {
         .route("/camera",   get(redirect_camera))
         .route("/game",     get(redirect_game))
         .route("/finder",   get(redirect_finder))
+        .route("/seki",     get(redirect_seki))
         .route("/contact",  get(redirect_contact))
         .route("/now",      get(redirect_now))
         .route("/podcast",  get(redirect_podcast))
