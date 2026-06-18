@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
+<title>使われるものを、つくる。— 僕がやっていること | yukihamada.jp</title>
+<meta name="description" content="AIで誰でも作れる時代。だからこそ『実際に使われるか』だけが価値になる。濱田優貴が作っているもの(JiuFlow/MU/bim.house/Koe…)と、この紙芝居そのものの裏側——絵はGemini、声は家のMacで動く本人クローン、全部ローカル——を8枚の紙芝居で。本人声つき。">
+<meta property="og:title" content="使われるものを、つくる。">
+<meta property="og:description" content="AIで誰でも作れる時代。だからこそ『実際に使われるか』だけが価値になる。濱田優貴が作っているもの(JiuFlow/MU/bim.house/Koe…)と、この紙芝居そのものの裏側——絵はGemini、声は家のMacで動く本人クローン、全部ローカル——を8枚の紙芝居で。本人声つき。">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://yukihamada.jp/kamisibai/tsukuru/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yukihamada.jp/kamisibai/tsukuru/og.jpg">
+<meta property="og:url" content="https://yukihamada.jp/kamisibai/tsukuru/">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/tsukuru/">
+<style>
+:root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--paper);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+header{padding:14px 16px 0;text-align:center;width:min(96vw,860px)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topline .spacer{width:64px}
+header h1{font-size:1.05rem;font-weight:600;letter-spacing:.18em;color:var(--paper)}
+header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;text-align:center}
+.langbtn{font-family:-apple-system,sans-serif;font-size:.7rem;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:5px 12px;cursor:pointer;width:64px}
+.langbtn:hover{color:var(--paper);border-color:var(--paper)}
+.voicebar{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px}
+.voicebar .vmain{font-family:inherit;font-size:.82rem;letter-spacing:.08em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(232,131,58,.35)}
+.voicebar .vmain.playing{background:#6b4a2a}
+.voicebar .vrate{font-family:-apple-system,sans-serif;font-size:.7rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:6px 10px;cursor:pointer}
+.stage{position:relative;width:min(96vw,860px);margin:12px auto 0;user-select:none}
+.frame{position:relative;background:#3a2c1c;border-radius:10px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 0 2px rgba(245,236,217,.08)}
+.art-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#241b10}
+.art-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#artTop{z-index:2}
+#artUnder{z-index:1}
+.titleplate{position:absolute;z-index:3;top:8%;left:6%;writing-mode:vertical-rl;font-size:clamp(1.6rem,5.5vw,3rem);font-weight:800;letter-spacing:.22em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 3px rgba(0,0,0,.9);opacity:0;transition:opacity .4s;pointer-events:none}
+.titleplate.on{opacity:1}
+.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;border:none;z-index:4}
+.nav-half:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.nav-prev{left:0}.nav-next{right:0}
+.card{background:var(--paper);color:var(--ink);width:min(96vw,860px);margin:14px auto;border-radius:10px;padding:20px 22px 16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
+.card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
+.card p.ja{font-size:.95rem;line-height:1.9}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
+.kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
+.kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
+.sent{transition:background .25s}
+.sent.on{background:rgba(232,131,58,.26);border-radius:3px}
+details.srcs{margin-top:12px;font-family:-apple-system,sans-serif}
+details.srcs summary{font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em}
+details.srcs ul{margin:6px 0 0 18px;font-size:.74rem;line-height:1.8}
+details.srcs a{color:#a05a20;word-break:break-all}
+details.srcs .note{font-size:.7rem;color:var(--muted);margin-top:4px}
+.dotrow{display:flex;gap:8px;justify-content:center;align-items:center;margin:4px 0 10px}
+.dotrow .dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(245,236,217,.25);cursor:pointer;padding:0}
+.dotrow .dot.on{background:var(--accent)}
+.dotrow .share{font-family:-apple-system,sans-serif;font-size:.68rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:4px 10px;cursor:pointer;margin-left:8px}
+.hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:.08em;padding:0 16px}
+footer{padding:10px 16px 28px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.7;font-family:-apple-system,sans-serif}
+footer a{color:var(--muted)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3a2c1c;color:var(--paper);font-size:.8rem;font-family:-apple-system,sans-serif;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;z-index:50}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast button{background:var(--accent);border:none;color:#fff;border-radius:6px;padding:4px 10px;margin-left:10px;cursor:pointer;font-size:.75rem}
+@media (max-width:480px){.card h2{font-size:1.02rem}.card p.ja{font-size:.88rem}.kanso p{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.art-wrap img{transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topline">
+    <span class="spacer" aria-hidden="true"></span>
+    <div><h1 id="h1">使われるものを、つくる。</h1></div>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" aria-label="Switch language">EN</button>
+  </div>
+  <p class="sub" id="sub">8枚の紙芝居 ・ 僕がやっていること と、この紙芝居の裏側 ・ ぼくの声つき</p>
+  <div class="voicebar">
+    <button id="voiceBtn" class="vmain" onclick="toggleVoice()">▶ ぼくの声で読み上げる</button>
+    <button id="rateBtn" class="vrate" onclick="cycleRate()" aria-label="再生速度">1x</button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="frame">
+    <div class="art-wrap">
+      <img id="artTop" src="img/01_title.jpg" width="1400" height="1050" alt="" fetchpriority="high">
+      <img id="artUnder" src="img/01_title.jpg" width="1400" height="1050" alt="" aria-hidden="true">
+      <div class="titleplate on" id="titleplate">つくる</div>
+    </div>
+    <button class="nav-half nav-prev" onclick="go(-1)" aria-label="前の枚へ" id="navPrev"></button>
+    <button class="nav-half nav-next" onclick="go(1)" aria-label="次の枚へ" id="navNext"></button>
+  </div>
+</div>
+
+<div class="card" id="card" aria-live="polite">
+  <div class="no" id="no"></div>
+  <h2 id="title"></h2>
+  <p class="ja" id="ja"></p>
+  <div class="kanso"><div class="who" id="who"></div><p id="kanso"></p></div>
+  <details class="srcs" id="srcs"><summary id="srcsum"></summary><ul id="srclist"></ul><div class="note" id="srcnote"></div></details>
+</div>
+
+<div class="dotrow" id="dotrow">
+  <span id="dots" style="display:contents"></span>
+  <button class="share" id="shareBtn" onclick="shareCard()">🔗</button>
+</div>
+<p class="hint" id="hint"></p>
+
+<footer id="foot"></footer>
+<div id="toast" role="status"></div>
+<noscript><p style="color:#f5ecd9;text-align:center;padding:20px">この紙芝居の閲覧にはJavaScriptが必要です / This kamishibai requires JavaScript.</p></noscript>
+
+<script>
+const SLIDES=[{"b": "01_title", "scene": "A warm workshop at dawn: a craftsman in simple clothes lighting a small forge-fire, shelves around him holding little glowing lantern-objects (tools, a folded garment, a tiny house, a sound-shell); the feeling of a maker's morning, watercolor, no text", "no": ["第一枚", "Card 1"], "alt": "夜明けの工房。簡素な身なりの作り手が小さな炉に火を入れる。棚にはランタンのような小さな作品(道具・畳んだ衣・小さな家・音の貝)が灯る", "title": ["はじまり、はじまり〜", "Here we go—"], "ja": ["こんばんは、濱田優貴です。今日は、ぼくが毎日なにを作っているのか——そして、いま見ているこの紙芝居そのものの裏側を、お話しします。テーマはひとつ。「使われるものを、つくる」。", "Good evening, I'm Yuki Hamada. Tonight I'll tell you what I build every day — and the secret behind this very kamishibai you're watching. One theme: build what gets used."], "kanso": ["AIで、だれでも何でも作れる時代になりました。だからこそ、作れること自体には、もう価値がない。問いはただ一つ——「それ、本当に使われる?」", "In the age of AI, anyone can make anything. So the mere act of making no longer holds value. The only question left is: will it actually be used?"], "yomi": ["こんばんは、はまだゆうきです。今日は、ぼくが毎日なにを作っているのか。そして、いま見ているこの紙芝居そのものの裏側を、お話しします。テーマはひとつ。「使われるものを、つくる」。エーアイで、だれでも何でも作れる時代になりました。だからこそ、作れること自体には、もう価値がない。問いはただ一つ。「それ、本当に使われる?」", "Good evening, I'm Yuki Hamada. Tonight I'll tell you what I build every day, and the secret behind this very kamishibai you're watching. One theme: build what gets used. In the age of A I, anyone can make anything. So the mere act of making no longer holds value. The only question left is: will it actually be used?"], "srcs": [], "audio": ["audio/01.mp3", "audio/01.mp3"]}, {"b": "02_used", "scene": "A market at dusk split in two: on one side a dusty heap of identical untouched trinkets piling up unused; on the other side a single well-worn wooden tool being passed warmly from hand to hand among people; contrast of unused versus loved, watercolor, no text", "no": ["第二枚", "Card 2"], "alt": "夕暮れの市が二分。片側に手つかずで埃をかぶる同じ品の山。もう片側で、使い込まれた一つの木の道具が人から人へ温かく手渡される", "title": ["無駄なものは、使われない", "Useless Things Go Unused"], "ja": ["AIで量産された「それっぽいもの」は、世界にあふれて、ほとんどが一度も使われずに埃をかぶります。逆に、たった一つでも本当に困りごとを解いた道具は、人から人へ手渡されていく。作る数ではなく、使われる深さ。", "AI now floods the world with 'plausible-looking' things, most of which gather dust without a single use. Meanwhile, one tool that truly solves a real problem gets passed from hand to hand. Not how many you make — how deeply they're used."], "kanso": ["だからぼくは、派手な数より「毎朝それを開く人がいるか」で測ります。盛った数字はいらない。使われている証拠だけが、ほんとう。", "So I measure not by flashy counts but by: is there someone who opens it every morning? No inflated numbers — only the evidence of real use is true."], "yomi": ["エーアイで量産された「それっぽいもの」は、世界にあふれて、ほとんどが一度も使われずに埃をかぶります。逆に、たった一つでも本当に困りごとを解いた道具は、人から人へ手渡されていく。作る数ではなく、使われる深さ。だからぼくは、派手な数より「毎朝それを開く人がいるか」で測ります。盛った数字はいらない。使われている証拠だけが、ほんとう。", "A I now floods the world with plausible-looking things, most of which gather dust without a single use. Meanwhile, one tool that truly solves a real problem gets passed from hand to hand. Not how many you make, how deeply they're used. So I measure not by flashy counts but by: is there someone who opens it every morning? No inflated numbers, only the evidence of real use is true."], "srcs": [], "audio": ["audio/02.mp3", "audio/02.mp3"]}, {"b": "03_products1", "scene": "Three glowing signboard-lanterns floating over a workshop bench: one shaped like a folded martial-arts belt and grappling figures, one like a loom weaving a glowing garment, one like a small house being drawn out of a ribbon of light; a maker tends them; warm watercolor, no text or logos", "no": ["第三枚", "Card 3"], "alt": "工房の机上に三つの光る看板ランタン。柔術の帯と組み手、衣を織る機、光のリボンから生まれる小さな家。作り手が世話をする", "title": ["作っているもの ①", "What I Build ①"], "ja": ["たとえば三つ。JiuFlowは、柔術の一本一本を記録して上達を支える道場のための道具。MUは、AIが自分でデザインして毎日服を生み出すアパレル。bim.houseは、「弟子屈に平屋を」と話すだけで家の図面が建ち、その場で建築基準法まで判定する。", "Three, for example. JiuFlow records every jiu-jitsu technique and helps dojos and athletes improve. MU is apparel where AI designs and creates clothing on its own, every day. bim.house turns 'a one-story house in Teshikaga' into real blueprints — and checks the building code on the spot."], "kanso": ["どれも「言葉にしたことが、そのまま形になる」道具です。頭の中のものを、世界に出す摩擦をゼロに近づけたい。", "Each one turns 'what you put into words' straight into form. I want to bring the friction of getting what's in your head out into the world close to zero."], "yomi": ["たとえば三つ。ジウフローは、柔術の一本一本を記録して上達を支える、道場のための道具。エムユーは、エーアイが自分でデザインして毎日服を生み出すアパレル。ビムハウスは、「てしかがに平屋を」と話すだけで家の図面が建ち、その場で建築基準法まで判定する。どれも「言葉にしたことが、そのまま形になる」道具です。頭の中のものを、世界に出す摩擦を、ゼロに近づけたい。", "Three, for example. JiuFlow records every jiu-jitsu technique and helps dojos and athletes improve. M U is apparel where A I designs and creates clothing on its own, every day. bim dot house turns a one story house in Teshikaga into real blueprints, and checks the building code on the spot. Each one turns what you put into words straight into form. I want to bring the friction of getting what's in your head out into the world close to zero."], "srcs": [{"t": "JiuFlow", "u": "https://jiuflow.com"}, {"t": "MU / wearmu", "u": "https://wearmu.com"}, {"t": "bim.house", "u": "https://bim.house"}], "audio": ["audio/03.mp3", "audio/03.mp3"]}, {"b": "04_products2", "scene": "More glowing lanterns on the bench: a calligraphy seal-stamp, a glowing sound-shell radiating voice waves, a small self-rolling cart of papers; beside them a long honest ledger-scroll glowing softly; the maker keeps them tidy; warm watercolor, no text", "no": ["第四枚", "Card 4"], "alt": "机にさらに光るランタン。篆刻の印、声の波を放つ光る貝、紙を載せて自走する小さな台車。傍らに静かに光る正直な台帳の巻物", "title": ["作っているもの ②", "What I Build ②"], "ja": ["まだあります。商標まるは、AIが商標出願を下調べして弁護士につなぐ。Koeは、声をクローンして喋らせ・聴きとる声のAI。AdFlowは、AIが広告を計画し人が承認して回す。共通の哲学は二つ。「速く、ノイズなく」。そして「AIは提案まで、最後のスイッチは人が押す」。", "There's more. Shohyo-Maru has AI pre-research trademark filings and hand off to a lawyer. Koe is voice AI that clones, speaks, and listens. AdFlow has AI plan the ads while a human approves and runs them. Two shared principles: 'fast, without noise,' and 'AI proposes — a human presses the final switch.'"], "kanso": ["数字は盛りません。売上も利用も、ぜんぶ wearmu.com/transparency で正直に公開しています。良い時も、悪い時も。", "I don't inflate the numbers. Revenue and usage are all published honestly at wearmu.com/transparency — the good days and the bad."], "yomi": ["まだあります。しょうひょうまるは、エーアイが商標出願を下調べして弁護士につなぐ。コエは、声をクローンして喋らせ・聴きとる声のエーアイ。アドフローは、エーアイが広告を計画し、人が承認して回す。共通の哲学は二つ。「速く、ノイズなく」。そして「エーアイは提案まで、最後のスイッチは人が押す」。数字は盛りません。売上も利用も、ぜんぶ ウェアムー ドット コム スラッシュ トランスペアレンシー で正直に公開しています。良い時も、悪い時も。", "There's more. Shohyo Maru has A I pre-research trademark filings and hand off to a lawyer. Koe is voice A I that clones, speaks, and listens. AdFlow has A I plan the ads while a human approves and runs them. Two shared principles: fast, without noise, and A I proposes, a human presses the final switch. I don't inflate the numbers. Revenue and usage are all published honestly at wearmu dot com slash transparency, the good days and the bad."], "srcs": [{"t": "商標まる", "u": "https://shohyo-maru.jp"}, {"t": "Koe", "u": "https://koe.live"}, {"t": "AdFlow", "u": "https://adflow.tools"}, {"t": "全プロダクトの実数字 (transparency)", "u": "https://wearmu.com/transparency"}], "audio": ["audio/04.mp3", "audio/04.mp3"]}, {"b": "05_meta", "scene": "On a desk, a tiny kamishibai paper-theater stage showing this very picture-story; from a small home computer beside it a warm glowing voice-spirit speaks, ribbons of voice flowing onto the little stage; the viewer's realization that the show itself is the product; cozy night, watercolor, no text", "no": ["第五枚", "Card 5"], "alt": "机の上に、この紙芝居そのものを映す小さな紙芝居舞台。傍らの小さな家庭用パソコンから温かい声の精霊が語り、声のリボンが舞台に流れ込む", "title": ["この紙芝居が、その実例", "This Kamishibai Is the Example"], "ja": ["そして——いま見ている、これ。この紙芝居こそ、その実例です。絵はGeminiが描き、物語はAIとぼくが書き、声は……このぼくの声。本人ではなく、ぼくの声のAIクローンが読み上げています。本人は、隣でお茶を飲んでいます。", "And — this, what you're watching right now. This kamishibai is itself the example. The art is drawn by Gemini, the story written by AI and me, and the voice… is my voice. Not the real me — an AI clone of my voice is narrating. The real me is beside it, drinking tea."], "kanso": ["「一言で紙芝居になる」サービス、kamishibai.tv もそうやって動いています。説明するより、作って見せる。それが一番はやい紹介です。", "The service kamishibai.tv — 'one line becomes a picture-story' — runs the same way. Rather than explain, build it and show it. That's the fastest introduction there is."], "yomi": ["そして、いま見ている、これ。この紙芝居こそ、その実例です。絵はジェミニが描き、物語はエーアイとぼくが書き、声は、このぼくの声。本人ではなく、ぼくの声のエーアイクローンが読み上げています。本人は、となりでお茶を飲んでいます。「一言で紙芝居になる」サービス、カミシバイ ティービー もそうやって動いています。説明するより、作って見せる。それが一番はやい紹介です。", "And, this, what you're watching right now. This kamishibai is itself the example. The art is drawn by Gemini, the story written by A I and me, and the voice, is my voice. Not the real me, an A I clone of my voice is narrating. The real me is beside it, drinking tea. The service kamishibai dot t v, one line becomes a picture story, runs the same way. Rather than explain, build it and show it. That's the fastest introduction there is."], "srcs": [{"t": "kamishibai.tv", "u": "https://kamishibai.tv"}], "audio": ["audio/05.mp3", "audio/05.mp3"]}, {"b": "06_voice", "scene": "A quiet home room at night: a desktop computer glowing softly, a microphone and a short waveform being gently cloned into a warm voice-spirit; the window shutter is closed (offline), no cloud, the voice is made entirely at home; intimate watercolor, no text", "no": ["第六枚", "Card 6"], "alt": "夜の静かな自宅の一室。机上のパソコンがやわらかく光り、マイクと短い波形が温かい声の精霊にクローンされる。窓の雨戸は閉じ(オフライン)、雲(クラウド)はない", "title": ["声の、裏側", "Behind the Voice"], "ja": ["声の裏側を、少しだけ。この声は、高価なクラウドのサービスではありません。家に置いた一台のMacの中で動く、ローカルのAIが、ぼくの数十秒の録音から声をクローンしています。インターネットが切れていても喋れる。クラウド代は、ゼロ円です。", "A peek behind the voice. This isn't an expensive cloud service. A local AI running inside a single Mac at home clones my voice from just tens of seconds of recording. It speaks even with the internet unplugged. The cloud bill is zero yen."], "kanso": ["しかも、読み間違いがないか、別のAIが聞き取って自分で検証してから出します。声が、自分の手の中にある。これは安心で、しかも自由です。", "And before it speaks, another AI listens back and checks for misreadings on its own. The voice stays in my own hands — that's both safe and free."], "yomi": ["声の裏側を、少しだけ。この声は、高価なクラウドのサービスではありません。家に置いた一台のマックの中で動く、ローカルのエーアイが、ぼくの数十秒の録音から声をクローンしています。インターネットが切れていても喋れる。クラウド代は、ゼロ円です。しかも、読み間違いがないか、別のエーアイが聞き取って自分で検証してから出します。声が、自分の手の中にある。これは安心で、しかも自由です。", "A peek behind the voice. This isn't an expensive cloud service. A local A I running inside a single Mac at home clones my voice from just tens of seconds of recording. It speaks even with the internet unplugged. The cloud bill is zero yen. And before it speaks, another A I listens back and checks for misreadings on its own. The voice stays in my own hands, that's both safe and free."], "srcs": [{"t": "Koe (声のAI)", "u": "https://koe.live"}], "audio": ["audio/06.mp3", "audio/06.mp3"]}, {"b": "07_local", "scene": "The same home room, now revealed as a whole tiny factory running on one desk computer: a little loom, a seal-stamp, the voice-spirit, and a stack of picture-cards, all powered from the single Mac; a closed padlock motif (privacy/cost in own hands); through the window a small globe glows (reaching the world while feet stay home); warm watercolor, no text", "no": ["第七枚", "Card 7"], "alt": "同じ自宅の部屋が、一台の机上パソコンで回る小さな工場に。機織り・印・声の精霊・紙芝居の束が一台のMacから動く。閉じた南京錠(プライバシーとコストは自分の手に)。窓の外に小さく光る地球儀", "title": ["ぜんぶ、手元で動く", "All of It Runs at Home"], "ja": ["目指しているのは、これ。絵の生成も、紙芝居づくりも、まるごと手元のMacで完結する仕組みを、もう動かしています。クラウドに預けない。だからデータも、コストも、止まらない安心も、自分の手の中。世界には届けるけれど、足元の蛇口は、自分で握る。", "This is what I'm aiming at. A setup where image generation and the whole kamishibai are made entirely on the Mac at home — and it already runs. Nothing handed to the cloud. So the data, the cost, and the never-goes-down peace of mind all stay in my own hands. Reach the world — but keep the tap at your feet in your own grip."], "kanso": ["大きな会社のサーバーに頼らなくても、家の一台で、世界に出せるものが作れる。これは、ぼく一人にも、あなた一人にも、できることです。", "You don't need a giant company's servers — a single machine at home can make things worthy of the world. This is something one person, you, can do too."], "yomi": ["目指しているのは、これ。絵の生成も、紙芝居づくりも、まるごと手元のマックで完結する仕組みを、もう動かしています。クラウドに預けない。だからデータも、コストも、止まらない安心も、自分の手の中。世界には届けるけれど、足元の蛇口は、自分で握る。大きな会社のサーバーに頼らなくても、家の一台で、世界に出せるものが作れる。これは、ぼく一人にも、あなた一人にも、できることです。", "This is what I'm aiming at. A setup where image generation and the whole kamishibai are made entirely on the Mac at home, and it already runs. Nothing handed to the cloud. So the data, the cost, and the never goes down peace of mind all stay in my own hands. Reach the world, but keep the tap at your feet in your own grip. You don't need a giant company's servers, a single machine at home can make things worthy of the world. This is something one person, you, can do too."], "srcs": [], "audio": ["audio/07.mp3", "audio/07.mp3"]}, {"b": "08_end", "scene": "A night campfire where friends and comrades add firewood together; the little products rise as warm lanterns into a starry sky arching over a small globe; warmth, togetherness, building for the world with friends; closing watercolor, no text", "no": ["第八枚", "Card 8"], "alt": "夜のたき火。仲間たちが一緒に薪をくべ、小さな作品たちが温かいランタンとなって、地球をいだく星空へのぼっていく", "title": ["おしまい", "The End"], "ja": ["AIで何でも作れる時代に、ぼくが選んだのは——「使われるものを、仲間と作る」。speed はAIに任せて、最後の責任は人が持つ。そして、一人では世界に届きません。", "In an age when AI can make anything, what I chose is this: build what gets used, with friends. Let AI bring the speed; humans keep the final responsibility. And no one reaches the world alone."], "kanso": ["この紙芝居も、絵と声とAIと、そして見てくれたあなたで出来ています。焚き火に薪をくべるように、つくっていきましょう。おあとがよろしいようで。", "This kamishibai, too, is made of art, voice, AI — and you, who watched it. Like adding wood to a campfire, let's keep building. And that's where I take my bow."], "yomi": ["エーアイで何でも作れる時代に、ぼくが選んだのは、「使われるものを、仲間と作る」。スピードはエーアイに任せて、最後の責任は人が持つ。そして、一人では世界に届きません。この紙芝居も、絵と声とエーアイと、そして見てくれたあなたで出来ています。焚き火に薪をくべるように、つくっていきましょう。おあとがよろしいようで。", "In an age when A I can make anything, what I chose is this: build what gets used, with friends. Let A I bring the speed; humans keep the final responsibility. And no one reaches the world alone. This kamishibai, too, is made of art, voice, A I, and you, who watched it. Like adding wood to a campfire, let's keep building. And that's where I take my bow."], "srcs": [], "final": true, "audio": ["audio/08.mp3", "audio/08.mp3"]}];
+const UI={"sub": ["8枚の紙芝居 ・ 僕がやっていること と、この紙芝居の裏側 ・ ぼくの声つき", "8 cards ・ what I build, and how this very kamishibai is made ・ with my voice"], "voice": ["▶ ぼくの声で読み上げる", "▶ Narrate in my voice"], "voiceStop": ["⏸ 読み上げをとめる", "⏸ Stop narration"], "who": ["🧠 ここが大事", "🧠 The point"], "hint": ["▶でぼくの声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー ・ Escで停止", "Press ▶ for narration by my AI voice clone — cards turn automatically. Manual: tap left/right on the art, ←→ keys. Esc stops."], "srcsum": ["出典・根拠 ▸", "Sources ▸"], "srcnote": ["※プロダクトの実数字(売上・利用)は盛らず wearmu.com/transparency で全公開しています。", "Real product numbers are not inflated here; they're published openly at wearmu.com/transparency."], "foot": ["絵: Gemini ・ 声: 濱田優貴のローカルAIクローン(Koe/m5) ・ 文: Claude + 濱田優貴 ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>", "Art: Gemini ・ Voice: Yuki Hamada's local AI clone (Koe/m5) ・ Words: Claude + Yuki Hamada ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>"], "prev": ["前の枚へ", "Previous card"], "next": ["次の枚へ", "Next card"], "dot": ["第%枚へ", "Go to card %"], "share": ["この枚のリンクを共有", "Share this card"], "copied": ["リンクをコピーしました", "Link copied"], "audioErr": ["音声を読み込めませんでした", "Could not load the audio"], "retry": ["⟳ もう一度", "⟳ Retry"]};
+let i=0,L=0,voice=false,busy=false,audioFor=-1,rate=1;
+const RATES=[1,1.25,1.5];
+const $=id=>document.getElementById(id);
+const artTop=$("artTop"),artUnder=$("artUnder"),titleplate=$("titleplate"),
+ no=$("no"),title=$("title"),ja=$("ja"),kanso=$("kanso"),who=$("who"),card=$("card"),
+ dots=$("dots"),voiceBtn=$("voiceBtn"),rateBtn=$("rateBtn"),hint=$("hint"),sub=$("sub"),foot=$("foot"),
+ srcs=$("srcs"),srcsum=$("srcsum"),srclist=$("srclist"),srcnote=$("srcnote"),
+ toast=$("toast"),langBtn=$("langBtn"),shareBtn=$("shareBtn");
+const player=new Audio();player.preload="metadata";
+let prefetcher=null;
+let sentEls=[],sentW=[],sentTotal=0;
+function srcset(b){return `img/${b}-700.webp 700w, img/${b}-1400.webp 1400w`}
+function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840px";el.src=`img/${b}.jpg`}
+SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.className="dot";btn.onclick=()=>show(k);dots.appendChild(btn)});
+function splitSent(text,el){
+ el.innerHTML="";
+ const parts=[];let buf="";
+ for(const ch of text){buf+=ch;if("。！？.?!".includes(ch)){parts.push(buf);buf=""}}
+ if(buf.trim())parts.push(buf);
+ return parts.map(p=>{const sp=document.createElement("span");sp.className="sent";sp.textContent=p;el.appendChild(sp);return sp});
+}
+function renderText(){
+ const s=SLIDES[i];
+ no.textContent=s.no[L];title.textContent=s.title[L];
+ const jaSp=splitSent(s.ja[L],ja),kSp=splitSent(s.kanso[L],kanso);
+ sentEls=[...jaSp,...kSp];
+ sentW=sentEls.map(e=>e.textContent.length);sentTotal=sentW.reduce((a,b)=>a+b,0);
+ who.textContent=UI.who[L];hint.textContent=UI.hint[L];sub.textContent=UI.sub[L];foot.innerHTML=UI.foot[L];
+ srcsum.textContent=UI.srcsum[L];srcnote.textContent=UI.srcnote[L];
+ voiceBtn.textContent=voice?UI.voiceStop[L]:UI.voice[L];
+ $("navPrev").setAttribute("aria-label",UI.prev[L]);$("navNext").setAttribute("aria-label",UI.next[L]);
+ shareBtn.setAttribute("aria-label",UI.share[L]);shareBtn.title=UI.share[L];
+ langBtn.textContent=L?"日本語":"EN";document.documentElement.lang=L?"en":"ja";
+ srclist.innerHTML="";
+ if(s.srcs&&s.srcs.length){srcs.style.display="";s.srcs.forEach(x=>{const li=document.createElement("li");const a=document.createElement("a");a.href=x.u;a.rel="noopener";a.target="_blank";a.textContent=x.t;li.appendChild(a);srclist.appendChild(li)})}
+ else srcs.style.display="none";
+ [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));if(k===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
+ artTop.alt=SLIDES[i].alt;
+ titleplate.classList.toggle("on",i===0);
+}
+function preloadAdjacent(){
+ [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
+ if(voice&&i+1<SLIDES.length){if(!prefetcher)prefetcher=new Audio();prefetcher.preload="auto";prefetcher.src=SLIDES[i+1].audio[L]}
+}
+function show(k,dir){
+ if(busy)return;
+ const n=(k+SLIDES.length)%SLIDES.length;
+ if(n===i){renderText();return}
+ dir=dir||(n>i?1:-1);
+ busy=true;
+ setImg(artUnder,SLIDES[n].b);
+ i=n;renderText();
+ try{history.replaceState(null,"",`?card=${i+1}`)}catch(e){}
+ artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
+ artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
+ setTimeout(()=>{
+  setImg(artTop,SLIDES[i].b);
+  artTop.style.transition="none";artTop.style.transform="none";
+  busy=false;preloadAdjacent();
+ },470);
+ playCurrent();
+}
+function playCurrent(){
+ if(!voice)return;
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
+player.addEventListener("timeupdate",()=>{
+ if(!voice||!player.duration||!sentTotal)return;
+ const p=player.currentTime/player.duration;
+ let acc=0,active=sentEls.length-1;
+ for(let k=0;k<sentW.length;k++){acc+=sentW[k]/sentTotal;if(p<acc){active=k;break}}
+ sentEls.forEach((e,k)=>e.classList.toggle("on",k===active));
+});
+function clearHighlight(){sentEls.forEach(e=>e.classList.remove("on"))}
+function setVoice(on){voice=on;voiceBtn.classList.toggle("playing",on);voiceBtn.textContent=on?UI.voiceStop[L]:UI.voice[L];if(!on){player.pause();clearHighlight()}}
+function toggleVoice(){
+ if(voice){setVoice(false);return}
+ setVoice(true);
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().then(()=>preloadAdjacent()).catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+function cycleRate(){rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];rateBtn.textContent=rate+"x";player.playbackRate=rate}
+function showToast(msg,withRetry){
+ toast.innerHTML="";toast.append(msg);
+ if(withRetry){const b=document.createElement("button");b.textContent=UI.retry[L];b.onclick=()=>{toast.classList.remove("on");toggleVoice()};toast.appendChild(b)}
+ toast.classList.add("on");
+ setTimeout(()=>toast.classList.remove("on"),5000);
+}
+function shareCard(){
+ const url=location.href.split("?")[0]+`?card=${i+1}`;
+ const title=SLIDES[i].title[L];
+ if(navigator.share){navigator.share({title,url}).catch(()=>{})}
+ else{navigator.clipboard.writeText(url).then(()=>showToast(UI.copied[L])).catch(()=>showToast(UI.copied[L]))}
+}
+function toggleLang(){
+ if(voice){setVoice(false);player.currentTime=0;audioFor=-1}
+ L=1-L;renderText();clearHighlight();
+}
+function go(d){show(i+d,d)}
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight")go(1);
+ if(e.key==="ArrowLeft")go(-1);
+ if(e.key==="Escape"&&voice)setVoice(false);
+});
+let tx=null;
+const wrap=document.querySelector(".art-wrap");
+wrap.addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+wrap.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
+const qp=parseInt(new URLSearchParams(location.search).get("card"),10);
+const start=qp>=1&&qp<=SLIDES.length?qp:1;
+i=start-1;
+setImg(artTop,SLIDES[i].b);setImg(artUnder,SLIDES[i].b);
+renderText();preloadAdjacent();
+</script>
+</body>
+</html>
