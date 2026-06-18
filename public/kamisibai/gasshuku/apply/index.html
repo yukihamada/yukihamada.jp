@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
+<title>AI合宿 参加カルテ — 席確保ありがとうございます | yukihamada.jp</title>
+<meta name="description" content="AI合宿(弟子屈・美留和)の席を確保いただいた方へ。当日を最高にするための参加カルテ。やりたいこと・学びたいこと・作りたいもの・希望日程をお聞かせください。">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/gasshuku/apply/">
+<meta property="og:title" content="AI合宿 参加カルテ">
+<meta property="og:description" content="席の確保ありがとうございます。当日を最高にするために、少しだけ教えてください。">
+<meta property="og:image" content="https://yukihamada.jp/kamisibai/gasshuku/og.jpg">
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+<style>
+:root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64;--line:rgba(42,33,24,.16)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center}
+.wrap{width:min(94vw,680px);margin:0 auto;padding:28px 0 64px}
+header{text-align:center;color:var(--paper);padding:30px 16px 6px}
+header .badge{font-size:.7rem;letter-spacing:.22em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
+header h1{font-size:1.5rem;letter-spacing:.12em;margin:8px 0 6px}
+header p{font-size:.82rem;color:var(--muted);line-height:1.9}
+.card{background:var(--paper);border-radius:14px;padding:22px 22px 26px;box-shadow:0 12px 40px rgba(0,0,0,.5);margin-top:18px}
+.q{margin:18px 0 0}
+.q:first-child{margin-top:4px}
+.q label.t{display:block;font-size:.92rem;font-weight:700;letter-spacing:.04em;margin-bottom:8px}
+.q .hint{font-size:.72rem;color:var(--muted);font-weight:400;margin-left:6px}
+input[type=text],input[type=email],textarea,select{width:100%;font-family:inherit;font-size:.92rem;color:var(--ink);background:#fffaf0;border:1px solid var(--line);border-radius:9px;padding:11px 12px}
+textarea{min-height:74px;resize:vertical;line-height:1.7}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:-apple-system,sans-serif;font-size:.8rem;border:1px solid var(--line);background:#fffaf0;border-radius:999px;padding:8px 13px;cursor:pointer;user-select:none;transition:all .12s}
+.chip:hover{border-color:var(--accent)}
+.chip.on{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 3px 10px rgba(232,131,58,.35)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.row>*{flex:1;min-width:140px}
+.corp{display:none;border-left:3px solid var(--accent);padding-left:12px;margin-top:10px}
+.corp.show{display:block}
+.submit{margin-top:24px;width:100%;font-family:inherit;font-size:1rem;letter-spacing:.1em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:15px;cursor:pointer;box-shadow:0 6px 18px rgba(232,131,58,.4)}
+.submit:disabled{opacity:.55;cursor:default}
+.note{font-size:.72rem;color:var(--muted);text-align:center;margin-top:14px;line-height:1.8;font-family:-apple-system,sans-serif}
+.done{display:none;text-align:center;padding:30px 10px}
+.done.show{display:block}
+.done .big{font-size:2.4rem}
+.done h2{font-size:1.2rem;margin:10px 0}
+.done p{font-size:.9rem;color:var(--ink);line-height:1.9}
+.done a{color:#a05a20}
+footer{color:var(--muted);font-size:.72rem;text-align:center;padding:8px 16px 30px;font-family:-apple-system,sans-serif}
+footer a{color:var(--muted)}
+.err{color:#b23b1e;font-size:.8rem;text-align:center;margin-top:10px;font-family:-apple-system,sans-serif;display:none}
+.err.show{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="badge">AI合宿2026 ・ 弟子屈・美留和</div>
+    <h1>参加カルテ</h1>
+    <p>席の確保、ありがとうございます。<br>当日をあなたにとって最高の数日にするために、少しだけ教えてください。<br>（日付は未定のままでOK・あとで一緒に決めます）</p>
+  </header>
+
+  <form id="form" class="card" novalidate>
+    <div class="q">
+      <label class="t" for="name">お名前</label>
+      <input type="text" id="name" autocomplete="name" placeholder="濱田 優貴">
+    </div>
+    <div class="q">
+      <label class="t" for="email">メール <span class="hint">連絡・席確保証の送付に使います</span></label>
+      <input type="email" id="email" autocomplete="email" placeholder="you@example.com" required>
+    </div>
+
+    <div class="q">
+      <label class="t">参加の区分</label>
+      <div class="chips" data-single="kubun">
+        <span class="chip" data-v="個人">個人で参加</span>
+        <span class="chip" data-v="法人">会社・法人として</span>
+      </div>
+      <div class="corp" id="corp">
+        <div class="row" style="margin-bottom:10px">
+          <input type="text" id="company" placeholder="会社名">
+          <input type="text" id="role" placeholder="役職（例: 代表 / 部長 / 一般）">
+        </div>
+        <div class="q" style="margin-top:0">
+          <label class="t" style="font-size:.82rem">会社規模 <span class="hint">研修費のお見積りに使います</span></label>
+          <div class="chips" data-single="size">
+            <span class="chip" data-v="〜10名">〜10名</span>
+            <span class="chip" data-v="〜50名">〜50名</span>
+            <span class="chip" data-v="〜300名">〜300名</span>
+            <span class="chip" data-v="300名〜">300名〜（大企業）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="t">AIの経験</label>
+      <div class="chips" data-single="ai">
+        <span class="chip" data-v="はじめて">はじめて</span>
+        <span class="chip" data-v="触ったことある">触ったことある</span>
+        <span class="chip" data-v="仕事で使う">仕事で使う</span>
+        <span class="chip" data-v="開発できる">自分で開発できる</span>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="t">柔術(BJJ)の経験</label>
+      <div class="chips" data-single="bjj">
+        <span class="chip" data-v="なし・これから">なし・これから</span>
+        <span class="chip" data-v="始めたて">始めたて</span>
+        <span class="chip" data-v="白帯">白帯</span>
+        <span class="chip" data-v="色帯〜">色帯以上</span>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="t">やりたいこと <span class="hint">複数OK</span></label>
+      <div class="chips" data-multi="want_do">
+        <span class="chip" data-v="自分の仕事を自動化">自分の仕事を自動化</span>
+        <span class="chip" data-v="アプリを作る">アプリを作る</span>
+        <span class="chip" data-v="自分のエージェントを作る">自分のエージェントを作る</span>
+        <span class="chip" data-v="学び直し">学び直し</span>
+        <span class="chip" data-v="整う・リトリート">整う・リトリート</span>
+        <span class="chip" data-v="仲間づくり">仲間づくり</span>
+        <span class="chip" data-v="柔術">柔術をやる</span>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="t" for="want_learn">学びたいこと <span class="hint">自由に</span></label>
+      <textarea id="want_learn" placeholder="例: Claude Codeの使い方を体に入れたい / 自分専用のエージェントの作り方 / ◯◯の自動化…"></textarea>
+    </div>
+
+    <div class="q">
+      <label class="t" for="want_build">いちばん作りたいもの <span class="hint">あれば具体的に</span></label>
+      <textarea id="want_build" placeholder="例: 受発注を自動化する社内ツール / 趣味の◯◯アプリ / よく分からないけど何か動くもの"></textarea>
+    </div>
+
+    <div class="q">
+      <label class="t">希望の日程 <span class="hint">複数OK・未定でもOK</span></label>
+      <div class="chips" data-multi="dates">
+        <span class="chip" data-v="6/27-29">6/27〜29</span>
+        <span class="chip" data-v="7/4-5">7/4〜5</span>
+        <span class="chip" data-v="7/11-13">7/11〜13</span>
+        <span class="chip" data-v="その他・相談">その他・相談したい</span>
+        <span class="chip" data-v="未定">まだ決められない</span>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="t">希望のスタイル / 場所</label>
+      <div class="chips" data-single="place">
+        <span class="chip" data-v="弟子屈・美留和">弟子屈・美留和（本命）</span>
+        <span class="chip" data-v="都市短縮版も興味">都市の短縮版も興味</span>
+        <span class="chip" data-v="どちらでも">どちらでも</span>
+      </div>
+    </div>
+
+    <div class="q">
+      <label class="t" for="meal">食事・アレルギー・体のこと <span class="hint">あれば</span></label>
+      <textarea id="meal" placeholder="例: 甲殻類アレルギー / ベジ / 腰に不安あり など"></textarea>
+    </div>
+
+    <div class="q">
+      <label class="t" for="notes">その他・期待・不安 <span class="hint">なんでも</span></label>
+      <textarea id="notes" placeholder="楽しみなこと、不安なこと、運営に伝えたいこと…"></textarea>
+    </div>
+
+    <button type="submit" class="submit" id="submit">送信する</button>
+    <div class="err" id="err">送信に失敗しました。少し時間をおいて、もう一度お試しください。</div>
+    <p class="note">いただいた内容は合宿の運営だけに使います。日付は未定でも大丈夫です。<br>席（参加T）がまだの方は <a href="https://wearmu.com/shop/AICAMPIKU-AGENT-TEE-ac9da26c" style="color:#a05a20">こちらで確保</a> できます。</p>
+  </form>
+
+  <div class="card done" id="done">
+    <div class="big">🔥</div>
+    <h2>ありがとうございます。受け取りました。</h2>
+    <p>内容をもとに、あなたに合う日程と過ごし方をこちらから連絡します。<br>美留和の焚き火で、お会いしましょう。</p>
+    <p style="margin-top:14px"><a href="https://yukihamada.jp/kamisibai/gasshuku/">← 合宿の紙芝居にもどる</a></p>
+  </div>
+</div>
+<footer>AI合宿2026 ・ <a href="https://yukihamada.jp">yukihamada.jp</a></footer>
+
+<script>
+const $=s=>document.querySelector(s);
+const state={kubun:"",size:"",ai:"",bjj:"",place:"",want_do:[],dates:[]};
+document.querySelectorAll('.chips').forEach(box=>{
+  const single=box.dataset.single, multi=box.dataset.multi;
+  box.querySelectorAll('.chip').forEach(chip=>{
+    chip.onclick=()=>{
+      const v=chip.dataset.v;
+      if(single){
+        box.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));
+        chip.classList.add('on'); state[single]=v;
+        if(single==='kubun') $('#corp').classList.toggle('show', v==='法人');
+      }else{
+        chip.classList.toggle('on');
+        const arr=state[multi];
+        const i=arr.indexOf(v);
+        if(i>=0)arr.splice(i,1); else arr.push(v);
+      }
+    };
+  });
+});
+function buildMessage(){
+  const g=id=>($('#'+id)?.value||"").trim();
+  const L=[];
+  L.push("■ AI合宿 参加カルテ");
+  L.push(`区分: ${state.kubun||"-"}${state.kubun==='法人'?` / ${g('company')||'(会社名なし)'} / ${g('role')||'役職なし'} / ${state.size||'規模なし'}`:''}`);
+  L.push(`AI経験: ${state.ai||"-"} ・ 柔術: ${state.bjj||"-"}`);
+  L.push(`やりたいこと: ${state.want_do.join("、")||"-"}`);
+  if(g('want_learn'))L.push(`学びたい: ${g('want_learn')}`);
+  if(g('want_build'))L.push(`作りたい: ${g('want_build')}`);
+  L.push(`希望日程: ${state.dates.join("、")||"-"} ・ 場所: ${state.place||"-"}`);
+  if(g('meal'))L.push(`食事/体: ${g('meal')}`);
+  if(g('notes'))L.push(`その他: ${g('notes')}`);
+  return L.join("\n");
+}
+$('#form').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const email=$('#email').value.trim();
+  if(!email||!email.includes('@')){$('#email').focus();$('#email').style.borderColor='#b23b1e';return;}
+  const btn=$('#submit'); btn.disabled=true; btn.textContent='送信中…'; $('#err').classList.remove('show');
+  const g=id=>($('#'+id)?.value||"").trim();
+  const payload={
+    slug:"ai-camp-gasshuku",
+    name:g('name'), email, company:g('company'),
+    message:buildMessage(),
+    extra:{
+      kubun:state.kubun, company_size:state.size, role:g('role'),
+      ai_level:state.ai, bjj_level:state.bjj,
+      want_do:state.want_do, want_learn:g('want_learn'), want_build:g('want_build'),
+      dates:state.dates, place:state.place, meal:g('meal'), notes:g('notes'),
+      sku:"AICAMPIKU-AGENT-TEE-ac9da26c", page:"gasshuku-apply"
+    }
+  };
+  try{
+    const r=await fetch("https://labs-enabler.fly.dev/api/inquiry",{
+      method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)
+    });
+    const j=await r.json().catch(()=>({}));
+    if(!r.ok||j.ok===false) throw new Error("bad");
+    if(window.__analytics)try{window.__analytics('camp_apply')}catch(e){}
+    $('#form').style.display='none'; $('#done').classList.add('show');
+    window.scrollTo({top:0,behavior:'smooth'});
+  }catch(err){
+    $('#err').classList.add('show'); btn.disabled=false; btn.textContent='送信する';
+  }
+});
+</script>
+</body>
+</html>
