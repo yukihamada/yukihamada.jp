@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#16120d">
+<title>AIの、いま。— 2026年6月20日の紙芝居 | yukihamada.jp</title>
+<meta name="description" content="今週のAIを8枚の紙芝居に。Grok 4.3がAWS Bedrockへ、AI交換所OpenRouterに巨額調達、ソフトバンク仏5GW DC、独Neura大型調達、EUのAI表示規範、中国の身体性AI国家計画。新モデルより『お金とルール』が動いた週。濱田優貴の感想と本人声(AIクローン)つき・出典実打。">
+<meta property="og:title" content="AIの、いま。— 2026年6月20日（今週まとめ）">
+<meta property="og:description" content="今週のAIを8枚の紙芝居に。Grok 4.3がAWS Bedrockへ、AI交換所OpenRouterに巨額調達、ソフトバンク仏5GW DC、独Neura大型調達、EUのAI表示規範、中国の身体性AI国家計画。新モデルより『お金とルール』が動いた週。濱田優貴の感想と本人声(AIクローン)つき・出典実打。">
+<meta property="og:type" content="article">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:image" content="https://yukihamada.jp/kamisibai/ai20260620/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://yukihamada.jp/kamisibai/ai20260620/og.jpg">
+<meta property="og:url" content="https://yukihamada.jp/kamisibai/ai20260620/">
+<link rel="canonical" href="https://yukihamada.jp/kamisibai/ai20260620/">
+<style>
+:root{--bg:#16120d;--paper:#f5ecd9;--ink:#2a2118;--accent:#e8833a;--muted:#8a7a64}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--paper);font-family:"Hiragino Mincho ProN","Yu Mincho",serif;min-height:100svh;display:flex;flex-direction:column;align-items:center;overflow-x:hidden}
+header{padding:14px 16px 0;text-align:center;width:min(96vw,860px)}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.topline .spacer{width:64px}
+header h1{font-size:1.05rem;font-weight:600;letter-spacing:.18em;color:var(--paper)}
+header p.sub{font-size:.72rem;color:var(--muted);letter-spacing:.1em;margin-top:2px;text-align:center}
+.langbtn{font-family:-apple-system,sans-serif;font-size:.7rem;letter-spacing:.06em;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:5px 12px;cursor:pointer;width:64px}
+.langbtn:hover{color:var(--paper);border-color:var(--paper)}
+.voicebar{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:10px}
+.voicebar .vmain{font-family:inherit;font-size:.82rem;letter-spacing:.08em;background:var(--accent);color:#fff;border:none;border-radius:999px;padding:8px 20px;cursor:pointer;box-shadow:0 4px 14px rgba(232,131,58,.35)}
+.voicebar .vmain.playing{background:#6b4a2a}
+.voicebar .vrate{font-family:-apple-system,sans-serif;font-size:.7rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:6px 10px;cursor:pointer}
+.stage{position:relative;width:min(96vw,860px);margin:12px auto 0;user-select:none}
+.frame{position:relative;background:#3a2c1c;border-radius:10px;padding:10px;box-shadow:0 12px 40px rgba(0,0,0,.55), inset 0 0 0 2px rgba(245,236,217,.08)}
+.art-wrap{position:relative;aspect-ratio:4/3;overflow:hidden;border-radius:4px;background:#241b10}
+.art-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+#artTop{z-index:2}
+#artUnder{z-index:1}
+.titleplate{position:absolute;z-index:3;top:8%;left:6%;writing-mode:vertical-rl;font-size:clamp(1.6rem,5.5vw,3rem);font-weight:800;letter-spacing:.22em;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,.85),0 0 3px rgba(0,0,0,.9);opacity:0;transition:opacity .4s;pointer-events:none}
+.titleplate.on{opacity:1}
+.nav-half{position:absolute;top:0;bottom:0;width:50%;cursor:pointer;-webkit-tap-highlight-color:transparent;background:transparent;border:none;z-index:4}
+.nav-half:focus-visible{outline:2px solid var(--accent);outline-offset:-4px}
+.nav-prev{left:0}.nav-next{right:0}
+.card{background:var(--paper);color:var(--ink);width:min(96vw,860px);margin:14px auto;border-radius:10px;padding:20px 22px 16px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.card .no{font-size:.7rem;letter-spacing:.25em;color:var(--accent);font-weight:700}
+.card h2{font-size:1.15rem;margin:6px 0 8px;letter-spacing:.06em}
+.card p.ja{font-size:.95rem;line-height:1.9}
+.kanso{margin-top:12px;background:rgba(232,131,58,.08);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px}
+.kanso .who{font-size:.68rem;letter-spacing:.18em;color:var(--accent);font-weight:700;font-family:-apple-system,sans-serif}
+.kanso p{font-size:.9rem;line-height:1.85;margin-top:4px}
+.sent{transition:background .25s}
+.sent.on{background:rgba(232,131,58,.26);border-radius:3px}
+details.srcs{margin-top:12px;font-family:-apple-system,sans-serif}
+details.srcs summary{font-size:.72rem;color:var(--muted);cursor:pointer;letter-spacing:.08em}
+details.srcs ul{margin:6px 0 0 18px;font-size:.74rem;line-height:1.8}
+details.srcs a{color:#a05a20;word-break:break-all}
+details.srcs .note{font-size:.7rem;color:var(--muted);margin-top:4px}
+.dotrow{display:flex;gap:8px;justify-content:center;align-items:center;margin:4px 0 10px}
+.dotrow .dot{width:9px;height:9px;border-radius:50%;border:none;background:rgba(245,236,217,.25);cursor:pointer;padding:0}
+.dotrow .dot.on{background:var(--accent)}
+.dotrow .share{font-family:-apple-system,sans-serif;font-size:.68rem;background:transparent;color:var(--muted);border:1px solid rgba(245,236,217,.3);border-radius:999px;padding:4px 10px;cursor:pointer;margin-left:8px}
+.hint{font-size:.68rem;color:var(--muted);text-align:center;margin-bottom:8px;letter-spacing:.08em;padding:0 16px}
+footer{padding:10px 16px 28px;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.7;font-family:-apple-system,sans-serif}
+footer a{color:var(--muted)}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#3a2c1c;color:var(--paper);font-size:.8rem;font-family:-apple-system,sans-serif;padding:10px 18px;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.5);transition:transform .3s;z-index:50}
+#toast.on{transform:translateX(-50%) translateY(0)}
+#toast button{background:var(--accent);border:none;color:#fff;border-radius:6px;padding:4px 10px;margin-left:10px;cursor:pointer;font-size:.75rem}
+@media (max-width:480px){.card h2{font-size:1.02rem}.card p.ja{font-size:.88rem}.kanso p{font-size:.85rem}}
+@media (prefers-reduced-motion:reduce){.art-wrap img{transition:none !important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="topline">
+    <span class="spacer" aria-hidden="true"></span>
+    <div><h1 id="h1">AIの、いま。</h1></div>
+    <button class="langbtn" id="langBtn" onclick="toggleLang()" aria-label="Switch language">EN</button>
+  </div>
+  <p class="sub" id="sub">2026年6月20日の紙芝居 ・ 今週まとめ・全8枚 ・ 濱田優貴の感想と本人声つき</p>
+  <div class="voicebar">
+    <button id="voiceBtn" class="vmain" onclick="toggleVoice()">▶ ぼくの声で読み上げる</button>
+    <button id="rateBtn" class="vrate" onclick="cycleRate()" aria-label="再生速度">1x</button>
+  </div>
+</header>
+
+<div class="stage">
+  <div class="frame">
+    <div class="art-wrap">
+      <img id="artTop" src="img/01_title.jpg" width="1400" height="1050" alt="" fetchpriority="high">
+      <img id="artUnder" src="img/01_title.jpg" width="1400" height="1050" alt="" aria-hidden="true">
+      <div class="titleplate on" id="titleplate">AIの、いま</div>
+    </div>
+    <button class="nav-half nav-prev" onclick="go(-1)" aria-label="前の枚へ" id="navPrev"></button>
+    <button class="nav-half nav-next" onclick="go(1)" aria-label="次の枚へ" id="navNext"></button>
+  </div>
+</div>
+
+<div class="card" id="card" aria-live="polite">
+  <div class="no" id="no"></div>
+  <h2 id="title"></h2>
+  <p class="ja" id="ja"></p>
+  <div class="kanso"><div class="who" id="who"></div><p id="kanso"></p></div>
+  <details class="srcs" id="srcs"><summary id="srcsum"></summary><ul id="srclist"></ul><div class="note" id="srcnote"></div></details>
+</div>
+
+<div class="dotrow" id="dotrow">
+  <span id="dots" style="display:contents"></span>
+  <button class="share" id="shareBtn" onclick="shareCard()">🔗</button>
+</div>
+<p class="hint" id="hint"></p>
+
+<footer id="foot"></footer>
+<div id="toast" role="status"></div>
+<noscript><p style="color:#f5ecd9;text-align:center;padding:20px">この紙芝居の閲覧にはJavaScriptが必要です / This kamishibai requires JavaScript.</p></noscript>
+
+<script>
+const SLIDES=[{"b": "01_title", "scene": "A small wooden kamishibai stage on a bicycle at dusk on a quiet street, its frame glowing with soft circuit-like light; orbiting the stage like small planets are glowing coins of light and tiny rolled paper rule-scrolls; children and adults gather; warm hand-painted gouache, deep blue twilight and lantern orange", "no": ["第一枚", "Card 1"], "alt": "夕暮れの路地、自転車の木の紙芝居舞台が回路の光をまとう。周りを光のコインと小さな規則の巻物が惑星のように回る。人々が集まる", "title": ["はじまり、はじまり〜", "Here we go—"], "ja": ["今日は2026年6月20日。ここ最近のAIニュースを見ると、派手な新モデルよりも、その『まわり』——お金とルール——が大きく動いていました。投資、データセンター、規制、国家戦略。今週のAIを、8枚にぎゅっと絞ってお届けします。", "It's June 20, 2026. Looking at recent AI news, the story wasn't a flashy new model — it was everything around it: money and rules. Funding, data centers, regulation, national strategy. Here's the week in AI, in eight tightly-packed cards."], "kanso": ["毎日AIと一緒にプロダクトを作っている僕には、こういう『お金とルールが回り出す音』が、次に何が来るかの予報に聞こえます。読み上げは今日も僕の声のAIクローン。本人は隣でお茶を飲んでいます。", "As someone who builds products with AI every day, the sound of money and rules starting to turn is, to me, a forecast of what's coming next. The narration is again an AI clone of my voice — the real me is beside it, drinking tea."], "yomi": ["きょうは にせんにじゅうろくねん ろくがつ はつか。ここ最近のエーアイニュースを見ると、派手な新モデルよりも、その『まわり』、お金とルールが、大きく動いていました。投資、データセンター、規制、国家戦略。今週のエーアイを、はちまいに ぎゅっと絞ってお届けします。毎日エーアイと一緒にプロダクトを作っている僕には、こういう『お金とルールが回り出す音』が、次に何が来るかの予報に聞こえます。読み上げは今日も僕の声のエーアイクローン。本人は、となりでお茶を飲んでいます。"], "srcs": [], "audio": ["audio/01.mp3", "audio/01.mp3"]}, {"b": "02_grok", "scene": "A strong friendly glowing spirit, like a personified AI model, politely stepping through an office doorway and taking a seat at a desk among human office workers; behind them, shelves lined with other glowing model-orbs arranged like products on sale; warm watercolor, deep blue and lantern orange", "no": ["第二枚", "Card 2"], "alt": "強く優しい光の精(AIモデル)が会社のドアをくぐり、人間の同僚に交じって机につく。背後の棚には商品のように並ぶ別の光るモデルたち", "title": ["モデルが、会社の現場へ", "A Model Walks Into the Office"], "ja": ["まずはモデルの話を一つ。xAIのGrok 4.3が、AWSのBedrock上で一般提供になったと報じられています。報道では、100万トークンの長い文脈や、調整できる推論レベルを備え、企業がAIエージェントを組むための部品として置かれた、とのことです。", "First, one model story. xAI's Grok 4.3 reportedly became generally available on AWS Bedrock. According to reports, it offers a one-million-token context and adjustable reasoning levels, placed as a building block for enterprises assembling AI agents."], "kanso": ["モデルは『すごい』から『使える部品』へ。どのクラウドの棚にも、強いモデルが並び始めました。僕の作り方はずっと同じ——特定のモデルに賭けない。明日また順位が入れ替わっても、棚から選び直すだけでいいように。", "Models are shifting from 'amazing' to 'usable parts.' Strong models are lining the shelves of every cloud. My approach never changes: don't bet on one model, so that when tomorrow's ranking flips, I just pick again off the shelf."], "yomi": ["まずはモデルの話を一つ。エックスエーアイのグロック よんてんさんが、エーダブリューエスのベッドロックの上で、一般提供になったと報じられています。報道では、ひゃくまんトークンの長い文脈や、調整できる推論レベルを備え、企業がエーアイエージェントを組むための部品として置かれた、とのことです。モデルは『すごい』から『使える部品』へ。どのクラウドの棚にも、強いモデルが並び始めました。僕の作り方はずっと同じ。特定のモデルに賭けない。明日また順位が入れ替わっても、棚から選び直すだけでいいように。"], "srcs": [{"t": "Releasebot: xAI更新(Grok 4.3 / Bedrock)", "u": "https://releasebot.io/updates/xai"}], "audio": ["audio/02.mp3", "audio/02.mp3"]}, {"b": "03_openrouter", "scene": "A bustling night marketplace exchange where a single grand lantern-lit gateway routes glowing streams of token-light out to dozens of differently-colored model-stalls; coins of light raining down onto the gatekeeper's booth at the center; bridges and threads connecting all stalls; warm gouache, deep blue and orange", "no": ["第三枚", "Card 3"], "alt": "夜の市場。中央の大きな提灯の門が、光のトークンを色とりどりのモデル露店へ振り分ける。門番の受付に光のコインが降り注ぐ", "title": ["AIの『交換所』に、お金が集まる", "Money Floods the AI Exchange"], "ja": ["お金の話へ。たくさんのAIモデルを一つの入り口でつなぐOpenRouterが、1億1300万ドルを調達し、評価額は約13億ドルになったと報じられています(発表は先月)。週に処理する量は半年で5兆から25兆トークンへ増えた、とされています。モデルそのものより、モデルを『配る場所』に資金が向かっています。", "To the money. OpenRouter — which connects many AI models behind a single doorway — reportedly raised 113 million dollars at a valuation of about 1.3 billion (announced last month). Its weekly volume is said to have grown from 5 to 25 trillion tokens in half a year. Capital is flowing not to the models themselves, but to where models are distributed."], "kanso": ["強い人(モデル)より、強い人を案内する受付(ルーター)が儲かる——市場が成熟してきた合図です。僕も全プロダクトをMCPで開いていますが、これからは『どのモデルか』より『どう届けるか』が勝負だと、改めて思いました。", "The receptionist who routes you to the strong (the router) earns more than the strong themselves (the models) — a sign the market is maturing. I keep all my products open via MCP, and this reminds me: the contest ahead is less 'which model' and more 'how you deliver it.'"], "yomi": ["お金の話へ。たくさんのエーアイモデルを、一つの入り口でつなぐ、オープンルーターが、いちおく せんさんびゃくまんドルを調達し、評価額は やく じゅうさんおくドルになったと報じられています。発表は先月です。週に処理する量は、はんとしで ごちょうから にじゅうごちょうトークンへ増えた、とされています。モデルそのものより、モデルを『配る場所』に、資金が向かっています。強い人、モデルより、強い人を案内する受付、ルーターが儲かる。市場が成熟してきた合図です。僕も全プロダクトをエムシーピーで開いていますが、これからは『どのモデルか』より『どう届けるか』が勝負だと、改めて思いました。"], "srcs": [{"t": "OpenRouter公式: Series B発表", "u": "https://openrouter.ai/announcements/series-b"}, {"t": "TechCrunch: OpenRouter $1.3B評価(5/26)", "u": "https://techcrunch.com/2026/05/26/openrouter-more-than-doubles-valuation-to-1-3b-in-a-year/"}], "audio": ["audio/03.mp3", "audio/03.mp3"]}, {"b": "04_softbank", "scene": "A vast twilight landscape where huge data-center halls rise beside enormous glowing electrical pylons and a wide river; tiny human figures planting flags on the land; rivers of golden light-coins flowing into the ground and along the power lines; warm watercolor, deep blue and lantern orange", "no": ["第四枚", "Card 4"], "alt": "夕暮れの広大な風景。巨大なデータセンターと光る送電鉄塔、大きな川。土地に旗を立てる小さな人影。金色のコインが地面と送電線へ流れ込む", "title": ["お金は、電気と土地へ", "The Money Goes to Power and Land"], "ja": ["もっと大きなお金も。ソフトバンクグループがフランスで、最大750億ユーロを投じて5ギガワット規模のAIデータセンターを整える計画を発表したと報じられています(今月初旬のサミットにて)。AIの競争は、賢さの競争から、電力と土地と冷却の競争へと、土俵を移しつつあります。", "Bigger money, too. SoftBank Group reportedly announced a plan in France to build up to 5 gigawatts of AI data-center capacity, investing as much as 75 billion euros (at a summit early this month). The AI race is shifting its arena from cleverness to a contest over power, land, and cooling."], "kanso": ["AIの正体は、最後は『電気』です。賢さの裏で、国と企業が電力と土地を奪い合っている。派手な発表の下に、地味なインフラの戦争がある——ここを見ておくと、ニュースの解像度が一段上がります。", "At bottom, AI is electricity. Behind the cleverness, states and companies are fighting over power and land. Beneath the flashy announcements lies a quiet war over infrastructure — watch it, and the news comes into much sharper focus."], "yomi": ["もっと大きなお金も。ソフトバンクグループが、フランスで、さいだい ななひゃくごじゅうおくユーロを投じて、ごギガワット規模のエーアイデータセンターを整える計画を発表したと報じられています。今月初旬のサミットにてです。エーアイの競争は、賢さの競争から、電力と土地と冷却の競争へと、土俵を移しつつあります。エーアイの正体は、最後は『電気』です。賢さの裏で、国と企業が、電力と土地を奪い合っている。派手な発表の下に、地味なインフラの戦争がある。ここを見ておくと、ニュースの解像度が、いちだん上がります。"], "srcs": [{"t": "SoftBank Group 公式プレス(Choose France)", "u": "https://group.softbank/en/news/press/20260531_0"}], "audio": ["audio/04.mp3", "audio/04.mp3"]}, {"b": "05_neura", "scene": "A friendly rounded humanoid robot standing in a bright workshop, being showered from above with golden coins of light pouring from investors' floating lanterns; cranes and a factory line in the background; warm gouache, deep blue twilight and lantern orange", "no": ["第五枚", "Card 5"], "alt": "明るい工房に立つ丸みのある人型ロボット。上空の投資家の提灯から金色のコインが降り注ぐ。背景にクレーンと工場ライン", "title": ["体を持つAIに、賭けが集まる", "Bets Pile Onto AI With a Body"], "ja": ["お金はロボットにも。ドイツのNeura Roboticsが、最大14億ドルとされる大型調達を実施したと報じられています。AmazonやNVIDIA、Qualcommなどが名を連ねたとされ、『体を持つAI(フィジカルAI)』への資金集中を示す、と伝えられています。", "Money is going to robots, too. Germany's Neura Robotics reportedly carried out a large raise said to reach up to 1.4 billion dollars. Amazon, NVIDIA, and Qualcomm are said to be among the backers — a sign, reports suggest, of capital concentrating on 'AI with a body,' or physical AI."], "kanso": ["画面の中のAIから、工場や家で動くAIへ。お金は正直で、次に来る場所を指さします。言葉が形になる未来に、僕も毎日少しずつ賭けています。", "From AI on a screen to AI that moves in factories and homes. Money is honest; it points at where things are headed next. I, too, bet a little every day on a future where words become physical form."], "yomi": ["お金はロボットにも。ドイツのノイラ・ロボティクスが、さいだい じゅうよんおくドルとされる大型調達を実施したと報じられています。アマゾンやエヌビディア、クアルコムなどが名を連ねたとされ、『体を持つエーアイ、フィジカルエーアイ』への資金集中を示す、と伝えられています。画面の中のエーアイから、工場や家で動くエーアイへ。お金は正直で、次に来る場所を指さします。言葉が形になる未来に、僕も毎日少しずつ賭けています。"], "srcs": [{"t": "CNBC: Neura Robotics 調達(6/10)", "u": "https://www.cnbc.com/2026/06/10/neura-robotics-funding-ai-humanoid-robots.html"}], "audio": ["audio/05.mp3", "audio/05.mp3"]}, {"b": "06_eu", "scene": "A wise judge in robes hanging a large glowing rulebook-shaped lantern, stamped with a small 'AI label' seal, over a street of glowing AI spirit-stalls; vendors calmly attaching honest little labels to their glowing wares; scales of justice subtly drawn in the clouds; warm watercolor, deep blue and orange", "no": ["第六枚", "Card 6"], "alt": "ローブの裁判官が、小さな『AI表示』の印を押した規則本型の提灯を、光るAI露店の通りに掲げる。露店主が商品に正直な札をつける。雲に天秤", "title": ["ルールが、追いついてくる", "The Rules Catch Up"], "ja": ["ルールの話も。欧州委員会が、AIが作ったコンテンツの透明性についての『実践規範』を公表したと報じられています。8月2日に始まるAI法の表示義務に向けた任意の手引きで、ディープフェイクに統一アイコンを付ける案などが含まれる、とされています。", "Rules, too. The European Commission reportedly published a 'Code of Practice' on the transparency of AI-generated content. It's voluntary guidance ahead of the AI Act's labeling duties that begin on August 2, and is said to include ideas like a unified icon for deepfakes."], "kanso": ["作る速さに、見分ける仕組みが追いついてきた。『これはAI製です』と正直に言える設計は、これから当たり前になります。僕の紙芝居も、声はAIクローンだと毎回ちゃんと書いています。盛らない、隠さない。", "The means to tell things apart is catching up to the speed of making them. Designs that can honestly say 'this is AI-made' will soon be the norm. My kamishibai always states, every time, that the voice is an AI clone. No hype, nothing hidden."], "yomi": ["ルールの話も。欧州委員会が、エーアイが作ったコンテンツの透明性についての『実践規範』を公表したと報じられています。はちがつ ふつかに始まるエーアイ法の表示義務に向けた、任意の手引きで、ディープフェイクに統一アイコンを付ける案などが含まれる、とされています。作る速さに、見分ける仕組みが追いついてきた。『これはエーアイ製です』と正直に言える設計は、これから当たり前になります。僕の紙芝居も、声はエーアイクローンだと、毎回ちゃんと書いています。盛らない、隠さない。"], "srcs": [{"t": "European Commission: AI生成物の実践規範", "u": "https://digital-strategy.ec.europa.eu/en/policies/code-practice-ai-generated-content"}], "audio": ["audio/06.mp3", "audio/06.mp3"]}, {"b": "07_china", "scene": "An enormous lantern shaped like a stylized map rising over a wide plain where rows of identical friendly humanoid robots march in formation toward distant factories; a giant gentle translucent hand from above guiding them; warm gouache, deep blue twilight and lantern orange", "no": ["第七枚", "Card 7"], "alt": "地図の形の巨大な提灯が広い平野に昇り、同じ人型ロボットの列が工場へ向かって行進する。上空から大きな半透明の手が優しく導く", "title": ["国そのものが、動き出す", "The State Itself Starts Moving"], "ja": ["最後に国の動き。中国が、人型ロボットと『身体性AI』を産業へ一気に広げる、全国規模のプログラムを進めていると報じられています。報道では、地方政府や国有企業に導入計画を出させ、年内に相当数の配備を目指す、とされています。数字は報道ベースで、確定ではありません。", "Finally, a move by a state. China is reportedly advancing a nationwide program to rapidly spread humanoid robots and 'embodied AI' through industry. According to reports, it has local governments and state-owned enterprises submit deployment plans, aiming for substantial rollout within the year. The figures are as reported, not confirmed."], "kanso": ["企業だけでなく、国がプレイヤーになる時代。お金・ルール・国家——モデルの『まわり』が、これだけ一斉に動いている。土俵の大きさそのものが、変わってきました。", "An era where not just companies but states become players. Money, rules, the state — the world around the models is all moving at once. The very size of the arena is changing."], "yomi": ["最後に国の動き。中国が、人型ロボットと『身体性エーアイ』を産業へ一気に広げる、全国規模のプログラムを進めていると報じられています。報道では、地方政府や国有企業に導入計画を出させ、ねんないに相当数の配備を目指す、とされています。数字は報道ベースで、確定ではありません。企業だけでなく、国がプレイヤーになる時代。お金、ルール、国家。モデルの『まわり』が、これだけ一斉に動いている。土俵の大きさそのものが、変わってきました。"], "srcs": [{"t": "South China Morning Post: 中国 身体性AI国家計画", "u": "https://www.scmp.com/economy/china-economy/article/3356629/china-fast-tracks-humanoid-robots-and-embodied-ai-industry-under-nationwide-programme"}], "audio": ["audio/07.mp3", "audio/07.mp3"]}, {"b": "08_end", "scene": "A kamishibai storyteller closing the wooden stage doors at night; the audience walking home under stars that form faint circuit constellations; one child looks back smiling, cupping in their hands a small glowing spark shaped from a tiny coin and a tiny rolled rule-scroll; warm watercolor, deep blue and lantern orange", "no": ["第八枚", "Card 8"], "alt": "夜、紙芝居屋が舞台の扉を閉じる。観客が回路の星座の下を家へ帰る。少女がふり返り、小さなコインと規則の巻物でできた火を手のひらに見せて微笑む", "title": ["おしまい——どうしていくべきか", "The End — So, What Do We Do?"], "ja": ["お金とルールがモデルに追いついてきた今、僕らはどうするか。3つ。ひとつ、特定のモデルやクラウドに賭けない。ふたつ、すべてを正直に——AI製はAI製と書く。みっつ、速さはAIに任せ、最後の判断と責任は人間が持つ。今日の数字の多くは『報道では』。鵜呑みにせず、出典で確かめてください。", "Now that money and rules are catching up to the models, what do we do? Three things. One: don't bet on any single model or cloud. Two: be honest about everything — label AI-made as AI-made. Three: let AI handle the speed, while humans keep the final call and the responsibility. Many of today's figures are 'as reported' — don't take them at face value; check the sources."], "kanso": ["モデルだけ見ていると、世界の半分を見落とす。お金とルールと国——『まわり』こそ、次の地図です。仲間と一緒に、配管をつないでいきましょう。今日もまた一本、焚き火に薪を。おあとがよろしいようで。", "Watch only the models and you miss half the world. Money, rules, the state — the surroundings are the next map. Let's connect the plumbing together, with friends. One more log on the campfire today. And that, as the rakugo masters say, is where I take my bow."], "yomi": ["お金とルールがモデルに追いついてきた今、僕らはどうするか。みっつ。ひとつ、特定のモデルやクラウドに賭けない。ふたつ、すべてを正直に。エーアイ製はエーアイ製と書く。みっつ、速さはエーアイに任せ、最後の判断と責任は人間が持つ。今日の数字の多くは『報道では』。鵜呑みにせず、出典で確かめてください。モデルだけ見ていると、世界の半分を見落とす。お金とルールと国。『まわり』こそ、次の地図です。仲間と一緒に、配管をつないでいきましょう。今日もまた一本、焚き火に薪を。おあとがよろしいようで。"], "srcs": [], "final": true, "audio": ["audio/08.mp3", "audio/08.mp3"]}];
+const UI={"sub": ["2026年6月20日の紙芝居 ・ 今週まとめ・全8枚 ・ 濱田優貴の感想と本人声つき", "A kamishibai of this week in AI (to June 20, 2026) ・ 8 cards ・ with Yuki Hamada's take & voice"], "voice": ["▶ ぼくの声で読み上げる", "▶ Narrate in my voice"], "voiceStop": ["⏸ 読み上げをとめる", "⏸ Stop narration"], "who": ["🧠 ここが大事", "🧠 The point"], "hint": ["▶でぼくの声(AIクローン)が読み上げ、終わると次の枚へ自動でめくれます ・ 手めくりは絵の左右タップ/←→キー ・ Escで停止", "Press ▶ for narration by my AI voice clone — cards turn automatically. Manual: tap left/right on the art, ←→ keys. Esc stops."], "srcsum": ["出典・根拠 ▸", "Sources ▸"], "srcnote": ["※今週(〜2026-06-20)の報道ベースのまとめ。OpenRouterの調達は先月の発表。設備容量・金額・台数などの数字は各報道ベースで、単一ソースの数字は『報道では』にとどめ、断定を避けています。", "A roundup of this week's reporting (to 2026-06-20). OpenRouter's raise was announced last month. Figures (capacity, amounts, unit counts) are as reported; single-sourced numbers are hedged as 'reported' and not stated as fact."], "foot": ["絵: Gemini ・ 声: 濱田優貴の本人声AIクローン(Koe/m5・ローカル) ・ 文: Claude + 濱田優貴 ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>", "Art: Gemini ・ Voice: Yuki Hamada's local AI clone (Koe/m5) ・ Words: Claude + Yuki Hamada ・ <a href=\"https://yukihamada.jp\">yukihamada.jp</a>"], "prev": ["前の枚へ", "Previous card"], "next": ["次の枚へ", "Next card"], "dot": ["第%枚へ", "Go to card %"], "share": ["この枚のリンクを共有", "Share this card"], "copied": ["リンクをコピーしました", "Link copied"], "audioErr": ["音声を読み込めませんでした", "Could not load the audio"], "retry": ["⟳ もう一度", "⟳ Retry"]};
+let i=0,L=0,voice=false,busy=false,audioFor=-1,rate=1;
+const RATES=[1,1.25,1.5];
+const $=id=>document.getElementById(id);
+const artTop=$("artTop"),artUnder=$("artUnder"),titleplate=$("titleplate"),
+ no=$("no"),title=$("title"),ja=$("ja"),kanso=$("kanso"),who=$("who"),card=$("card"),
+ dots=$("dots"),voiceBtn=$("voiceBtn"),rateBtn=$("rateBtn"),hint=$("hint"),sub=$("sub"),foot=$("foot"),
+ srcs=$("srcs"),srcsum=$("srcsum"),srclist=$("srclist"),srcnote=$("srcnote"),
+ toast=$("toast"),langBtn=$("langBtn"),shareBtn=$("shareBtn");
+const player=new Audio();player.preload="metadata";
+let prefetcher=null;
+let sentEls=[],sentW=[],sentTotal=0;
+function srcset(b){return `img/${b}-700.webp 700w, img/${b}-1400.webp 1400w`}
+function setImg(el,b){el.srcset=srcset(b);el.sizes="(max-width:880px) 96vw, 840px";el.src=`img/${b}.jpg`}
+SLIDES.forEach((s,k)=>{const btn=document.createElement("button");btn.className="dot";btn.onclick=()=>show(k);dots.appendChild(btn)});
+function splitSent(text,el){
+ el.innerHTML="";
+ const parts=[];let buf="";
+ for(const ch of text){buf+=ch;if("。！？.?!".includes(ch)){parts.push(buf);buf=""}}
+ if(buf.trim())parts.push(buf);
+ return parts.map(p=>{const sp=document.createElement("span");sp.className="sent";sp.textContent=p;el.appendChild(sp);return sp});
+}
+function renderText(){
+ const s=SLIDES[i];
+ no.textContent=s.no[L];title.textContent=s.title[L];
+ const jaSp=splitSent(s.ja[L],ja),kSp=splitSent(s.kanso[L],kanso);
+ sentEls=[...jaSp,...kSp];
+ sentW=sentEls.map(e=>e.textContent.length);sentTotal=sentW.reduce((a,b)=>a+b,0);
+ who.textContent=UI.who[L];hint.textContent=UI.hint[L];sub.textContent=UI.sub[L];foot.innerHTML=UI.foot[L];
+ srcsum.textContent=UI.srcsum[L];srcnote.textContent=UI.srcnote[L];
+ voiceBtn.textContent=voice?UI.voiceStop[L]:UI.voice[L];
+ $("navPrev").setAttribute("aria-label",UI.prev[L]);$("navNext").setAttribute("aria-label",UI.next[L]);
+ shareBtn.setAttribute("aria-label",UI.share[L]);shareBtn.title=UI.share[L];
+ langBtn.textContent=L?"日本語":"EN";document.documentElement.lang=L?"en":"ja";
+ srclist.innerHTML="";
+ if(s.srcs&&s.srcs.length){srcs.style.display="";s.srcs.forEach(x=>{const li=document.createElement("li");const a=document.createElement("a");a.href=x.u;a.rel="noopener";a.target="_blank";a.textContent=x.t;li.appendChild(a);srclist.appendChild(li)})}
+ else srcs.style.display="none";
+ [...dots.children].forEach((d,k)=>{d.classList.toggle("on",k===i);d.setAttribute("aria-label",UI.dot[L].replace("%",k+1));if(k===i)d.setAttribute("aria-current","true");else d.removeAttribute("aria-current")});
+ artTop.alt=SLIDES[i].alt;
+ titleplate.classList.toggle("on",i===0);
+}
+function preloadAdjacent(){
+ [i+1,i-1].forEach(k=>{if(k>=0&&k<SLIDES.length){const im=new Image();im.srcset=srcset(SLIDES[k].b);im.src=`img/${SLIDES[k].b}.jpg`}});
+ if(voice&&i+1<SLIDES.length){if(!prefetcher)prefetcher=new Audio();prefetcher.preload="auto";prefetcher.src=SLIDES[i+1].audio[L]}
+}
+function show(k,dir){
+ if(busy)return;
+ const n=(k+SLIDES.length)%SLIDES.length;
+ if(n===i){renderText();return}
+ dir=dir||(n>i?1:-1);
+ busy=true;
+ setImg(artUnder,SLIDES[n].b);
+ i=n;renderText();
+ try{history.replaceState(null,"",`?card=${i+1}`)}catch(e){}
+ artTop.style.transition="transform .45s cubic-bezier(.4,0,.6,1)";
+ artTop.style.transform=`translateX(${dir>0?-106:106}%)`;
+ setTimeout(()=>{
+  setImg(artTop,SLIDES[i].b);
+  artTop.style.transition="none";artTop.style.transform="none";
+  busy=false;preloadAdjacent();
+ },470);
+ playCurrent();
+}
+function playCurrent(){
+ if(!voice)return;
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+player.addEventListener("ended",()=>{if(voice&&i<SLIDES.length-1)show(i+1,1);else if(voice)setVoice(false)});
+player.addEventListener("timeupdate",()=>{
+ if(!voice||!player.duration||!sentTotal)return;
+ const p=player.currentTime/player.duration;
+ let acc=0,active=sentEls.length-1;
+ for(let k=0;k<sentW.length;k++){acc+=sentW[k]/sentTotal;if(p<acc){active=k;break}}
+ sentEls.forEach((e,k)=>e.classList.toggle("on",k===active));
+});
+function clearHighlight(){sentEls.forEach(e=>e.classList.remove("on"))}
+function setVoice(on){voice=on;voiceBtn.classList.toggle("playing",on);voiceBtn.textContent=on?UI.voiceStop[L]:UI.voice[L];if(!on){player.pause();clearHighlight()}}
+function toggleVoice(){
+ if(voice){setVoice(false);return}
+ setVoice(true);
+ const want=SLIDES[i].audio[L];if(player.getAttribute("data-src")!==want){player.src=want;player.setAttribute("data-src",want);audioFor=i}
+ player.playbackRate=rate;
+ player.play().then(()=>preloadAdjacent()).catch(()=>{audioFor=-1;setVoice(false);showToast(UI.audioErr[L],true)});
+}
+function cycleRate(){rate=RATES[(RATES.indexOf(rate)+1)%RATES.length];rateBtn.textContent=rate+"x";player.playbackRate=rate}
+function showToast(msg,withRetry){
+ toast.innerHTML="";toast.append(msg);
+ if(withRetry){const b=document.createElement("button");b.textContent=UI.retry[L];b.onclick=()=>{toast.classList.remove("on");toggleVoice()};toast.appendChild(b)}
+ toast.classList.add("on");
+ setTimeout(()=>toast.classList.remove("on"),5000);
+}
+function shareCard(){
+ const url=location.href.split("?")[0]+`?card=${i+1}`;
+ const title=SLIDES[i].title[L];
+ if(navigator.share){navigator.share({title,url}).catch(()=>{})}
+ else{navigator.clipboard.writeText(url).then(()=>showToast(UI.copied[L])).catch(()=>showToast(UI.copied[L]))}
+}
+function toggleLang(){
+ if(voice){setVoice(false);player.currentTime=0;audioFor=-1}
+ L=1-L;renderText();clearHighlight();
+}
+function go(d){show(i+d,d)}
+document.addEventListener("keydown",e=>{
+ if(e.key==="ArrowRight")go(1);
+ if(e.key==="ArrowLeft")go(-1);
+ if(e.key==="Escape"&&voice)setVoice(false);
+});
+let tx=null;
+const wrap=document.querySelector(".art-wrap");
+wrap.addEventListener("touchstart",e=>tx=e.touches[0].clientX,{passive:true});
+wrap.addEventListener("touchend",e=>{if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>40)go(dx<0?1:-1);tx=null},{passive:true});
+const qp=parseInt(new URLSearchParams(location.search).get("card"),10);
+const start=qp>=1&&qp<=SLIDES.length?qp:1;
+i=start-1;
+setImg(artTop,SLIDES[i].b);setImg(artUnder,SLIDES[i].b);
+renderText();preloadAdjacent();
+</script>
+</body>
+</html>
