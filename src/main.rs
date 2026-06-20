@@ -1199,6 +1199,11 @@ async fn kamishibai_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai.html"))
 }
 
+// 🎬 紙芝居シアター: MUのMVを全画面でプレイリスト自動再生する。
+async fn theater_page() -> impl IntoResponse {
+    Html(include_str!("../templates/theater.html"))
+}
+
 // 紙芝居『いい奴らと、世界をつくる。』第2話（士業 × AI × いい奴ら）。画像は <base>
 // 経由で devil-podcast から、音声は同一オリジン /audio/kamishibai-ep2.mp3（marker: kamishibai-2）。
 async fn kamishibai_ep2_page() -> impl IntoResponse {
@@ -6888,6 +6893,7 @@ async fn main() {
     let app = Router::new()
         .route("/", get(home))
         .route("/kamishibai", get(kamishibai_page))
+        .route("/theater", get(theater_page))
         .route("/akuma", get(kamishibai_page))
         .route("/shibai", get(kamishibai_page))
         .route("/kamishibai/2", get(kamishibai_ep2_page))
