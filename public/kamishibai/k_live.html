@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" id="htmlRoot">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -34,6 +34,15 @@
     background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
   .sec{position:fixed;top:calc(max(20px,env(safe-area-inset-top)) + 54px);left:0;right:0;text-align:center;z-index:6;
     font-size:12px;letter-spacing:.5em;text-indent:.5em;color:var(--gold);opacity:.8}
+
+  /* ===== language toggle ===== */
+  .langtog{position:fixed;top:max(16px,env(safe-area-inset-top));right:14px;z-index:31;
+    display:flex;gap:2px;background:rgba(20,20,28,.7);border:1px solid rgba(216,183,90,.32);
+    border-radius:12px;padding:3px;backdrop-filter:blur(6px)}
+  .langtog button{border:0;background:transparent;color:#8d8775;cursor:pointer;
+    font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:11px;letter-spacing:.12em;
+    padding:5px 9px;border-radius:9px;transition:background .2s,color .2s}
+  .langtog button.on{background:linear-gradient(180deg,var(--gold2),var(--goldd));color:#1a1407}
 
   /* ===== main demand-gate card ===== */
   .wrap{position:relative;z-index:3;width:min(86vw,440px);
@@ -120,6 +129,11 @@
 <div class="glow"></div>
 <div class="flash"></div>
 
+<div class="langtog" id="langtog">
+  <button data-lang="ja" id="langJa">JA</button>
+  <button data-lang="en" id="langEn">EN</button>
+</div>
+
 <div class="mark">
   <svg viewBox="0 0 150 86" width="118"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
   <span class="wm">MU</span>
@@ -128,13 +142,13 @@
 
 <div class="wrap" id="wrap">
   <div class="card">
-    <div class="glabel">PREMIUM BLACK GI · 4.5kg</div>
+    <div class="glabel" id="glabel">PREMIUM BLACK GI · 4.5kg</div>
     <div class="gi" id="gi">🥋</div>
     <div class="pname" id="pname">プレミアム黒帯道着</div>
     <div class="pmeta" id="pmeta">made to order — 100人集まったら、作ります</div>
     <div class="meterrow">
       <div class="meterhead">
-        <div class="now"><span id="now">0</span><small>人が「ほしい」</small></div>
+        <div class="now"><span id="now">0</span><small id="nowlabel">人が「ほしい」</small></div>
         <div class="goal">/ <span id="goal">100</span></div>
       </div>
       <div class="meter"><div class="fill" id="fill"></div></div>
@@ -146,9 +160,9 @@
 
 <div class="unlocked" id="unlocked">
   <div class="ugi" id="ugi">🥋</div>
-  <div class="ubig">✦ UNLOCKED</div>
-  <div class="usub">100人、集まりました。<b style="color:var(--gold2)">作ります。</b></div>
-  <div class="next">次は、何を集める?</div>
+  <div class="ubig" id="ubig">✦ UNLOCKED</div>
+  <div class="usub" id="usub">100人、集まりました。<b style="color:var(--gold2)">作ります。</b></div>
+  <div class="next" id="nextlabel">次は、何を集める?</div>
   <div class="nextrow" id="nextrow"></div>
 </div>
 
@@ -157,15 +171,54 @@
 <audio id="audio" src="MuMuMu.mp3" preload="auto" loop></audio>
 
 <div class="start" id="start">
-  <div class="t">100人で、建つ</div>
+  <div class="t" id="startTitle">100人で、建つ</div>
   <div class="play">▶</div>
-  <div class="h">タップで再生 · 🔊 音あり</div>
+  <div class="h" id="startHint">タップで再生 · 🔊 音あり</div>
 </div>
 
 <script>
 /* =========================================================================
    MU — 「100人で、建つ」 demand-gate kamishibai (self-contained, no backend)
+   JA/EN bilingual. ?lang=en → EN, else JA. Song follows language.
    ========================================================================= */
+
+/* ---- language ---- */
+const LANG = (new URLSearchParams(location.search).get('lang') === 'en') ? 'en' : 'ja';
+
+/* song per language (JA=62.96s / EN=47.88s) */
+const SONG = { ja:'MuMuMu.mp3', en:'MuMuMu_8.mp3' };
+
+/* all copy {ja,en} — never mix languages */
+const T = {
+  htmlLang:   { ja:'ja', en:'en' },
+  title:      { ja:'MU — 100人で、建つ', en:'MU — Built by 100' },
+  sec:        { ja:'いっしょに、ほしがる', en:'WANT IT TOGETHER' },
+  glabel:     { ja:'プレミアム黒帯道着 · 4.5kg', en:'PREMIUM BLACK GI · 4.5kg' },
+  pname:      { ja:'プレミアム黒帯道着', en:'Premium Black-Belt Gi' },
+  pmeta:      { ja:'受注生産 — 100人集まったら、作ります', en:'made to order — built when 100 want it' },
+  nowlabel:   { ja:'人が「ほしい」', en:'people want it' },
+  wantBtn:    { ja:'🙋 ほしい!', en:'🙋 I want it!' },
+  wantVoted:  { ja:'✓ あなたの票を記録しました', en:'✓ your vote is in' },
+  hint:       { ja:'あなたの1票で、ものづくりが動きだす', en:'your one vote sets the making in motion' },
+  hintVoted:  { ja:'ありがとう。仲間が集まるのを待とう。', en:'thank you. now we wait for the others.' },
+  ubig:       { ja:'✦ 達成', en:'✦ UNLOCKED' },
+  usubA:      { ja:'100人、集まりました。', en:'100 people, gathered.' },
+  usubB:      { ja:'作ります。', en:'We build it.' },
+  nextlabel:  { ja:'次は、何を集める?', en:'What do we gather next?' },
+  startTitle: { ja:'100人で、建つ', en:'Built by 100' },
+  startHint:  { ja:'タップで再生 · 🔊 音あり', en:'tap to play · 🔊 sound on' },
+};
+
+/* next-drop candidates {ja,en} */
+const NEXT = [
+  {icon:'👟', name:{ja:'グラップリングシューズ', en:'Grappling shoes'}},
+  {icon:'🧥', name:{ja:'ラッシュガード',         en:'Rash guard'}},
+  {icon:'🎒', name:{ja:'道場バッグ',             en:'Dojo bag'}},
+  {icon:'🏠', name:{ja:'弟子屈の道場（一棟）',   en:'A dojo in Teshikaga'}},
+];
+
+function L(key){ return T[key][LANG]; }
+
 const GOAL = 100;
 const SKU  = 'MU-GI-BLACK-4_5KG';
 const LS_VOTE  = 'mu_want_voted_' + SKU;   // この端末が投票済みか
@@ -188,8 +241,43 @@ let count   = clampInt(localStorage.getItem(LS_COUNT), 0, GOAL, 0);
 let voted   = localStorage.getItem(LS_VOTE) === '1';
 let done    = count >= GOAL;
 let crowdTimer = null;
+let curProduct = null; // 現在の品（switchTo 後）名 {ja,en} or null = デフォルト道着
 
 function clampInt(v,min,max,def){ v=parseInt(v,10); if(isNaN(v))return def; return Math.max(min,Math.min(max,v)); }
+
+/* ---- apply all static copy for current LANG ---- */
+function applyLang(){
+  document.getElementById('htmlRoot').setAttribute('lang', T.htmlLang[LANG]);
+  document.title = L('title');
+  document.getElementById('sec').textContent        = L('sec');
+  document.getElementById('nowlabel').textContent   = L('nowlabel');
+  document.getElementById('ubig').textContent       = L('ubig');
+  document.getElementById('usub').innerHTML =
+    L('usubA') + '<b style="color:var(--gold2)">' + L('usubB') + '</b>';
+  document.getElementById('nextlabel').textContent  = L('nextlabel');
+  document.getElementById('startTitle').textContent = L('startTitle');
+  document.getElementById('startHint').textContent  = L('startHint');
+  // product labels: default product unless a custom one is active
+  if(!curProduct){
+    document.getElementById('glabel').textContent = L('glabel');
+    document.getElementById('pname').textContent  = L('pname');
+  }
+  document.getElementById('pmeta').textContent = L('pmeta');
+  // toggle highlight
+  document.getElementById('langJa').classList.toggle('on', LANG==='ja');
+  document.getElementById('langEn').classList.toggle('on', LANG==='en');
+}
+
+/* ---- language toggle: swap ?lang= and reload (clean re-render) ---- */
+document.getElementById('langtog').addEventListener('click', (e)=>{
+  const b = e.target.closest('button'); if(!b) return;
+  const next = b.getAttribute('data-lang');
+  if(next === LANG) return;
+  const u = new URL(location.href);
+  if(next === 'en') u.searchParams.set('lang','en');
+  else u.searchParams.delete('lang');
+  location.href = u.toString();
+});
 
 /* ---- sparkle field (ambient, beat-driven) ---- */
 const SP=[]; for(let i=0;i<14;i++){const d=document.createElement('div');d.className='spk';
@@ -204,8 +292,12 @@ function render(){
   fillEl.classList.toggle('near', p >= 0.85 && p < 1);
   if(voted){
     wantBtn.classList.add('voted');
-    wantBtn.textContent = '✓ あなたの票を記録しました';
-    hintEl.textContent = 'ありがとう。仲間が集まるのを待とう。';
+    wantBtn.textContent = L('wantVoted');
+    hintEl.textContent = L('hintVoted');
+  }else{
+    wantBtn.classList.remove('voted');
+    wantBtn.textContent = L('wantBtn');
+    hintEl.textContent = L('hint');
   }
 }
 
@@ -291,33 +383,27 @@ function rainGi(){
 }
 
 /* 「次は何を集める?」 候補 */
-const NEXT=[
-  {icon:'👟', name:'グラップリングシューズ'},
-  {icon:'🧥', name:'ラッシュガード'},
-  {icon:'🎒', name:'道場バッグ'},
-  {icon:'🏠', name:'弟子屈の道場（一棟）'},
-];
 function buildNext(){
   nextrow.innerHTML='';
   NEXT.forEach(n=>{
     const b=document.createElement('button');
-    b.innerHTML=n.icon+' '+n.name;
+    b.innerHTML=n.icon+' '+n.name[LANG];
     b.onclick=()=>switchTo(n);
     nextrow.appendChild(b);
   });
 }
 /* 次の品で新しいゲートを始める（デモ内で完結） */
 function switchTo(n){
+  curProduct = n.name;
   unlocked.classList.remove('on');
   giEl.textContent=n.icon;
   document.getElementById('ugi').textContent=n.icon;
-  document.getElementById('pname').textContent=n.name;
-  document.querySelector('.card .glabel').textContent='NEXT DROP · ' + n.name;
-  document.getElementById('pmeta').textContent='made to order — 100人集まったら、作ります';
+  document.getElementById('pname').textContent=n.name[LANG];
+  document.getElementById('glabel').textContent=
+    (LANG==='en' ? 'NEXT DROP · ' : '次の一品 · ') + n.name[LANG];
+  document.getElementById('pmeta').textContent=L('pmeta');
   // reset state for the new product (demo only; real sku would change LS keys)
   voted=false; done=false; count=Math.floor(GOAL*0.12)+Math.floor(Math.random()*8);
-  wantBtn.classList.remove('voted'); wantBtn.textContent='🙋 ほしい!';
-  hintEl.textContent='あなたの1票で、ものづくりが動きだす';
   render(); flashGold(0.4); popGi();
 }
 
@@ -325,14 +411,10 @@ function switchTo(n){
 resetBtn.addEventListener('click', ()=>{
   stopCrowd();
   localStorage.removeItem(LS_VOTE); localStorage.removeItem(LS_COUNT);
-  voted=false; done=false; count=0;
+  voted=false; done=false; count=0; curProduct=null;
   unlocked.classList.remove('on');
   giEl.textContent='🥋'; document.getElementById('ugi').textContent='🥋';
-  document.getElementById('pname').textContent='プレミアム黒帯道着';
-  document.querySelector('.card .glabel').textContent='PREMIUM BLACK GI · 4.5kg';
-  document.getElementById('pmeta').textContent='made to order — 100人集まったら、作ります';
-  wantBtn.classList.remove('voted'); wantBtn.textContent='🙋 ほしい!';
-  hintEl.textContent='あなたの1票で、ものづくりが動きだす';
+  applyLang();
   render();
 });
 
@@ -369,8 +451,10 @@ function begin(){
 }
 startEl.addEventListener('click', begin);
 
-/* initial paint (so headless/no-tap still shows the card, not black) */
-render();
+/* ---- boot ---- */
+audio.src = SONG[LANG];          // song follows language
+applyLang();                     // all copy in current LANG
+render();                        // initial paint (so headless/no-tap still shows the card, not black)
 /* headless / no-audio fallback: run the ambient loop immediately so the
    screenshot is never black even before a tap */
 running=true; requestAnimationFrame(loop);

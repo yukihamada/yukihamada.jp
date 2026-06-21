@@ -4,84 +4,192 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MU 紙芝居シアター</title>
+<meta name="description" content="言葉が、物語になる。MUのインタラクティブ紙芝居——言うだけで生む生成体験・100人で建つデマンドゲート・ほしいの墓場→復活・言葉が建つ・MUの一晩・声で言う・贈る・MU対既存。">
+<meta name="theme-color" content="#07070a">
+<link rel="canonical" href="https://yukihamada.jp/kamishibai-theater/">
+<link rel="alternate" hreflang="ja" href="https://yukihamada.jp/kamishibai-theater/">
+<link rel="alternate" hreflang="en" href="https://yukihamada.jp/kamishibai-theater/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://yukihamada.jp/kamishibai-theater/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MU 紙芝居シアター">
+<meta property="og:title" content="MU 紙芝居シアター — 言葉が、物語になる。">
+<meta property="og:description" content="言うだけで生む生成紙芝居ほか8本。観るたび、別物。">
+<meta property="og:url" content="https://yukihamada.jp/kamishibai-theater/">
+<meta property="og:image" content="https://yukihamada.jp/kamishibai-theater/girl3/make.png">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MU 紙芝居シアター">
+<meta name="twitter:image" content="https://yukihamada.jp/kamishibai-theater/girl3/make.png">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2307070a'/%3E%3Cg stroke='%23d8b75a' stroke-width='1.4' stroke-linecap='round'%3E%3Cline x1='16' y1='6' x2='16' y2='11'/%3E%3Cline x1='16' y1='21' x2='16' y2='26'/%3E%3Cline x1='6' y1='16' x2='11' y2='16'/%3E%3Cline x1='21' y1='16' x2='26' y2='16'/%3E%3Cline x1='9' y1='9' x2='12.5' y2='12.5'/%3E%3Cline x1='19.5' y1='19.5' x2='23' y2='23'/%3E%3Cline x1='23' y1='9' x2='19.5' y2='12.5'/%3E%3Cline x1='12.5' y1='19.5' x2='9' y2='23'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%23d8b75a'/%3E%3C/svg%3E">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"CollectionPage","name":"MU 紙芝居シアター","url":"https://yukihamada.jp/kamishibai-theater/","inLanguage":"ja","isPartOf":{"@type":"WebSite","name":"yukihamada.jp","url":"https://yukihamada.jp/"},"about":"言葉から物語と商品を生むMUのインタラクティブ紙芝居"}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="kamishibai-theater.css">
 <style>
-  :root{--gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#07070a}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:var(--ink);color:#f5f3ee;font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;
-    min-height:100vh}
-  .bg{position:fixed;inset:0;background:radial-gradient(60% 50% at 50% 22%,rgba(216,183,90,.12),transparent 60%);pointer-events:none}
-  header{text-align:center;padding:64px 24px 30px;position:relative}
-  .eye .iris{}
-  .mark{filter:drop-shadow(0 0 24px rgba(216,183,90,.5))}
-  .wm{font-family:"Zen Antique",serif;letter-spacing:.34em;text-indent:.34em;font-size:15px;color:var(--gold);margin-top:14px}
-  h1{font-family:"Zen Antique",serif;font-size:clamp(28px,5vw,42px);margin-top:6px;
-    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{color:#8d8775;font-size:14px;letter-spacing:.1em;margin-top:10px}
-  .grid{max-width:1080px;margin:20px auto 70px;padding:0 22px;display:grid;
-    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
-  a.card{display:block;text-decoration:none;color:inherit;background:#0e0e14;border:1px solid rgba(216,183,90,.22);
-    border-radius:18px;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative}
-  a.card:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 40px rgba(216,183,90,.18)}
-  .card .top{height:118px;display:flex;align-items:center;justify-content:center;font-size:48px;
-    background:linear-gradient(135deg,#15131c,#0a0a10);position:relative;overflow:hidden}
-  .card .badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;letter-spacing:.08em;
-    padding:4px 9px;border-radius:6px;background:var(--gold);color:#1a1407}
-  .card .body{padding:18px 20px}
-  .card .t{font-weight:900;font-size:17px}
-  .card .d{font-size:13px;color:#a8a294;margin-top:8px;line-height:1.6}
-  .card .go{margin-top:14px;font-size:12px;letter-spacing:.16em;color:var(--gold)}
-  footer{text-align:center;color:#6f6a5e;font-size:12px;letter-spacing:.16em;padding:0 0 50px}
-  footer .b{color:var(--gold)}
+  .langtoggle{position:fixed;top:max(18px,env(safe-area-inset-top));right:max(16px,env(safe-area-inset-right));
+    z-index:50;display:flex;gap:2px;background:#0e0e14;border:1px solid rgba(216,183,90,.28);
+    border-radius:9px;padding:3px;backdrop-filter:blur(6px)}
+  .langtoggle a{padding:7px 13px;font-size:12px;letter-spacing:.12em;color:#8d8775;text-decoration:none;
+    border-radius:6px;font-weight:700;transition:color .15s,background .15s}
+  .langtoggle a.on{color:#1a1407;background:linear-gradient(180deg,var(--gold2),var(--goldd))}
 </style>
 </head>
 <body>
 <div class="bg"></div>
+
+<nav class="langtoggle" aria-label="language">
+  <a id="lnk-ja" href="?lang=ja">JA</a>
+  <a id="lnk-en" href="?lang=en">EN</a>
+</nav>
+
 <header>
   <svg class="mark" width="120" height="69" viewBox="0 0 150 86">
     <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs>
     <g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g>
   </svg>
   <div class="wm">MU</div>
-  <h1>紙芝居シアター</h1>
-  <div class="sub">言葉が、物語になる。— 5つの紙芝居</div>
+  <h1 id="h1">紙芝居シアター</h1>
+  <div class="sub" id="sub">言葉が、物語になる。— 8つの紙芝居</div>
 </header>
 
-<div class="grid">
-  <a class="card" href="k_generate.html">
-    <div class="top">✨<span class="badge">生成・対話</span></div>
-    <div class="body"><div class="t">言ってみて</div>
-      <div class="d">一言いうと、その場で世界に1つを生む。観るたびに別物。本物のAI生成つき。</div>
-      <div class="go">PLAY →</div></div>
+<div class="grid" id="grid">
+  <a class="card" data-href="k_generate.html">
+    <div class="top">✨<span class="badge" id="bdg-gen">生成・対話</span></div>
+    <div class="body"><div class="t" id="t-gen">言ってみて</div>
+      <div class="d" id="d-gen">一言いうと、その場で世界に1つを生む。観るたびに別物。本物のAI生成つき。</div>
+      <div class="go" id="go-gen">PLAY →</div></div>
   </a>
-  <a class="card" href="k_live.html">
-    <div class="top">🥋<span class="badge">参加型</span></div>
-    <div class="body"><div class="t">100人で、建つ</div>
-      <div class="d">「ほしい」が100人で解禁→4.5kgの黒帯道着が作られる。あなたが押すと進む。</div>
-      <div class="go">PLAY →</div></div>
+  <a class="card" data-href="k_live.html">
+    <div class="top">🥋<span class="badge" id="bdg-live">参加型</span></div>
+    <div class="body"><div class="t" id="t-live">100人で、建つ</div>
+      <div class="d" id="d-live">「ほしい」が100人で解禁→4.5kgの黒帯道着が作られる。あなたが押すと進む。</div>
+      <div class="go" id="go-live">PLAY →</div></div>
   </a>
-  <a class="card" href="k_graveyard.html">
+  <a class="card" data-href="k_graveyard.html">
     <div class="top">🪦</div>
-    <div class="body"><div class="t">ほしいの墓場 → 復活</div>
-      <div class="d">Amazonで「0件」の願いが、MUの金の光で次々と本物の商品に蘇る。敗者復活戦。</div>
-      <div class="go">PLAY（♪音あり）→</div></div>
+    <div class="body"><div class="t" id="t-grave">ほしいの墓場 → 復活</div>
+      <div class="d" id="d-grave">Amazonで「0件」の願いが、MUの金の光で次々と本物の商品に蘇る。敗者復活戦。</div>
+      <div class="go" id="go-grave">PLAY（♪音あり）→</div></div>
   </a>
-  <a class="card" href="k_build.html">
+  <a class="card" data-href="k_build.html">
     <div class="top">🏠</div>
-    <div class="body"><div class="t">言葉が、建つ</div>
-      <div class="d">タオル→服→家→村。一文から弟子屈の村まで、言葉だけで立ち上がる。</div>
-      <div class="go">PLAY（♪音あり）→</div></div>
+    <div class="body"><div class="t" id="t-build">言葉が、建つ</div>
+      <div class="d" id="d-build">タオル→服→家→村。一文から弟子屈の村まで、言葉だけで立ち上がる。</div>
+      <div class="go" id="go-build">PLAY（♪音あり）→</div></div>
   </a>
-  <a class="card" href="k_overnight.html">
+  <a class="card" data-href="k_overnight.html">
     <div class="top">🌙</div>
-    <div class="body"><div class="t">MUの一晩</div>
-      <div class="d">寝てる間にMUが作った19個の本物の商品を、夜→朝で実況。全部、盛ってない。</div>
-      <div class="go">PLAY →</div></div>
+    <div class="body"><div class="t" id="t-over">MUの一晩</div>
+      <div class="d" id="d-over">寝てる間にMUが作った19個の本物の商品を、夜→朝で実況。全部、盛ってない。</div>
+      <div class="go" id="go-over">PLAY →</div></div>
+  </a>
+  <a class="card" data-href="k_voice.html">
+    <div class="top">🎤<span class="badge" id="bdg-voice">声・本人声</span></div>
+    <div class="body"><div class="t" id="t-voice">声で、言う</div>
+      <div class="d" id="d-voice">キーボードはいらない。声でひと言。MUが聞いて、その場で生む。本人の声で返す。</div>
+      <div class="go" id="go-voice">PLAY →</div></div>
+  </a>
+  <a class="card" data-href="k_gift.html">
+    <div class="top">🎁<span class="badge" id="bdg-gift">贈る</span></div>
+    <div class="body"><div class="t" id="t-gift">贈る</div>
+      <div class="d" id="d-gift">あの人のために、世界に1つを。@アカウント宛に贈れば住所はいらない。言葉が、贈り物になる。</div>
+      <div class="go" id="go-gift">PLAY →</div></div>
+  </a>
+  <a class="card" data-href="k_tournament.html">
+    <div class="top">⚔️<span class="badge" id="bdg-tour">対決</span></div>
+    <div class="body"><div class="t" id="t-tour">MU 対 既存</div>
+      <div class="d" id="d-tour">同じ願いを、既存ECとMUに。0件の検索 vs その場の1点。どっちが「ほしい」に届くか。</div>
+      <div class="go" id="go-tour">PLAY →</div></div>
   </a>
 </div>
 
-<footer>ほしいを、生む。 ・ <span class="b">wearmu.com</span></footer>
+<footer><span style="opacity:.5" id="ft-upd">更新 <span id="upd"></span> ・ </span><span id="ft-tag">ほしいを、生む。</span> ・ <span class="b">wearmu.com</span></footer>
+
+<script>
+(function(){
+  var I18N={
+    ja:{
+      htmlLang:"ja", locale:"ja-JP", upd:"更新 ", tag:"ほしいを、生む。",
+      title:"紙芝居シアター", sub:"言葉が、物語になる。— 8つの紙芝居",
+      cards:{
+        gen:{t:"言ってみて",d:"一言いうと、その場で世界に1つを生む。観るたびに別物。本物のAI生成つき。",go:"PLAY →",badge:"生成・対話"},
+        live:{t:"100人で、建つ",d:"「ほしい」が100人で解禁→4.5kgの黒帯道着が作られる。あなたが押すと進む。",go:"PLAY →",badge:"参加型"},
+        grave:{t:"ほしいの墓場 → 復活",d:"Amazonで「0件」の願いが、MUの金の光で次々と本物の商品に蘇る。敗者復活戦。",go:"PLAY（♪音あり）→"},
+        build:{t:"言葉が、建つ",d:"タオル→服→家→村。一文から弟子屈の村まで、言葉だけで立ち上がる。",go:"PLAY（♪音あり）→"},
+        over:{t:"MUの一晩",d:"寝てる間にMUが作った19個の本物の商品を、夜→朝で実況。全部、盛ってない。",go:"PLAY →"},
+        voice:{t:"声で、言う",d:"キーボードはいらない。声でひと言。MUが聞いて、その場で生む。本人の声で返す。",go:"PLAY →",badge:"声・本人声"},
+        gift:{t:"贈る",d:"あの人のために、世界に1つを。@アカウント宛に贈れば住所はいらない。言葉が、贈り物になる。",go:"PLAY →",badge:"贈る"},
+        tour:{t:"MU 対 既存",d:"同じ願いを、既存ECとMUに。0件の検索 vs その場の1点。どっちが「ほしい」に届くか。",go:"PLAY →",badge:"対決"}
+      }
+    },
+    en:{
+      htmlLang:"en", locale:"en-US", upd:"Updated ", tag:"Speak it. We make it.",
+      title:"Kamishibai Theater", sub:"Words become a story. — 8 kamishibai",
+      cards:{
+        gen:{t:"Just say it",d:"Say one word and a one-of-a-kind is born on the spot. Different every time. Real AI generation.",go:"PLAY →",badge:"GENERATIVE"},
+        live:{t:"Built by 100",d:"100 “wants” unlock it → a 4.5kg black-belt gi gets made. You press, it moves.",go:"PLAY →",badge:"INTERACTIVE"},
+        grave:{t:"Graveyard of wants → Revived",d:"“0 results” on Amazon come back to life as real products in MU’s golden light. A second chance.",go:"PLAY (♪ sound) →"},
+        build:{t:"Words get built",d:"Towel → clothes → house → village. From one sentence to a whole Teshikaga village, by words alone.",go:"PLAY (♪ sound) →"},
+        over:{t:"One night of MU",d:"19 real products MU made while you slept, narrated night to morning. Nothing exaggerated.",go:"PLAY →"},
+        voice:{t:"Say it out loud",d:"No keyboard. Just speak. MU listens and makes it on the spot — and answers in a real human voice.",go:"PLAY →",badge:"VOICE"},
+        gift:{t:"Give it",d:"A one-of-a-kind for someone you love. Send it to an @account — no address needed. Words become a gift.",go:"PLAY →",badge:"GIFT"},
+        tour:{t:"MU vs. the rest",d:"Same wish, sent to a normal store and to MU. 0 search results vs. one made on the spot. Which reaches “I want it”?",go:"PLAY →",badge:"VERSUS"}
+      }
+    }
+  };
+
+  function getLang(){
+    try{
+      var p=new URLSearchParams(location.search).get('lang');
+      if(p){p=p.toLowerCase();return p==='en'?'en':'ja';}
+    }catch(_){}
+    return 'ja';
+  }
+
+  function setText(id,v){var e=document.getElementById(id);if(e&&v!=null)e.textContent=v;}
+
+  var lang=getLang();
+  var T=I18N[lang]||I18N.ja;
+
+  // html lang + document locale
+  document.documentElement.setAttribute('lang',T.htmlLang);
+  document.documentElement.setAttribute('data-locale',T.locale);
+
+  // header
+  setText('h1',T.title);
+  setText('sub',T.sub);
+
+  // cards
+  var c=T.cards;
+  setText('t-gen',c.gen.t);setText('d-gen',c.gen.d);setText('go-gen',c.gen.go);setText('bdg-gen',c.gen.badge);
+  setText('t-live',c.live.t);setText('d-live',c.live.d);setText('go-live',c.live.go);setText('bdg-live',c.live.badge);
+  setText('t-grave',c.grave.t);setText('d-grave',c.grave.d);setText('go-grave',c.grave.go);
+  setText('t-build',c.build.t);setText('d-build',c.build.d);setText('go-build',c.build.go);
+  setText('t-over',c.over.t);setText('d-over',c.over.d);setText('go-over',c.over.go);
+  setText('t-voice',c.voice.t);setText('d-voice',c.voice.d);setText('go-voice',c.voice.go);setText('bdg-voice',c.voice.badge);
+  setText('t-gift',c.gift.t);setText('d-gift',c.gift.d);setText('go-gift',c.gift.go);setText('bdg-gift',c.gift.badge);
+  setText('t-tour',c.tour.t);setText('d-tour',c.tour.d);setText('go-tour',c.tour.go);setText('bdg-tour',c.tour.badge);
+
+  // footer
+  setText('ft-tag',T.tag);
+  try{
+    var d=new Intl.DateTimeFormat(T.locale,{year:'numeric',month:'long'}).format(new Date(2026,5,21));
+    setText('upd',d);
+  }catch(_){}
+
+  // propagate ?lang= into each card link
+  var q=(lang==='en')?'?lang=en':'?lang=ja';
+  var cards=document.querySelectorAll('#grid a.card[data-href]');
+  for(var i=0;i<cards.length;i++){
+    cards[i].setAttribute('href',cards[i].getAttribute('data-href')+q);
+  }
+
+  // toggle active state
+  var lja=document.getElementById('lnk-ja'),len=document.getElementById('lnk-en');
+  if(lja)lja.className=(lang==='ja')?'on':'';
+  if(len)len.className=(lang==='en')?'on':'';
+})();
+</script>
 </body>
 </html>

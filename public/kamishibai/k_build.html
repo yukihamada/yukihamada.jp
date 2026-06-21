@@ -112,11 +112,23 @@
   .start .play{width:84px;height:84px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);margin-top:6px}
   .start .t{font-family:"Zen Antique",serif;letter-spacing:.34em;text-indent:.34em;color:var(--gold);font-size:clamp(16px,4.4vw,20px);text-align:center}
   .start .h{color:#8d8775;font-size:12px;letter-spacing:.14em}
+
+  /* 言語トグル JA / EN */
+  .lang{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;z-index:40;display:flex;gap:2px;
+    background:rgba(7,7,10,.55);border:1px solid rgba(216,183,90,.35);border-radius:999px;padding:3px;backdrop-filter:blur(6px)}
+  .lang button{appearance:none;border:0;background:transparent;cursor:pointer;
+    font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:12px;letter-spacing:.12em;
+    color:#8d8775;padding:5px 11px;border-radius:999px;transition:all .2s}
+  .lang button.on{color:var(--ink);background:linear-gradient(180deg,var(--gold2),var(--goldd));box-shadow:0 0 14px rgba(216,183,90,.5)}
 </style>
 </head>
 <body>
 <div class="stage" id="stage"></div>
 <div class="glow"></div><div class="streak"></div><div class="flash"></div>
+
+<div class="lang" id="lang">
+  <button data-l="ja">JA</button><button data-l="en">EN</button>
+</div>
 
 <div class="mark">
   <svg viewBox="0 0 150 86"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
@@ -128,44 +140,76 @@
 
 <div class="end" id="end">
   <div class="bloom"><svg viewBox="0 0 150 86"><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg></div>
-  <div class="big">言葉が、建つ。</div>
+  <div class="big" id="endBig">言葉が、建つ。</div>
   <div class="urls"><span class="url"><b>wearmu.com</b></span><span class="url"><b>bim.house</b></span></div>
 </div>
 
 <div class="start" id="start">
   <svg viewBox="0 0 150 86"><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
-  <div class="t">言葉が、建つ</div>
+  <div class="t" id="startT">言葉が、建つ</div>
   <div class="play">▶</div>
-  <div class="h">タップで再生 · 🔊 音あり</div>
+  <div class="h" id="startH">タップで再生 · 🔊 音あり</div>
 </div>
 
-<audio id="audio" src="MuMuMu_8.mp3" preload="auto"></audio>
+<audio id="audio" preload="auto"></audio>
 
 <script>
-const DUR=47.88, NPROD=19, NCELL=12;
+// ===== i18n =====
+// ?lang=en → EN、それ以外 → JA(既定)
+const LANG=(new URLSearchParams(location.search).get('lang')==='en')?'en':'ja';
+document.documentElement.setAttribute('lang', LANG);
+
+// 言語別: 曲・尺・固定UI文言
+const I18N={
+  ja:{ song:'MuMuMu.mp3', dur:62.96,
+       startT:'言葉が、建つ', startH:'タップで再生 · 🔊 音あり',
+       endBig:'言葉が、建つ。' },
+  en:{ song:'MuMuMu_8.mp3', dur:47.88,
+       startT:'a word becomes a thing', startH:'tap to play · 🔊 sound on',
+       endBig:'A word becomes a thing.' },
+};
+const L=I18N[LANG];
+const DUR=L.dur, NPROD=19, NCELL=12;
 const PRODUCTS=Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
 
 // 物語: 一文「ほしい」→ タオル → 服 → 家が建つ → 村
-// [t, type, asset, caption, section]
-const TL=[
- [0.0,  'line', 'want',          '<span class="g">「ほしい。」</span>',     'A WORD'],
- [3.0,  'girl', 'want',          'と、言うだけ。',                          'WANT'],
- [5.4,  'phone','real_shop',     '',                                        'SHOP'],
- [7.2,  'girl', 'towel',         'タオルも。',                              'MADE ON MU'],
- [9.0,  'hero', 'towel_real',    '<span class="g">✦ MUで、できた。</span>', 'MADE ON MU'],
- [10.8, 'reel', 'reel',          '<span class="g">made on MU</span>',       'MADE ON MU'],
- [13.6, 'girl', 'dance2',        '服も。',                                  'WEAR'],
- [15.6, 'reel', 'reel',          '<span class="g">あなたの言葉が、商品に。</span>','WEAR'],
- [18.4, 'girl', 'make',          '言えば、つくれる。',                      'MAKE'],
- [20.6, 'phone','real_make',     '',                                        'MAKE'],
- [23.0, 'girl', 'arrive',        'ぜんぶ、つながる。',                      ''],
- [25.6, 'phone','real_bim_en',   '',                                        'BUILD'],
- [28.6, 'girl', 'house_build',   '<span class="g">家も。</span>',           'BUILD'],
- [31.8, 'girl', 'house_done',    '言葉から、一棟。',                        'bim.house'],
- [34.8, 'village','village',     '<span class="g">村も。</span>',           'A VILLAGE'],
- [42.0, 'village','village',     '<span class="g">言葉が、建つ。</span>',   'TESHIKAGA'],
- [46.6, 'village','village',     '',                                        ''],
+// 各行: [t, type, asset, {ja,en}caption, {ja,en}section]
+// JAタイムライン基準(62.96s)。ENは尺差(47.88/62.96)で apply 時に自動スケール。
+const TL_RAW=[
+ [0.0,  'line', 'want',          {ja:'<span class="g">「ほしい。」</span>', en:'<span class="g">“I want it.”</span>'}, {ja:'はじまりの一言', en:'A WORD'}],
+ [3.0,  'girl', 'want',          {ja:'と、言うだけ。',          en:'Just say it.'},               {ja:'ほしい', en:'WANT'}],
+ [5.4,  'phone','real_shop',     {ja:'',                        en:''},                            {ja:'えらぶ', en:'SHOP'}],
+ [7.2,  'girl', 'towel',         {ja:'タオルも。',              en:'A towel, too.'},               {ja:'MUでできた', en:'MADE ON MU'}],
+ [9.0,  'hero', 'towel_real',    {ja:'<span class="g">✦ MUで、できた。</span>', en:'<span class="g">✦ made on MU.</span>'}, {ja:'MUでできた', en:'MADE ON MU'}],
+ [10.8, 'reel', 'reel',          {ja:'<span class="g">made on MU</span>', en:'<span class="g">made on MU</span>'}, {ja:'MUでできた', en:'MADE ON MU'}],
+ [13.6, 'girl', 'dance2',        {ja:'服も。',                  en:'Clothes, too.'},               {ja:'着る', en:'WEAR'}],
+ [15.6, 'reel', 'reel',          {ja:'<span class="g">あなたの言葉が、商品に。</span>', en:'<span class="g">your words become things.</span>'}, {ja:'着る', en:'WEAR'}],
+ [18.4, 'girl', 'make',          {ja:'言えば、つくれる。',      en:'Say it, make it.'},            {ja:'つくる', en:'MAKE'}],
+ [20.6, 'phone','real_make',     {ja:'',                        en:''},                            {ja:'つくる', en:'MAKE'}],
+ [23.0, 'girl', 'arrive',        {ja:'ぜんぶ、つながる。',      en:'It all connects.'},            {ja:'', en:''}],
+ [25.6, 'phone','real_bim_en',   {ja:'',                        en:''},                            {ja:'建てる', en:'BUILD'}],
+ [28.6, 'girl', 'house_build',   {ja:'<span class="g">家も。</span>', en:'<span class="g">A house, too.</span>'}, {ja:'建てる', en:'BUILD'}],
+ [31.8, 'girl', 'house_done',    {ja:'言葉から、一棟。',        en:'From words, a home.'},         {ja:'bim.house', en:'bim.house'}],
+ [34.8, 'village','village',     {ja:'<span class="g">村も。</span>', en:'<span class="g">A village, too.</span>'}, {ja:'村をつくる', en:'A VILLAGE'}],
+ [42.0, 'village','village',     {ja:'<span class="g">言葉が、建つ。</span>', en:'<span class="g">a word becomes a thing.</span>'}, {ja:'弟子屈', en:'TESHIKAGA'}],
+ [46.6, 'village','village',     {ja:'',                        en:''},                            {ja:'', en:''}],
 ];
+// 言語選択 + ENは尺スケール
+const SCALE = DUR / 62.96;
+const TL = TL_RAW.map(([t,type,asset,cap,sec])=>[ +(t*SCALE).toFixed(3), type, asset, cap[LANG], sec[LANG] ]);
+
+// 固定UI文言を適用
+document.getElementById('startT').textContent=L.startT;
+document.getElementById('startH').textContent=L.startH;
+document.getElementById('endBig').textContent=L.endBig;
+document.getElementById('audio').src=L.song;
+{ const lb=document.getElementById('lang');
+  [...lb.querySelectorAll('button')].forEach(b=>{
+    b.classList.toggle('on', b.dataset.l===LANG);
+    b.addEventListener('click',()=>{ if(b.dataset.l===LANG)return;
+      const u=new URL(location.href); u.searchParams.set('lang',b.dataset.l); location.href=u.toString(); });
+  });
+}
 
 const stage=document.getElementById('stage'), built={};
 let reelCells=[];
@@ -198,7 +242,8 @@ TL.forEach(([t,type,asset])=>{const k=type+':'+asset; if(built[k])return; built[
   else if(type==='phone') s.innerHTML='<div class="phone"><div class="notch"></div><div class="screen"><img src="shots/'+asset+'.png" alt=""></div></div>';
   else if(type==='hero') s.innerHTML='<div class="herocard"><img src="shots/'+asset+'.png" alt=""></div>';
   else if(type==='line'){
-    s.innerHTML='<div class="lwrap"><div class="quote">「ほしい。」</div><div class="sub">A WORD BECOMES A THING</div></div>';
+    const q=LANG==='en'?'“I want it.”':'「ほしい。」';
+    s.innerHTML='<div class="lwrap"><div class="quote">'+q+'</div><div class="sub">A WORD BECOMES A THING</div></div>';
   }
   else if(type==='village'){
     // SVG: ドーム + 六棟。各pathにstroke-dash長を後で測って格納。
@@ -215,7 +260,7 @@ TL.forEach(([t,type,asset])=>{const k=type+':'+asset; if(built[k])return; built[
       '</svg>'+
       '<span class="vemoji" data-vi="0" style="left:50%;top:50%">🔥</span>'+
       HOUSES.map(hh=>`<span class="vemoji" style="left:${hh.ex}%;top:${hh.ey}%">🏠</span>`).join('')+
-      '<div class="vlabel">弟子屈 · 白から、組む。</div>'+
+      '<div class="vlabel">'+(LANG==='en'?'Teshikaga · build from white':'弟子屈 · 白から、組む。')+'</div>'+
       '</div>';
   }
   else { const g=document.createElement('div'); g.className='reelgrid';
@@ -264,12 +309,12 @@ function apply(t){
 
   // 村：家が順番に金の線で建ち上がる→絵文字が灯る
   if(type==='village' && vpaths.length){
-    // 村シーンの開始tを取得（最初のvillage TL）
-    const vstart=34.8;
+    // 村シーンの開始tを取得（最初のvillage TL・尺スケール済み）
+    const vstart=34.8*SCALE;
     const vlocal=t - vstart;
     // 8本（ドーム+6棟+地面）を時間差で描く
     const N=vpaths.length;
-    const STAGGER=0.62, DRAW=1.4;
+    const STAGGER=0.62*SCALE, DRAW=1.4*SCALE;
     for(let p=0;p<N;p++){
       const ord = (p===N-1)?0:(p+1); // 地面(最後)を最初に、ドーム→棟の順
       const ps = ord*STAGGER;
@@ -285,7 +330,7 @@ function apply(t){
       const lit = vlocal > (ps + DRAW*0.7);
       em.classList.toggle('lit', lit);
     });
-    if(vLabel) vLabel.classList.toggle('on', vlocal>5.6);
+    if(vLabel) vLabel.classList.toggle('on', vlocal>5.6*SCALE);
   }
 
   const beat=Math.max(0, Math.exp(-((t*2)%1)*5)*0.95);

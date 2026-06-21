@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" id="html">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -136,9 +136,21 @@
   .start .t{font-family:"Zen Antique",serif;letter-spacing:.36em;text-indent:.36em;color:var(--gold);font-size:clamp(15px,4vw,19px);text-align:center}
   .start .sub{color:#7f8aa0;font-size:12px;letter-spacing:.14em}
   .start .h{color:#8d8775;font-size:12px;letter-spacing:.14em}
+
+  /* language toggle */
+  .lang{position:fixed;top:max(16px,env(safe-area-inset-top));right:14px;z-index:40;
+    display:flex;align-items:center;gap:2px;font-size:11px;letter-spacing:.12em;
+    font-family:"Zen Kaku Gothic New",sans-serif;
+    border:1px solid rgba(216,183,90,.4);border-radius:20px;padding:3px;
+    background:rgba(7,7,10,.55);backdrop-filter:blur(4px)}
+  .lang a{color:#7f8aa0;text-decoration:none;padding:3px 9px;border-radius:16px;
+    cursor:pointer;transition:color .2s,background .2s;font-weight:700}
+  .lang a.act{color:#07070a;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd))}
 </style>
 </head>
 <body>
+<div class="lang" id="lang"><a data-l="ja">JA</a><a data-l="en">EN</a></div>
 <div class="stage" id="stage"></div>
 <div class="glow"></div><div class="streak"></div>
 <div class="ripplering" id="ripple"></div>
@@ -153,46 +165,96 @@
 
 <div class="end" id="end">
   <svg viewBox="0 0 150 86" width="118"><defs><linearGradient id="ge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#ge)"/></g></svg>
-  <div class="ja">ほしいを、生む。</div>
-  <div class="en">Anything is born.</div>
+  <div class="ja" id="endJa"></div>
+  <div class="en" id="endEn"></div>
   <div class="url">wearmu.com</div>
 </div>
 
 <div class="start" id="start">
-  <div class="t">ほしいの墓場</div>
+  <div class="t" id="startT"></div>
   <div class="play">▶</div>
-  <div class="sub">検索の、敗者復活戦。</div>
-  <div class="h">タップで再生 · 🔊 音あり</div>
+  <div class="sub" id="startSub"></div>
+  <div class="h" id="startH"></div>
 </div>
-<audio id="audio" src="MuMuMu_8.mp3" preload="auto"></audio>
+<audio id="audio" preload="auto"></audio>
 
 <script>
-const DUR=47.88, NPROD=19;
-const PRODUCTS=Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
-// 墓標になった「ほしい」（検索で0件になった願い）
-const WISHES=[
-  '犬の道着','左利き用の鋏','世界に1つの帯',
-  '私だけの作務衣','光る祭り半纏','双子おそろい着',
-  '7本指の手袋','推し色の道着'
-];
-const NTOMB=WISHES.length; // 8 → 3x3 grid (with center bloom slot)
+// ===== i18n: ?lang=en → EN / それ以外 → JA(既定) =====
+const LANG = (new URLSearchParams(location.search).get('lang')==='en') ? 'en' : 'ja';
+document.getElementById('html').setAttribute('lang', LANG);
 
+// 曲ごとの尺（秒）と音源
+const SONG = {
+  ja: { src:'MuMuMu.mp3',   dur:62.96 },
+  en: { src:'MuMuMu_8.mp3', dur:47.88 }
+};
+const DUR = SONG[LANG].dur, NPROD=19;
+const PRODUCTS=Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
+
+// 墓標になった「ほしい」（検索で0件になった願い）二言語
+const WISHES_I18N = {
+  ja:['犬の道着','左利き用の鋏','世界に1つの帯','私だけの作務衣','光る祭り半纏','双子おそろい着','7本指の手袋','推し色の道着'],
+  en:['A gi for my dog','Left-handed shears','A one-of-a-kind belt','My own samue','A glowing festival happi','Matching twin outfits','7-finger gloves','A gi in my fav color']
+};
+const WISHES = WISHES_I18N[LANG];
+const NTOMB = WISHES.length; // 8 → 3x3 grid (with center bloom slot)
+
+// 墓場ラベル（NOT FOUND / 0件）二言語
+const LBL = {
+  ja:{ notfound:'NOT FOUND', zero:'0件',   born:'✦ 生まれた' },
+  en:{ notfound:'NOT FOUND', zero:'0 found', born:'✦ born' }
+};
+
+// スタートゲート / エンドカード 二言語
+const UI = {
+  ja:{ startT:'ほしいの墓場', startSub:'検索の、敗者復活戦。', startH:'タップで再生 · 🔊 音あり',
+       endJa:'ほしいを、生む。', endEn:'Anything is born.' },
+  en:{ startT:'Graveyard of Wants', startSub:'A comeback match for every search.', startH:'tap to play · 🔊 sound on',
+       endJa:'Anything is born.', endEn:'wear what you want.' }
+};
+
+// ===== タイムライン（言語別の表を持つ。時刻は各曲尺に合わせる） =====
 // [t, type, asset, caption, section]
-const TL=[
- [0.0,  'grave','',  '検索しても、<span class="g">0件</span>。',     'NOT FOUND'],
- [4.2,  'grave','',  'ほしいは、ここで死んでいた。',                 '0件の墓場'],
- [8.4,  'grave','',  '「犬の道着」も「左利き用の…」も。',            'WISH · DENIED'],
- [12.6, 'grave','',  'だれも、つくってくれなかった。',               '0件の墓場'],
- [16.4, 'grave','',  '——ここで、<span class="g">光が灯る</span>。',  'MU'],   // bloom ignite (pre-chorus)
- [19.4, 'grave','',  '<span class="g">敗者復活戦、開始。</span>',     'RESURRECT'], // ripple + resurrect
- [24.2, 'reel','',   '墓標が、<span class="g">商品に変わる</span>。', 'MADE ON MU'],
- [28.0, 'girl','dance2','検索の、敗者復活戦。',                       'MU'],
- [31.4, 'reel','',   '<span class="g">ぜんぶ、生まれ直す。</span>',   'MADE ON MU'],
- [35.0, 'girl','arrive','言えば、できる。',                          'MAKE'],
- [38.4, 'girl','finale_alt','ほしいを、<span class="g">生む</span>。', ''],
- [42.6, 'girl','dance2','Anything is born.',                         ''],
- [45.8, 'end','',   '',                                              ''],
-];
+const TL_I18N = {
+ en:[
+   [0.0,  'grave','',  'You searched. <span class="g">0 found</span>.',  'NOT FOUND'],
+   [4.2,  'grave','',  'Every want died right here.',                    'GRAVEYARD OF 0'],
+   [8.4,  'grave','',  '"A gi for my dog." "Left-handed…"',             'WISH · DENIED'],
+   [12.6, 'grave','',  'No one ever made it.',                           'GRAVEYARD OF 0'],
+   [16.4, 'grave','',  '—— here, <span class="g">a light ignites</span>.', 'MU'],
+   [19.4, 'grave','',  '<span class="g">The comeback begins.</span>',    'RESURRECT'],
+   [24.2, 'reel','',   'Tombstones <span class="g">turn into products</span>.', 'MADE ON MU'],
+   [28.0, 'girl','dance2','A comeback match for every search.',          'MU'],
+   [31.4, 'reel','',   '<span class="g">Everything is reborn.</span>',   'MADE ON MU'],
+   [35.0, 'girl','arrive','Say it, and it’s made.',                      'MAKE'],
+   [38.4, 'girl','finale_alt','<span class="g">Anything</span> is born.', ''],
+   [42.6, 'girl','dance2','Anything is born.',                           ''],
+   [45.8, 'end','',   '',                                                ''],
+ ],
+ // JA: 元の演出を 62.96/47.88 ≒ 1.315 でスケール（最後の end は DUR-2.08 に揃える）
+ ja:[
+   [0.0,  'grave','',  '検索しても、<span class="g">0件</span>。',     'NOT FOUND'],
+   [5.5,  'grave','',  'ほしいは、ここで死んでいた。',                 '0件の墓場'],
+   [11.0, 'grave','',  '「犬の道着」も「左利き用の…」も。',            'WISH · DENIED'],
+   [16.6, 'grave','',  'だれも、つくってくれなかった。',               '0件の墓場'],
+   [21.6, 'grave','',  '——ここで、<span class="g">光が灯る</span>。',  'MU'],
+   [25.5, 'grave','',  '<span class="g">敗者復活戦、開始。</span>',     'RESURRECT'],
+   [31.8, 'reel','',   '墓標が、<span class="g">商品に変わる</span>。', 'MADE ON MU'],
+   [36.8, 'girl','dance2','検索の、敗者復活戦。',                       'MU'],
+   [41.3, 'reel','',   '<span class="g">ぜんぶ、生まれ直す。</span>',   'MADE ON MU'],
+   [46.0, 'girl','arrive','言えば、できる。',                          'MAKE'],
+   [50.5, 'girl','finale_alt','ほしいを、<span class="g">生む</span>。', ''],
+   [56.0, 'girl','dance2','Anything is born.',                         ''],
+   [60.9, 'end','',   '',                                              ''],
+ ]
+};
+const TL = TL_I18N[LANG];
+
+// ブルーム点灯 / 復活 / 波紋終了（言語別）
+const PHASE = {
+  ja:{ bloom:21.6, resurrect:25.5, rippleEnd:31.6 },
+  en:{ bloom:16.4, resurrect:19.4, rippleEnd:24.0 }
+};
 
 const stage=document.getElementById('stage'), built={};
 let reelCells=[], tombEls=[];
@@ -235,9 +297,9 @@ for(let i=0;i<9;i++){
   const prodIdx = (wi*7+3)%NPROD;
   t.innerHTML =
     '<div class="pimg" style="background-image:url('+PRODUCTS[prodIdx]+')"></div>'+
-    '<div class="err">NOT FOUND</div><div class="zero">0件</div>'+
+    '<div class="err">'+LBL[LANG].notfound+'</div><div class="zero">'+LBL[LANG].zero+'</div>'+
     '<div class="wish">'+WISHES[wi%NTOMB]+'</div><div class="moss"></div>'+
-    '<div class="born">✦ 生まれた</div>';
+    '<div class="born">'+LBL[LANG].born+'</div>';
   yard.appendChild(t); tombEls.push(t);
 }
 
@@ -247,10 +309,29 @@ const sec=document.getElementById('sec'), prog=document.getElementById('prog');
 const endEl=document.getElementById('end'), startEl=document.getElementById('start');
 const rippleEl=document.getElementById('ripple');
 const root=document.documentElement, audio=document.getElementById('audio');
+
+// ===== i18n: 音源・固定UI文言・言語トグルを反映 =====
+audio.src = SONG[LANG].src;
+document.getElementById('startT').textContent   = UI[LANG].startT;
+document.getElementById('startSub').textContent = UI[LANG].startSub;
+document.getElementById('startH').textContent   = UI[LANG].startH;
+document.getElementById('endJa').textContent    = UI[LANG].endJa;
+document.getElementById('endEn').textContent    = UI[LANG].endEn;
+document.title = LANG==='en' ? 'MU — Graveyard of Wants → Reborn' : 'MU — ほしいの墓場 → 復活';
+// 言語トグル：現言語をハイライト。押すと ?lang= を切り替えて再読込
+document.querySelectorAll('#lang a').forEach(a=>{
+  if(a.dataset.l===LANG) a.classList.add('act');
+  a.addEventListener('click',()=>{
+    const u=new URL(location.href);
+    if(a.dataset.l==='ja') u.searchParams.delete('lang'); else u.searchParams.set('lang','en');
+    location.href=u.toString();
+  });
+});
+
 const SP=[]; for(let i=0;i<16;i++){const d=document.createElement('div');d.className='spk';d.style.fontSize=(10+(i%4)*6)+'px';d.textContent='✦';stage.appendChild(d);SP.push(d);}
 let cur=-1;
 
-const BLOOM_T=16.4, RESURRECT_T=19.4, RIPPLE_END=24.0;
+const BLOOM_T=PHASE[LANG].bloom, RESURRECT_T=PHASE[LANG].resurrect, RIPPLE_END=PHASE[LANG].rippleEnd;
 
 function apply(t){
   let i=0; for(let k=0;k<TL.length;k++) if(t>=TL[k][0]) i=k;

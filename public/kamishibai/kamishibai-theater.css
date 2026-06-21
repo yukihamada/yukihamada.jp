@@ -1,0 +1,28 @@
+
+  :root{--gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#07070a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:#f5f3ee;font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;
+    min-height:100vh}
+  .bg{position:fixed;inset:0;background:radial-gradient(60% 50% at 50% 22%,rgba(216,183,90,.12),transparent 60%);pointer-events:none}
+  header{text-align:center;padding:64px 24px 30px;position:relative}
+  .eye .iris{}
+  .mark{filter:drop-shadow(0 0 24px rgba(216,183,90,.5))}
+  .wm{font-family:"Zen Antique",serif;letter-spacing:.34em;text-indent:.34em;font-size:15px;color:var(--gold);margin-top:14px}
+  h1{font-family:"Zen Antique",serif;font-size:clamp(28px,5vw,42px);margin-top:6px;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:#8d8775;font-size:14px;letter-spacing:.1em;margin-top:10px}
+  .grid{max-width:1080px;margin:20px auto 70px;padding:0 22px;display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+  a.card{display:block;text-decoration:none;color:inherit;background:#0e0e14;border:1px solid rgba(216,183,90,.22);
+    border-radius:18px;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;position:relative}
+  a.card:hover{transform:translateY(-5px);border-color:var(--gold);box-shadow:0 14px 40px rgba(216,183,90,.18)}
+  .card .top{height:118px;display:flex;align-items:center;justify-content:center;font-size:48px;
+    background:linear-gradient(135deg,#15131c,#0a0a10);position:relative;overflow:hidden}
+  .card .badge{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;letter-spacing:.08em;
+    padding:4px 9px;border-radius:6px;background:var(--gold);color:#1a1407}
+  .card .body{padding:18px 20px}
+  .card .t{font-weight:900;font-size:17px}
+  .card .d{font-size:13px;color:#a8a294;margin-top:8px;line-height:1.6}
+  .card .go{margin-top:14px;font-size:12px;letter-spacing:.16em;color:var(--gold)}
+  footer{text-align:center;color:#6f6a5e;font-size:12px;letter-spacing:.16em;padding:0 0 50px}
+  footer .b{color:var(--gold)}

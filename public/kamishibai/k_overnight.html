@@ -4,6 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>MUの一晩 — ひと晩で、19個。</title>
+<style id="lang-toggle-style">
+  /* 言語トグル（右上・小さく） */
+  .langtoggle{position:fixed;top:max(14px,env(safe-area-inset-top));right:14px;z-index:40;
+    display:flex;align-items:center;gap:2px;
+    background:rgba(8,8,12,.55);backdrop-filter:blur(8px);
+    border:1px solid rgba(216,183,90,.32);border-radius:30px;padding:4px;
+    font-family:"Zen Kaku Gothic New",sans-serif}
+  .langtoggle button{appearance:none;border:0;background:transparent;cursor:pointer;
+    color:#9b937e;font-size:12px;font-weight:700;letter-spacing:.08em;
+    padding:5px 12px;border-radius:24px;line-height:1;transition:color .25s,background .25s}
+  .langtoggle button.on{color:#1a1407;
+    background:linear-gradient(180deg,#f4d98a,#b8922f);
+    box-shadow:0 2px 10px rgba(216,183,90,.35)}
+</style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
@@ -144,6 +158,10 @@
 </style>
 </head>
 <body>
+<div class="langtoggle" id="langtoggle">
+  <button id="lang_ja" data-lang="ja">JA</button>
+  <button id="lang_en" data-lang="en">EN</button>
+</div>
 <div class="stage" id="stage"></div>
 <div class="stars" id="stars"></div>
 
@@ -159,7 +177,7 @@
   <div class="mark"><span class="star">✦</span><span class="wm">MU</span></div>
   <div class="time" id="clk">23<span class="pm">:00</span></div>
   <div class="phase" id="phase">NIGHT</div>
-  <div class="count" id="count"><b>0</b> 個できた</div>
+  <div class="count" id="count"><b>0</b> <span id="count_unit">個できた</span></div>
 </div>
 
 <div class="cap" id="cap"></div>
@@ -170,16 +188,16 @@
   <div class="bloomlogo">
     <svg viewBox="0 0 150 86" width="140"><defs><linearGradient id="ge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#ge)"/></g></svg>
   </div>
-  <div class="big">ほしいを、生む。</div>
-  <div class="sub">全部、本物の商品。盛っていない。</div>
-  <div class="url">wearmu.com/shop?brand=uchi-mono</div>
+  <div class="big" id="end_big">ほしいを、生む。</div>
+  <div class="sub" id="end_sub">全部、本物の商品。盛っていない。</div>
+  <div class="url" id="end_url">wearmu.com/shop?brand=uchi-mono</div>
 </div>
 
 <div class="start" id="start">
   <div class="smark"><span class="swm">MU</span></div>
-  <div class="title">MUの<span class="g">一晩</span></div>
+  <div class="title" id="start_title">MUの<span class="g">一晩</span></div>
   <div class="play">▶</div>
-  <div class="h">タップで再生（🔊 音あり）</div>
+  <div class="h" id="start_hint">タップで再生（🔊 音あり）</div>
 </div>
 
 <audio id="audio" src="MuMuMu.mp3" preload="auto" loop></audio>
@@ -187,13 +205,78 @@
 <script>
 (function(){
   "use strict";
+
+  // ===== i18n =====
+  const qpInit = new URLSearchParams(location.search);
+  const LANG = (qpInit.get('lang') === 'en') ? 'en' : 'ja';
+  document.documentElement.lang = LANG;
+
+  // 曲（言語連動）と尺。タイムラインはこの尺にスケールする。
+  const SONG = {
+    ja: { src:'MuMuMu.mp3',   dur:62.96 },
+    en: { src:'MuMuMu_8.mp3', dur:47.88 }
+  };
+
+  const I18N = {
+    ja: {
+      title:'MUの<span class="g">一晩</span>',
+      startHint:'タップで再生（🔊 音あり）',
+      countUnit:'個できた',
+      made:' を作りました',
+      summary:'ひと晩で、<span class="g">19個</span>。<br>あなたが寝てる間に。',
+      endBig:'ほしいを、生む。',
+      endSub:'全部、本物の商品。盛っていない。',
+      endUrl:'wearmu.com/shop?brand=uchi-mono',
+      names:['Tシャツ','パーカー','キャップ','トート','ロンT','クルー','ソックス','ビーニー','ステッカー',
+             'ワッペン','マグ','道着','ラッシュガード','ショーツ','ジャケット','スカーフ','ポーチ','タオル','ポスター'],
+      phase:{NIGHT:'夜',DEEP:'深夜',DAWN:'夜明け',MORNING:'朝'}
+    },
+    en: {
+      title:'MU <span class="g">Overnight</span>',
+      startHint:'tap to play · sound on 🔊',
+      countUnit:'made',
+      made:' made',
+      summary:'<span class="g">19</span> in one night.<br>while you slept.',
+      endBig:'Make what you want.',
+      endSub:'All real products. No hype.',
+      endUrl:'wearmu.com/shop?brand=uchi-mono',
+      names:['Tee','Hoodie','Cap','Tote','Long Sleeve','Crew','Socks','Beanie','Sticker',
+             'Patch','Mug','Gi','Rashguard','Shorts','Jacket','Scarf','Pouch','Towel','Poster'],
+      phase:{NIGHT:'NIGHT',DEEP:'DEEP NIGHT',DAWN:'DAWN',MORNING:'MORNING'}
+    }
+  };
+  const L = I18N[LANG];
+
+  // 言語トグル：?lang= を切替えてリロード（再生中の途中状態より一貫表示を優先）
+  (function wireToggle(){
+    const bJa=document.getElementById('lang_ja'), bEn=document.getElementById('lang_en');
+    if(bJa) bJa.classList.toggle('on', LANG==='ja');
+    if(bEn) bEn.classList.toggle('on', LANG==='en');
+    function go(to){
+      if(to===LANG) return;
+      const u=new URL(location.href);
+      if(to==='en') u.searchParams.set('lang','en'); else u.searchParams.delete('lang');
+      location.href=u.toString();
+    }
+    if(bJa) bJa.addEventListener('click',()=>go('ja'));
+    if(bEn) bEn.addEventListener('click',()=>go('en'));
+  })();
+
+  // 静的テキストを言語で差し込む
+  (function fillStatic(){
+    const set=(id,html)=>{const e=document.getElementById(id); if(e) e.innerHTML=html;};
+    set('start_title', L.title);
+    set('start_hint', L.startHint);
+    set('count_unit', L.countUnit);
+    set('end_big', L.endBig);
+    set('end_sub', L.endSub);
+    set('end_url', L.endUrl);
+  })();
+
   const NPROD = 19;
   const PRODUCTS = Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
-  // 実商品名（毎時lookbookで生まれる物の実況。盛らない・全部 reel の本物）
-  const NAMES = [
-    'Tee','Hoodie','Cap','Tote','Long Sleeve','Crew','Socks','Beanie','Sticker',
-    'Patch','Mug','Gi','Rashguard','Shorts','Jacket','Scarf','Pouch','Towel','Poster'
-  ];
+  // 実商品名（毎時lookbookで生まれる物の実況。盛らない・全部 reel の本物）— 言語連動
+  const NAMES = L.names;
   // 一晩のタイムライン（深夜→朝）。HH:MM を等間隔に割る。
   // r00 を 23:08 から始め、08:08 まで。19個。
   const T0 = 23*60 + 8;      // 23:08
@@ -204,25 +287,32 @@
     return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
   });
 
-  // タイミング設計（自走・音はBGM任意）
-  const INTRO = 2.6;          // 「寝てる間に…」の沈黙
-  const STEP  = 1.5;          // 1商品が生まれる間隔
+  // タイミング設計（自走・音はBGM任意）。曲の尺に合わせて STEP をスケール。
+  const INTRO   = 2.6;        // 「寝てる間に…」の沈黙
+  const SUM_GAP = 0.6;        // 生成終了→サマリ
+  const SUM_DUR = 3.4;        // サマリ→ブルーム
+  const BORN_DUR= 6.0;        // ブルーム→折り返し
+  // 固定区間を除いた残り時間を NPROD ステップに割り当てる
+  const FIXED = INTRO + SUM_GAP + SUM_DUR + BORN_DUR; // 12.6s
+  const TARGET_END = SONG[LANG].dur;                  // 曲尺に合わせる
+  let STEP = (TARGET_END - FIXED) / NPROD;
+  if(!isFinite(STEP) || STEP < 0.6) STEP = 1.5;       // 安全下限（JA/EN とも十分上回る）
   const GEN_END = INTRO + NPROD*STEP;   // 全商品が生まれ終わる
-  const SUM_AT  = GEN_END + 0.6;        // 「ひと晩で、19個。」
-  const BORN_AT = SUM_AT + 3.4;         // 「ほしいを、生む。」＋ブルーム
-  const END     = BORN_AT + 6.0;        // ループ折り返し
+  const SUM_AT  = GEN_END + SUM_GAP;    // 「ひと晩で、19個。」
+  const BORN_AT = SUM_AT + SUM_DUR;     // 「ほしいを、生む。」＋ブルーム
+  const END     = BORN_AT + BORN_DUR;   // ループ折り返し
 
   // 時刻の見た目（NIGHT→DEEP NIGHT→DAWN→MORNING）
   function clockFor(idx){
     // idx = 何個目まで生まれたか（-1=イントロ）。stamps で時刻を出す。
-    if(idx < 0) return {hh:'23',mm:':00',phase:'NIGHT',dawn:0};
+    if(idx < 0) return {hh:'23',mm:':00',phase:L.phase.NIGHT,dawn:0};
     const s = stamps[Math.min(idx,NPROD-1)].split(':');
     const hh = parseInt(s[0],10), mm = s[1];
-    let phase='NIGHT', dawn=0;
-    if(hh>=23 || hh<2){ phase='NIGHT'; dawn=0; }
-    else if(hh<4){ phase='DEEP NIGHT'; dawn=0.08; }
-    else if(hh<6){ phase='DAWN'; dawn=0.45; }
-    else { phase='MORNING'; dawn=0.9; }
+    let phase=L.phase.NIGHT, dawn=0;
+    if(hh>=23 || hh<2){ phase=L.phase.NIGHT; dawn=0; }
+    else if(hh<4){ phase=L.phase.DEEP; dawn=0.08; }
+    else if(hh<6){ phase=L.phase.DAWN; dawn=0.45; }
+    else { phase=L.phase.MORNING; dawn=0.9; }
     return {hh:String(hh).padStart(2,'0'), mm:':'+mm, phase, dawn};
   }
 
@@ -259,6 +349,8 @@
         countEl=document.getElementById('count').querySelector('b');
   const cap=document.getElementById('cap'), endEl=document.getElementById('end');
   const startEl=document.getElementById('start'), audio=document.getElementById('audio');
+  // 曲を言語に合わせる（JA=MuMuMu.mp3 / EN=MuMuMu_8.mp3）
+  if(audio.getAttribute('src') !== SONG[LANG].src){ audio.setAttribute('src', SONG[LANG].src); audio.load(); }
 
   let bornCount=-1;     // 生まれた数（イントロは-1）
   let lastFresh=-1;
@@ -326,7 +418,7 @@
       const full = typeName(visible);
       const chars = Math.min(full.length, Math.floor(localStep/0.05));
       t_nm.textContent = full.slice(0,chars);
-      if(chars>=full.length){ t_made.textContent = ' を作りました'; }
+      if(chars>=full.length){ t_made.textContent = L.made; }
       else t_made.textContent='';
     } else {
       tline.classList.remove('show');
@@ -336,7 +428,7 @@
     // ---- キャプション（締め） ----
     let capHTML='', capOn=false;
     if(inSummary){
-      capHTML = 'ひと晩で、<span class="g">19個</span>。<br>あなたが寝てる間に。';
+      capHTML = L.summary;
       capOn = (tt - SUM_AT) > 0.3;
     }
     cap.innerHTML = capHTML;

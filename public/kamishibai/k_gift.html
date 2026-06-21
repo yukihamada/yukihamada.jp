@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ja" id="htmlroot">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MU — 贈る</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#d8b75a; --gold2:#f4d98a; --goldd:#b8922f;
+    --ink:#07070a; --beat:0; --bloom:0; --reveal:0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden;color:#fff;
+    font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .stage{position:fixed;inset:0;background:var(--ink);overflow:hidden}
+
+  /* ===== ambient bloom + sparkles ===== */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:radial-gradient(70% 55% at 50% 42%, rgba(216,183,90,calc(.10 + var(--bloom)*.20 + var(--beat)*.16 + var(--reveal)*.30)), transparent 62%);
+    box-shadow:inset 0 0 220px 70px rgba(0,0,0,.6)}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:radial-gradient(60% 50% at 50% 44%, rgba(255,245,220,.92), rgba(216,183,90,.45) 45%, transparent 76%);
+    opacity:0;transition:opacity .5s}
+  .flash.on{opacity:.9;transition:opacity .05s}
+  .spk{position:fixed;z-index:4;pointer-events:none;color:var(--gold2);
+    text-shadow:0 0 12px rgba(244,217,138,.9);will-change:transform,opacity}
+
+  /* ===== wordmark (bloom logo) ===== */
+  .mark{position:fixed;top:max(20px,env(safe-area-inset-top));left:0;right:0;
+    text-align:center;z-index:7;display:flex;align-items:center;justify-content:center;gap:12px;opacity:.95}
+  .mark svg{filter:drop-shadow(0 0 calc(8px + var(--beat)*22px) rgba(216,183,90,.85))}
+  .mark .wm{font-family:"Zen Antique",serif;font-size:23px;letter-spacing:.34em;text-indent:.34em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ===== language toggle ===== */
+  .lang{position:fixed;top:max(16px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right));
+    z-index:31;display:flex;gap:2px;align-items:center;
+    background:rgba(20,20,26,.6);border:1px solid rgba(216,183,90,.35);
+    border-radius:999px;padding:3px;backdrop-filter:blur(6px)}
+  .lang button{cursor:pointer;border:none;background:none;font-family:"Zen Antique",serif;
+    font-size:12px;letter-spacing:.12em;color:#8d8775;padding:5px 11px;border-radius:999px;
+    transition:color .2s,background .2s}
+  .lang button.on{color:#1a1407;background:linear-gradient(180deg,var(--gold2),var(--goldd));font-weight:700}
+  .lang button:not(.on):hover{color:var(--gold2)}
+
+  /* ===== generic scene ===== */
+  .screen{position:absolute;inset:0;opacity:0;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 7%;transition:opacity .55s ease}
+  .screen.on{opacity:1;pointer-events:auto}
+
+  /* ===== START (sound gate) ===== */
+  #start{z-index:30;gap:20px;background:#000;cursor:pointer}
+  #start.gone{opacity:0;pointer-events:none}
+  #start .bloomwrap{filter:drop-shadow(0 0 30px rgba(216,183,90,.55))}
+  #start .play{width:84px;height:84px;border-radius:50%;border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);margin-top:8px}
+  #start .t{font-family:"Zen Antique",serif;letter-spacing:.32em;color:var(--gold);font-size:18px;text-align:center;line-height:1.5}
+  #start .h{color:#8d8775;font-size:12px;letter-spacing:.14em;text-align:center}
+
+  /* ===== ASK (input) ===== */
+  .ask{gap:24px}
+  .ask .step{font-size:12px;letter-spacing:.4em;color:var(--gold);opacity:.85}
+  .ask .q{font-family:"Zen Antique",serif;font-size:clamp(26px,6.4vw,42px);
+    background:linear-gradient(180deg,#fff,var(--gold2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 30px rgba(216,183,90,.18);text-align:center;line-height:1.3}
+  .ask .sub{color:#9a9484;font-size:13px;letter-spacing:.14em;margin-top:-10px;text-align:center}
+  .inputrow{width:min(92vw,560px);display:flex;gap:10px;align-items:stretch}
+  .ask input{flex:1;min-width:0;background:rgba(20,20,26,.9);border:2px solid rgba(216,183,90,.45);
+    border-radius:18px;padding:18px 20px;color:#fff;font-size:clamp(17px,4.6vw,22px);
+    font-family:inherit;outline:none;box-shadow:0 0 0 0 rgba(216,183,90,.4);transition:box-shadow .25s,border-color .25s}
+  .ask input:focus{border-color:var(--gold2);box-shadow:0 0 26px rgba(216,183,90,.35)}
+  .ask input::placeholder{color:#6c675b}
+  .gobtn{flex:0 0 auto;border:none;cursor:pointer;border-radius:18px;padding:0 22px;
+    font-family:inherit;font-weight:900;font-size:18px;color:#1a1407;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    box-shadow:0 8px 24px rgba(216,183,90,.35);transition:transform .12s}
+  .gobtn:active{transform:scale(.96)}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;width:min(92vw,580px)}
+  .chip{cursor:pointer;border:1px solid rgba(216,183,90,.4);border-radius:999px;
+    padding:9px 16px;font-size:14px;color:var(--gold2);background:rgba(216,183,90,.06);
+    transition:background .2s,transform .12s}
+  .chip:hover{background:rgba(216,183,90,.16)}
+  .chip:active{transform:scale(.95)}
+
+  /* ===== LOADING (gift box opening) ===== */
+  #load{gap:30px}
+  .giftbox{width:170px;height:170px;position:relative;
+    filter:drop-shadow(0 18px 40px rgba(0,0,0,.6)) drop-shadow(0 0 calc(22px + var(--beat)*40px) rgba(216,183,90,.55))}
+  .giftbox .body{position:absolute;left:14px;right:14px;bottom:0;top:54px;border-radius:10px;
+    background:linear-gradient(160deg,#1c1812,#0c0a07);box-shadow:inset 0 0 0 1.5px rgba(216,183,90,.5)}
+  .giftbox .vrib{position:absolute;left:50%;top:54px;bottom:0;width:24px;transform:translateX(-50%);
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));box-shadow:0 0 16px rgba(216,183,90,.5)}
+  .giftbox .lid{position:absolute;left:0;right:0;top:30px;height:34px;border-radius:8px;
+    background:linear-gradient(160deg,#262017,#13100b);box-shadow:inset 0 0 0 1.5px rgba(216,183,90,.55);
+    transform-origin:center bottom;animation:lidlift 1.5s ease-in-out infinite}
+  .giftbox .hrib{position:absolute;left:0;right:0;top:42px;height:10px;
+    background:linear-gradient(90deg,var(--goldd),var(--gold2),var(--goldd));animation:lidlift 1.5s ease-in-out infinite}
+  .giftbox .bow{position:absolute;left:50%;top:8px;transform:translateX(-50%);font-size:42px;
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.5));animation:bowpop 1.5s ease-in-out infinite}
+  @keyframes lidlift{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-9px) rotate(-2deg)}}
+  @keyframes bowpop{0%,100%{transform:translateX(-50%) translateY(0) scale(1)}50%{transform:translateX(-50%) translateY(-12px) scale(1.08)}}
+  #load .lt{font-family:"Zen Antique",serif;font-size:clamp(19px,4.8vw,28px);color:var(--gold2);text-align:center;line-height:1.4}
+  #load .lw{color:#fff;font-weight:900}
+  #load .ls{color:#7f7a6d;font-size:12px;letter-spacing:.22em;text-align:center}
+
+  /* ===== RESULT (gift reveal) ===== */
+  #result{gap:0}
+  .resstage{position:relative;width:min(94vw,640px);display:flex;flex-direction:column;align-items:center}
+  .toline{font-family:"Zen Antique",serif;font-size:clamp(15px,4vw,20px);color:var(--gold);
+    letter-spacing:.12em;margin-bottom:14px;text-align:center;text-shadow:0 2px 14px rgba(0,0,0,.8)}
+  .toline .g{color:var(--gold2)}
+  .prodwrap{position:relative;width:min(82vw,420px);aspect-ratio:1/1}
+  .rays{position:absolute;inset:-22%;border-radius:50%;pointer-events:none;z-index:0;
+    background:conic-gradient(from 0deg, transparent 0deg, rgba(244,217,138,.0) 6deg, rgba(244,217,138,.42) 8deg, transparent 14deg, transparent 24deg, rgba(244,217,138,.42) 26deg, transparent 32deg);
+    animation:rayspin 14s linear infinite;opacity:calc(.35 + var(--reveal)*.55);
+    mix-blend-mode:screen;filter:blur(.4px)}
+  @keyframes rayspin{to{transform:rotate(360deg)}}
+  .prodcard{position:relative;z-index:1;width:100%;height:100%;border-radius:24px;overflow:hidden;background:#fff;
+    box-shadow:0 24px 70px rgba(0,0,0,.62),0 0 0 2px rgba(216,183,90,.6),0 0 calc(50px + var(--beat)*70px) rgba(216,183,90,calc(.22+var(--beat)*.3));
+    animation:cardin .8s cubic-bezier(.2,.9,.25,1.2) both}
+  @keyframes cardin{0%{opacity:0;transform:scale(.7) translateY(30px) rotate(-3deg)}60%{opacity:1}100%{opacity:1;transform:scale(1) translateY(0) rotate(0)}}
+  .prodcard img{width:100%;height:100%;object-fit:cover}
+  .prodtag{position:absolute;left:14px;bottom:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+  .prodtag .made{background:linear-gradient(180deg,var(--gold2),var(--goldd));color:#1a1407;
+    font-weight:900;letter-spacing:.04em;padding:7px 13px;border-radius:14px;font-size:13px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .prodtag .ribbon{font-size:24px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+  .reveallabel{margin-top:20px;text-align:center;max-width:min(90vw,560px)}
+  .reveallabel .big{font-family:"Zen Antique",serif;font-size:clamp(19px,5vw,30px);color:#fff;
+    line-height:1.45;text-shadow:0 2px 18px rgba(0,0,0,.9)}
+  .reveallabel .big .g{color:var(--gold2)}
+  .reveallabel .sub{margin-top:8px;color:#b7ad96;font-size:13px;letter-spacing:.1em;line-height:1.6}
+  .cta{margin-top:22px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .btn{cursor:pointer;border:none;font-family:inherit;font-weight:900;font-size:16px;
+    border-radius:16px;padding:14px 24px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .12s}
+  .btn:active{transform:scale(.96)}
+  .btn.share{color:var(--gold2);background:rgba(216,183,90,.1);border:1.5px solid rgba(216,183,90,.5)}
+  .btn.make{color:#1a1407;background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    box-shadow:0 10px 28px rgba(216,183,90,.4)}
+  .again{margin-top:18px;cursor:pointer;color:#8d8775;font-size:13px;letter-spacing:.12em;
+    text-decoration:underline;text-underline-offset:4px;background:none;border:none;font-family:inherit}
+  .again:hover{color:var(--gold2)}
+  .toast{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translate(-50%,20px);
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));color:#1a1407;font-weight:900;
+    padding:12px 22px;border-radius:999px;box-shadow:0 12px 30px rgba(0,0,0,.5);z-index:20;
+    opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;font-size:14px}
+  .toast.on{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- wordmark -->
+  <div class="mark">
+    <svg viewBox="0 0 150 86" width="96" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+    <span class="wm">MU</span>
+  </div>
+
+  <!-- language toggle -->
+  <div class="lang" id="lang">
+    <button type="button" data-lang="ja">JA</button>
+    <button type="button" data-lang="en">EN</button>
+  </div>
+
+  <!-- START / sound gate -->
+  <section class="screen on" id="start">
+    <div class="bloomwrap">
+      <svg viewBox="0 0 150 86" width="150" aria-hidden="true"><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+    </div>
+    <div class="t" id="startT">大切な人へ、贈る。</div>
+    <div class="play">🎁</div>
+    <div class="h" id="startH">タップで再生（音あり）</div>
+  </section>
+
+  <!-- ASK 1: who -->
+  <section class="screen ask" id="ask1">
+    <div class="step" id="step1">STEP 1 / 2</div>
+    <div class="q" id="q1">誰に、贈る？</div>
+    <div class="sub" id="sub1">名前や、関係を。</div>
+    <div class="inputrow">
+      <input id="who" type="text" autocomplete="off" placeholder="例：お母さん、ゆい、親友のミナ…">
+      <button class="gobtn" id="go1">次へ →</button>
+    </div>
+    <div class="chips" id="chips1"></div>
+  </section>
+
+  <!-- ASK 2: what -->
+  <section class="screen ask" id="ask2">
+    <div class="step" id="step2">STEP 2 / 2</div>
+    <div class="q" id="q2">何を、贈る？</div>
+    <div class="sub" id="sub2">一言でいい。言葉にして。</div>
+    <div class="inputrow">
+      <input id="what" type="text" autocomplete="off" placeholder="例：あったかいマフラー、推しマグ…">
+      <button class="gobtn" id="go2">贈りものを作る ✦</button>
+    </div>
+    <div class="chips" id="chips2"></div>
+  </section>
+
+  <!-- LOADING -->
+  <section class="screen" id="load">
+    <div class="giftbox">
+      <div class="body"></div><div class="vrib"></div>
+      <div class="lid"></div><div class="hrib"></div><div class="bow">🎀</div>
+    </div>
+    <div class="lt" id="loadLt"><span id="loadPre">「</span><span class="lw" id="loadword"></span><span id="loadPost">」を、包んでいます…</span></div>
+    <div class="ls" id="loadstep">MU が、心を込めています</div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="resstage">
+      <div class="toline" id="toline"><span class="g" id="toName">○○</span> さんへ</div>
+      <div class="prodwrap">
+        <div class="rays"></div>
+        <div class="prodcard">
+          <img id="prodpic" src="reel/r00.jpg" alt="gift">
+          <div class="prodtag"><span class="made">✦ made on MU</span><span class="ribbon">🎁</span></div>
+        </div>
+      </div>
+      <div class="reveallabel">
+        <div class="big" id="revealBig"><span class="g" id="revName">○○</span><span id="revBody">さんへ。あなたが言葉にした、<span class="g">世界に1つ</span>。</span></div>
+        <div class="sub" id="revealSub">言葉が、贈りものになる。</div>
+      </div>
+      <div class="cta">
+        <button class="btn share" id="sharebtn">🔗 リンクを贈る</button>
+        <a class="btn make" id="makebtn" href="https://wearmu.com/make" target="_blank" rel="noopener">🎁 MUで贈る</a>
+      </div>
+      <button class="again" id="again">↺ 別の人に贈る</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="glow"></div>
+<div class="flash" id="flash"></div>
+<div class="toast" id="toast">🔗 贈りもののリンクをコピーしました</div>
+
+<audio id="audio" src="MuMuMu.mp3" preload="auto" loop></audio>
+
+<script>
+(function(){
+  "use strict";
+  const NPROD = 19;
+  const PRODUCTS = Array.from({length:NPROD}, (_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
+
+  // ---- i18n ---------------------------------------------------------------
+  const LANG = (new URLSearchParams(location.search).get('lang') === 'en') ? 'en' : 'ja';
+  const SONG = { ja:'MuMuMu.mp3', en:'MuMuMu_8.mp3' };
+  const I18N = {
+    ja:{
+      htmllang:'ja',
+      title:'MU — 贈る',
+      startT:'大切な人へ、贈る。',
+      startH:'タップで再生（音あり）',
+      step:'STEP {n} / 2',
+      q1:'誰に、贈る？',     sub1:'名前や、関係を。',
+      whoPh:'例：お母さん、ゆい、親友のミナ…',
+      go1:'次へ →',
+      whoChips:['お母さん','お父さん','親友','パートナー','先生','チームのみんな'],
+      q2:'何を、贈る？',     sub2:'一言でいい。言葉にして。',
+      whatPh:'例：あったかいマフラー、推しマグ…',
+      go2:'贈りものを作る ✦',
+      whatChips:['あったかいマフラー','名前入りマグ','うちの子Tシャツ','刺繍トート','光るキーホルダー','道場ロゴパーカー'],
+      loadPre:'「', loadPost:'」を、包んでいます…',
+      loadSteps:['言葉を、かたちに','色を、選んでいます','リボンを、結んでいます','心を、込めています','もうすぐ、開きます'],
+      toLine:'さんへ',
+      revBody:'さんへ。あなたが言葉にした、',
+      revOneOfOne:'世界に1つ',
+      revBodyEnd:'。',
+      revealSub:'言葉が、贈りものになる。',
+      share:'🔗 リンクを贈る',
+      make:'🎁 MUで贈る',
+      again:'↺ 別の人に贈る',
+      toast:'🔗 贈りもののリンクをコピーしました'
+    },
+    en:{
+      htmllang:'en',
+      title:'MU — Make it for someone',
+      startT:'Make it for someone you love.',
+      startH:'tap to play · sound on',
+      step:'STEP {n} / 2',
+      q1:'Who is it for?',   sub1:'A name, or how you know them.',
+      whoPh:'e.g. Mom, Yui, my best friend Mina…',
+      go1:'Next →',
+      whoChips:['Mom','Dad','my best friend','my partner','my coach','the whole team'],
+      q2:'What will you give?', sub2:'One line is enough. Just say it.',
+      whatPh:'e.g. a warm scarf, an oshi mug…',
+      go2:'Make the gift ✦',
+      whatChips:['a warm scarf','a mug with their name','a tee of my kid','an embroidered tote','a glowing keychain','a dojo-logo hoodie'],
+      loadPre:'Wrapping "', loadPost:'"…',
+      loadSteps:['Turning words into form','Choosing the colors','Tying the ribbon','Putting heart into it','Almost ready to open'],
+      toLine:'',
+      revBody:', this is the one you put into words — ',
+      revOneOfOne:'one of one in the world',
+      revBodyEnd:'.',
+      revealSub:'Words become a gift.',
+      share:'🔗 Send the link',
+      make:'🎁 Give it on MU',
+      again:'↺ Make one for someone else',
+      toast:'🔗 Gift link copied'
+    }
+  };
+  const T = I18N[LANG];
+
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement;
+  const audio = $('audio'), flash = $('flash');
+  const startEl=$('start'), ask1El=$('ask1'), ask2El=$('ask2'), loadEl=$('load'), resultEl=$('result');
+  const screens=[startEl,ask1El,ask2El,loadEl,resultEl];
+
+  // ---- apply language to DOM + song ----
+  audio.src = SONG[LANG];
+  function applyLang(){
+    document.getElementById('htmlroot').setAttribute('lang', T.htmllang);
+    document.title = T.title;
+    $('startT').textContent = T.startT;
+    $('startH').textContent = T.startH;
+    $('step1').textContent = T.step.replace('{n}','1');
+    $('step2').textContent = T.step.replace('{n}','2');
+    $('q1').textContent = T.q1;  $('sub1').textContent = T.sub1;
+    $('q2').textContent = T.q2;  $('sub2').textContent = T.sub2;
+    $('who').placeholder = T.whoPh;
+    $('what').placeholder = T.whatPh;
+    $('go1').textContent = T.go1;
+    $('go2').textContent = T.go2;
+    $('loadPre').textContent = T.loadPre;
+    $('loadPost').textContent = T.loadPost;
+    $('revealSub').textContent = T.revealSub;
+    $('sharebtn').textContent = T.share;
+    $('makebtn').textContent = T.make;
+    $('again').textContent = T.again;
+    $('toast').textContent = T.toast;
+    document.querySelectorAll('#lang button').forEach(b=>b.classList.toggle('on', b.dataset.lang===LANG));
+  }
+  applyLang();
+
+  // ---- language toggle: switch ?lang= and reload (preserves brand/FX) ----
+  document.querySelectorAll('#lang button').forEach(b=>{
+    b.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const next = b.dataset.lang;
+      if(next===LANG) return;
+      const u = new URL(location.href);
+      u.searchParams.set('lang', next);
+      location.href = u.toString();
+    });
+  });
+
+  // ---- deterministic hash ----
+  function hash(str){ let h=2166136261>>>0; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+
+  // ---- sparkles ----
+  const stage=$('stage'); const SP=[];
+  for(let i=0;i<16;i++){ const d=document.createElement('div'); d.className='spk';
+    d.style.fontSize=(11+(i%4)*5)+'px'; d.textContent='✦'; stage.appendChild(d); SP.push(d); }
+  let t0=performance.now()/1000;
+  function frame(){
+    const t=performance.now()/1000 - t0;
+    const beat = audio.paused ? 0 : Math.max(0, Math.exp(-((t*2)%1)*5)*0.9);
+    root.style.setProperty('--beat', beat.toFixed(3));
+    for(let j=0;j<SP.length;j++){ const ph=j*1.7;
+      const x=50 + 44*Math.sin(t*0.55 + ph);
+      const y=16 + 64*((Math.sin(t*0.4+ph*1.3)+1)/2);
+      const op=(0.18 + 0.6*Math.max(0,Math.sin(t*2.0 + ph))) * (0.4 + beat*0.7 + 0.3);
+      SP[j].style.left=x+'%'; SP[j].style.top=y+'%';
+      SP[j].style.opacity=Math.min(1,op).toFixed(2);
+      SP[j].style.transform='scale('+(0.6+0.6*Math.abs(Math.sin(t*1.4+ph)))+')';
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function show(el){ screens.forEach(s=>s.classList.toggle('on', s===el)); }
+  function bloom(v){ root.style.setProperty('--bloom', v); }
+  function reveal(v){ root.style.setProperty('--reveal', v); }
+  function doFlash(){ flash.classList.add('on'); setTimeout(()=>flash.classList.remove('on'),60); }
+
+  // ---- chips ----
+  function fillChips(elId, list, inputId, onPick){
+    const el=$(elId); el.innerHTML='';
+    list.forEach(ex=>{ const c=document.createElement('button'); c.className='chip'; c.type='button';
+      c.textContent=ex; c.addEventListener('click',()=>{ $(inputId).value=ex; onPick(ex); }); el.appendChild(c); });
+  }
+
+  // ---- state ----
+  let recipient='', present='', busy=false;
+
+  // ---- start (sound gate) ----
+  startEl.addEventListener('click',()=>{
+    audio.currentTime=0;
+    const after=()=>{ startEl.classList.add('gone'); bloom(1); doFlash(); show(ask1El); setTimeout(()=>$('who').focus(),200); };
+    audio.play().then(after).catch(after);
+  });
+
+  // ---- step 1: who ----
+  fillChips('chips1', T.whoChips, 'who', ()=>step1Done());
+  $('go1').addEventListener('click',()=>step1Done());
+  $('who').addEventListener('keydown',e=>{ if(e.key==='Enter') step1Done(); });
+  function step1Done(){
+    recipient = ($('who').value||'').trim() || T.whoChips[Math.floor(Math.random()*T.whoChips.length)];
+    $('who').value = recipient;
+    doFlash(); show(ask2El); setTimeout(()=>$('what').focus(),200);
+  }
+
+  // ---- step 2: what ----
+  fillChips('chips2', T.whatChips, 'what', ()=>step2Done());
+  $('go2').addEventListener('click',()=>step2Done());
+  $('what').addEventListener('keydown',e=>{ if(e.key==='Enter') step2Done(); });
+  function step2Done(){
+    present = ($('what').value||'').trim() || T.whatChips[Math.floor(Math.random()*T.whatChips.length)];
+    $('what').value = present;
+    generate();
+  }
+
+  // ---- generate (gift box → reveal) ----
+  function generate(){
+    if(busy) return; busy=true;
+    doFlash();
+    const seed = hash(recipient+'|'+present+'|'+Math.floor(Math.random()*5));
+    const prodIdx = seed % NPROD;
+
+    $('loadword').textContent = present;
+    $('loadstep').textContent = T.loadSteps[0];
+    show(loadEl);
+    let si=0;
+    const stepTimer=setInterval(()=>{ si=(si+1)%T.loadSteps.length; $('loadstep').textContent=T.loadSteps[si]; }, 560);
+
+    const demo = ()=>({ img: PRODUCTS[prodIdx] });
+    const settle = (data)=>{
+      clearInterval(stepTimer);
+      const card=resultEl.querySelector('.prodcard'); card.style.animation='none'; void card.offsetWidth; card.style.animation='';
+      $('prodpic').src = data.img || PRODUCTS[prodIdx];
+      // recipient lines
+      $('toName').textContent = recipient;
+      $('toline').lastChild.textContent = T.toLine ? ' '+T.toLine : '';
+      $('revName').textContent = recipient;
+      // build reveal body with highlighted "one of one"
+      const revBody=$('revBody');
+      revBody.innerHTML = T.revBody + '<span class="g">'+T.revOneOfOne+'</span>' + T.revBodyEnd;
+      // make/gift CTA
+      $('makebtn').href = 'https://wearmu.com/make?prompt='+encodeURIComponent(present)+'&gift='+encodeURIComponent(recipient);
+      reveal(1); doFlash();
+      show(resultEl);
+      setTimeout(()=>reveal(0.5), 1200);
+      busy=false;
+    };
+
+    const delay = 2200 + Math.random()*900;
+    const apiOK = location.protocol === 'http:' || location.protocol === 'https:';
+    setTimeout(()=>{
+      let done=false;
+      if(!apiOK){ settle(demo()); return; }
+      fetch('/api/gen?prompt='+encodeURIComponent(present))
+        .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+        .then(j=>{ if(done) return; done=true; settle({ img:(j&&j.image)||PRODUCTS[prodIdx] }); })
+        .catch(()=>{ if(done) return; done=true; settle(demo()); });
+      setTimeout(()=>{ if(!done){ done=true; settle(demo()); } }, 700);
+    }, delay);
+  }
+
+  // ---- result actions ----
+  $('sharebtn').addEventListener('click',()=>{
+    doFlash();
+    const link='https://wearmu.com/make?prompt='+encodeURIComponent(present)+'&gift='+encodeURIComponent(recipient);
+    if(navigator.clipboard) navigator.clipboard.writeText(link).catch(()=>{});
+    const toast=$('toast'); toast.classList.add('on');
+    setTimeout(()=>toast.classList.remove('on'),1900);
+  });
+  $('again').addEventListener('click',()=>{
+    $('who').value=''; $('what').value=''; recipient=''; present='';
+    bloom(1); show(ask1El); setTimeout(()=>$('who').focus(),150);
+  });
+
+})();
+</script>
+</body>
+</html>
