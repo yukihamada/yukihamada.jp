@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MU — 言ってみて。作れます。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#d8b75a; --gold2:#f4d98a; --goldd:#b8922f;
+    --ink:#07070a; --beat:0; --bloom:0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden;color:#fff;
+    font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .stage{position:fixed;inset:0;background:var(--ink);overflow:hidden}
+
+  /* ===== ambient bloom + sparkles ===== */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:radial-gradient(70% 55% at 50% 42%, rgba(216,183,90,calc(.10 + var(--bloom)*.22 + var(--beat)*.16)), transparent 62%);
+    box-shadow:inset 0 0 220px 70px rgba(0,0,0,.6)}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:radial-gradient(60% 50% at 50% 44%, rgba(255,245,220,.92), rgba(216,183,90,.45) 45%, transparent 76%);
+    opacity:0;transition:opacity .5s}
+  .flash.on{opacity:.9;transition:opacity .05s}
+  .spk{position:fixed;z-index:4;pointer-events:none;color:var(--gold2);
+    text-shadow:0 0 12px rgba(244,217,138,.9);will-change:transform,opacity}
+
+  /* ===== wordmark (bloom logo) ===== */
+  .mark{position:fixed;top:max(20px,env(safe-area-inset-top));left:0;right:0;
+    text-align:center;z-index:7;display:flex;align-items:center;justify-content:center;gap:12px;opacity:.95}
+  .mark svg{filter:drop-shadow(0 0 calc(8px + var(--beat)*22px) rgba(216,183,90,.85))}
+  .mark .wm{font-family:"Zen Antique",serif;font-size:23px;letter-spacing:.34em;text-indent:.34em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ===== generic scene ===== */
+  .screen{position:absolute;inset:0;opacity:0;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:0 7%;transition:opacity .55s ease}
+  .screen.on{opacity:1;pointer-events:auto}
+
+  /* ===== START (sound gate) ===== */
+  #start{z-index:30;gap:20px;background:#000;cursor:pointer}
+  #start.gone{opacity:0;pointer-events:none}
+  #start .bloomwrap{filter:drop-shadow(0 0 30px rgba(216,183,90,.55))}
+  #start .play{width:84px;height:84px;border-radius:50%;border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);margin-top:8px}
+  #start .t{font-family:"Zen Antique",serif;letter-spacing:.32em;color:var(--gold);font-size:18px}
+  #start .h{color:#8d8775;font-size:12px;letter-spacing:.14em}
+
+  /* ===== ASK (input) ===== */
+  #ask{gap:26px}
+  #ask .q{font-family:"Zen Antique",serif;font-size:clamp(28px,7vw,46px);
+    background:linear-gradient(180deg,#fff,var(--gold2));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 30px rgba(216,183,90,.18);text-align:center;line-height:1.3}
+  #ask .sub{color:#9a9484;font-size:13px;letter-spacing:.16em;margin-top:-12px}
+  .inputrow{width:min(92vw,560px);display:flex;gap:10px;align-items:stretch}
+  #word{flex:1;min-width:0;background:rgba(20,20,26,.9);border:2px solid rgba(216,183,90,.45);
+    border-radius:18px;padding:18px 20px;color:#fff;font-size:clamp(17px,4.6vw,22px);
+    font-family:inherit;outline:none;box-shadow:0 0 0 0 rgba(216,183,90,.4);transition:box-shadow .25s,border-color .25s}
+  #word:focus{border-color:var(--gold2);box-shadow:0 0 26px rgba(216,183,90,.35)}
+  #word::placeholder{color:#6c675b}
+  #go{flex:0 0 auto;border:none;cursor:pointer;border-radius:18px;padding:0 22px;
+    font-family:inherit;font-weight:900;font-size:18px;color:#1a1407;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    box-shadow:0 8px 24px rgba(216,183,90,.35);transition:transform .12s}
+  #go:active{transform:scale(.96)}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;width:min(92vw,580px)}
+  .chip{cursor:pointer;border:1px solid rgba(216,183,90,.4);border-radius:999px;
+    padding:9px 16px;font-size:14px;color:var(--gold2);background:rgba(216,183,90,.06);
+    transition:background .2s,transform .12s}
+  .chip:hover{background:rgba(216,183,90,.16)}
+  .chip:active{transform:scale(.95)}
+
+  /* ===== LOADING ===== */
+  #load{gap:24px}
+  .ring{width:148px;height:148px;border-radius:50%;position:relative;
+    background:conic-gradient(from 0deg, transparent, rgba(216,183,90,.15), var(--gold2), rgba(216,183,90,.15), transparent);
+    animation:spin 1.1s linear infinite;filter:drop-shadow(0 0 22px rgba(216,183,90,.5))}
+  .ring::before{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--ink)}
+  .ring .core{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    font-size:40px;color:var(--gold2);text-shadow:0 0 18px rgba(244,217,138,.9);
+    animation:pulse 1.1s ease-in-out infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes pulse{0%,100%{transform:scale(.9);opacity:.7}50%{transform:scale(1.15);opacity:1}}
+  #load .lt{font-family:"Zen Antique",serif;font-size:clamp(20px,5vw,30px);color:var(--gold2);
+    text-align:center}
+  #load .lw{color:#fff;font-weight:900}
+  #load .ls{color:#7f7a6d;font-size:12px;letter-spacing:.24em}
+
+  /* ===== RESULT ===== */
+  #result{gap:0}
+  .resstage{position:relative;width:min(94vw,640px);display:flex;flex-direction:column;align-items:center}
+  .girlbubble{position:relative;width:100%;display:flex;flex-direction:column;align-items:center;margin-bottom:14px}
+  .girlrow{display:flex;align-items:flex-end;gap:14px;width:100%;justify-content:center}
+  .girlimg{width:clamp(120px,30vw,180px);aspect-ratio:3/4;border-radius:20px;overflow:hidden;
+    flex:0 0 auto;box-shadow:0 16px 44px rgba(0,0,0,.6),0 0 0 2px rgba(216,183,90,.4);
+    transform:translateY(var(--gfloat))}
+  .girlimg img{width:100%;height:100%;object-fit:cover;object-position:center 20%}
+  .bubble{position:relative;background:linear-gradient(180deg,#fffdf6,#f3e6c2);color:#1a1407;
+    border-radius:18px;padding:14px 18px;font-weight:900;font-size:clamp(15px,4vw,20px);
+    max-width:min(54vw,300px);box-shadow:0 10px 30px rgba(0,0,0,.5);line-height:1.4}
+  .bubble::after{content:"";position:absolute;left:-12px;bottom:22px;border:8px solid transparent;
+    border-right-color:#f3e6c2}
+  .bubble .g{color:var(--goldd)}
+  .prodcard{width:min(82vw,420px);aspect-ratio:1/1;border-radius:24px;overflow:hidden;background:#fff;
+    box-shadow:0 24px 70px rgba(0,0,0,.62),0 0 0 2px rgba(216,183,90,.55),0 0 calc(46px + var(--beat)*70px) rgba(216,183,90,calc(.18+var(--beat)*.3));
+    position:relative;animation:cardin .6s cubic-bezier(.2,.9,.25,1.2) both}
+  @keyframes cardin{from{opacity:0;transform:scale(.84) translateY(24px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .prodcard img{width:100%;height:100%;object-fit:cover}
+  .prodtag{position:absolute;left:14px;bottom:14px;right:14px;display:flex;justify-content:space-between;align-items:flex-end;gap:8px}
+  .prodtag .made{background:linear-gradient(180deg,var(--gold2),var(--goldd));color:#1a1407;
+    font-weight:900;letter-spacing:.04em;padding:7px 13px;border-radius:14px;font-size:13px;
+    box-shadow:0 6px 18px rgba(0,0,0,.35)}
+  .yourlabel{margin-top:16px;text-align:center;font-family:"Zen Antique",serif;
+    font-size:clamp(18px,5vw,28px);color:#fff;text-shadow:0 2px 18px rgba(0,0,0,.9)}
+  .yourlabel .g{color:var(--gold2)}
+  .cta{margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .btn{cursor:pointer;border:none;font-family:inherit;font-weight:900;font-size:16px;
+    border-radius:16px;padding:14px 22px;text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .12s}
+  .btn:active{transform:scale(.96)}
+  .btn.want{color:var(--gold2);background:rgba(216,183,90,.1);border:1.5px solid rgba(216,183,90,.5)}
+  .btn.make{color:#1a1407;background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    box-shadow:0 10px 28px rgba(216,183,90,.4)}
+  .again{margin-top:16px;cursor:pointer;color:#8d8775;font-size:13px;letter-spacing:.14em;
+    text-decoration:underline;text-underline-offset:4px;background:none;border:none;font-family:inherit}
+  .again:hover{color:var(--gold2)}
+  .wanttoast{position:fixed;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translate(-50%,20px);
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));color:#1a1407;font-weight:900;
+    padding:12px 22px;border-radius:999px;box-shadow:0 12px 30px rgba(0,0,0,.5);z-index:20;
+    opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;font-size:14px}
+  .wanttoast.on{opacity:1;transform:translate(-50%,0)}
+
+  @media (max-width:430px){
+    .girlrow{flex-direction:column;align-items:center;gap:8px}
+    .bubble{max-width:82vw}
+    .bubble::after{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="stage" id="stage">
+
+  <!-- wordmark -->
+  <div class="mark">
+    <svg viewBox="0 0 150 86" width="96" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+    <span class="wm">MU</span>
+  </div>
+
+  <!-- START / sound gate -->
+  <section class="screen on" id="start">
+    <div class="bloomwrap">
+      <svg viewBox="0 0 150 86" width="150" aria-hidden="true"><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+    </div>
+    <div class="t">言ってみて。</div>
+    <div class="play">▶</div>
+    <div class="h">タップで再生（音あり）· 観るたび、別物</div>
+  </section>
+
+  <!-- ASK -->
+  <section class="screen" id="ask">
+    <div class="q">ほしいもの、ある？</div>
+    <div class="sub">なんでもいい。言ってみて。</div>
+    <div class="inputrow">
+      <input id="word" type="text" autocomplete="off" placeholder="例：犬の道着、痛タオル、推しマグ…">
+      <button id="go">作る ✦</button>
+    </div>
+    <div class="chips" id="chips"></div>
+  </section>
+
+  <!-- LOADING -->
+  <section class="screen" id="load">
+    <div class="ring"><div class="core">✦</div></div>
+    <div class="lt">「<span class="lw" id="loadword"></span>」を、生成中…</div>
+    <div class="ls" id="loadstep">MU が考えています</div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="resstage">
+      <div class="girlbubble">
+        <div class="girlrow">
+          <div class="girlimg"><img id="girlpic" src="girl3/make.png" alt="MU girl"></div>
+          <div class="bubble">これ、<span class="g">作れます</span>。</div>
+        </div>
+      </div>
+      <div class="prodcard">
+        <img id="prodpic" src="reel/r00.jpg" alt="generated product">
+        <div class="prodtag"><span class="made">✦ made on MU</span></div>
+      </div>
+      <div class="yourlabel">あなたの<span class="g" id="resword">○○</span></div>
+      <div class="cta">
+        <button class="btn want" id="wantbtn">🙋 ほしい</button>
+        <a class="btn make" id="makebtn" href="https://wearmu.com/make" target="_blank" rel="noopener">✨ MUで作る</a>
+      </div>
+      <button class="again" id="again">↺ 別のを言ってみる</button>
+    </div>
+  </section>
+
+</div>
+
+<div class="glow"></div>
+<div class="flash" id="flash"></div>
+<div class="wanttoast" id="toast">🙋 ほしい！を受け取りました</div>
+
+<audio id="audio" src="MuMuMu.mp3" preload="auto" loop></audio>
+
+<script>
+(function(){
+  "use strict";
+  const NPROD = 19;
+  const PRODUCTS = Array.from({length:NPROD}, (_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
+  const GIRLS = ['make','arrive','want','sell','towel','dance2'];
+  const EXAMPLES = ['犬の道着','痛タオル','推しマグ','道場ロゴ入りパーカー','刺繍トート','光るキーホルダー','チームの旗','うちの子Tシャツ'];
+  const LOAD_STEPS = ['言葉を、かたちに','素材を選んでいます','色を、決めています','縫い目を、整えます','もうすぐ、出来ます'];
+
+  const $ = id => document.getElementById(id);
+  const root = document.documentElement;
+  const audio = $('audio'), flash = $('flash');
+  const startEl=$('start'), askEl=$('ask'), loadEl=$('load'), resultEl=$('result');
+
+  // ---- deterministic hash so the same word always picks the same product ----
+  function hash(str){ let h=2166136261>>>0; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+
+  // ---- sparkles ----
+  const stage=$('stage'); const SP=[];
+  for(let i=0;i<16;i++){ const d=document.createElement('div'); d.className='spk';
+    d.style.fontSize=(11+(i%4)*5)+'px'; d.textContent='✦'; stage.appendChild(d); SP.push(d); }
+  let t0=performance.now()/1000;
+  function frame(){
+    const t=performance.now()/1000 - t0;
+    const beat = audio.paused ? 0 : Math.max(0, Math.exp(-((t*2)%1)*5)*0.9);
+    root.style.setProperty('--beat', beat.toFixed(3));
+    root.style.setProperty('--gfloat', (Math.sin(t*1.4)*5).toFixed(2)+'px');
+    for(let j=0;j<SP.length;j++){ const ph=j*1.7;
+      const x=50 + 44*Math.sin(t*0.55 + ph);
+      const y=16 + 64*((Math.sin(t*0.4+ph*1.3)+1)/2);
+      const op=(0.18 + 0.6*Math.max(0,Math.sin(t*2.0 + ph))) * (0.4 + beat*0.7 + 0.3);
+      SP[j].style.left=x+'%'; SP[j].style.top=y+'%';
+      SP[j].style.opacity=Math.min(1,op).toFixed(2);
+      SP[j].style.transform='scale('+(0.6+0.6*Math.abs(Math.sin(t*1.4+ph)))+')';
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  function show(el){ [startEl,askEl,loadEl,resultEl].forEach(s=>s.classList.toggle('on', s===el)); }
+  function bloom(v){ root.style.setProperty('--bloom', v); }
+  function doFlash(){ flash.classList.add('on'); setTimeout(()=>flash.classList.remove('on'),60); }
+
+  // ---- chips ----
+  const chipsEl=$('chips');
+  EXAMPLES.forEach(ex=>{ const c=document.createElement('button'); c.className='chip'; c.type='button';
+    c.textContent=ex; c.addEventListener('click',()=>{ $('word').value=ex; generate(ex); }); chipsEl.appendChild(c); });
+
+  // ---- start (sound gate) ----
+  startEl.addEventListener('click',()=>{
+    audio.currentTime=0;
+    const after=()=>{ startEl.classList.add('gone'); bloom(1); doFlash(); show(askEl); setTimeout(()=>$('word').focus(),200); };
+    audio.play().then(after).catch(after);
+  });
+
+  // ---- ask ----
+  $('go').addEventListener('click',()=>generate($('word').value));
+  $('word').addEventListener('keydown',e=>{ if(e.key==='Enter') generate($('word').value); });
+
+  let busy=false;
+  function generate(raw){
+    let word=(raw||'').trim();
+    if(!word){ word = EXAMPLES[Math.floor(Math.random()*EXAMPLES.length)]; $('word').value=word; }
+    if(busy) return; busy=true;
+    doFlash();
+
+    // pick product: deterministic by word, but salted so repeats of same word still feel alive
+    const seed = hash(word + '|' + Math.floor(Math.random()*7));
+    const prodIdx = seed % NPROD;
+    const girl = GIRLS[hash(word) % GIRLS.length];
+
+    // loading screen
+    $('loadword').textContent = word;
+    $('loadstep').textContent = LOAD_STEPS[0];
+    show(loadEl);
+    let si=0;
+    const stepTimer=setInterval(()=>{ si=(si+1)%LOAD_STEPS.length; $('loadstep').textContent=LOAD_STEPS[si]; }, 520);
+
+    // future hook: real API, fall back to demo on any failure
+    const demo = ()=>({ img: PRODUCTS[prodIdx], girl });
+    const settle = (data)=>{
+      clearInterval(stepTimer);
+      $('girlpic').src = (data.girl ? 'girl3/'+data.girl+'.png' : 'girl3/make.png');
+      // re-trigger card-in animation
+      const card=resultEl.querySelector('.prodcard'); card.style.animation='none'; void card.offsetWidth; card.style.animation='';
+      $('prodpic').src = data.img || PRODUCTS[prodIdx];
+      $('resword').textContent = word;
+      $('makebtn').href = 'https://wearmu.com/make?prompt='+encodeURIComponent(word);
+      doFlash();
+      show(resultEl);
+      busy=false;
+    };
+
+    const delay = 2000 + Math.random()*900; // 2–3s feel
+    const apiOK = location.protocol === 'http:' || location.protocol === 'https:';
+    const t=setTimeout(()=>{
+      // try real API but never block on it past the delay window
+      let done=false;
+      if(!apiOK){ settle(demo()); return; } // static/file:// → demo only, no noisy fetch
+      fetch('/api/gen?prompt='+encodeURIComponent(word))
+        .then(r=>{ if(!r.ok) throw 0; return r.json(); })
+        .then(j=>{ if(done) return; done=true; settle({ img: (j&&j.image)||PRODUCTS[prodIdx], girl }); })
+        .catch(()=>{ if(done) return; done=true; settle(demo()); });
+      // hard fallback in case fetch hangs
+      setTimeout(()=>{ if(!done){ done=true; settle(demo()); } }, 700);
+    }, delay);
+  }
+
+  // ---- result actions ----
+  $('wantbtn').addEventListener('click',()=>{
+    doFlash();
+    const toast=$('toast'); toast.classList.add('on');
+    setTimeout(()=>toast.classList.remove('on'),1800);
+  });
+  $('again').addEventListener('click',()=>{ $('word').value=''; bloom(1); show(askEl); setTimeout(()=>$('word').focus(),150); });
+
+})();
+</script>
+</body>
+</html>

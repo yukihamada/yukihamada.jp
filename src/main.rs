@@ -6990,6 +6990,8 @@ async fn main() {
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
+        // 🎬 紙芝居シアター: MUのインタラクティブ紙芝居5本(launcher=index.html)
+        .nest_service("/kamishibai-theater", ServeDir::new("public/kamishibai"))
         .route("/api/fanclub/verify", post(fanclub_verify))
         .route("/api/fanclub/verify", axum::routing::options(options_cors))
         .route("/api/fanclub/otp/send", post(fanclub_send_otp))
