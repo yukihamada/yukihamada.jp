@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MUの一晩 — ひと晩で、19個。</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#07070a;
+    --beat:0;--flash:0;--bloom:0;--dawn:0;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden;color:#fff;
+    font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;
+    display:flex;align-items:center;justify-content:center}
+
+  /* 夜→朝で背景が静かに移る。dawn=0:深い夜  dawn=1:朝の藍金 */
+  .stage{position:fixed;inset:0;overflow:hidden;
+    background:
+      radial-gradient(120% 90% at 50% 8%,
+        rgba(40,34,16,calc(var(--dawn)*.55)), transparent 55%),
+      linear-gradient(180deg,
+        rgb(calc(7 + var(--dawn)*30), calc(7 + var(--dawn)*22), calc(12 + var(--dawn)*30)) 0%,
+        rgb(calc(3 + var(--dawn)*16), calc(3 + var(--dawn)*14), calc(7 + var(--dawn)*22)) 100%);
+  }
+  /* 星（夜だけ）— 朝に向かって消える */
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:1;opacity:calc(1 - var(--dawn)*.92)}
+  .stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.0;
+    box-shadow:0 0 4px rgba(255,255,255,.6)}
+
+  /* 商品が積み上がる壁（グリッド）。生まれたカードだけ .born で出現 */
+  .wall{position:fixed;left:50%;top:46%;transform:translate(-50%,-50%);
+    width:min(86vw,560px);z-index:3;
+    display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-content:start}
+  .card{position:relative;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:#0d0d12;
+    opacity:0;transform:translateY(14px) scale(.9);
+    box-shadow:0 6px 20px rgba(0,0,0,.55),0 0 0 1px rgba(216,183,90,.18);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.16,.8,.3,1), box-shadow .7s}
+  .card img{width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s}
+  .card.born{opacity:1;transform:translateY(0) scale(1)}
+  .card.born img{opacity:1}
+  .card.fresh{box-shadow:0 6px 24px rgba(0,0,0,.5),
+    0 0 0 1px rgba(244,217,138,.9),
+    0 0 34px rgba(216,183,90,.55)}
+  /* 生まれた瞬間に出る金リング */
+  .card .ring{position:absolute;inset:0;border-radius:12px;pointer-events:none;
+    box-shadow:0 0 0 2px rgba(244,217,138,0);opacity:0}
+  .card.fresh .ring{animation:ringpop 1.2s ease forwards}
+  @keyframes ringpop{
+    0%{opacity:1;box-shadow:0 0 0 2px rgba(244,217,138,.95),0 0 0 0 rgba(244,217,138,.5)}
+    100%{opacity:0;box-shadow:0 0 0 2px rgba(244,217,138,0),0 0 0 20px rgba(244,217,138,0)}
+  }
+  /* 生まれた商品の実況ラベル（タイムスタンプ＋名） */
+  .ticker{position:fixed;left:0;right:0;top:50%;transform:translateY(-50%);
+    text-align:center;z-index:5;pointer-events:none;padding:0 8%}
+  .ticker .line{display:inline-flex;align-items:center;gap:12px;
+    background:rgba(8,8,12,.62);backdrop-filter:blur(8px);
+    border:1px solid rgba(216,183,90,.32);border-radius:40px;
+    padding:11px 22px;opacity:0;transform:translateY(10px) scale(.96);
+    box-shadow:0 10px 40px rgba(0,0,0,.6),0 0 30px rgba(216,183,90,.12)}
+  .ticker .line.show{opacity:1;transform:translateY(0) scale(1);
+    transition:opacity .45s, transform .45s cubic-bezier(.16,.8,.3,1)}
+  .ticker .ts{font-family:"Zen Antique",serif;font-size:16px;letter-spacing:.06em;color:var(--gold2)}
+  .ticker .st{color:var(--gold);font-size:15px}
+  .ticker .nm{font-weight:700;font-size:15px;color:#fff;letter-spacing:.02em}
+  .ticker .nm .typed{border-right:2px solid var(--gold2);padding-right:1px}
+  .ticker .nm .made{color:#cfc7b2;font-weight:400;margin-left:2px}
+
+  /* 上部：時刻が夜→朝へ進む */
+  .clock{position:fixed;left:0;right:0;top:max(22px,env(safe-area-inset-top));
+    z-index:7;display:flex;flex-direction:column;align-items:center;gap:7px}
+  .clock .mark{display:flex;align-items:center;justify-content:center;gap:9px;opacity:.95}
+  .clock .star{font-size:18px;color:var(--gold);
+    filter:drop-shadow(0 0 calc(6px + var(--beat)*16px) rgba(216,183,90,1))}
+  .clock .wm{font-family:"Zen Antique",serif;font-size:20px;letter-spacing:.34em;text-indent:.34em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .clock .time{font-family:"Zen Antique",serif;font-size:clamp(30px,8vw,46px);
+    letter-spacing:.08em;color:#fff;line-height:1;
+    text-shadow:0 0 22px rgba(216,183,90,.35)}
+  .clock .time .pm{font-size:.42em;letter-spacing:.3em;color:var(--gold);margin-left:8px;vertical-align:.32em}
+  .clock .phase{font-size:11px;letter-spacing:.46em;text-indent:.46em;color:var(--gold);opacity:.8}
+  .clock .count{font-size:11px;letter-spacing:.18em;color:#9b937e}
+  .clock .count b{color:var(--gold2);font-family:"Zen Antique",serif;font-size:15px}
+
+  /* 下部キャプション（締めの言葉） */
+  .cap{position:fixed;left:0;right:0;bottom:8%;z-index:7;text-align:center;padding:0 8%;
+    font-weight:900;font-size:clamp(20px,5vw,30px);color:#fff;opacity:0;
+    transform:translateY(8px);transition:opacity .6s,transform .6s;
+    text-shadow:0 2px 16px rgba(0,0,0,.9),0 0 26px rgba(216,183,90,.3)}
+  .cap.on{opacity:1;transform:translateY(0)}
+  .cap .g{color:var(--gold2)}
+
+  /* 演出レイヤ */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:radial-gradient(70% 55% at 50% 46%, rgba(216,183,90,calc(var(--beat)*.16)), transparent 62%);
+    box-shadow:inset 0 0 200px 50px rgba(0,0,0,.5)}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:8;
+    background:radial-gradient(58% 48% at 50% 46%, rgba(255,245,220,.85), rgba(216,183,90,.4) 45%, transparent 75%);
+    opacity:var(--flash)}
+  .spk{position:fixed;z-index:4;pointer-events:none;color:var(--gold2);
+    text-shadow:0 0 12px rgba(244,217,138,.9)}
+
+  /* ブルームのエンディング */
+  .end{position:fixed;inset:0;z-index:9;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:14px;opacity:0;
+    background:radial-gradient(60% 50% at 50% 44%,
+      rgba(24,20,10,calc(var(--bloom))), rgba(0,0,0,calc(var(--bloom)*.96)));
+    transition:opacity .8s}
+  .end.on{opacity:1}
+  .end .bloomlogo{filter:drop-shadow(0 0 calc(20px + var(--bloom)*60px) rgba(244,217,138,.8));
+    transform:scale(calc(.85 + var(--bloom)*.25))}
+  .end .big{font-family:"Zen Antique",serif;font-size:clamp(26px,7vw,46px);
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-align:center;line-height:1.3}
+  .end .sub{font-size:clamp(15px,3.6vw,19px);color:#d8cfb6;letter-spacing:.1em;text-align:center}
+  .end .url{margin-top:14px;color:#1a1407;font-weight:900;letter-spacing:.04em;font-size:15px;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    padding:12px 26px;border-radius:30px;box-shadow:0 12px 40px rgba(216,183,90,.4)}
+
+  /* スタート画面（音あり再生のための必須ゲート） */
+  .start{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:20px;cursor:pointer;
+    background:radial-gradient(70% 60% at 50% 42%,#0c0a06,#000);transition:opacity .6s}
+  .start.hide{opacity:0;pointer-events:none}
+  .start .smark{display:flex;align-items:center;gap:10px}
+  .start .swm{font-family:"Zen Antique",serif;font-size:24px;letter-spacing:.36em;text-indent:.36em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .start .title{font-family:"Zen Antique",serif;font-size:clamp(22px,6vw,34px);color:#fff;
+    letter-spacing:.1em;text-align:center}
+  .start .title .g{background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  .start .play{width:80px;height:80px;border-radius:50%;border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;font-size:28px;color:var(--gold);
+    box-shadow:0 0 40px rgba(216,183,90,.3);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 30px rgba(216,183,90,.22)}50%{box-shadow:0 0 60px rgba(216,183,90,.5)}}
+  .start .h{color:#8d8775;font-size:12px;letter-spacing:.16em}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<div class="stars" id="stars"></div>
+
+<div class="wall" id="wall"></div>
+
+<div class="ticker"><div class="line" id="tline">
+  <span class="ts" id="t_ts">23:00</span>
+  <span class="st">✦</span>
+  <span class="nm"><span class="typed" id="t_nm"></span><span class="made" id="t_made"></span></span>
+</div></div>
+
+<div class="clock">
+  <div class="mark"><span class="star">✦</span><span class="wm">MU</span></div>
+  <div class="time" id="clk">23<span class="pm">:00</span></div>
+  <div class="phase" id="phase">NIGHT</div>
+  <div class="count" id="count"><b>0</b> 個できた</div>
+</div>
+
+<div class="cap" id="cap"></div>
+
+<div class="glow"></div><div class="flash"></div>
+
+<div class="end" id="end">
+  <div class="bloomlogo">
+    <svg viewBox="0 0 150 86" width="140"><defs><linearGradient id="ge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#ge)"/></g></svg>
+  </div>
+  <div class="big">ほしいを、生む。</div>
+  <div class="sub">全部、本物の商品。盛っていない。</div>
+  <div class="url">wearmu.com/shop?brand=uchi-mono</div>
+</div>
+
+<div class="start" id="start">
+  <div class="smark"><span class="swm">MU</span></div>
+  <div class="title">MUの<span class="g">一晩</span></div>
+  <div class="play">▶</div>
+  <div class="h">タップで再生（🔊 音あり）</div>
+</div>
+
+<audio id="audio" src="MuMuMu.mp3" preload="auto" loop></audio>
+
+<script>
+(function(){
+  "use strict";
+  const NPROD = 19;
+  const PRODUCTS = Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
+  // 実商品名（毎時lookbookで生まれる物の実況。盛らない・全部 reel の本物）
+  const NAMES = [
+    'Tee','Hoodie','Cap','Tote','Long Sleeve','Crew','Socks','Beanie','Sticker',
+    'Patch','Mug','Gi','Rashguard','Shorts','Jacket','Scarf','Pouch','Towel','Poster'
+  ];
+  // 一晩のタイムライン（深夜→朝）。HH:MM を等間隔に割る。
+  // r00 を 23:08 から始め、08:08 まで。19個。
+  const T0 = 23*60 + 8;      // 23:08
+  const T1 = (24+8)*60 + 8;  // 翌08:08
+  const stamps = PRODUCTS.map((_,i)=>{
+    const m = Math.round(T0 + (T1-T0)*i/(NPROD-1));
+    const hh = Math.floor(m/60)%24, mm = m%60;
+    return String(hh).padStart(2,'0')+':'+String(mm).padStart(2,'0');
+  });
+
+  // タイミング設計（自走・音はBGM任意）
+  const INTRO = 2.6;          // 「寝てる間に…」の沈黙
+  const STEP  = 1.5;          // 1商品が生まれる間隔
+  const GEN_END = INTRO + NPROD*STEP;   // 全商品が生まれ終わる
+  const SUM_AT  = GEN_END + 0.6;        // 「ひと晩で、19個。」
+  const BORN_AT = SUM_AT + 3.4;         // 「ほしいを、生む。」＋ブルーム
+  const END     = BORN_AT + 6.0;        // ループ折り返し
+
+  // 時刻の見た目（NIGHT→DEEP NIGHT→DAWN→MORNING）
+  function clockFor(idx){
+    // idx = 何個目まで生まれたか（-1=イントロ）。stamps で時刻を出す。
+    if(idx < 0) return {hh:'23',mm:':00',phase:'NIGHT',dawn:0};
+    const s = stamps[Math.min(idx,NPROD-1)].split(':');
+    const hh = parseInt(s[0],10), mm = s[1];
+    let phase='NIGHT', dawn=0;
+    if(hh>=23 || hh<2){ phase='NIGHT'; dawn=0; }
+    else if(hh<4){ phase='DEEP NIGHT'; dawn=0.08; }
+    else if(hh<6){ phase='DAWN'; dawn=0.45; }
+    else { phase='MORNING'; dawn=0.9; }
+    return {hh:String(hh).padStart(2,'0'), mm:':'+mm, phase, dawn};
+  }
+
+  // ----- DOM 構築 -----
+  const wall = document.getElementById('wall');
+  const cards = PRODUCTS.map((src,i)=>{
+    const c = document.createElement('div'); c.className='card';
+    const im = document.createElement('img'); im.src=src; im.alt=NAMES[i];
+    const ring = document.createElement('div'); ring.className='ring';
+    c.appendChild(im); c.appendChild(ring); wall.appendChild(c);
+    return c;
+  });
+  // 星
+  const starsEl = document.getElementById('stars');
+  const STARS=[];
+  for(let i=0;i<60;i++){
+    const s=document.createElement('i');
+    s.style.left=(Math.random()*100)+'%';
+    s.style.top=(Math.random()*70)+'%';
+    s.dataset.ph=(Math.random()*6.28).toFixed(2);
+    s.dataset.sp=(0.4+Math.random()*0.8).toFixed(2);
+    starsEl.appendChild(s); STARS.push(s);
+  }
+  // スパークル
+  const stage=document.getElementById('stage');
+  const SP=[];
+  for(let i=0;i<12;i++){const d=document.createElement('div');d.className='spk';
+    d.style.fontSize=(10+(i%4)*5)+'px';d.textContent='✦';stage.appendChild(d);SP.push(d);}
+
+  const root=document.documentElement;
+  const tline=document.getElementById('tline'), t_ts=document.getElementById('t_ts'),
+        t_nm=document.getElementById('t_nm'), t_made=document.getElementById('t_made');
+  const clk=document.getElementById('clk'), phaseEl=document.getElementById('phase'),
+        countEl=document.getElementById('count').querySelector('b');
+  const cap=document.getElementById('cap'), endEl=document.getElementById('end');
+  const startEl=document.getElementById('start'), audio=document.getElementById('audio');
+
+  let bornCount=-1;     // 生まれた数（イントロは-1）
+  let lastFresh=-1;
+  let curTickerIdx=-2;  // 直近で実況した商品index
+
+  function typeName(idx){
+    // 「Tee」をタイプ風に出す（描画はrenderループでlocal時間から決定論的に）
+    return NAMES[idx];
+  }
+
+  function apply(t){
+    // ループ
+    const tt = t % END;
+
+    // 何個目まで生まれたか
+    let nb;
+    if(tt < INTRO) nb = -1;
+    else nb = Math.min(NPROD-1, Math.floor((tt-INTRO)/STEP));
+    const phaseGen = (tt < INTRO);
+    const inSummary = (tt >= SUM_AT && tt < BORN_AT);
+    const inBorn = (tt >= BORN_AT);
+
+    // ---- カード出現 ----
+    const visible = (tt < INTRO) ? -1 : nb;
+    for(let i=0;i<cards.length;i++){
+      const on = i<=visible;
+      if(on && !cards[i].classList.contains('born')) cards[i].classList.add('born');
+      if(!on && cards[i].classList.contains('born') && tt < 0.05){ /* ループ先頭でリセット */ }
+    }
+    // ループ折り返しのリセット（tt が小さく巻き戻った時）
+    if(tt < INTRO && bornCount>=0){
+      cards.forEach(c=>{c.classList.remove('born');c.classList.remove('fresh');});
+      lastFresh=-1; curTickerIdx=-2;
+    }
+    bornCount = visible;
+
+    // 直近で生まれたカードを fresh に
+    if(visible>=0 && visible!==lastFresh){
+      if(lastFresh>=0 && cards[lastFresh]) cards[lastFresh].classList.remove('fresh');
+      if(cards[visible]) cards[visible].classList.add('fresh');
+      // ring を再トリガ
+      cards[visible].classList.remove('fresh'); void cards[visible].offsetWidth; cards[visible].classList.add('fresh');
+      lastFresh=visible;
+    }
+
+    // ---- 時刻表示 ----
+    const ck=clockFor(visible);
+    clk.innerHTML = ck.hh+'<span class="pm">'+ck.mm+'</span>';
+    phaseEl.textContent = ck.phase;
+    root.style.setProperty('--dawn', (inBorn? Math.min(1,0.9+0.1) : ck.dawn).toFixed(3));
+    countEl.textContent = Math.max(0, visible+1);
+
+    // ---- 実況ティッカー ----
+    if(!inSummary && !inBorn && visible>=0){
+      const localStep = (tt-INTRO) - visible*STEP; // この商品が生まれてからの経過
+      // 表示は生成直後 0〜1.25s 強調、その後フェード
+      const show = localStep < STEP*0.9;
+      tline.classList.toggle('show', show);
+      if(visible!==curTickerIdx){
+        curTickerIdx=visible;
+        t_ts.textContent = stamps[visible];
+        t_made.textContent = '';
+      }
+      // タイプライタ（local時間から決定論的に）
+      const full = typeName(visible);
+      const chars = Math.min(full.length, Math.floor(localStep/0.05));
+      t_nm.textContent = full.slice(0,chars);
+      if(chars>=full.length){ t_made.textContent = ' を作りました'; }
+      else t_made.textContent='';
+    } else {
+      tline.classList.remove('show');
+      curTickerIdx=-2;
+    }
+
+    // ---- キャプション（締め） ----
+    let capHTML='', capOn=false;
+    if(inSummary){
+      capHTML = 'ひと晩で、<span class="g">19個</span>。<br>あなたが寝てる間に。';
+      capOn = (tt - SUM_AT) > 0.3;
+    }
+    cap.innerHTML = capHTML;
+    cap.classList.toggle('on', capOn);
+
+    // ---- ブルーム・エンディング ----
+    endEl.classList.toggle('on', inBorn);
+    let bloom=0;
+    if(inBorn){ bloom = Math.min(1, (tt-BORN_AT)/1.6); }
+    root.style.setProperty('--bloom', bloom.toFixed(3));
+
+    // ---- ビート（BGMが鳴っていれば軽く脈動） ----
+    const beat = audio.paused ? (0.3*Math.max(0,Math.exp(-((tt*1.6)%1)*5)))
+                              : Math.max(0, Math.exp(-((tt*1.85)%1)*5)*0.85);
+    root.style.setProperty('--beat', beat.toFixed(3));
+
+    // 商品が生まれた瞬間の金フラッシュ
+    let flash=0;
+    if(visible>=0 && !inSummary && !inBorn){
+      const localStep=(tt-INTRO)-visible*STEP;
+      flash=Math.max(0, 0.5 - localStep*4);
+    }
+    if(inBorn) flash=Math.max(flash, Math.max(0, 0.6 - (tt-BORN_AT)*1.5));
+    root.style.setProperty('--flash', flash.toFixed(3));
+
+    // 星のまたたき
+    for(let i=0;i<STARS.length;i++){
+      const ph=parseFloat(STARS[i].dataset.ph), sp=parseFloat(STARS[i].dataset.sp);
+      const op=0.15+0.65*Math.max(0,Math.sin(tt*sp+ph));
+      STARS[i].style.opacity=op.toFixed(2);
+    }
+    // スパークル（夜は控えめ、ブルームで増える）
+    const spBoost = inBorn ? 1 : 0.45;
+    for(let j=0;j<SP.length;j++){ const ph=j*1.7;
+      const x=50 + 40*Math.sin(tt*0.5 + ph), y=18 + 62*((Math.sin(tt*0.37+ph*1.3)+1)/2);
+      const op=(0.2 + 0.6*Math.max(0,Math.sin(tt*1.9 + ph))) * spBoost;
+      SP[j].style.left=x+'%'; SP[j].style.top=y+'%';
+      SP[j].style.opacity=Math.min(1,op).toFixed(2);
+      SP[j].style.transform='scale('+(0.5+0.6*Math.abs(Math.sin(tt*1.3+ph)))+')';
+    }
+  }
+
+  let rafing=false;
+  function loop(){ apply(audio.paused ? perfClock() : audio.currentTime); requestAnimationFrame(loop); }
+  // 音なし/再生不可でも進むための内部時計
+  let baseT=0, started=false;
+  function perfClock(){ return started ? (performance.now()/1000 - baseT) : 0; }
+
+  startEl.addEventListener('click',()=>{
+    started=true; baseT=performance.now()/1000;
+    audio.currentTime=0; audio.volume=0.55;
+    audio.play().then(()=>{}).catch(()=>{});
+    startEl.classList.add('hide');
+    if(!rafing){ rafing=true; requestAnimationFrame(loop); }
+  });
+
+  // ヘッドレス検証用（?render で start を飛ばし任意時刻にシーク）
+  const qp=new URLSearchParams(location.search);
+  if(qp.has('render')){
+    startEl.classList.add('hide');
+    window.__seek=(t)=>apply(t);
+    window.__ready=true;
+    const at=qp.get('at');
+    if(at!==null) apply(parseFloat(at));
+  }
+})();
+</script>
+</body>
+</html>

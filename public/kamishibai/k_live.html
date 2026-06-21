@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MU — 100人で、建つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#07070a;--beat:0;--flash:0;--punch:1}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden;color:#fff;
+    font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;
+    display:flex;align-items:center;justify-content:center}
+  .stage{position:fixed;inset:0;background:var(--ink);overflow:hidden}
+
+  /* ===== ambient layers ===== */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:1;
+    background:radial-gradient(72% 60% at 50% 42%, rgba(216,183,90,calc(.10 + var(--beat)*.18)), transparent 62%);
+    box-shadow:inset 0 0 220px 70px rgba(0,0,0,.6)}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:radial-gradient(60% 55% at 50% 42%, rgba(255,245,220,.95), rgba(216,183,90,.55) 45%, transparent 78%);
+    opacity:var(--flash)}
+  .spk{position:fixed;z-index:4;pointer-events:none;color:var(--gold2);
+    text-shadow:0 0 12px rgba(244,217,138,.9);will-change:transform,opacity}
+
+  /* ===== wordmark ===== */
+  .mark{position:fixed;top:max(20px,env(safe-area-inset-top));left:0;right:0;text-align:center;z-index:6;
+    display:flex;align-items:center;justify-content:center;gap:12px;opacity:.95}
+  .mark svg{filter:drop-shadow(0 0 calc(8px + var(--beat)*22px) rgba(216,183,90,.85))}
+  .mark .wm{font-family:"Zen Antique",serif;font-size:23px;letter-spacing:.34em;text-indent:.34em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sec{position:fixed;top:calc(max(20px,env(safe-area-inset-top)) + 54px);left:0;right:0;text-align:center;z-index:6;
+    font-size:12px;letter-spacing:.5em;text-indent:.5em;color:var(--gold);opacity:.8}
+
+  /* ===== main demand-gate card ===== */
+  .wrap{position:relative;z-index:3;width:min(86vw,440px);
+    display:flex;flex-direction:column;align-items:center;gap:18px;
+    transform:scale(var(--punch))}
+
+  .card{position:relative;width:100%;border-radius:26px;overflow:hidden;
+    background:linear-gradient(165deg,#14141c,#0a0a10);
+    box-shadow:0 26px 70px rgba(0,0,0,.65),0 0 0 1.5px rgba(216,183,90,.45),
+      0 0 calc(40px + var(--beat)*70px) rgba(216,183,90,calc(.14 + var(--beat)*.28));
+    padding:30px 26px 26px}
+  .card .glabel{font-size:11px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase;text-align:center}
+  .gi{font-size:118px;line-height:1;text-align:center;margin:14px 0 4px;
+    filter:drop-shadow(0 16px 30px rgba(0,0,0,.6));
+    transform:translateY(0) scale(1);transition:none;will-change:transform}
+  .pname{font-family:"Zen Antique",serif;font-size:24px;text-align:center;color:#fff;margin-top:2px}
+  .pmeta{text-align:center;color:#9a937f;font-size:12.5px;letter-spacing:.05em;margin-top:4px}
+
+  /* meter */
+  .meterrow{margin-top:22px}
+  .meterhead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+  .meterhead .now{font-family:"Zen Antique",serif;font-size:30px;color:var(--gold2);line-height:1}
+  .meterhead .now small{font-family:"Zen Kaku Gothic New",sans-serif;font-size:13px;color:#9a937f;font-weight:700;margin-left:4px}
+  .meterhead .goal{font-size:12px;letter-spacing:.16em;color:#9a937f}
+  .meter{width:100%;height:22px;border-radius:12px;background:#15151c;overflow:hidden;position:relative;
+    box-shadow:inset 0 0 0 1px rgba(216,183,90,.28)}
+  .fill{height:100%;width:0;border-radius:12px;transition:width .5s cubic-bezier(.3,1.2,.4,1);
+    background:linear-gradient(90deg,var(--goldd),var(--gold2));box-shadow:0 0 18px rgba(216,183,90,.7)}
+  .fill.near{animation:pulseFill 1s ease-in-out infinite}
+  @keyframes pulseFill{0%,100%{filter:brightness(1)}50%{filter:brightness(1.35)}}
+
+  /* want button */
+  .wantbtn{margin-top:6px;width:100%;border:0;cursor:pointer;
+    font-family:"Zen Kaku Gothic New",sans-serif;font-weight:900;font-size:18px;letter-spacing:.04em;
+    color:#1a1407;background:linear-gradient(180deg,var(--gold2),var(--goldd));
+    padding:16px;border-radius:18px;box-shadow:0 12px 28px rgba(216,183,90,.32);
+    transition:transform .12s ease, box-shadow .2s, opacity .2s}
+  .wantbtn:active{transform:scale(.96)}
+  .wantbtn.voted{background:linear-gradient(180deg,#2a2a33,#1a1a20);color:var(--gold2);
+    box-shadow:0 0 0 1.5px rgba(216,183,90,.4) inset;cursor:default}
+  .hint{text-align:center;color:#7c7768;font-size:11px;letter-spacing:.12em;margin-top:2px}
+
+  /* ===== unlocked overlay ===== */
+  .unlocked{position:fixed;inset:0;z-index:8;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;opacity:0;pointer-events:none;transition:opacity .6s;
+    background:radial-gradient(60% 55% at 50% 44%,#1a1509,#000)}
+  .unlocked.on{opacity:1;pointer-events:auto}
+  .unlocked .ubig{font-family:"Zen Antique",serif;font-size:clamp(30px,8vw,52px);
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-align:center;text-shadow:0 0 40px rgba(216,183,90,.3)}
+  .unlocked .usub{color:#fff;font-size:clamp(15px,4vw,19px);font-weight:700;text-align:center}
+  .unlocked .ugi{font-size:96px;filter:drop-shadow(0 20px 40px rgba(216,183,90,.4))}
+  .unlocked .next{margin-top:18px;color:var(--gold);letter-spacing:.18em;font-size:13px}
+  .nextrow{display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;justify-content:center;max-width:90vw}
+  .nextrow button{border:1px solid rgba(216,183,90,.5);background:rgba(216,183,90,.06);color:var(--gold2);
+    font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;font-size:14px;letter-spacing:.06em;
+    padding:11px 18px;border-radius:16px;cursor:pointer;transition:background .2s,transform .12s}
+  .nextrow button:active{transform:scale(.95)}
+  .nextrow button:hover{background:rgba(216,183,90,.16)}
+
+  /* falling/finished gi pieces */
+  .drop{position:fixed;z-index:7;pointer-events:none;will-change:transform,opacity;font-size:30px;opacity:0}
+
+  /* reset (tiny, for testing) */
+  .reset{position:fixed;bottom:max(12px,env(safe-area-inset-bottom));right:14px;z-index:10;
+    background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:#6f6a5d;
+    font-size:10px;letter-spacing:.1em;padding:6px 10px;border-radius:10px;cursor:pointer}
+  .reset:hover{color:#9a937f}
+
+  /* ===== start overlay (sound gate) ===== */
+  .start{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:18px;background:#000;cursor:pointer;transition:opacity .5s}
+  .start.hide{opacity:0;pointer-events:none}
+  .start .play{width:84px;height:84px;border-radius:50%;border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold)}
+  .start .t{font-family:"Zen Antique",serif;letter-spacing:.34em;text-indent:.34em;color:var(--gold);font-size:18px;text-align:center}
+  .start .h{color:#8d8775;font-size:12px;letter-spacing:.12em}
+
+  @media (max-width:380px){ .gi{font-size:96px} }
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<div class="glow"></div>
+<div class="flash"></div>
+
+<div class="mark">
+  <svg viewBox="0 0 150 86" width="118"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+  <span class="wm">MU</span>
+</div>
+<div class="sec" id="sec">WANT IT TOGETHER</div>
+
+<div class="wrap" id="wrap">
+  <div class="card">
+    <div class="glabel">PREMIUM BLACK GI · 4.5kg</div>
+    <div class="gi" id="gi">🥋</div>
+    <div class="pname" id="pname">プレミアム黒帯道着</div>
+    <div class="pmeta" id="pmeta">made to order — 100人集まったら、作ります</div>
+    <div class="meterrow">
+      <div class="meterhead">
+        <div class="now"><span id="now">0</span><small>人が「ほしい」</small></div>
+        <div class="goal">/ <span id="goal">100</span></div>
+      </div>
+      <div class="meter"><div class="fill" id="fill"></div></div>
+    </div>
+    <button class="wantbtn" id="wantbtn">🙋 ほしい!</button>
+    <div class="hint" id="hint">あなたの1票で、ものづくりが動きだす</div>
+  </div>
+</div>
+
+<div class="unlocked" id="unlocked">
+  <div class="ugi" id="ugi">🥋</div>
+  <div class="ubig">✦ UNLOCKED</div>
+  <div class="usub">100人、集まりました。<b style="color:var(--gold2)">作ります。</b></div>
+  <div class="next">次は、何を集める?</div>
+  <div class="nextrow" id="nextrow"></div>
+</div>
+
+<button class="reset" id="reset">⟲ reset</button>
+
+<audio id="audio" src="MuMuMu.mp3" preload="auto" loop></audio>
+
+<div class="start" id="start">
+  <div class="t">100人で、建つ</div>
+  <div class="play">▶</div>
+  <div class="h">タップで再生 · 🔊 音あり</div>
+</div>
+
+<script>
+/* =========================================================================
+   MU — 「100人で、建つ」 demand-gate kamishibai (self-contained, no backend)
+   ========================================================================= */
+const GOAL = 100;
+const SKU  = 'MU-GI-BLACK-4_5KG';
+const LS_VOTE  = 'mu_want_voted_' + SKU;   // この端末が投票済みか
+const LS_COUNT = 'mu_want_count_' + SKU;   // 演出用の擬似カウント（自分+他の人）
+
+const stage   = document.getElementById('stage');
+const root    = document.documentElement;
+const audio   = document.getElementById('audio');
+const startEl = document.getElementById('start');
+const nowEl   = document.getElementById('now');
+const fillEl  = document.getElementById('fill');
+const wantBtn = document.getElementById('wantbtn');
+const hintEl  = document.getElementById('hint');
+const giEl    = document.getElementById('gi');
+const unlocked= document.getElementById('unlocked');
+const nextrow = document.getElementById('nextrow');
+const resetBtn= document.getElementById('reset');
+
+let count   = clampInt(localStorage.getItem(LS_COUNT), 0, GOAL, 0);
+let voted   = localStorage.getItem(LS_VOTE) === '1';
+let done    = count >= GOAL;
+let crowdTimer = null;
+
+function clampInt(v,min,max,def){ v=parseInt(v,10); if(isNaN(v))return def; return Math.max(min,Math.min(max,v)); }
+
+/* ---- sparkle field (ambient, beat-driven) ---- */
+const SP=[]; for(let i=0;i<14;i++){const d=document.createElement('div');d.className='spk';
+  d.style.fontSize=(10+(i%4)*5)+'px';d.textContent='✦';stage.appendChild(d);SP.push(d);}
+
+/* ---- render meter ---- */
+function render(){
+  count = Math.max(0, Math.min(GOAL, count));
+  const p = count / GOAL;
+  nowEl.textContent = count;
+  fillEl.style.width = (p*100).toFixed(1) + '%';
+  fillEl.classList.toggle('near', p >= 0.85 && p < 1);
+  if(voted){
+    wantBtn.classList.add('voted');
+    wantBtn.textContent = '✓ あなたの票を記録しました';
+    hintEl.textContent = 'ありがとう。仲間が集まるのを待とう。';
+  }
+}
+
+/* ---- a flying ✦ / gold flash on each vote ---- */
+function flashGold(strength){
+  root.style.setProperty('--flash', strength.toFixed(2));
+  const t0 = performance.now();
+  (function decay(){
+    const k = (performance.now()-t0)/420;
+    if(k>=1){ root.style.setProperty('--flash','0'); return; }
+    root.style.setProperty('--flash', (strength*(1-k)).toFixed(3));
+    requestAnimationFrame(decay);
+  })();
+}
+function popGi(){
+  giEl.animate(
+    [{transform:'scale(1)'},{transform:'scale(1.18)'},{transform:'scale(1)'}],
+    {duration:360, easing:'cubic-bezier(.3,1.4,.5,1)'}
+  );
+}
+
+/* ---- one vote (self) ---- */
+function castVote(){
+  if(voted || done) return;
+  voted = true;
+  localStorage.setItem(LS_VOTE,'1');
+  count += 1;
+  persist();
+  popGi(); flashGold(0.55);
+  render();
+  // 本物のバックエンドにつなぐときはここを有効化:
+  // fetch('/api/make/want', {method:'POST',
+  //   headers:{'Content-Type':'application/json'},
+  //   body:JSON.stringify({sku:SKU})});
+  if(count >= GOAL){ unlock(); } else { startCrowd(); }
+}
+
+/* ---- "他の人" がじわじわ増える演出 ---- */
+function startCrowd(){
+  if(crowdTimer || done) return;
+  crowdTimer = setInterval(()=>{
+    if(done || count >= GOAL){ stopCrowd(); return; }
+    // 残りが少ないほどゆっくり（焦らし）
+    const remain = GOAL - count;
+    const add = Math.max(1, Math.round(Math.random()*2));
+    count += Math.min(add, remain);
+    persist();
+    popGi(); flashGold(0.18);
+    render();
+    if(count >= GOAL){ unlock(); }
+  }, 900 + Math.random()*700);
+}
+function stopCrowd(){ if(crowdTimer){ clearInterval(crowdTimer); crowdTimer=null; } }
+function persist(){ localStorage.setItem(LS_COUNT, String(count)); }
+
+/* ---- 100到達: UNLOCKED 演出 ---- */
+function unlock(){
+  if(done) return;
+  done = true; count = GOAL;
+  stopCrowd(); persist(); render();
+  flashGold(0.95);
+  rainGi();
+  setTimeout(()=>{ unlocked.classList.add('on'); buildNext(); }, 650);
+}
+
+/* 道着が降ってくる / 光る */
+function rainGi(){
+  const glyphs=['🥋','✦','🥋','✨','🥋','✦'];
+  for(let i=0;i<26;i++){
+    const d=document.createElement('div'); d.className='drop';
+    d.textContent=glyphs[i%glyphs.length];
+    d.style.fontSize=(20+Math.random()*34)+'px';
+    const x=Math.random()*100, dur=1400+Math.random()*1600, delay=Math.random()*500;
+    d.style.left=x+'vw'; d.style.top='-12vh';
+    document.body.appendChild(d);
+    d.animate(
+      [{transform:'translateY(-12vh) rotate(0deg)',opacity:0},
+       {transform:'translateY(8vh) rotate(40deg)',opacity:1,offset:.15},
+       {transform:'translateY(118vh) rotate(360deg)',opacity:0}],
+      {duration:dur, delay:delay, easing:'cubic-bezier(.4,.1,.7,1)'}
+    ).onfinish=()=>d.remove();
+  }
+}
+
+/* 「次は何を集める?」 候補 */
+const NEXT=[
+  {icon:'👟', name:'グラップリングシューズ'},
+  {icon:'🧥', name:'ラッシュガード'},
+  {icon:'🎒', name:'道場バッグ'},
+  {icon:'🏠', name:'弟子屈の道場（一棟）'},
+];
+function buildNext(){
+  nextrow.innerHTML='';
+  NEXT.forEach(n=>{
+    const b=document.createElement('button');
+    b.innerHTML=n.icon+' '+n.name;
+    b.onclick=()=>switchTo(n);
+    nextrow.appendChild(b);
+  });
+}
+/* 次の品で新しいゲートを始める（デモ内で完結） */
+function switchTo(n){
+  unlocked.classList.remove('on');
+  giEl.textContent=n.icon;
+  document.getElementById('ugi').textContent=n.icon;
+  document.getElementById('pname').textContent=n.name;
+  document.querySelector('.card .glabel').textContent='NEXT DROP · ' + n.name;
+  document.getElementById('pmeta').textContent='made to order — 100人集まったら、作ります';
+  // reset state for the new product (demo only; real sku would change LS keys)
+  voted=false; done=false; count=Math.floor(GOAL*0.12)+Math.floor(Math.random()*8);
+  wantBtn.classList.remove('voted'); wantBtn.textContent='🙋 ほしい!';
+  hintEl.textContent='あなたの1票で、ものづくりが動きだす';
+  render(); flashGold(0.4); popGi();
+}
+
+/* ---- reset (testing) ---- */
+resetBtn.addEventListener('click', ()=>{
+  stopCrowd();
+  localStorage.removeItem(LS_VOTE); localStorage.removeItem(LS_COUNT);
+  voted=false; done=false; count=0;
+  unlocked.classList.remove('on');
+  giEl.textContent='🥋'; document.getElementById('ugi').textContent='🥋';
+  document.getElementById('pname').textContent='プレミアム黒帯道着';
+  document.querySelector('.card .glabel').textContent='PREMIUM BLACK GI · 4.5kg';
+  document.getElementById('pmeta').textContent='made to order — 100人集まったら、作ります';
+  wantBtn.classList.remove('voted'); wantBtn.textContent='🙋 ほしい!';
+  hintEl.textContent='あなたの1票で、ものづくりが動きだす';
+  render();
+});
+
+wantBtn.addEventListener('click', castVote);
+
+/* ---- ambient beat loop (drives glow + sparkles to the music) ---- */
+let running=false;
+function loop(){
+  const t = audio.currentTime || (performance.now()/1000);
+  const beat = Math.max(0, Math.exp(-((t*2)%1)*5)*0.95);
+  root.style.setProperty('--beat', beat.toFixed(3));
+  root.style.setProperty('--punch', (1 + beat*0.012).toFixed(4));
+  for(let j=0;j<SP.length;j++){ const ph=j*1.7;
+    const x=50 + 44*Math.sin(t*0.55 + ph);
+    const y=14 + 70*((Math.sin(t*0.4+ph*1.3)+1)/2);
+    const op=(0.18 + 0.55*Math.max(0,Math.sin(t*2.2 + ph))) * (0.5+beat*0.6);
+    const s=SP[j];
+    s.style.left=x+'%'; s.style.top=y+'%';
+    s.style.opacity=Math.min(1,op).toFixed(2);
+    s.style.transform='scale('+(0.6+0.6*Math.abs(Math.sin(t*1.5+ph))).toFixed(2)+')';
+  }
+  if(running) requestAnimationFrame(loop);
+}
+
+/* ---- start gate (autoplay-with-sound requires a tap) ---- */
+function begin(){
+  startEl.classList.add('hide');
+  running=true; loop();
+  render();
+  // 進行中だった群衆カウントを再開（投票済かつ未到達のとき）
+  if(voted && !done) startCrowd();
+  audio.currentTime=0;
+  audio.play().catch(()=>{ /* sound blocked — visuals still run */ });
+}
+startEl.addEventListener('click', begin);
+
+/* initial paint (so headless/no-tap still shows the card, not black) */
+render();
+/* headless / no-audio fallback: run the ambient loop immediately so the
+   screenshot is never black even before a tap */
+running=true; requestAnimationFrame(loop);
+</script>
+</body>
+</html>

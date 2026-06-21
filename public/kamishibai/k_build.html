@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MU × bim.house — 言葉が、建つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#07070a;--beat:0;--punch:1;--flash:0;--cappop:1}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;
+    font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;color:#fff}
+  .stage{position:fixed;inset:0;background:var(--ink);overflow:hidden}
+  .scene{position:absolute;inset:0;opacity:0;display:flex;align-items:center;justify-content:center;
+    transition:opacity .42s ease}
+  .scene.on{opacity:1}
+
+  /* girl＝実写AIガール */
+  .scene.girl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%;
+    transform:scale(calc(var(--punch) * (1.02 + var(--beat)*.05)))}
+
+  /* phone＝実アプリ画面 */
+  .phone{width:min(46vw,540px);aspect-ratio:540/1110;max-height:88vh;border-radius:min(6vw,60px);position:relative;
+    background:linear-gradient(160deg,#1a1a22,#050507);padding:11px;
+    box-shadow:0 0 0 2px rgba(216,183,90,.32),0 30px 90px rgba(0,0,0,.7),0 0 calc(46px + var(--beat)*90px) rgba(216,183,90,calc(.16 + var(--beat)*.34));
+    transform:scale(calc(var(--punch) * (1 + var(--beat)*.02)))}
+  .phone .screen{position:absolute;inset:11px;border-radius:min(5vw,50px);overflow:hidden;background:#07070b}
+  .phone .screen img{width:100%;height:100%;object-fit:cover;object-position:center top}
+  .phone .notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:38%;max-width:150px;height:28px;background:#050507;border-radius:0 0 18px 18px;z-index:5}
+
+  /* hero＝実商品モックを大きく */
+  .hero .herocard{width:min(76vw,560px);aspect-ratio:1/1;max-height:78vh;border-radius:28px;overflow:hidden;
+    background:#0c0c10;box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 0 2px rgba(216,183,90,.5),0 0 calc(50px+var(--beat)*90px) rgba(216,183,90,calc(.18+var(--beat)*.34));
+    transform:scale(calc(var(--punch)*(1+var(--beat)*.03)))}
+  .hero .herocard img{width:100%;height:100%;object-fit:cover}
+
+  /* reel＝MU実商品の壁が高速で入れ替わる */
+  .reel .reelgrid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);
+    gap:min(2vw,14px);width:min(86vw,560px);height:min(74vh,760px);transform:scale(calc(var(--punch)*(1+var(--beat)*.02)))}
+  .reel .cell{background:#0c0c10;border-radius:14px;overflow:hidden;position:relative;
+    box-shadow:0 8px 22px rgba(0,0,0,.5),0 0 0 1px rgba(216,183,90,.25)}
+  .reel .cell img{width:100%;height:100%;object-fit:cover}
+
+  /* ===== village＝家が金の線で建ち上がる ===== */
+  .village .vwrap{position:relative;width:min(94vw,940px);aspect-ratio:16/11;max-height:82vh;
+    display:flex;align-items:center;justify-content:center}
+  .village svg{width:100%;height:100%;overflow:visible;
+    filter:drop-shadow(0 0 calc(8px + var(--beat)*22px) rgba(216,183,90,.55))}
+  .vpath{fill:none;stroke:url(#vg);stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;
+    stroke-dasharray:var(--len);stroke-dashoffset:var(--len)}
+  .vfloor{fill:rgba(216,183,90,.05)}
+  .vemoji{position:absolute;font-size:clamp(20px,4.4vw,44px);opacity:0;
+    transform:translate(-50%,-50%) scale(.4);filter:drop-shadow(0 4px 16px rgba(0,0,0,.6))}
+  .vemoji.lit{opacity:1;transform:translate(-50%,-50%) scale(1);
+    transition:opacity .5s ease,transform .6s cubic-bezier(.2,1.3,.4,1)}
+  .vlabel{position:absolute;bottom:-2%;left:0;right:0;text-align:center;
+    font-family:"Zen Antique",serif;font-size:clamp(13px,2.4vw,20px);letter-spacing:.4em;text-indent:.4em;
+    color:var(--gold2);opacity:0;text-shadow:0 0 18px rgba(216,183,90,.6)}
+  .vlabel.on{opacity:1;transition:opacity .6s ease}
+
+  /* one-line＝最初の一文「ほしい」 */
+  .line .lwrap{display:flex;flex-direction:column;align-items:center;gap:18px;padding:0 8%}
+  .line .quote{font-family:"Zen Antique",serif;font-size:clamp(34px,9vw,84px);line-height:1.1;text-align:center;
+    background:linear-gradient(180deg,#fff,var(--gold2));-webkit-background-clip:text;background-clip:text;color:transparent;
+    transform:scale(calc(var(--punch)*(1+var(--beat)*.04)));text-shadow:0 0 40px rgba(216,183,90,.2)}
+  .line .sub{font-size:clamp(12px,3vw,16px);letter-spacing:.36em;text-indent:.36em;color:var(--gold)}
+
+  /* FX layers */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:radial-gradient(72% 56% at 50% 45%, rgba(216,183,90,calc(var(--beat)*.2)), transparent 60%);
+    box-shadow:inset 0 0 220px 60px rgba(0,0,0,.55)}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:8;
+    background:radial-gradient(60% 50% at 50% 45%, rgba(255,245,220,.9), rgba(216,183,90,.5) 45%, transparent 75%);opacity:var(--flash)}
+  .streak{position:fixed;inset:0;pointer-events:none;z-index:3;mix-blend-mode:screen;
+    background:linear-gradient(115deg, transparent 42%, rgba(244,217,138,calc(var(--beat)*.5)) 50%, transparent 58%)}
+  .spk{position:fixed;z-index:4;pointer-events:none;color:var(--gold2);text-shadow:0 0 12px rgba(244,217,138,.9)}
+
+  /* wordmark＝ブルーム */
+  .mark{position:fixed;top:max(20px,env(safe-area-inset-top));left:0;right:0;z-index:6;display:flex;align-items:center;justify-content:center;gap:10px;opacity:.95}
+  .mark svg{width:96px;height:auto;filter:drop-shadow(0 0 calc(6px+var(--beat)*16px) rgba(216,183,90,.7))}
+  .mark .wm{font-family:"Zen Antique",serif;font-size:21px;letter-spacing:.34em;text-indent:.34em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sec{position:fixed;top:calc(max(20px,env(safe-area-inset-top)) + 50px);left:0;right:0;text-align:center;z-index:6;font-size:11px;letter-spacing:.5em;text-indent:.5em;color:var(--gold);opacity:0;transition:opacity .4s}
+  .sec.on{opacity:.9}
+
+  .cap{position:fixed;bottom:7.5%;left:0;right:0;text-align:center;z-index:6;padding:0 8%;font-weight:900;
+    font-size:clamp(20px,5vw,30px);color:#fff;opacity:0;transition:opacity .35s;
+    text-shadow:0 2px 18px rgba(0,0,0,.95),0 0 26px rgba(216,183,90,.4)}
+  .cap.on{opacity:1}
+  .cap .g{color:var(--gold2)}
+  .cap .inner{display:inline-block;transform:scale(var(--cappop))}
+  .prog{position:fixed;bottom:0;left:0;height:3px;width:0;z-index:7;background:linear-gradient(90deg,var(--goldd),var(--gold2));box-shadow:0 0 12px var(--gold)}
+
+  /* end＝ブルーム締め */
+  .end{position:fixed;inset:0;z-index:5;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    opacity:0;background:radial-gradient(60% 50% at 50% 45%,#15130c,#000);transition:opacity .6s}
+  .end.on{opacity:1}
+  .end .bloom svg{width:150px;height:auto;filter:drop-shadow(0 0 calc(14px+var(--beat)*30px) rgba(216,183,90,.85))}
+  .end .big{font-family:"Zen Antique",serif;font-size:clamp(30px,7.4vw,52px);margin-top:8px;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .end .urls{display:flex;gap:22px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  .end .url{color:var(--gold);letter-spacing:.2em;font-size:clamp(12px,3.2vw,16px)}
+  .end .url b{color:var(--gold2);font-weight:900}
+
+  .start{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+    background:radial-gradient(70% 60% at 50% 42%,#100e08,#000);cursor:pointer;transition:opacity .5s}
+  .start.hide{opacity:0;pointer-events:none}
+  .start svg{width:130px;height:auto;filter:drop-shadow(0 0 22px rgba(216,183,90,.6))}
+  .start .play{width:84px;height:84px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:30px;color:var(--gold);margin-top:6px}
+  .start .t{font-family:"Zen Antique",serif;letter-spacing:.34em;text-indent:.34em;color:var(--gold);font-size:clamp(16px,4.4vw,20px);text-align:center}
+  .start .h{color:#8d8775;font-size:12px;letter-spacing:.14em}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<div class="glow"></div><div class="streak"></div><div class="flash"></div>
+
+<div class="mark">
+  <svg viewBox="0 0 150 86"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+  <span class="wm">MU</span>
+</div>
+<div class="sec" id="sec"></div>
+<div class="cap" id="cap"><span class="inner"></span></div>
+<div class="prog" id="prog"></div>
+
+<div class="end" id="end">
+  <div class="bloom"><svg viewBox="0 0 150 86"><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg></div>
+  <div class="big">言葉が、建つ。</div>
+  <div class="urls"><span class="url"><b>wearmu.com</b></span><span class="url"><b>bim.house</b></span></div>
+</div>
+
+<div class="start" id="start">
+  <svg viewBox="0 0 150 86"><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+  <div class="t">言葉が、建つ</div>
+  <div class="play">▶</div>
+  <div class="h">タップで再生 · 🔊 音あり</div>
+</div>
+
+<audio id="audio" src="MuMuMu_8.mp3" preload="auto"></audio>
+
+<script>
+const DUR=47.88, NPROD=19, NCELL=12;
+const PRODUCTS=Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
+
+// 物語: 一文「ほしい」→ タオル → 服 → 家が建つ → 村
+// [t, type, asset, caption, section]
+const TL=[
+ [0.0,  'line', 'want',          '<span class="g">「ほしい。」</span>',     'A WORD'],
+ [3.0,  'girl', 'want',          'と、言うだけ。',                          'WANT'],
+ [5.4,  'phone','real_shop',     '',                                        'SHOP'],
+ [7.2,  'girl', 'towel',         'タオルも。',                              'MADE ON MU'],
+ [9.0,  'hero', 'towel_real',    '<span class="g">✦ MUで、できた。</span>', 'MADE ON MU'],
+ [10.8, 'reel', 'reel',          '<span class="g">made on MU</span>',       'MADE ON MU'],
+ [13.6, 'girl', 'dance2',        '服も。',                                  'WEAR'],
+ [15.6, 'reel', 'reel',          '<span class="g">あなたの言葉が、商品に。</span>','WEAR'],
+ [18.4, 'girl', 'make',          '言えば、つくれる。',                      'MAKE'],
+ [20.6, 'phone','real_make',     '',                                        'MAKE'],
+ [23.0, 'girl', 'arrive',        'ぜんぶ、つながる。',                      ''],
+ [25.6, 'phone','real_bim_en',   '',                                        'BUILD'],
+ [28.6, 'girl', 'house_build',   '<span class="g">家も。</span>',           'BUILD'],
+ [31.8, 'girl', 'house_done',    '言葉から、一棟。',                        'bim.house'],
+ [34.8, 'village','village',     '<span class="g">村も。</span>',           'A VILLAGE'],
+ [42.0, 'village','village',     '<span class="g">言葉が、建つ。</span>',   'TESHIKAGA'],
+ [46.6, 'village','village',     '',                                        ''],
+];
+
+const stage=document.getElementById('stage'), built={};
+let reelCells=[];
+
+// ----- 村のジオメトリ（ドーム1 + 六棟が金の線で立ち上がる）-----
+// viewBox 1000x660。各家=屋根三角+本体四角の polyline。建つ順=domeから時計回り。
+const GX=500, GY=420; // 中心（火＝ドームの位置）
+function house(cx, baseY, w, h, roofH){
+  const x0=cx-w/2, x1=cx+w/2, by=baseY, ty=baseY-h, ry=ty-roofH;
+  // 床→左壁→屋根左→棟→屋根右→右壁→床（連続線で「建つ」感）
+  return `M ${x0} ${by} L ${x0} ${ty} L ${cx} ${ry} L ${x1} ${ty} L ${x1} ${by} L ${x0} ${by}`;
+}
+function dome(cx, baseY, r){
+  // 半円ドーム＋基底線
+  return `M ${cx-r} ${baseY} A ${r} ${r} 0 0 1 ${cx+r} ${baseY} L ${cx-r} ${baseY}`;
+}
+// 六棟を中心の周りに（手前ほど大きい・奥行き）
+const HOUSES=[
+  {cx:500, by:300, w:120, h:70, rh:46, ex:50, ey:30},  // 奥中央
+  {cx:300, by:330, w:130, h:78, rh:50, ex:30, ey:34},  // 奥左
+  {cx:700, by:330, w:130, h:78, rh:50, ex:70, ey:34},  // 奥右
+  {cx:220, by:470, w:160, h:96, rh:60, ex:22, ey:50},  // 手前左
+  {cx:780, by:470, w:160, h:96, rh:60, ex:78, ey:50},  // 手前右
+  {cx:500, by:560, w:175, h:104,rh:66, ex:50, ey:60},  // 手前中央
+];
+
+TL.forEach(([t,type,asset])=>{const k=type+':'+asset; if(built[k])return; built[k]=true;
+  const s=document.createElement('section'); s.className='scene '+type; s.dataset.k=k;
+  if(type==='girl') s.innerHTML='<img src="girl3/'+asset+'.png" alt="">';
+  else if(type==='phone') s.innerHTML='<div class="phone"><div class="notch"></div><div class="screen"><img src="shots/'+asset+'.png" alt=""></div></div>';
+  else if(type==='hero') s.innerHTML='<div class="herocard"><img src="shots/'+asset+'.png" alt=""></div>';
+  else if(type==='line'){
+    s.innerHTML='<div class="lwrap"><div class="quote">「ほしい。」</div><div class="sub">A WORD BECOMES A THING</div></div>';
+  }
+  else if(type==='village'){
+    // SVG: ドーム + 六棟。各pathにstroke-dash長を後で測って格納。
+    let paths='';
+    paths+=`<path class="vpath" data-i="0" d="${dome(GX,GY,118)}"/>`;
+    HOUSES.forEach((hh,idx)=>{ paths+=`<path class="vpath" data-i="${idx+1}" d="${house(hh.cx,hh.by,hh.w,hh.h,hh.rh)}"/>`; });
+    // 金の地面ライン（村の基盤）
+    paths+=`<path class="vpath" data-i="7" d="M 90 600 L 910 600"/>`;
+    s.innerHTML=
+      '<div class="vwrap"><svg viewBox="0 0 1000 660">'+
+        '<defs><linearGradient id="vg" x1="0" y1="0" x2="0" y2="1">'+
+        '<stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs>'+
+        paths+
+      '</svg>'+
+      '<span class="vemoji" data-vi="0" style="left:50%;top:50%">🔥</span>'+
+      HOUSES.map(hh=>`<span class="vemoji" style="left:${hh.ex}%;top:${hh.ey}%">🏠</span>`).join('')+
+      '<div class="vlabel">弟子屈 · 白から、組む。</div>'+
+      '</div>';
+  }
+  else { const g=document.createElement('div'); g.className='reelgrid';
+    for(let c=0;c<NCELL;c++){const cell=document.createElement('div');cell.className='cell';
+      const im=document.createElement('img');im.src=PRODUCTS[c%NPROD];cell.appendChild(im);g.appendChild(cell);reelCells.push(im);}
+    s.appendChild(g); }
+  stage.appendChild(s);
+});
+
+const scenes=[...stage.querySelectorAll('.scene')];
+const capWrap=document.getElementById('cap'), capInner=capWrap.querySelector('.inner');
+const sec=document.getElementById('sec'), prog=document.getElementById('prog');
+const endEl=document.getElementById('end'), startEl=document.getElementById('start');
+const root=document.documentElement, audio=document.getElementById('audio');
+
+// 村のpath長を測ってdash初期化
+const villageScene=document.querySelector('.scene.village');
+let vpaths=[];
+if(villageScene){
+  vpaths=[...villageScene.querySelectorAll('.vpath')].map(p=>{
+    const len=p.getTotalLength()||300;
+    p.style.setProperty('--len', len);
+    return p;
+  });
+}
+const vEmojis = villageScene ? [...villageScene.querySelectorAll('.vemoji')] : [];
+const vLabel = villageScene ? villageScene.querySelector('.vlabel') : null;
+
+// スパークル
+const SP=[]; for(let i=0;i<16;i++){const d=document.createElement('div');d.className='spk';d.style.fontSize=(11+(i%4)*5)+'px';d.textContent='✦';stage.appendChild(d);SP.push(d);}
+
+let cur=-1;
+function apply(t){
+  let i=0; for(let k=0;k<TL.length;k++) if(t>=TL[k][0]) i=k;
+  const [st,type,asset,c,sc]=TL[i], key=type+':'+asset, local=t-st;
+  if(i!==cur){ cur=i;
+    scenes.forEach(s=>s.classList.toggle('on', s.dataset.k===key));
+    capInner.innerHTML=c; capWrap.classList.toggle('on',!!c);
+    sec.textContent=sc; sec.classList.toggle('on',!!sc);
+    endEl.classList.toggle('on', i>=TL.length-1);
+  }
+
+  // リール：実商品が高速で入れ替わる
+  if(type==='reel'){ const step=Math.floor(t/0.18);
+    for(let j=0;j<reelCells.length;j++){ const idx=(step*7 + j*11) % NPROD; reelCells[j].src=PRODUCTS[idx]; } }
+
+  // 村：家が順番に金の線で建ち上がる→絵文字が灯る
+  if(type==='village' && vpaths.length){
+    // 村シーンの開始tを取得（最初のvillage TL）
+    const vstart=34.8;
+    const vlocal=t - vstart;
+    // 8本（ドーム+6棟+地面）を時間差で描く
+    const N=vpaths.length;
+    const STAGGER=0.62, DRAW=1.4;
+    for(let p=0;p<N;p++){
+      const ord = (p===N-1)?0:(p+1); // 地面(最後)を最初に、ドーム→棟の順
+      const ps = ord*STAGGER;
+      const prog2=Math.max(0,Math.min(1,(vlocal-ps)/DRAW));
+      const len=vpaths[p].getTotalLength()||300;
+      vpaths[p].style.strokeDashoffset = (len*(1-prog2)).toFixed(1);
+    }
+    // 絵文字（火＋家）が線完成後に灯る
+    vEmojis.forEach((em,ei)=>{
+      // ei0=火(ord0), ei1..6=家(対応ord 1..6)
+      const ord = ei; // 火=0, 家=1..6 → houseのvpath data-i 1..6 と一致
+      const ps = ord*STAGGER;
+      const lit = vlocal > (ps + DRAW*0.7);
+      em.classList.toggle('lit', lit);
+    });
+    if(vLabel) vLabel.classList.toggle('on', vlocal>5.6);
+  }
+
+  const beat=Math.max(0, Math.exp(-((t*2)%1)*5)*0.95);
+  root.style.setProperty('--beat', beat.toFixed(3));
+  root.style.setProperty('--punch', (1 + Math.max(0, 0.07 - local*0.32)).toFixed(3));
+  root.style.setProperty('--flash', Math.max(0, 0.55 - local*3.0).toFixed(3));
+  root.style.setProperty('--cappop', (1 + Math.max(0, 0.18 - local*0.9)).toFixed(3));
+
+  for(let j=0;j<SP.length;j++){ const ph=j*1.7;
+    const x=50 + 44*Math.sin(t*0.6 + ph), y=18 + 64*((Math.sin(t*0.4+ph*1.3)+1)/2);
+    const op=(0.25 + 0.65*Math.max(0,Math.sin(t*2.2 + ph))) * (0.5+beat*0.6);
+    SP[j].style.left=x+'%'; SP[j].style.top=y+'%'; SP[j].style.opacity=Math.min(1,op).toFixed(2);
+    SP[j].style.transform='scale('+(0.6+0.6*Math.abs(Math.sin(t*1.5+ph)))+')';
+  }
+  prog.style.width=Math.min(100,t/DUR*100)+'%';
+}
+
+function loop(){ apply(audio.currentTime); if(!audio.paused) requestAnimationFrame(loop); }
+startEl.addEventListener('click',()=>{audio.currentTime=0;audio.play().then(()=>{startEl.classList.add('hide');loop();}).catch(()=>{startEl.classList.add('hide');loop();});});
+
+// render/headless hook
+(function(){ if(!new URLSearchParams(location.search).has('render'))return;
+  root.classList.add('render'); startEl.classList.add('hide'); window.__seek=(t)=>apply(t); window.__ready=true; })();
+</script>
+</body>
+</html>

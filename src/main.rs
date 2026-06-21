@@ -480,6 +480,55 @@ async fn takibi_feed() -> impl IntoResponse {
 struct TakibiSpeakReq { id: String }
 
 // 薪id → クローン声mp3 (Koe /api/takibi/speak を中継)。url は絶対化して返す。
+#[derive(serde::Deserialize)]
+struct GenQuery { prompt: Option<String> }
+
+// GET /api/gen?prompt= — Gemini で画像生成し PNG を返す（紙芝居「言ってみて」用）。
+// 鍵が無い/失敗時は 5xx を返し、クライアントはデモ生成にフォールバックする。
+async fn api_gen(axum::extract::Query(q): axum::extract::Query<GenQuery>) -> Response {
+    let key = match std::env::var("GEMINI_API_KEY").ok()
+        .or_else(|| std::env::var("GOOGLE_API_KEY").ok())
+        .filter(|s| !s.is_empty())
+    {
+        Some(k) => k,
+        None => return (axum::http::StatusCode::SERVICE_UNAVAILABLE, "no gemini key").into_response(),
+    };
+    let prompt: String = q.prompt.unwrap_or_default().chars().take(300).collect();
+    let subj = if prompt.trim().is_empty() { "a mysterious wish" } else { prompt.trim() };
+    let style = format!("Premium product design on a deep near-black background, metallic gold accents, \
+minimal world-class fashion-brand quality, a small gold four-point sparkle motif, centered, \
+lots of negative space, 4k. Subject: {}", subj);
+    let body = serde_json::json!({
+        "contents": [{ "parts": [{ "text": style }] }],
+        "generationConfig": { "responseModalities": ["IMAGE", "TEXT"] }
+    });
+    let url = format!("https://generativelanguage.googleapis.com/v1beta/models/gemini-3-pro-image-preview:generateContent?key={}", key);
+    let resp = match reqwest::Client::new().post(&url).json(&body)
+        .timeout(std::time::Duration::from_secs(60)).send().await
+    {
+        Ok(r) => r,
+        Err(_) => return (axum::http::StatusCode::BAD_GATEWAY, "gen upstream").into_response(),
+    };
+    let v: serde_json::Value = match resp.json().await {
+        Ok(v) => v,
+        Err(_) => return (axum::http::StatusCode::BAD_GATEWAY, "bad json").into_response(),
+    };
+    let data = v.pointer("/candidates/0/content/parts")
+        .and_then(|p| p.as_array())
+        .and_then(|arr| arr.iter().find_map(|part| part.pointer("/inlineData/data").and_then(|d| d.as_str())));
+    let b64 = match data { Some(d) => d, None => return (axum::http::StatusCode::BAD_GATEWAY, "no image").into_response() };
+    use base64::Engine;
+    let bytes = match base64::engine::general_purpose::STANDARD.decode(b64) {
+        Ok(b) => b,
+        Err(_) => return (axum::http::StatusCode::BAD_GATEWAY, "bad b64").into_response(),
+    };
+    ([
+        (axum::http::header::CONTENT_TYPE, "image/png"),
+        (axum::http::header::CACHE_CONTROL, "no-store"),
+        (axum::http::header::ACCESS_CONTROL_ALLOW_ORIGIN, "*"),
+    ], bytes).into_response()
+}
+
 async fn takibi_speak(axum::Json(req): axum::Json<TakibiSpeakReq>) -> impl IntoResponse {
     let body = serde_json::json!({ "id": req.id });
     let out = match reqwest::Client::new()
@@ -1206,6 +1255,11 @@ async fn room_page(Path(_id): Path<String>) -> impl IntoResponse {
 // devil-podcast.fly.dev から配信（marker: kamishibai-1）。
 async fn kamishibai_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai.html"))
+}
+
+// 🎬 紙芝居シアター(MVプレイリスト)。インタラクティブ5本は /kamishibai-theater(静的)。
+async fn theater_page() -> impl IntoResponse {
+    Html(include_str!("../templates/theater.html"))
 }
 
 // 紙芝居『いい奴らと、世界をつくる。』第2話（士業 × AI × いい奴ら）。画像は <base>
@@ -7522,6 +7576,11 @@ async fn main() {
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/kamisibai", ServeDir::new("public/kamisibai"))
         .nest_service("/mv", ServeDir::new("public/mv"))
+        .route("/theater", get(theater_page))
+        // 🎬 紙芝居シアター: MUのインタラクティブ紙芝居5本(launcher=index.html)
+        .nest_service("/kamishibai-theater", ServeDir::new("public/kamishibai"))
+        // 「言ってみて」生成紙芝居の本物のGemini画像生成
+        .route("/api/gen", get(api_gen))
         .route("/api/fanclub/verify", post(fanclub_verify))
         .route("/api/fanclub/verify", axum::routing::options(options_cors))
         .route("/api/fanclub/otp/send", post(fanclub_send_otp))

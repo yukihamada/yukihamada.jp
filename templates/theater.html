@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>🎬 紙芝居シアター — yukihamada.jp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#050507}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;color:#f5f3ee;overflow:hidden;font-family:"Zen Kaku Gothic New",-apple-system,sans-serif}
+  .stage{position:fixed;inset:0;background:radial-gradient(70% 60% at 50% 40%,#15130c,#000);
+    display:flex;align-items:center;justify-content:center}
+  video{max-width:100%;max-height:100%;width:auto;height:100%;object-fit:contain;background:#000;
+    box-shadow:0 0 120px rgba(216,183,90,.18)}
+  /* ヘッダー */
+  .head{position:fixed;top:0;left:0;right:0;z-index:5;display:flex;align-items:center;gap:12px;
+    padding:18px 22px;background:linear-gradient(#000a,transparent)}
+  .head .b{font-family:"Zen Antique",serif;letter-spacing:.18em;font-size:15px;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .head .home{margin-left:auto;color:#8d8775;text-decoration:none;font-size:13px;letter-spacing:.1em;border:1px solid rgba(216,183,90,.25);padding:7px 14px;border-radius:20px}
+  /* now playing */
+  .np{position:fixed;left:24px;bottom:120px;z-index:5;max-width:70%;opacity:0;transition:opacity .5s}
+  .np.show{opacity:1}
+  .np .k{font-size:11px;letter-spacing:.4em;color:var(--gold);text-transform:uppercase}
+  .np .t{font-family:"Zen Antique",serif;font-size:clamp(20px,3.4vw,30px);margin-top:6px;text-shadow:0 2px 20px #000}
+  /* 音を出す */
+  .sound{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:8;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:14px;transition:opacity .5s}
+  .sound.hide{opacity:0;pointer-events:none}
+  .sound .btn{width:92px;height:92px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    font-size:34px;color:var(--gold);background:rgba(216,183,90,.08);box-shadow:0 0 50px rgba(216,183,90,.25);animation:breathe 2.4s ease-in-out infinite}
+  .sound .t{font-family:"Zen Antique",serif;letter-spacing:.3em;color:var(--gold);font-size:15px}
+  .sound .h{color:#8d8775;font-size:12px;letter-spacing:.14em}
+  @keyframes breathe{0%,100%{transform:scale(1);opacity:.9}50%{transform:scale(1.07);opacity:1}}
+  /* プレイリスト */
+  .rail{position:fixed;left:0;right:0;bottom:0;z-index:6;display:flex;gap:12px;padding:16px 22px;overflow-x:auto;
+    background:linear-gradient(transparent,#000c 40%)}
+  .rail::-webkit-scrollbar{height:0}
+  .card{flex:0 0 auto;width:172px;cursor:pointer;border-radius:12px;overflow:hidden;position:relative;
+    border:1px solid rgba(216,183,90,.2);background:#0d0d12;transition:transform .2s,border-color .2s}
+  .card:hover{transform:translateY(-4px)}
+  .card.active{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 8px 26px rgba(216,183,90,.25)}
+  .card .thumb{height:96px;background:#000;display:flex;align-items:center;justify-content:center}
+  .card .thumb video{height:100%;width:100%;object-fit:cover;box-shadow:none}
+  .card .meta{padding:9px 11px}
+  .card .meta .tt{font-size:12.5px;font-weight:700;line-height:1.35;color:#efe9da}
+  .card .meta .ds{font-size:10.5px;color:#8d8775;margin-top:3px}
+  .card.active .meta .tt{color:var(--gold2)}
+  /* progress */
+  .prog{position:fixed;left:0;bottom:0;height:3px;width:0;z-index:7;background:linear-gradient(90deg,var(--goldd),var(--gold2));box-shadow:0 0 10px var(--gold)}
+</style>
+</head>
+<body>
+<div class="head"><span style="font-size:18px">🎬</span><span class="b">紙芝居シアター</span>
+  <a class="home" href="/">← ホームへ</a></div>
+
+<div class="stage"><video id="v" playsinline muted></video></div>
+
+<div class="np" id="np"><div class="k">NOW PLAYING</div><div class="t" id="npT"></div></div>
+
+<div class="sound" id="sound"><div class="btn">🔊</div><div class="t">紙芝居シアター</div><div class="h">タップで再生 ・ 音が出ます</div></div>
+
+<div class="rail" id="rail"></div>
+<div class="prog" id="prog"></div>
+
+<script>
+const LIST=[
+  {src:'/mv/mumu_real.mp4', t:'ムムム — ほしいが、家になる', d:'実写MV ・ 買う/売る/作る/建てる'},
+  {src:'/mv/mumu_cm.mp4',   t:'MU『生まれる』', d:'30秒シネマCM'},
+  {src:'/mv/mumu_en.mp4',   t:'Mu Mu Mu — Anything is born', d:'English MV'},
+  {src:'/mv/mumu_jp.mp4',   t:'ムムム — 買う・売る・作る', d:'日本語MV'},
+];
+const v=document.getElementById('v'), np=document.getElementById('np'), npT=document.getElementById('npT');
+const rail=document.getElementById('rail'), prog=document.getElementById('prog'), sound=document.getElementById('sound');
+let cur=0, started=false;
+
+LIST.forEach((it,i)=>{
+  const c=document.createElement('div'); c.className='card'; c.dataset.i=i;
+  c.innerHTML='<div class="thumb"><video src="'+it.src+'#t=12" muted preload="metadata"></video></div>'+
+    '<div class="meta"><div class="tt">'+it.t+'</div><div class="ds">'+it.d+'</div></div>';
+  c.onclick=()=>play(i,true);
+  rail.appendChild(c);
+});
+function marks(){ [...rail.children].forEach((c,i)=>c.classList.toggle('active',i===cur)); }
+function showNP(){ npT.textContent=LIST[cur].t; np.classList.add('show'); clearTimeout(showNP._t);
+  showNP._t=setTimeout(()=>np.classList.remove('show'),3800); }
+function play(i,user){ cur=(i+LIST.length)%LIST.length; v.src=LIST[cur].src; v.currentTime=0;
+  if(user&&!started)unmute();
+  v.play().catch(()=>{}); marks(); showNP(); }
+function unmute(){ started=true; v.muted=false; sound.classList.add('hide'); }
+
+sound.onclick=()=>{ unmute(); play(0,false); };
+v.addEventListener('ended',()=>play(cur+1,false));
+v.addEventListener('timeupdate',()=>{ if(v.duration)prog.style.width=(v.currentTime/v.duration*100)+'%'; });
+v.addEventListener('click',()=>{ if(v.paused)v.play(); else v.pause(); });
+document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight')play(cur+1,false); if(e.key==='ArrowLeft')play(cur-1,false); });
+
+// 自動でミュート再生開始（音はタップで）
+play(0,false); marks();
+</script>
+</body>
+</html>

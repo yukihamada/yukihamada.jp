@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MU — ほしいの墓場 → 復活</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Antique&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#d8b75a;--gold2:#f4d98a;--goldd:#b8922f;--ink:#07070a;
+    --beat:0;--punch:1;--flash:0;--cappop:1;--ripple:0;--dawn:0;--streak:0
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:#000;overflow:hidden;display:flex;align-items:center;justify-content:center;
+    font-family:"Zen Kaku Gothic New",-apple-system,sans-serif;color:#fff}
+  .stage{position:fixed;inset:0;background:var(--ink);overflow:hidden}
+  .scene{position:absolute;inset:0;opacity:0;transition:opacity .5s ease;display:flex;align-items:center;justify-content:center}
+  .scene.on{opacity:1}
+
+  /* ===== 墓場 graveyard ===== */
+  .grave{padding:0}
+  .grave .fog{position:absolute;inset:0;
+    background:
+      radial-gradient(60% 40% at 50% 18%, rgba(40,46,66,.55), transparent 70%),
+      radial-gradient(120% 80% at 50% 120%, rgba(20,24,38,.9), transparent 70%),
+      linear-gradient(180deg,#04060c 0%,#070910 40%,#020306 100%)}
+  .grave .moon{position:absolute;top:9%;left:50%;transform:translateX(-50%);
+    width:120px;height:120px;border-radius:50%;
+    background:radial-gradient(circle at 42% 40%, #cdd6e8, #5a627a 70%, #2a3045 100%);
+    box-shadow:0 0 70px 18px rgba(150,165,200,.18);opacity:calc(.7 - var(--dawn)*.6);
+    filter:saturate(.6)}
+  .grave .yard{position:absolute;left:0;right:0;bottom:0;height:62%;
+    display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;
+    gap:min(3.6vw,30px);padding:0 7% 8%;align-items:end;justify-items:center}
+  .tomb{position:relative;width:100%;max-width:160px;aspect-ratio:.78/1;
+    display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+    text-align:center;border-radius:84px 84px 12px 12px;
+    background:linear-gradient(180deg,#2b2f3c 0%,#20232e 55%,#15171f 100%);
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.06),inset 0 -16px 30px rgba(0,0,0,.55),
+      0 18px 26px rgba(0,0,0,.6);
+    padding:14% 10% 8%;color:#9aa0b2;overflow:hidden;
+    opacity:0;transform:translateY(26px) scale(.96);
+    transition:opacity .6s ease, transform .6s ease}
+  .tomb.show{opacity:1;transform:translateY(0) scale(1)}
+  .tomb::before{content:"✝";position:absolute;top:6%;font-size:18px;color:#3c4254;opacity:.8}
+  .tomb .err{margin-top:20%;font-size:clamp(8px,2vw,11px);letter-spacing:.18em;
+    color:#cf5d5d;text-transform:uppercase;font-weight:700;opacity:.85}
+  .tomb .zero{font-family:"Zen Antique",serif;font-size:clamp(12px,3.4vw,19px);color:#c7475f;margin-top:2px;line-height:1}
+  .tomb .wish{margin-top:auto;font-size:clamp(10px,2.6vw,14px);font-weight:700;color:#aeb3c4;line-height:1.35}
+  .tomb .moss{position:absolute;inset:auto 0 0 0;height:30%;
+    background:linear-gradient(180deg,transparent,rgba(60,80,60,.22));opacity:.6}
+  /* 復活した墓標＝中身が商品画像に */
+  .tomb.alive{color:#1a1407;
+    background:#fff;box-shadow:0 0 0 2px rgba(216,183,90,.7),
+      0 0 38px rgba(244,217,138,.55),0 18px 30px rgba(0,0,0,.5)}
+  .tomb.alive::before{content:"✦";color:var(--goldd);opacity:1;z-index:3}
+  .tomb.alive .err,.tomb.alive .zero,.tomb.alive .moss{opacity:0}
+  .tomb .pimg{position:absolute;inset:0;opacity:0;transition:opacity .45s ease;
+    background-size:cover;background-position:center}
+  .tomb.alive .pimg{opacity:1}
+  .tomb .born{position:absolute;left:0;right:0;bottom:8%;text-align:center;z-index:4;
+    font-weight:900;font-size:clamp(9px,2.3vw,12px);letter-spacing:.04em;
+    color:#1a1407;opacity:0;transition:opacity .4s}
+  .tomb.alive .born{opacity:1}
+
+  /* 金の波紋 ripple from bloom */
+  .ripplering{position:fixed;left:50%;top:46%;width:40px;height:40px;border-radius:50%;
+    transform:translate(-50%,-50%) scale(calc(1 + var(--ripple)*26));
+    border:2px solid rgba(244,217,138,calc(var(--ripple)*.9));
+    box-shadow:0 0 60px rgba(244,217,138,calc(var(--ripple)*.7));
+    pointer-events:none;z-index:4;opacity:calc(1 - var(--ripple)*.2)}
+
+  /* ===== girl ===== */
+  .scene.girl img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 38%;
+    transform:scale(calc(var(--punch) * (1.03 + var(--beat)*.05)))}
+  .scene.girl::after{content:"";position:absolute;inset:0;
+    background:linear-gradient(180deg,rgba(4,4,8,.45),transparent 32%,transparent 60%,rgba(4,4,8,.72));pointer-events:none}
+
+  /* ===== reel wall ===== */
+  .reel .reelgrid{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(4,1fr);
+    gap:min(3vw,16px);width:84%;height:74%;
+    transform:scale(calc(var(--punch)*(1+var(--beat)*.02)))}
+  .reel .cell{background:#fff;border-radius:16px;overflow:hidden;position:relative;
+    box-shadow:0 8px 22px rgba(0,0,0,.5),0 0 0 1px rgba(216,183,90,.3),
+      0 0 calc(var(--beat)*30px) rgba(244,217,138,calc(var(--beat)*.4))}
+  .reel .cell img{width:100%;height:100%;object-fit:cover}
+
+  /* overlays */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:2;
+    background:radial-gradient(72% 56% at 50% 45%, rgba(216,183,90,calc(var(--beat)*.22)), transparent 60%);
+    box-shadow:inset 0 0 220px 70px rgba(0,0,0,.55)}
+  .flash{position:fixed;inset:0;pointer-events:none;z-index:9;
+    background:radial-gradient(60% 50% at 50% 45%, rgba(255,245,220,.95), rgba(216,183,90,.5) 45%, transparent 75%);opacity:var(--flash)}
+  .streak{position:fixed;inset:0;pointer-events:none;z-index:3;mix-blend-mode:screen;
+    opacity:var(--streak);
+    background:linear-gradient(115deg, transparent 44%, rgba(244,217,138,calc(var(--beat)*.32)) 50%, transparent 56%)}
+  .spk{position:fixed;z-index:5;pointer-events:none;color:var(--gold2);text-shadow:0 0 12px rgba(244,217,138,.9)}
+
+  .mark{position:fixed;top:max(22px,env(safe-area-inset-top));left:0;right:0;z-index:7;
+    display:flex;align-items:center;justify-content:center;gap:8px;opacity:.95}
+  .mark svg{filter:drop-shadow(0 0 calc(6px+var(--beat)*16px) rgba(216,183,90,.8))}
+  .mark .wm{font-family:"Zen Antique",serif;font-size:22px;letter-spacing:.34em;text-indent:.34em;
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sec{position:fixed;top:calc(max(22px,env(safe-area-inset-top)) + 44px);left:0;right:0;text-align:center;z-index:7;
+    font-size:11px;letter-spacing:.5em;text-indent:.5em;color:var(--gold);opacity:0;transition:opacity .4s}
+  .sec.on{opacity:.9}
+
+  .cap{position:fixed;bottom:8%;left:0;right:0;text-align:center;z-index:7;padding:0 8%;
+    font-weight:900;font-size:clamp(19px,5vw,30px);color:#fff;opacity:0;transition:opacity .35s;
+    text-shadow:0 2px 18px rgba(0,0,0,.95),0 0 26px rgba(216,183,90,.4)}
+  .cap.on{opacity:1}
+  .cap .g{color:var(--gold2)}
+  .cap .inner{display:inline-block;transform:scale(var(--cappop))}
+  .prog{position:fixed;bottom:0;left:0;height:3px;width:0;z-index:8;background:linear-gradient(90deg,var(--goldd),var(--gold2));box-shadow:0 0 12px var(--gold)}
+
+  /* end card */
+  .end{position:fixed;inset:0;z-index:6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+    opacity:0;transition:opacity .5s;background:radial-gradient(60% 50% at 50% 44%,#15130c,#000)}
+  .end.on{opacity:1}
+  .end svg{margin-bottom:8px;filter:drop-shadow(0 0 26px rgba(244,217,138,.8))}
+  .end .ja{font-family:"Zen Antique",serif;font-size:clamp(26px,7vw,46px);
+    background:linear-gradient(180deg,var(--gold2),var(--goldd));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .end .en{color:#c9c2ad;letter-spacing:.16em;font-size:clamp(13px,3.4vw,17px)}
+  .end .url{color:var(--gold);letter-spacing:.24em;font-size:15px;margin-top:14px;
+    border:1px solid rgba(216,183,90,.4);padding:9px 22px;border-radius:24px}
+
+  /* start gate */
+  .start{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    background:radial-gradient(70% 60% at 50% 40%,#0d0e16,#000);cursor:pointer;transition:opacity .5s}
+  .start.hide{opacity:0;pointer-events:none}
+  .start .play{width:88px;height:88px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    font-size:30px;color:var(--gold);box-shadow:0 0 50px rgba(216,183,90,.3)}
+  .start .t{font-family:"Zen Antique",serif;letter-spacing:.36em;text-indent:.36em;color:var(--gold);font-size:clamp(15px,4vw,19px);text-align:center}
+  .start .sub{color:#7f8aa0;font-size:12px;letter-spacing:.14em}
+  .start .h{color:#8d8775;font-size:12px;letter-spacing:.14em}
+</style>
+</head>
+<body>
+<div class="stage" id="stage"></div>
+<div class="glow"></div><div class="streak"></div>
+<div class="ripplering" id="ripple"></div>
+<div class="flash"></div>
+<div class="mark">
+  <svg viewBox="0 0 150 86" width="84"><defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#g)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#g)"/></g></svg>
+  <span class="wm">MU</span>
+</div>
+<div class="sec" id="sec"></div>
+<div class="cap" id="cap"><span class="inner"></span></div>
+<div class="prog" id="prog"></div>
+
+<div class="end" id="end">
+  <svg viewBox="0 0 150 86" width="118"><defs><linearGradient id="ge" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#ge)" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#ge)"/></g></svg>
+  <div class="ja">ほしいを、生む。</div>
+  <div class="en">Anything is born.</div>
+  <div class="url">wearmu.com</div>
+</div>
+
+<div class="start" id="start">
+  <div class="t">ほしいの墓場</div>
+  <div class="play">▶</div>
+  <div class="sub">検索の、敗者復活戦。</div>
+  <div class="h">タップで再生 · 🔊 音あり</div>
+</div>
+<audio id="audio" src="MuMuMu_8.mp3" preload="auto"></audio>
+
+<script>
+const DUR=47.88, NPROD=19;
+const PRODUCTS=Array.from({length:NPROD},(_,i)=>'reel/r'+String(i).padStart(2,'0')+'.jpg');
+// 墓標になった「ほしい」（検索で0件になった願い）
+const WISHES=[
+  '犬の道着','左利き用の鋏','世界に1つの帯',
+  '私だけの作務衣','光る祭り半纏','双子おそろい着',
+  '7本指の手袋','推し色の道着'
+];
+const NTOMB=WISHES.length; // 8 → 3x3 grid (with center bloom slot)
+
+// [t, type, asset, caption, section]
+const TL=[
+ [0.0,  'grave','',  '検索しても、<span class="g">0件</span>。',     'NOT FOUND'],
+ [4.2,  'grave','',  'ほしいは、ここで死んでいた。',                 '0件の墓場'],
+ [8.4,  'grave','',  '「犬の道着」も「左利き用の…」も。',            'WISH · DENIED'],
+ [12.6, 'grave','',  'だれも、つくってくれなかった。',               '0件の墓場'],
+ [16.4, 'grave','',  '——ここで、<span class="g">光が灯る</span>。',  'MU'],   // bloom ignite (pre-chorus)
+ [19.4, 'grave','',  '<span class="g">敗者復活戦、開始。</span>',     'RESURRECT'], // ripple + resurrect
+ [24.2, 'reel','',   '墓標が、<span class="g">商品に変わる</span>。', 'MADE ON MU'],
+ [28.0, 'girl','dance2','検索の、敗者復活戦。',                       'MU'],
+ [31.4, 'reel','',   '<span class="g">ぜんぶ、生まれ直す。</span>',   'MADE ON MU'],
+ [35.0, 'girl','arrive','言えば、できる。',                          'MAKE'],
+ [38.4, 'girl','finale_alt','ほしいを、<span class="g">生む</span>。', ''],
+ [42.6, 'girl','dance2','Anything is born.',                         ''],
+ [45.8, 'end','',   '',                                              ''],
+];
+
+const stage=document.getElementById('stage'), built={};
+let reelCells=[], tombEls=[];
+
+TL.forEach(([t,type,asset])=>{
+  const k=type+':'+asset; if(built[k])return; built[k]=true;
+  const s=document.createElement('section'); s.className='scene '+type; s.dataset.k=k;
+  if(type==='grave'){
+    s.innerHTML='<div class="fog"></div><div class="moon"></div><div class="yard" id="yard"></div>';
+  } else if(type==='girl'){
+    const file = asset==='finale_alt' ? 'dance2' : asset; // dance2/arrive 実在。finale_alt→dance2
+    s.innerHTML='<img src="girl3/'+file+'.png" alt="">';
+  } else if(type==='reel'){
+    const g=document.createElement('div'); g.className='reelgrid';
+    for(let c=0;c<12;c++){const cell=document.createElement('div');cell.className='cell';
+      const im=document.createElement('img');im.src=PRODUCTS[c%NPROD];cell.appendChild(im);g.appendChild(cell);reelCells.push(im);}
+    s.appendChild(g);
+  } else if(type==='end'){
+    // end card handled by #end overlay; empty scene placeholder
+    s.innerHTML='';
+  }
+  stage.appendChild(s);
+});
+
+// 墓場の中身を生成（3x3、中央はブルームの種＝光源）
+const yard=document.getElementById('yard');
+for(let i=0;i<9;i++){
+  if(i===4){ // center = bloom seed cell (光が灯る場所)
+    const c=document.createElement('div'); c.className='tomb bloomseed';
+    c.style.background='radial-gradient(circle at 50% 45%, rgba(244,217,138,.0), rgba(20,23,30,1) 72%)';
+    c.style.boxShadow='none'; c.dataset.bloom='1';
+    const sv=document.createElement('div');
+    sv.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .6s';
+    sv.innerHTML='<svg viewBox="0 0 150 86" width="78"><defs><linearGradient id="gb'+i+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4d98a"/><stop offset="1" stop-color="#b8922f"/></linearGradient></defs><g><line x1="88" y1="43" x2="108" y2="43" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="52.2" x2="98.3" y2="66.3" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="56" x2="75" y2="76" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="52.2" x2="51.7" y2="66.3" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="62" y1="43" x2="42" y2="43" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="65.8" y1="33.8" x2="51.7" y2="19.7" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="75" y1="30" x2="75" y2="10" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><line x1="84.2" y1="33.8" x2="98.3" y2="19.7" stroke="url(#gb'+i+')" stroke-width="2.4" stroke-linecap="round"/><circle cx="75" cy="43" r="6.5" fill="url(#gb'+i+')"/></g></svg>';
+    c.appendChild(sv); c.__svg=sv;
+    yard.appendChild(c); tombEls.push(c); continue;
+  }
+  const wi = i<4 ? i : i-1; // map around center
+  const t=document.createElement('div'); t.className='tomb';
+  const prodIdx = (wi*7+3)%NPROD;
+  t.innerHTML =
+    '<div class="pimg" style="background-image:url('+PRODUCTS[prodIdx]+')"></div>'+
+    '<div class="err">NOT FOUND</div><div class="zero">0件</div>'+
+    '<div class="wish">'+WISHES[wi%NTOMB]+'</div><div class="moss"></div>'+
+    '<div class="born">✦ 生まれた</div>';
+  yard.appendChild(t); tombEls.push(t);
+}
+
+const scenes=[...stage.querySelectorAll('.scene')];
+const capWrap=document.getElementById('cap'), capInner=capWrap.querySelector('.inner');
+const sec=document.getElementById('sec'), prog=document.getElementById('prog');
+const endEl=document.getElementById('end'), startEl=document.getElementById('start');
+const rippleEl=document.getElementById('ripple');
+const root=document.documentElement, audio=document.getElementById('audio');
+const SP=[]; for(let i=0;i<16;i++){const d=document.createElement('div');d.className='spk';d.style.fontSize=(10+(i%4)*6)+'px';d.textContent='✦';stage.appendChild(d);SP.push(d);}
+let cur=-1;
+
+const BLOOM_T=16.4, RESURRECT_T=19.4, RIPPLE_END=24.0;
+
+function apply(t){
+  let i=0; for(let k=0;k<TL.length;k++) if(t>=TL[k][0]) i=k;
+  const [st,type,asset,c,sc]=TL[i], key=type+':'+asset, local=t-st;
+
+  if(i!==cur){ cur=i;
+    scenes.forEach(s=>s.classList.toggle('on', s.dataset.k===key));
+    capInner.innerHTML=c||''; capWrap.classList.toggle('on',!!c);
+    sec.innerHTML=sc||''; sec.classList.toggle('on',!!sc);
+    endEl.classList.toggle('on', type==='end');
+  }
+
+  // ===== 墓場：墓標を順に出す → ブルーム点灯 → 復活 =====
+  if(type==='grave'){
+    // 墓標の出現（時間で順番に）
+    tombEls.forEach((el,idx)=>{
+      if(el.dataset.bloom) return;
+      const appearAt = 0.5 + idx*0.7;
+      el.classList.toggle('show', t>=appearAt);
+    });
+    // ブルーム点灯（中央の種が光る）
+    const seed=tombEls[4];
+    if(seed && seed.__svg){
+      const lit = t>=BLOOM_T-1.0;
+      seed.__svg.style.opacity = lit ? '1' : '0';
+      seed.style.background = lit
+        ? 'radial-gradient(circle at 50% 45%, rgba(244,217,138,.55), rgba(20,23,30,1) 75%)'
+        : 'radial-gradient(circle at 50% 45%, rgba(244,217,138,0), rgba(20,23,30,1) 72%)';
+      seed.style.boxShadow = lit ? '0 0 50px rgba(244,217,138,.55)' : 'none';
+    }
+    // 復活：RESURRECT_T 以降、墓標が次々と商品へ（位置でスタガー）
+    const reTombs=tombEls.filter(e=>!e.dataset.bloom);
+    reTombs.forEach((el,idx)=>{
+      const aliveAt = RESURRECT_T + idx*0.45;
+      el.classList.toggle('alive', t>=aliveAt);
+    });
+  } else {
+    // 墓場を離れたら復活状態を確定（reel/girlへ）
+    tombEls.forEach(e=>{ if(!e.dataset.bloom) e.classList.add('alive'); });
+  }
+
+  // 金の波紋（ブルーム点灯〜復活直後）
+  let rp=0;
+  if(t>=BLOOM_T && t<RIPPLE_END){ rp=(t-BLOOM_T)/(RIPPLE_END-BLOOM_T); }
+  root.style.setProperty('--ripple', rp.toFixed(3));
+  rippleEl.style.opacity = (rp>0 && rp<1) ? '1' : '0';
+
+  // ===== reel：商品が高速で入れ替わる壁 =====
+  if(type==='reel'){
+    const step=Math.floor(t/0.16);
+    for(let j=0;j<reelCells.length;j++){ const idx=(step*7 + j*11) % NPROD; reelCells[j].src=PRODUCTS[idx]; }
+  }
+
+  // ===== beat / FX =====
+  const beat=Math.max(0, Math.exp(-((t*2)%1)*5)*0.95);
+  root.style.setProperty('--beat', beat.toFixed(3));
+  // 墓場フェーズは斜光ストリークを消し、サビ(復活)以降だけ走らせる
+  root.style.setProperty('--streak', t<RESURRECT_T ? '0' : '1');
+  root.style.setProperty('--punch', (1 + Math.max(0, 0.08 - local*0.34)).toFixed(3));
+  // フラッシュ：シーン頭 + ブルーム点灯 + 復活開始で金フラッシュ
+  let fl = Math.max(0, 0.5 - local*2.8);
+  if(t>=BLOOM_T && t<BLOOM_T+0.6) fl=Math.max(fl, 0.85*(1-(t-BLOOM_T)/0.6));
+  if(t>=RESURRECT_T && t<RESURRECT_T+0.7) fl=Math.max(fl, 0.95*(1-(t-RESURRECT_T)/0.7));
+  root.style.setProperty('--flash', fl.toFixed(3));
+  root.style.setProperty('--cappop', (1 + Math.max(0, 0.2 - local*0.95)).toFixed(3));
+  // 墓場フェーズは✦を弱く、サビ以降は強く
+  const sparkPower = t<BLOOM_T ? 0.15 : 1.0;
+  for(let j=0;j<SP.length;j++){ const ph=j*1.6;
+    const x=50 + 44*Math.sin(t*0.6 + ph), y=14 + 70*((Math.sin(t*0.4+ph*1.3)+1)/2);
+    const op=(0.2 + 0.7*Math.max(0,Math.sin(t*2.2 + ph))) * (0.45+beat*0.6) * sparkPower;
+    SP[j].style.left=x+'%'; SP[j].style.top=y+'%'; SP[j].style.opacity=Math.min(1,op).toFixed(2);
+    SP[j].style.transform='scale('+(0.55+0.6*Math.abs(Math.sin(t*1.5+ph)))+')';
+  }
+  prog.style.width=Math.min(100,t/DUR*100)+'%';
+}
+
+function loop(){ apply(audio.currentTime); if(!audio.paused) requestAnimationFrame(loop); }
+startEl.addEventListener('click',()=>{
+  audio.currentTime=0;
+  audio.play().then(()=>{startEl.classList.add('hide');loop();})
+              .catch(()=>{startEl.classList.add('hide');loop();});
+});
+// loop restart at end
+audio.addEventListener('ended',()=>{ cur=-1; tombEls.forEach(e=>{if(!e.dataset.bloom){e.classList.remove('alive');e.classList.remove('show');}}); });
+
+// render hook (headless seek)
+(function(){ if(!new URLSearchParams(location.search).has('render'))return;
+  startEl.classList.add('hide'); window.__seek=(t)=>apply(t); window.__ready=true; })();
+</script>
+</body>
+</html>
