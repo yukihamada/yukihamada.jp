@@ -1327,6 +1327,11 @@ async fn ichigon_ep1_page() -> impl IntoResponse {
     Html(include_str!("../templates/ichigon-ep1.html"))
 }
 
+// ── 番組『一言、立つ。』第2話「三日で消える、んじゃなかった。」(marker: ichigon-2) ──
+async fn ichigon_ep2_page() -> impl IntoResponse {
+    Html(include_str!("../templates/ichigon-ep2.html"))
+}
+
 // ── 紙芝居 第9話『焚き火に、話しかけろ。』焚き火コマンド編 ──────────────
 // 薪の先頭に「/」でボットが応える使い方を全8場面で。/tension /house /koe → /help。
 // 画像 /assets/kamishibai-v2/TBOT/、音声 /audio/v2/tbot-kam-N.mp3 を WebAudio で。(marker: kamishibai-9)
@@ -7502,6 +7507,7 @@ async fn main() {
         .route("/kamishibai/8", get(kamishibai_ep8_page))
         .route("/ichigon", get(ichigon_ep1_page))
         .route("/ichigon/1", get(ichigon_ep1_page))
+        .route("/ichigon/2", get(ichigon_ep2_page))
         .route("/kamishibai/9", get(kamishibai_tbot_page))
         .route("/kamishibai/takibi-bot", get(kamishibai_tbot_page))
         .route("/kamishibai/hi/{token}", get(kamishibai_hiseki_page))
