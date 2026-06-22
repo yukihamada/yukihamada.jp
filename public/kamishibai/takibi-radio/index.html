@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>焚き火ラジオ ― 声の家系図が育つAIポッドキャスト</title>
+<meta name="description" content="焚き火を囲む仲間が、AI時代の『どうなるか』と『何が大事か』を語り合う。視聴者のリクエストで次回が決まり、新しい声(仲間)が生まれて家系図が枝分かれしていく、参加型のAIポッドキャスト。">
+<link rel="canonical" href="https://yukihamada.jp/kamishibai-theater/takibi-radio/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="焚き火ラジオ ― 声の家系図が育つAIポッドキャスト">
+<meta property="og:description" content="リクエストで次回が決まり、新しい声(仲間)が生まれて家系図が枝分かれしていく参加型AIポッドキャスト。第1話『AI時代は、どうなって、何が大事か』公開中。">
+<meta property="og:url" content="https://yukihamada.jp/kamishibai-theater/takibi-radio/">
+<meta property="og:image" content="https://i.ytimg.com/vi/wz1YO6VgG_s/maxresdefault.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+<style>
+:root{--bg:#16120d;--bg2:#1f1810;--ink:#f5ecd9;--mut:#bdae97;--accent:#e8833a;--accent2:#f2b15a;--line:rgba(245,236,217,.12)}
+*{box-sizing:border-box}
+html,body{margin:0;background:radial-gradient(1200px 700px at 50% -10%,#241a10 0%,var(--bg) 60%);color:var(--ink);
+  font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--accent2)}
+.wrap{max-width:880px;margin:0 auto;padding:0 20px}
+header.hero{text-align:center;padding:72px 20px 28px}
+.kicker{letter-spacing:.34em;color:var(--accent);font-size:13px;font-weight:700;margin:0 0 14px}
+h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-weight:800;font-size:clamp(28px,6vw,46px);margin:0 0 14px;line-height:1.3}
+.tag{color:var(--mut);font-size:clamp(15px,2.6vw,18px);margin:0 auto;max-width:620px}
+.flame{font-size:40px;filter:drop-shadow(0 0 16px rgba(232,131,58,.6));animation:flick 2.4s ease-in-out infinite}
+@keyframes flick{0%,100%{transform:scale(1) rotate(-1deg)}50%{transform:scale(1.08) rotate(1deg)}}
+section{padding:30px 0;border-top:1px solid var(--line)}
+h2{font-family:"Hiragino Mincho ProN",serif;font-size:clamp(20px,4vw,26px);margin:0 0 8px}
+.lead{color:var(--mut);margin:0 0 20px}
+.video{position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.epmeta{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0;color:var(--mut);font-size:14px}
+.chip{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+/* family tree */
+.tree{display:grid;gap:18px}
+.root{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.node{background:linear-gradient(180deg,var(--bg2),#191309);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-width:150px;flex:1 1 150px;max-width:200px}
+.node .nm{font-weight:800;font-size:17px}
+.node .rl{color:var(--accent2);font-size:12.5px;font-weight:700;margin:2px 0 6px}
+.node .tr{color:var(--mut);font-size:13px}
+.branchwrap{margin-top:8px}
+.branchwrap h3{font-size:15px;color:var(--accent);letter-spacing:.1em;margin:0 0 12px;text-align:center}
+.branches{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.bnode{border:1px dashed var(--line);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.015)}
+.bnode .when{color:var(--mut);font-size:12.5px}
+.bnode .seed{font-weight:700;margin-bottom:4px}
+.bnode .ghost{display:inline-block;font-size:11px;color:#8c7f6a;border:1px solid var(--line);border-radius:999px;padding:2px 8px;margin-bottom:6px}
+/* request form */
+.form{background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:22px}
+label{display:block;font-size:13px;color:var(--mut);margin:14px 0 6px;font-weight:700}
+input,textarea,select{width:100%;background:#120e09;color:var(--ink);border:1px solid var(--line);border-radius:10px;
+  padding:12px 14px;font-size:15px;font-family:inherit}
+textarea{min-height:110px;resize:vertical}
+.btn{display:inline-block;margin-top:18px;background:linear-gradient(180deg,var(--accent2),var(--accent));color:#1a1106;
+  font-weight:800;border:0;border-radius:999px;padding:13px 26px;font-size:16px;cursor:pointer;box-shadow:0 8px 24px rgba(232,131,58,.35)}
+.note{color:var(--mut);font-size:13px;margin-top:12px}
+footer{padding:36px 0 60px;text-align:center;color:var(--mut);font-size:13px}
+.cta-x{color:var(--accent2)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="flame">🔥</div>
+  <p class="kicker">TAKIBI RADIO</p>
+  <h1>焚き火ラジオ</h1>
+  <p class="tag">声の家系図が育つ、参加型のAIポッドキャスト。<br>あなたのリクエストが、次の夜のテーマと、新しい仲間（声）を呼ぶ。</p>
+</header>
+
+<div class="wrap">
+
+  <section>
+    <h2>第1話「AI時代は、どうなって、何が大事か」</h2>
+    <p class="lead">焚き火を囲む5人が、これからの世界と、その中で握りしめておくべきものを語り合う。約6分半。音声だけでも楽しめます。</p>
+    <div class="video">
+      <iframe src="https://www.youtube.com/embed/wz1YO6VgG_s" title="焚き火ラジオ 第1話" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+    </div>
+    <div class="epmeta">
+      <span class="chip">🎙 5人の声の対話劇</span>
+      <span class="chip">🖼 絵：Gemini</span>
+      <span class="chip">🗣 声：ElevenLabs / Koe</span>
+      <span class="chip">✍️ 構成：Claude(Opus) + 濱田優貴</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>声の家系図</h2>
+    <p class="lead">いまの仲間。リクエストが集まるたびに、新しい声が生まれ、枝が伸びていきます。</p>
+    <div class="tree">
+      <div class="root" id="founders"></div>
+      <div class="branchwrap">
+        <h3>― これから生まれるかもしれない枝 ―</h3>
+        <div class="branches" id="branches"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>次の夜に、リクエストを</h2>
+    <p class="lead">「次はこれを話してほしい」「こんな声（仲間）を呼んでほしい」。集まったリクエストが次回のテーマを決め、系統が育つと新しいメンバーが家系図に加わります。</p>
+    <div class="form">
+      <label for="theme">話してほしいテーマ・問い</label>
+      <textarea id="theme" placeholder="例：AIと子どもの教育って、これからどうなる？／お金の意味はどう変わる？"></textarea>
+      <label for="voice">呼んでほしい声・仲間（任意）</label>
+      <input id="voice" placeholder="例：経済の声／音楽家／お医者さん／哲学者">
+      <label for="name">お名前・ラジオネーム（任意）</label>
+      <input id="name" placeholder="例：たき火好き">
+      <button class="btn" id="send">🔥 リクエストを送る</button>
+      <p class="note">※ 現在はメールでお預かりします（送信ボタンでメーラーが開きます）。いただいた声は次回の企画に反映します。</p>
+    </div>
+  </section>
+
+  <footer>
+    <p>焚き火ラジオ ／ 絵：Gemini ・ 声：ElevenLabs + Koe ・ 構成：Claude(Opus) + 濱田優貴</p>
+    <p><a class="cta-x" href="https://x.com/yukihamada" target="_blank" rel="noopener">@yukihamada</a> ／ <a href="https://yukihamada.jp/">yukihamada.jp</a></p>
+  </footer>
+</div>
+
+<script>
+const ROSTER = {
+  founders: [
+    {name:"ハジメ", role:"進行・ナレーター", trait:"落ち着いた語りで場を編む"},
+    {name:"優貴", role:"ホスト・主人公", trait:"作り手目線・北極星を示す"},
+    {name:"エイコ", role:"楽観・未来にワクワク", trait:"可能性を広げる"},
+    {name:"オオタニ", role:"知性・慎重", trait:"本質と落とし穴を突く"},
+    {name:"ユイ", role:"聞き手・素朴な問い", trait:"視聴者の代弁者"}
+  ],
+  branches: [
+    {seed:"音楽家の声", when:"創作・音楽のリクエストが集まったら"},
+    {seed:"経済・お金の声", when:"仕事・お金のリクエストが集まったら"},
+    {seed:"身体・健康の声", when:"暮らし・体のリクエストが集まったら"},
+    {seed:"子どもの声", when:"教育・素朴な疑問が集まったら"}
+  ]
+};
+const f = document.getElementById('founders');
+ROSTER.founders.forEach(n=>{
+  const d=document.createElement('div');d.className='node';
+  d.innerHTML=`<div class="nm">${n.name}</div><div class="rl">${n.role}</div><div class="tr">${n.trait}</div>`;
+  f.appendChild(d);
+});
+const b = document.getElementById('branches');
+ROSTER.branches.forEach(n=>{
+  const d=document.createElement('div');d.className='bnode';
+  d.innerHTML=`<div class="ghost">未誕生</div><div class="seed">${n.seed}</div><div class="when">${n.when}</div>`;
+  b.appendChild(d);
+});
+document.getElementById('send').addEventListener('click',()=>{
+  const theme=document.getElementById('theme').value.trim();
+  const voice=document.getElementById('voice').value.trim();
+  const name=document.getElementById('name').value.trim();
+  if(!theme){document.getElementById('theme').focus();return;}
+  const subject=encodeURIComponent('焚き火ラジオ リクエスト');
+  const body=encodeURIComponent(
+    `【話してほしいテーマ】\n${theme}\n\n【呼んでほしい声・仲間】\n${voice||'(なし)'}\n\n【お名前】\n${name||'(なし)'}\n`);
+  window.location.href=`mailto:mail@yukihamada.jp?subject=${subject}&body=${body}`;
+});
+</script>
+</body>
+</html>
