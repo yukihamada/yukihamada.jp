@@ -1320,6 +1320,13 @@ async fn kamishibai_ep8_page() -> impl IntoResponse {
     Html(include_str!("../templates/kamishibai-ep8.html"))
 }
 
+// ── 番組『一言、立つ。』第1話 ────────────────────────────────
+// 人間ひとりの一言を4体のAIが奪い合うマルチエージェント番組。声は全員AI
+// (koe声クローン×Qwen-TTS)。動画は同一オリジン /mv/ichigon-ep1.mp4。(marker: ichigon-1)
+async fn ichigon_ep1_page() -> impl IntoResponse {
+    Html(include_str!("../templates/ichigon-ep1.html"))
+}
+
 // ── 紙芝居 第9話『焚き火に、話しかけろ。』焚き火コマンド編 ──────────────
 // 薪の先頭に「/」でボットが応える使い方を全8場面で。/tension /house /koe → /help。
 // 画像 /assets/kamishibai-v2/TBOT/、音声 /audio/v2/tbot-kam-N.mp3 を WebAudio で。(marker: kamishibai-9)
@@ -7493,6 +7500,8 @@ async fn main() {
         .route("/transformer", get(kamishibai_ep7_page))
         .route("/attention", get(kamishibai_ep7_page))
         .route("/kamishibai/8", get(kamishibai_ep8_page))
+        .route("/ichigon", get(ichigon_ep1_page))
+        .route("/ichigon/1", get(ichigon_ep1_page))
         .route("/kamishibai/9", get(kamishibai_tbot_page))
         .route("/kamishibai/takibi-bot", get(kamishibai_tbot_page))
         .route("/kamishibai/hi/{token}", get(kamishibai_hiseki_page))
