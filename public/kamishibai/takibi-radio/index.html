@@ -29,8 +29,13 @@ h1{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;font-weight:800;font-siz
 section{padding:30px 0;border-top:1px solid var(--line)}
 h2{font-family:"Hiragino Mincho ProN",serif;font-size:clamp(20px,4vw,26px);margin:0 0 8px}
 .lead{color:var(--mut);margin:0 0 20px}
-.video{position:relative;padding-top:56.25%;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video{position:relative;display:block;padding-top:56.25%;border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.5);text-decoration:none}
+.video img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.video .play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:84px;height:84px;border-radius:50%;
+  background:rgba(232,131,58,.92);box-shadow:0 8px 30px rgba(0,0,0,.5);transition:transform .15s}
+.video .play::after{content:"";position:absolute;left:54%;top:50%;transform:translate(-50%,-50%);
+  border-style:solid;border-width:16px 0 16px 26px;border-color:transparent transparent transparent #1a1106}
+.video:hover .play{transform:translate(-50%,-50%) scale(1.08)}
 .epmeta{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 0;color:var(--mut);font-size:14px}
 .chip{background:var(--bg2);border:1px solid var(--line);border-radius:999px;padding:5px 12px}
 /* family tree */
@@ -73,9 +78,10 @@ footer{padding:36px 0 60px;text-align:center;color:var(--mut);font-size:13px}
   <section>
     <h2>第1話「AI時代は、どうなって、何が大事か」</h2>
     <p class="lead">焚き火を囲む5人が、これからの世界と、その中で握りしめておくべきものを語り合う。約6分半。音声だけでも楽しめます。</p>
-    <div class="video">
-      <iframe src="https://www.youtube.com/embed/wz1YO6VgG_s" title="焚き火ラジオ 第1話" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-    </div>
+    <a class="video" href="https://www.youtube.com/watch?v=wz1YO6VgG_s" target="_blank" rel="noopener" aria-label="第1話をYouTubeで観る">
+      <img src="https://i.ytimg.com/vi/wz1YO6VgG_s/maxresdefault.jpg" alt="焚き火ラジオ 第1話のサムネイル" loading="lazy">
+      <span class="play"></span>
+    </a>
     <div class="epmeta">
       <span class="chip">🎙 5人の声の対話劇</span>
       <span class="chip">🖼 絵：Gemini</span>
