@@ -29,6 +29,11 @@ Splice（音楽制作サンプル素材の大手プラットフォーム）の�
 
 ベルリンのコレクティブ**Keinemusik**がヨーロッパ側の波を作り、Master KGの「Jerusalema」（2020年）がTikTok発のダンスチャレンジで世界中にバイラルし、複数国のチャートで1位を獲得——という流れで、アフロハウスはニッチなタウンシップの音楽から国際的なジャンルになった。
 
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.2em 0;border-radius:8px;">
+<iframe src="https://www.youtube.com/embed/YgspUgZRylc" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Master KG - Jerusalema (Official Music Video)"></iframe>
+</div>
+<p style="font-size:0.9em;opacity:0.7;margin-top:-0.5em;">▶ Master KG feat. Nomcebo Zikode「Jerusalema」(2019) — TikTokダンスチャレンジで世界的にバイラル化した、アフロハウスが国際的に認知される起点になった一曲</p>
+
 ## 音楽理論: 「4つ打ち」を柔らかく崩す構造
 
 <audio controls preload="none" style="width:100%;margin:1em 0" src="/audio/blog/afro-house/segment-02.mp3"></audio>
@@ -64,6 +69,11 @@ Splice（音楽制作サンプル素材の大手プラットフォーム）の�
 
 これらを常時全部鳴らすわけではなく、どの楽器を前に出すかを曲の展開の中でローテーションさせていく。これが「ずっと聴いていても飽きない」複雑さの正体で、ドラムサークルが徐々に楽器を入れ替えながら演奏しているのに近い感覚がある。
 
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.2em 0;border-radius:8px;">
+<iframe src="https://www.youtube.com/embed/95dB-ObZ7Ho" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Adam Port, Stryv, Keinemusik - Move feat. Malachiii (Official Audio)"></iframe>
+</div>
+<p style="font-size:0.9em;opacity:0.7;margin-top:-0.5em;">▶ Adam Port, Stryv, Keinemusik feat. Malachiii「Move」(2024) — パーカッションのレイヤーとボーカルチョップの実例。Keinemusikらしい今のアフロハウスの音</p>
+
 ## 姉妹ジャンルとの関係
 
 アフロハウス周辺は名前が似ていて混同しやすいので整理しておく。
@@ -87,6 +97,11 @@ Splice（音楽制作サンプル素材の大手プラットフォーム）の�
 2. **2022年** — Black Coffee『Subconsciously』がグラミー受賞、南アフリカ発サウンドの正当性が国際的に認められる
 3. **2023年** — Black CoffeeがマディソンスクエアガーデンをアフリカDJ史上初のソロ満席に。同時期、Keinemusikがベルリン～ヨーロッパのディープ/アフロ系シーンを牽引
 4. **2025〜2026年** — Splice上でのダウンロード急増（+778%）、Beatportが独立ジャンルカテゴリとして定着。メインストリームEDMのプロデューサーたちがログドラムやパーカッションレイヤーを取り入れた「アフロ・テック」的なクロスオーバー曲を量産する段階に入っている
+
+<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.2em 0;border-radius:8px;">
+<iframe src="https://www.youtube.com/embed/vu1QsEUVLQs" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Black Coffee & David Guetta - Drive feat. Delilah Montagu (Official Video)"></iframe>
+</div>
+<p style="font-size:0.9em;opacity:0.7;margin-top:-0.5em;">▶ Black Coffee & David Guetta feat. Delilah Montagu「Drive」(2018) — 南アフリカのアフロハウスの顔とEDM最大手のコラボ。この曲がクロスオーバーの先駆けだった</p>
 
 つまりアフロハウスは「新しいジャンルが生まれた」という話ではなく、南アフリカのタウンシップで30年かけて熟成してきたリズムの語彙が、ようやくグローバルなダンスミュージックの主流言語の一部になった、という話。EDM側から見ると、ストレートな四つ打ちに飽きてきたタイミングで、複層パーカッションとポリリズムという「新しい語彙」が輸入されてきた、というのが今起きていることに近い。
 
