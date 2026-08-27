@@ -13,7 +13,7 @@ description: "Black Coffee、Keinemusik、Themba、Da Capo、Culoe De Song、Eno
 
 ## レーン1: ソロブランド型 — Black Coffee
 
-南アフリカ出身、アフロハウスを世界に持ち出した本人。自分のレーベル**Soulistic Music**を主宰し、2017年から**Hï Ibiza**（イビサの最大手クラブ）で毎年サマーレジデンシーを継続。2026年は5月2日〜10月3日の毎週土曜、8年目のレジデンシーになる。
+南アフリカ出身、アフロハウスを世界に持ち出した最初の立役者。自分のレーベル**Soulistic Music**を主宰し、2017年から**Hï Ibiza**（イビサの最大手クラブ）で毎年サマーレジデンシーを継続。2026年は5月2日〜10月3日の毎週土曜、8年目のレジデンシーになる。
 
 制作面では、以前は音符を手書きしていたが今はLogic Proを使用。「白紙のキャンバスから始める」スタイルで、ソウルやジャズ、R&B、クラシックの要素を積極的に混ぜ込む。コロナ禍以降はスタジオに入れないアーティストとリモートで曲を作るのが普通になり（PharrellやCassieとの制作もその一例）、南アフリカのタウンシップ発の音がリモートコラボでロサンゼルスやロンドンのポップシーンに直接つながる状態になっている。
 
@@ -39,7 +39,7 @@ Black Coffeeが「個人ブランド」だとすると、Keinemusikは「グル�
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.2em 0;border-radius:8px;">
 <iframe src="https://www.youtube.com/embed/tLuXTeK-NBs" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="THEMBA & Nico de Andrea feat. Tasan - Disappear (Official Visualizer)"></iframe>
 </div>
-<p style="font-size:0.9em;opacity:0.7;margin-top:-0.5em;">▶ THEMBA & Nico de Andrea feat. Tasan「Disappear」(2022) — 800万再生超。テクノのタスティメーカーにも刺さった一曲</p>
+<p style="font-size:0.9em;opacity:0.7;margin-top:-0.5em;">▶ THEMBA & Nico de Andrea feat. Tasan「Disappear」(2022) — ストリーミング累計800万回超(Spotify等・この動画自体の再生数ではない)。テクノのテイストメーカーにも刺さった一曲</p>
 
 Black CoffeeやKeinemusikが「アフロハウスというジャンルの中心」で勝負しているのに対し、Thembaは**ジャンルの境界を越えることで評価される**戦い方。アフロハウスのリスナーだけでなく、テクノのリスナーにもリーチできる曲を作っている。
 
