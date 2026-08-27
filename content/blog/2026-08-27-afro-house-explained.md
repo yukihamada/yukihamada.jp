@@ -8,8 +8,88 @@ description: "南アフリカのタウンシップで生まれたアフロハウ
 # アフロハウスとは何か
 
 <div class="audio-intro">
-<p>この記事は声でも聴けます。各セクションの再生ボタンを押してください。</p>
+<p>この記事は声でも聴けます。各セクションの再生ボタンを押してください。コード進行とリズムパターンはブラウザ上で音を合成して実際に鳴らせます。</p>
 </div>
+
+<style>
+.koe-play-btn{display:inline-block;margin:4px 8px 4px 0;padding:8px 16px;border-radius:999px;border:1px solid var(--border);background:var(--bg-card);color:var(--text);font-size:0.85em;font-weight:600;cursor:pointer;transition:var(--transition-fast);}
+.koe-play-btn:hover{background:var(--bg-card-hover);border-color:var(--primary);color:var(--primary-light);}
+.koe-play-box{margin:1em 0;padding:14px 16px;border:1px solid var(--border-subtle);border-radius:var(--radius-sm);background:var(--bg-elevated);}
+.koe-play-box p{margin:0 0 8px;font-size:0.85em;color:var(--text-muted);}
+</style>
+<script>
+(function(){
+  var actx;
+  function ctx(){
+    if(!actx) actx = new (window.AudioContext||window.webkitAudioContext)();
+    if(actx.state === 'suspended') actx.resume();
+    return actx;
+  }
+  function tone(c, freq, t, dur, type, peak){
+    var osc = c.createOscillator(), gain = c.createGain();
+    osc.type = type; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, c.currentTime + t);
+    gain.gain.linearRampToValueAtTime(peak, c.currentTime + t + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + t + dur);
+    osc.connect(gain).connect(c.destination);
+    osc.start(c.currentTime + t); osc.stop(c.currentTime + t + dur + 0.05);
+  }
+  function kick(c, t, soft){
+    var osc = c.createOscillator(), gain = c.createGain();
+    osc.frequency.setValueAtTime(soft?110:150, c.currentTime + t);
+    osc.frequency.exponentialRampToValueAtTime(soft?38:45, c.currentTime + t + 0.12);
+    gain.gain.setValueAtTime(soft?0.45:0.85, c.currentTime + t);
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + t + (soft?0.16:0.25));
+    osc.connect(gain).connect(c.destination);
+    osc.start(c.currentTime + t); osc.stop(c.currentTime + t + 0.3);
+  }
+  function noiseBurst(c, t, dur, hpFreq, peak){
+    var n = Math.max(1, Math.floor(c.sampleRate * dur));
+    var buf = c.createBuffer(1, n, c.sampleRate);
+    var d = buf.getChannelData(0);
+    for(var i=0;i<n;i++) d[i] = Math.random()*2-1;
+    var src = c.createBufferSource(); src.buffer = buf;
+    var hp = c.createBiquadFilter(); hp.type='highpass'; hp.frequency.value = hpFreq;
+    var gain = c.createGain();
+    gain.gain.setValueAtTime(peak, c.currentTime + t);
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + t + dur);
+    src.connect(hp).connect(gain).connect(c.destination);
+    src.start(c.currentTime + t);
+  }
+  function logdrum(c, t, freq){
+    var osc = c.createOscillator(), gain = c.createGain();
+    osc.type = 'sine'; osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0.28, c.currentTime + t);
+    gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + t + 0.15);
+    osc.connect(gain).connect(c.destination);
+    osc.start(c.currentTime + t); osc.stop(c.currentTime + t + 0.2);
+  }
+  var CHORDS = {
+    sad:    [[220.00,261.63,329.63], [174.61,220.00,261.63], [196.00,246.94,293.66]],
+    uplift: [[196.00,246.94,293.66], [174.61,220.00,261.63], [220.00,261.63,329.63]],
+    dorian: [[220.00,261.63,329.63,392.00], [174.61,220.00,261.63,329.63], [196.00,246.94,293.66,349.23]]
+  };
+  window.koePlayChords = function(id){
+    var c = ctx(), chords = CHORDS[id], dur = 1.05;
+    chords.forEach(function(notes, i){
+      notes.forEach(function(f){ tone(c, f, i*dur, dur*0.92, 'triangle', 0.10); });
+    });
+  };
+  window.koePlayRhythm = function(mode){
+    var c = ctx(), bpm = 121, step = (60/bpm)/4, bars = 2;
+    for(var bar=0; bar<bars; bar++){
+      var base = bar*16*step;
+      [0,4,8,12].forEach(function(s){ kick(c, base+s*step, false); });
+      if(mode === 'afro'){
+        [2,6,10,14].forEach(function(s){ kick(c, base+s*step, true); });
+        for(var s=0; s<16; s+=2) noiseBurst(c, base+s*step, 0.05, 6000, 0.07);
+        [3,7,11,14].forEach(function(s,i){ logdrum(c, base+s*step, [220,196,246,175][i]); });
+        noiseBurst(c, base+8*step, 0.12, 1200, 0.14);
+      }
+    }
+  };
+})();
+</script>
 
 最近、EDMのプレイリストで明らかに「効いてる」曲が増えている。四つ打ちなのにどこか揺れている、ボーカルが細かく刻まれている、パーカッションが何層にも重なっている——それがアフロハウス（Afro House）。
 
@@ -50,6 +130,13 @@ Splice（音楽制作サンプル素材の大手プラットフォーム）の�
 
 **コード進行**はマイナーキーが基本。例えば `i–♭VI–♭VII`（Am–F–G）は郷愁的な響き、順番を変えて `♭VII–♭VI–i` にすると高揚感のある響きになる。他にも `im7–♭VImaj7–♭VII7` のようなドリアン・ヴァンプ（1つのマイナーコードを軸に周りを漂わせる進行）も多用される。コードは主張しすぎず、パーカッションと共存する程度の密度に留めるのがセオリー。
 
+<div class="koe-play-box">
+<p>実際に音を鳴らして聴き比べてみる(ブラウザで音を合成・録音物ではありません)</p>
+<button class="koe-play-btn" onclick="koePlayChords('sad')">▶ i–♭VI–♭VII 郷愁的 (Am→F→G)</button>
+<button class="koe-play-btn" onclick="koePlayChords('uplift')">▶ ♭VII–♭VI–i 高揚感 (G→F→Am)</button>
+<button class="koe-play-btn" onclick="koePlayChords('dorian')">▶ ドリアン・ヴァンプ (Am7→Fmaj7→G7)</button>
+</div>
+
 **ボーカルチョップ**（人の声を細切れにサンプリングして楽器的に配置する手法）は裏拍に置かれることが多く、これも全体のシンコペーションを強調する要素になっている。
 
 ## 実際の音: パーカッションが5〜8層重なる
@@ -68,6 +155,12 @@ Splice（音楽制作サンプル素材の大手プラットフォーム）の�
 - **手拍子（ハンドクラップ）** — 儀式的なニュアンスを加える要素
 
 これらを常時全部鳴らすわけではなく、どの楽器を前に出すかを曲の展開の中でローテーションさせていく。これが「ずっと聴いていても飽きない」複雑さの正体で、ドラムサークルが徐々に楽器を入れ替えながら演奏しているのに近い感覚がある。
+
+<div class="koe-play-box">
+<p>121BPM・2小節ループで聴き比べ(合成音・比較用の簡易パターンです)</p>
+<button class="koe-play-btn" onclick="koePlayRhythm('straight')">▶ ふつうの4つ打ちだけ</button>
+<button class="koe-play-btn" onclick="koePlayRhythm('afro')">▶ アフロハウスの5層グルーヴ</button>
+</div>
 
 <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;max-width:100%;margin:1.2em 0;border-radius:8px;">
 <iframe src="https://www.youtube.com/embed/95dB-ObZ7Ho" style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy" title="Adam Port, Stryv, Keinemusik - Move feat. Malachiii (Official Audio)"></iframe>
