@@ -7,7 +7,13 @@ description: "去年10月のAmsterdam Dance Event(ADE)で体験した2つの対�
 
 # 去年ADEで見た「教会」と「クレーン」
 
+<div class="audio-intro">
+<p>この記事は声でも聴けます。各セクションの再生ボタンを押してください。</p>
+</div>
+
 去年の10月、Amsterdam Dance Event(ADE)に行った。かなり色々体験したけど、一番振れ幅が大きかったのは同じ街の中で「教会」と「クレーン」という両極端な会場を両方体験したこと。
+
+<audio controls preload="none" style="width:100%;margin:1em 0" src="/audio/blog/ade/segment-01.mp3"></audio>
 
 ## 教会でのレイブ
 
@@ -31,6 +37,8 @@ description: "去年10月のAmsterdam Dance Event(ADE)で体験した2つの対�
 
 ## DJとは何か
 
+<audio controls preload="none" style="width:100%;margin:1em 0" src="/audio/blog/ade/segment-02.mp3"></audio>
+
 せっかくなので、ここで一度立ち止まって「DJとは何か」を考えてみる。
 
 技術的には「既存の曲をつなぐ人」「機材を操作する人」という説明もできる。でも結局のところ、**DJの仕事は人を踊らせることに尽きる**と思う。選曲も、ミックスの技術も、機材の進化も、全部は「今このフロアにいる人たちをどう踊らせるか」という一点のための手段。
@@ -45,6 +53,8 @@ Amsterdam Dance Event(ADE)は1996年、オランダの音楽業界向けのビ�
 
 ## ここからEDMの歴史をざっと振り返る
 
+<audio controls preload="none" style="width:100%;margin:1em 0" src="/audio/blog/ade/segment-03.mp3"></audio>
+
 ADEで体感した「教会からクレーンまでの振れ幅」は、実はEDMというジャンル自体の歴史そのものでもある。ざっと辿ってみる。
 
 **1970年代: ディスコ** — ニューヨークのゲイ・マイノリティコミュニティ発のダンスカルチャーとして誕生。
@@ -58,6 +68,8 @@ ADEで体感した「教会からクレーンまでの振れ幅」は、実はED
 **2020年代: 非西欧発ジャンルの台頭** — そしてここに、[前回まで書いてきたアフロハウス](/blog/2026-08-27-afro-house-explained)が入ってくる。南アフリカのタウンシップで熟成されたリズムの語彙が、TikTok経由でバイラル化し、Black CoffeeやKeinemusikのようなアーティストを通じて世界のダンスミュージックの主流言語の一部になった。
 
 ## アフロハウスだけじゃない、今伸びているもの
+
+<audio controls preload="none" style="width:100%;margin:1em 0" src="/audio/blog/ade/segment-04.mp3"></audio>
 
 去年からの調査で見えてきたのは、アフロハウス以外にも「非西欧発・SNS発」のジャンルが軒並み伸びているということ。
 
