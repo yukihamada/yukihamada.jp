@@ -7,6 +7,8 @@ description: "去年10月のAmsterdam Dance Event(ADE)で体験した2つの対�
 
 # 去年ADEで見た「教会」と「クレーン」
 
+*([English version here](/blog/2026-08-28-ade-edm-history-scene-now-en))*
+
 <div class="audio-intro">
 <p>この記事は声でも聴けます。各セクションの再生ボタンを押してください。</p>
 </div>
