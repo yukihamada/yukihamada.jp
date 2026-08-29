@@ -4369,6 +4369,231 @@ fn extract_lang_from_ua(ua: &str) -> &str {
     if ua.contains("ja") { "ja" } else if ua.contains("en") { "en" } else { "other" }
 }
 
+// ── Chord charts (guitar chord+lyrics sheets, /chords) ──
+// Persisted as JSON files under $CHORDS_DATA_DIR (default /data/chords) so they survive
+// deploys and can be edited via the admin-only API without a rebuild.
+fn chords_data_dir() -> std::path::PathBuf {
+    std::path::PathBuf::from(std::env::var("CHORDS_DATA_DIR").unwrap_or_else(|_| "/data/chords".to_string()))
+}
+
+fn chords_admin_authed(state: &AppState, headers: &HeaderMap) -> bool {
+    headers.get("cookie")
+        .and_then(|v| v.to_str().ok())
+        .and_then(|cookies| cookies.split(';').find_map(|part| {
+            part.trim().strip_prefix("admin_auth=").map(|t| t.to_string())
+        }))
+        .map(|token| validate_admin_token(state, &token))
+        .unwrap_or(false)
+}
+
+fn safe_chord_slug(slug: &str) -> Option<String> {
+    if !slug.is_empty() && slug.len() <= 80
+        && slug.chars().all(|c| c.is_ascii_alphanumeric() || c == '-' || c == '_') {
+        Some(slug.to_string())
+    } else {
+        None
+    }
+}
+
+// Seed data for the first song, used only when no file exists yet on disk.
+fn seed_musubinaosu_asa() -> serde_json::Value {
+    serde_json::json!({
+        "title": "結び直す朝",
+        "artist": "Shiopixel",
+        "key": "Eb",
+        "bpm": 89.1,
+        "audio": "/audio/musubinaosu-asa.mp3",
+        "lines": [
+            {"t":13.5,"chord":"Bb","text":"目覚ましの前に 目が覚めて 湯気の向こうで 今日が待ってる"},
+            {"t":25.02,"chord":"Ab","text":"もう一度 結び直す"},
+            {"t":28.57,"chord":"Gm","text":"ささやかなことに救われて"},
+            {"t":33.89,"chord":"Ab","text":"犬の足音でリビングをめぐる"},
+            {"t":39.65,"chord":"Eb","text":"昨日の悔しさ床に置いて"},
+            {"t":44.52,"chord":"Ab","text":"深呼吸 蒔いた種の匂い"},
+            {"t":48.96,"chord":"Bb","text":"うまくいかない日ばかりでも"},
+            {"t":54.72,"chord":"Fm","text":"ふとした笑い声が背中を押す"},
+            {"t":60.48,"chord":"Eb","text":"大丈夫そのままでいい"},
+            {"t":64.91,"chord":"Cm","text":"僕らは何度でも始められる"},
+            {"t":70.23,"chord":"Eb","text":"解けた心も指先で結び直せる"},
+            {"t":75.99,"chord":"Cm","text":"結び直せる名前を呼べば"},
+            {"t":80.87,"chord":"Bb","text":"ここに戻れる"},
+            {"t":83.53,"chord":"Bb","text":"古いアルバムも開くたび"},
+            {"t":88.4,"chord":"Eb","text":"部屋の隅で 時間が立ち止まる"},
+            {"t":94.16,"chord":"Bb","text":"今日は何曜日君が聞く"},
+            {"t":98.6,"chord":"Ab","text":"同じ答えても抱きしめたくなる"},
+            {"t":104.8,"chord":"Bb","text":"小さな会議丸いテーブル"},
+            {"t":109.68,"chord":"Cm","text":"言葉の端っこを拾い集めて"},
+            {"t":115.0,"chord":"Cm","text":"赤い印で約束をつける"},
+            {"t":119.43,"chord":"Bb","text":"忘れないために今を灯す"},
+            {"t":124.3,"chord":"Ab","text":"私は相変わらず"},
+            {"t":127.41,"chord":"Fm","text":"忙しいけど"},
+            {"t":129.62,"chord":"Fm","text":"僕らの歩幅で"},
+            {"t":132.28,"chord":"Bb","text":"ゆっくりでいい"},
+            {"t":135.38,"chord":"Gm","text":"大丈夫"},
+            {"t":136.71,"chord":"Cm","text":"急がなくていい"},
+            {"t":139.82,"chord":"Bb","text":"涙がこぼれても笑っていい"},
+            {"t":145.13,"chord":"Bb","text":"昨日の痛みは味方になる"},
+            {"t":150.01,"chord":"Fm","text":"結び直せる 結び直せる"},
+            {"t":154.44,"chord":"Ab","text":"離れそうなら手を握ればいい"},
+            {"t":160.2,"chord":"Cm","text":"負けた夜には青い指を切った"},
+            {"t":165.96,"chord":"Cm","text":"解いて結び直す"},
+            {"t":169.07,"chord":"Ab","text":"1,2,1,2"},
+            {"t":172.17,"chord":"Fm","text":"息を合わせ心の中の波に乗る"},
+            {"t":177.93,"chord":"Ab","text":"今年のページに赤で書いた"},
+            {"t":183.25,"chord":"Bb","text":"何度でも挑む優しく強く"},
+            {"t":188.12,"chord":"Bb","text":"大丈夫 僕らはまだ"},
+            {"t":191.67,"chord":"Eb","text":"誰かの光になれる途中"},
+            {"t":196.1,"chord":"Cm","text":"手のひらの火を消さないで"},
+            {"t":201.42,"chord":"Fm","text":"結び直そう 結び直そう"},
+            {"t":205.85,"chord":"Eb","text":"名前を呼べばここに戻れる"},
+            {"t":211.17,"chord":"Bb","text":"明日の靴紐を確かめたら"},
+            {"t":216.05,"chord":"Bb","text":"窓の朝焼けが僕らを待ってる"},
+            {"t":221.81,"chord":"Eb","text":"大丈夫 そのままでいい"},
+            {"t":226.24,"chord":"Bb","text":"何度でも始められる"}
+        ]
+    })
+}
+
+fn seed_triangle() -> serde_json::Value {
+    serde_json::json!({
+        "title": "三角の歌 (Triangle Song)",
+        "artist": "濱田優貴",
+        "key": "Eb",
+        "bpm": null,
+        "audio": "/mv/assets/audio/triangle.mp3",
+        "lines": [
+            {"t":0.5,"chord":"Eb","text":"クローズからの三角　まずは深く呼吸をして"},
+            {"t":8.0,"chord":"Eb","text":"立たせないように　割らせないように"},
+            {"t":14.0,"chord":"Eb","text":"両袖をやさしく包み込み　アッパーカットの角度で"},
+            {"t":20.0,"chord":"Cm","text":"胸にそっと添えて　溝落ちへ導いて"},
+            {"t":25.0,"chord":"Bb","text":"もう片方の手は　弓を引くようにやさしく引き寄せて"},
+            {"t":36.0,"chord":"Bb","text":"こつばんを上げて　顎に寄り添って"},
+            {"t":42.0,"chord":"Cm","text":"足で相手をやさしくキャッチしてロックする"},
+            {"t":47.0,"chord":"Cm","text":"膝をたたんで　頭を近くに招いて"},
+            {"t":51.0,"chord":"Bb","text":"三角の扉を　静かに閉じていく"},
+            {"t":59.0,"chord":"Eb","text":"がいせんからないせんへ　迷わずに流れ"},
+            {"t":64.0,"chord":"Cm","text":"クラッチは心に秘めて　師からの学びを信じて"},
+            {"t":70.0,"chord":"Cm","text":"内ももで包み　腰で支えながら"},
+            {"t":73.0,"chord":"Bb","text":"やがて相手は　そっとタップを刻むでしょう"},
+            {"t":82.0,"chord":"Eb","text":"腰に足を添えて　角度をやわらかくひらき"},
+            {"t":87.0,"chord":"Bb","text":"振り上げた足が　三角を描き出す"},
+            {"t":93.0,"chord":"Bb","text":"頭を包んで　そっと近くに引き寄せて"},
+            {"t":98.0,"chord":"Cm","text":"じんわり伝わる圧は　逃げ場をなくしていく"},
+            {"t":104.0,"chord":"Bb","text":"落ち着いたコントロールが　勝利への道しるべになる"},
+            {"t":115.0,"chord":"Bb","text":"これが私の道　これが私の技"},
+            {"t":120.0,"chord":"Eb","text":"準備はできている　心は静かに澄んでいる"},
+            {"t":126.0,"chord":"Cm","text":"三角はやさしい証明　決まればタップ"}
+        ]
+    })
+}
+
+fn seed_attention_kudasai() -> serde_json::Value {
+    serde_json::json!({
+        "title": "アテンションください",
+        "artist": "Shiopixel",
+        "key": "E",
+        "bpm": null,
+        "audio": "/audio/attention-kudasai.mp3",
+        "lines": [
+            {"t":1.6,"chord":"E","text":"まぶたの裏で光が灯る"},
+            {"t":6.51,"chord":"E","text":"閃きみたいに ニューロンがまた灯る"},
+            {"t":14.36,"chord":"E","text":"一緒に発火したから結びつく"},
+            {"t":20.74,"chord":"E","text":"ヘッブ則みたいな始まりの予感"},
+            {"t":27.6,"chord":"E","text":"君の名前で世界は予測を始める"},
+            {"t":34.47,"chord":"E","text":"ズレを数えて胸が熱くなる"},
+            {"t":40.36,"chord":"B","text":"だから 最初に動こう"},
+            {"t":44.78,"chord":"Am","text":"言葉より先に手を繋いで"},
+            {"t":50.18,"chord":"E","text":"深呼吸して自由エネルギー"},
+            {"t":56.06,"chord":"A","text":"そっと熱を下げて"},
+            {"t":59.99,"chord":"E","text":"合図をちょうだい"},
+            {"t":63.91,"chord":"E","text":"アテンションください"},
+            {"t":68.82,"chord":"B","text":"アテンションください"},
+            {"t":73.73,"chord":"B","text":"アテンションください"},
+            {"t":78.63,"chord":"E","text":"アテンションください"},
+            {"t":83.54,"chord":"Abm","text":"アテンションください"},
+            {"t":88.45,"chord":"E","text":"アテンションください"},
+            {"t":93.35,"chord":"Ab","text":"ウェイトを上げて 境界を超えたら"},
+            {"t":100.71,"chord":"E","text":"キスは今がいい"},
+            {"t":104.15,"chord":"C#m","text":"アテンション ラララ ください"},
+            {"t":110.53,"chord":"E","text":"君の笑顔を埋め込みに変えて"},
+            {"t":116.9,"chord":"B","text":"胸の潜在空間で何度も再生"},
+            {"t":122.79,"chord":"F#m","text":"夜の損失は逆再生でほどける 涙の勾配で 心を最適化してきた"},
+            {"t":136.04,"chord":"Em","text":"ドーパミンは 小さな予測誤差の花火"},
+            {"t":143.89,"chord":"B","text":"幸せの確率が 跳ね上がるよ"},
+            {"t":149.78,"chord":"E","text":"触れた温度で シナプスが花開く"},
+            {"t":156.65,"chord":"Ab","text":"LTP 長期増強みたいに記憶は強く"},
+            {"t":164.5,"chord":"B","text":"余計なノイズはドラッと"},
+            {"t":169.9,"chord":"E","text":"君の声だけ残して"},
+            {"t":173.82,"chord":"C#m","text":"アテンションください"},
+            {"t":178.73,"chord":"F#m","text":"2人の情報を統合して"},
+            {"t":183.63,"chord":"E","text":"Φが満ちる ここがピーク"},
+            {"t":189.03,"chord":"A","text":"ギリギリギリ"},
+            {"t":191.98,"chord":"B","text":"アテンション"},
+            {"t":194.92,"chord":"B","text":"ラララ… ください"},
+            {"t":198.84,"chord":"A","text":"眠れない夜に脳は自分を再学習"},
+            {"t":205.71,"chord":"E","text":"夢のパッチで記憶を正規化 破滅的忘却は起こさせない"},
+            {"t":217.49,"chord":"E","text":"君の手の温度で 固定する(consolidation)"},
+            {"t":230.25,"chord":"E","text":"スポットラ"}
+        ]
+    })
+}
+
+fn seed_for_slug(slug: &str) -> Option<serde_json::Value> {
+    match slug {
+        "musubinaosu-asa" => Some(seed_musubinaosu_asa()),
+        "triangle" => Some(seed_triangle()),
+        "attention-kudasai" => Some(seed_attention_kudasai()),
+        _ => None,
+    }
+}
+
+async fn api_chords_get(Path(slug): Path<String>) -> Response {
+    let Some(slug) = safe_chord_slug(&slug) else {
+        return StatusCode::BAD_REQUEST.into_response();
+    };
+    let path = chords_data_dir().join(format!("{}.json", slug));
+    if let Ok(bytes) = std::fs::read(&path) {
+        if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&bytes) {
+            return (cors_headers(), Json(v)).into_response();
+        }
+    }
+    if let Some(seed) = seed_for_slug(&slug) {
+        if let Some(dir) = path.parent() { let _ = std::fs::create_dir_all(dir); }
+        let _ = std::fs::write(&path, serde_json::to_vec_pretty(&seed).unwrap_or_default());
+        return (cors_headers(), Json(seed)).into_response();
+    }
+    StatusCode::NOT_FOUND.into_response()
+}
+
+async fn api_chords_save(
+    Path(slug): Path<String>,
+    State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
+    body: axum::body::Bytes,
+) -> Response {
+    if !chords_admin_authed(&state, &headers) {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
+    let Some(slug) = safe_chord_slug(&slug) else {
+        return StatusCode::BAD_REQUEST.into_response();
+    };
+    let Ok(v) = serde_json::from_slice::<serde_json::Value>(&body) else {
+        return (StatusCode::BAD_REQUEST, "invalid json").into_response();
+    };
+    if !v.is_object() || !v.get("lines").map(|l| l.is_array()).unwrap_or(false) {
+        return (StatusCode::BAD_REQUEST, "expected {lines:[...],...}").into_response();
+    }
+    let dir = chords_data_dir();
+    if let Err(e) = std::fs::create_dir_all(&dir) {
+        return (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response();
+    }
+    let path = dir.join(format!("{}.json", slug));
+    match std::fs::write(&path, serde_json::to_vec_pretty(&v).unwrap_or_default()) {
+        Ok(_) => (cors_headers(), Json(serde_json::json!({"ok": true}))).into_response(),
+        Err(e) => (StatusCode::INTERNAL_SERVER_ERROR, e.to_string()).into_response(),
+    }
+}
+
 async fn admin_analytics(State(state): State<Arc<AppState>>, headers: HeaderMap) -> Response {
     // Check admin_auth cookie against admin_sessions
     let authed = headers.get("cookie")
@@ -7593,6 +7818,8 @@ async fn main() {
         .nest_service("/mv", ServeDir::new("public/mv"))
         .route("/theater", get(theater_page))
         .nest_service("/chords", ServeDir::new("public/chords"))
+        .route("/api/chords/{slug}", get(api_chords_get))
+        .route("/api/admin/chords/{slug}", post(api_chords_save))
         // 🎬 紙芝居シアター: MUのインタラクティブ紙芝居5本(launcher=index.html)
         .nest_service("/kamishibai-theater", ServeDir::new("public/kamishibai"))
         // 「言ってみて」生成紙芝居の本物のGemini画像生成
