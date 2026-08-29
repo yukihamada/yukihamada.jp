@@ -7039,6 +7039,7 @@ async fn main() {
         .nest_service("/takibi", ServeDir::new("public/takibi"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/mv", ServeDir::new("public/mv"))
+        .nest_service("/chords", ServeDir::new("public/chords"))
         // 🎬 紙芝居シアター: MUのインタラクティブ紙芝居5本(launcher=index.html)
         .nest_service("/kamishibai-theater", ServeDir::new("public/kamishibai"))
         // 「言ってみて」生成紙芝居の本物のGemini画像生成
