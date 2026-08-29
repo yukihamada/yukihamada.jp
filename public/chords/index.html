@@ -3,229 +3,52 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>結び直す朝 — ギターコード | yukihamada.jp/chords</title>
-<meta name="description" content="Shiopixel『結び直す朝』のギターコード譜。カポ切替・自動スクロール対応。">
+<title>ギターコード集 | yukihamada.jp/chords</title>
+<meta name="description" content="Shiopixel / 濱田優貴の曲のギターコード譜集。カポ切替・自動スクロール対応。">
 <meta name="robots" content="noindex">
 <style>
   :root{
     --bg:#0e0d0b; --fg:#f4f1ea; --mut:#9b968a; --line:rgba(244,241,234,.12);
-    --gold:#d9b26a; --chord:#7ecbb0; --chip:rgba(126,203,176,.14);
+    --gold:#d9b26a; --chip:rgba(217,178,106,.1);
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
     font-family:"Hiragino Sans","Noto Sans JP",sans-serif;}
-  .wrap{max-width:620px;margin:0 auto;padding:28px 20px 140px}
-  header{text-align:center;margin-bottom:18px}
-  h1{font-size:20px;font-weight:600;margin:0 0 4px;letter-spacing:.02em}
-  .meta{font-size:12px;color:var(--mut);letter-spacing:.08em}
-  .note{font-size:11px;color:var(--mut);text-align:center;margin:10px auto 0;max-width:480px;line-height:1.7;
-    border-top:1px solid var(--line);padding-top:10px}
-  .controls{position:sticky;top:0;z-index:5;background:rgba(14,13,11,.92);backdrop-filter:blur(8px);
-    border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:14px;align-items:center;
-    justify-content:center;flex-wrap:wrap;font-size:12px}
-  .ctl-group{display:flex;align-items:center;gap:6px}
-  .ctl-group label{color:var(--mut);letter-spacing:.05em}
-  select,button{background:#1a1815;color:var(--fg);border:1px solid var(--line);
-    border-radius:8px;padding:6px 10px;font-size:13px;font-family:inherit;cursor:pointer}
-  button.active{background:var(--gold);color:#1a1512;border-color:var(--gold)}
-  input[type=range]{width:90px;accent-color:var(--gold)}
-  .sheet{margin-top:26px}
-  .line{display:flex;flex-direction:column;padding:9px 0;transition:background .3s}
-  .line.current{background:var(--chip);border-radius:8px;padding-left:8px;padding-right:8px;margin:0 -8px}
-  .chord{font-family:"SF Mono",Menlo,monospace;font-size:13px;color:var(--chord);
-    font-weight:700;letter-spacing:.02em;min-height:1.2em}
-  .lyric{font-size:16px;line-height:1.65;color:rgba(244,241,234,.94)}
-  .audio-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(14,13,11,.96);
-    border-top:1px solid var(--line);padding:10px 16px;backdrop-filter:blur(10px)}
-  audio{width:100%;max-width:620px;display:block;margin:0 auto;height:34px}
-  .capo-hint{font-size:11px;color:var(--mut);text-align:center;margin-top:4px}
-  a.back{color:var(--mut);font-size:12px;text-decoration:none;display:inline-block;margin-bottom:14px}
+  .wrap{max-width:560px;margin:0 auto;padding:36px 20px 80px}
+  a.back{color:var(--mut);font-size:12px;text-decoration:none}
   a.back:hover{color:var(--gold)}
-  .disclaimer{font-size:10px;color:var(--mut);opacity:.7;text-align:center;margin-top:24px;line-height:1.7}
+  h1{font-size:20px;font-weight:600;margin:22px 0 4px}
+  .sub{font-size:12px;color:var(--mut);margin-bottom:26px}
+  .song{display:block;padding:16px 18px;border:1px solid var(--line);border-radius:12px;
+    margin-bottom:10px;text-decoration:none;color:var(--fg);background:var(--chip);
+    transition:border-color .15s}
+  .song:hover{border-color:var(--gold)}
+  .song .title{font-size:15px;font-weight:600}
+  .song .artist{font-size:12px;color:var(--mut);margin-top:2px}
 </style>
 </head>
 <body>
 <div class="wrap">
   <a class="back" href="/">← yukihamada.jp</a>
-  <header>
-    <h1>結び直す朝</h1>
-    <div class="meta">Shiopixel / アコギ・バラード / Key: E♭ / ♩=89</div>
-  </header>
-
-  <div class="controls">
-    <div class="ctl-group">
-      <label for="capo">CAPO</label>
-      <select id="capo"></select>
-    </div>
-    <div class="ctl-group">
-      <button id="scroll-btn" onclick="toggleAutoScroll()">▶ 自動スクロール</button>
-    </div>
-    <div class="ctl-group">
-      <label for="speed">速さ</label>
-      <input type="range" id="speed" min="0.5" max="1.6" step="0.05" value="1">
-    </div>
-  </div>
-  <div class="capo-hint" id="capo-hint"></div>
-
-  <div class="sheet" id="sheet"></div>
-
-  <p class="disclaimer">コード進行はCNN+CRFモデル(madmom)による解析＋ベース音との独立クロスチェック(一致率90%)。歌詞の行とタイミングの対応は目安のため、実際に弾きながら微調整してください。</p>
+  <h1>ギターコード集</h1>
+  <div class="sub">カポ切替・自動スクロール対応。コードはAI解析(要確認)。</div>
+  <div id="list"></div>
 </div>
-
-<div class="audio-bar">
-  <audio id="player" controls src="/audio/musubinaosu-asa.mp3" preload="none"></audio>
-</div>
-
 <script>
-const DATA = {
-  duration: 253.32498866213152,
-  lines: [
-    {t:13.5,chord:"Bb",text:"目覚ましの前に 目が覚めて 湯気の向こうで 今日が待ってる"},
-    {t:25.02,chord:"Ab",text:"もう一度 結び直す"},
-    {t:28.57,chord:"Gm",text:"ささやかなことに救われて"},
-    {t:33.89,chord:"Ab",text:"犬の足音でリビングをめぐる"},
-    {t:39.65,chord:"Eb",text:"昨日の悔しさ床に置いて"},
-    {t:44.52,chord:"Ab",text:"深呼吸 蒔いた種の匂い"},
-    {t:48.96,chord:"Bb",text:"うまくいかない日ばかりでも"},
-    {t:54.72,chord:"Fm",text:"ふとした笑い声が背中を押す"},
-    {t:60.48,chord:"Eb",text:"大丈夫そのままでいい"},
-    {t:64.91,chord:"Cm",text:"僕らは何度でも始められる"},
-    {t:70.23,chord:"Eb",text:"解けた心も指先で結び直せる"},
-    {t:75.99,chord:"Cm",text:"結び直せる名前を呼べば"},
-    {t:80.87,chord:"Bb",text:"ここに戻れる"},
-    {t:83.53,chord:"Bb",text:"古いアルバムも開くたび"},
-    {t:88.4,chord:"Eb",text:"部屋の隅で 時間が立ち止まる"},
-    {t:94.16,chord:"Bb",text:"今日は何曜日君が聞く"},
-    {t:98.6,chord:"Ab",text:"同じ答えても抱きしめたくなる"},
-    {t:104.8,chord:"Bb",text:"小さな会議丸いテーブル"},
-    {t:109.68,chord:"Cm",text:"言葉の端っこを拾い集めて"},
-    {t:115.0,chord:"Cm",text:"赤い印で約束をつける"},
-    {t:119.43,chord:"Bb",text:"忘れないために今を灯す"},
-    {t:124.3,chord:"Ab",text:"私は相変わらず"},
-    {t:127.41,chord:"Fm",text:"忙しいけど"},
-    {t:129.62,chord:"Fm",text:"僕らの歩幅で"},
-    {t:132.28,chord:"Bb",text:"ゆっくりでいい"},
-    {t:135.38,chord:"Gm",text:"大丈夫"},
-    {t:136.71,chord:"Cm",text:"急がなくていい"},
-    {t:139.82,chord:"Bb",text:"涙がこぼれても笑っていい"},
-    {t:145.13,chord:"Bb",text:"昨日の痛みは味方になる"},
-    {t:150.01,chord:"Fm",text:"結び直せる 結び直せる"},
-    {t:154.44,chord:"Ab",text:"離れそうなら手を握ればいい"},
-    {t:160.2,chord:"Cm",text:"負けた夜には青い指を切った"},
-    {t:165.96,chord:"Cm",text:"解いて結び直す"},
-    {t:169.07,chord:"Ab",text:"1,2,1,2"},
-    {t:172.17,chord:"Fm",text:"息を合わせ心の中の波に乗る"},
-    {t:177.93,chord:"Ab",text:"今年のページに赤で書いた"},
-    {t:183.25,chord:"Bb",text:"何度でも挑む優しく強く"},
-    {t:188.12,chord:"Bb",text:"大丈夫 僕らはまだ"},
-    {t:191.67,chord:"Eb",text:"誰かの光になれる途中"},
-    {t:196.1,chord:"Cm",text:"手のひらの火を消さないで"},
-    {t:201.42,chord:"Fm",text:"結び直そう 結び直そう"},
-    {t:205.85,chord:"Eb",text:"名前を呼べばここに戻れる"},
-    {t:211.17,chord:"Bb",text:"明日の靴紐を確かめたら"},
-    {t:216.05,chord:"Bb",text:"窓の朝焼けが僕らを待ってる"},
-    {t:221.81,chord:"Eb",text:"大丈夫 そのままでいい"},
-    {t:226.24,chord:"Bb",text:"何度でも始められる"}
-  ]
-};
-
-const NOTES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
-const ENHARM = {'Db':'C#','D#':'Eb','Gb':'F#','G#':'Ab','A#':'Bb'};
-function pcOf(root){ return NOTES.indexOf(root) >= 0 ? NOTES.indexOf(root) : NOTES.indexOf(ENHARM[root]); }
-function splitChord(chord){
-  // root can be 2 chars (with # or b) or 1 char
-  let root = chord.slice(0,2);
-  if(!(root in {...Object.fromEntries(NOTES.map(n=>[n,1])), ...ENHARM})) root = chord.slice(0,1);
-  return { root, qual: chord.slice(root.length) };
-}
-function transpose(chord, semitoneShift){
-  const {root, qual} = splitChord(chord);
-  const pc = pcOf(root);
-  if(pc === undefined || pc < 0) return chord;
-  const newPc = ((pc + semitoneShift) % 12 + 12) % 12;
-  return NOTES[newPc] + qual;
-}
-
-// capo N: shape you play = original chord transposed DOWN by N semitones
-const capoSel = document.getElementById('capo');
-for(let i=0;i<=7;i++){
-  const opt = document.createElement('option');
-  opt.value = i; opt.textContent = i===0 ? 'なし' : `${i}フレット`;
-  if(i===3) opt.selected = true; // Eb major → capo3でCシェイプが弾ける
-  capoSel.appendChild(opt);
-}
-
-const sheet = document.getElementById('sheet');
-function render(){
-  const capo = parseInt(capoSel.value, 10);
-  sheet.innerHTML = '';
-  DATA.lines.forEach((line, i) => {
-    const div = document.createElement('div');
-    div.className = 'line';
-    div.id = 'line-' + i;
-    const shapeChord = transpose(line.chord, -capo);
-    div.innerHTML = `<div class="chord">${shapeChord}</div><div class="lyric">${line.text}</div>`;
-    sheet.appendChild(div);
-  });
-  document.getElementById('capo-hint').textContent = capo===0
-    ? '実音（カポなし）で表示中'
-    : `カポ${capo}フレット装着 → 表示コードのシェイプで押さえると実音は原曲どおりになります`;
-}
-capoSel.addEventListener('change', render);
-render();
-
-// ── auto-scroll synced to audio.currentTime ──
-const audio = document.getElementById('player');
-const scrollBtn = document.getElementById('scroll-btn');
-const speedSlider = document.getElementById('speed');
-let autoScrollOn = false;
-let manualRaf = null;
-
-function toggleAutoScroll(){
-  autoScrollOn = !autoScrollOn;
-  scrollBtn.classList.toggle('active', autoScrollOn);
-  scrollBtn.textContent = autoScrollOn ? '⏸ 自動スクロール中' : '▶ 自動スクロール';
-  if(autoScrollOn){
-    if(audio.paused && audio.currentTime === 0) audio.play().catch(()=>{});
-    manualScrollLoop();
-  } else if(manualRaf){
-    cancelAnimationFrame(manualRaf);
-    manualRaf = null;
-  }
-}
-
-function currentLineIndex(t){
-  let idx = 0;
-  for(let i=0;i<DATA.lines.length;i++){
-    if(DATA.lines[i].t <= t) idx = i; else break;
-  }
-  return idx;
-}
-
-let lastHighlighted = -1;
-function manualScrollLoop(){
-  if(!autoScrollOn) return;
-  const speed = parseFloat(speedSlider.value);
-  let t;
-  if(audio.duration && !audio.paused){
-    t = audio.currentTime;
-  } else {
-    // no audio playing: fake-advance time by speed, teleprompter style
-    t = (manualScrollLoop._t || 0) + 0.25 * speed;
-    manualScrollLoop._t = t;
-  }
-  const idx = currentLineIndex(t);
-  if(idx !== lastHighlighted){
-    document.querySelectorAll('.line.current').forEach(el=>el.classList.remove('current'));
-    const el = document.getElementById('line-'+idx);
-    if(el){
-      el.classList.add('current');
-      el.scrollIntoView({behavior:'smooth', block:'center'});
-    }
-    lastHighlighted = idx;
-  }
-  manualRaf = requestAnimationFrame(manualScrollLoop);
-}
+const SONGS = [
+  {slug:"musubinaosu-asa", title:"結び直す朝", artist:"Shiopixel"},
+  {slug:"triangle", title:"三角の歌 (Triangle Song)", artist:"濱田優貴"},
+  {slug:"attention-kudasai", title:"アテンションください", artist:"Shiopixel"},
+  {slug:"sore-koi-jujutsu", title:"それ恋じゃなくて、柔術", artist:"Shiopixel"},
+];
+const list = document.getElementById('list');
+SONGS.forEach(s => {
+  const a = document.createElement('a');
+  a.className = 'song';
+  a.href = `/chords/song.html?slug=${encodeURIComponent(s.slug)}`;
+  a.innerHTML = `<div class="title">${s.title}</div><div class="artist">${s.artist}</div>`;
+  list.appendChild(a);
+});
 </script>
 </body>
 </html>

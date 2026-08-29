@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ギターコード | yukihamada.jp/chords</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --bg:#0e0d0b; --fg:#f4f1ea; --mut:#9b968a; --line:rgba(244,241,234,.12);
+    --gold:#d9b26a; --chord:#7ecbb0; --chip:rgba(126,203,176,.14); --danger:#e07a6b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:"Hiragino Sans","Noto Sans JP",sans-serif;}
+  .wrap{max-width:620px;margin:0 auto;padding:28px 20px 150px}
+  header{text-align:center;margin-bottom:18px}
+  h1{font-size:20px;font-weight:600;margin:0 0 4px;letter-spacing:.02em}
+  .meta{font-size:12px;color:var(--mut);letter-spacing:.08em}
+  .controls{position:sticky;top:0;z-index:5;background:rgba(14,13,11,.92);backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);padding:10px 16px;display:flex;gap:14px;align-items:center;
+    justify-content:center;flex-wrap:wrap;font-size:12px}
+  .ctl-group{display:flex;align-items:center;gap:6px}
+  .ctl-group label{color:var(--mut);letter-spacing:.05em}
+  select,button,input[type=text]{background:#1a1815;color:var(--fg);border:1px solid var(--line);
+    border-radius:8px;padding:6px 10px;font-size:13px;font-family:inherit;cursor:pointer}
+  input[type=text]{cursor:text}
+  button.active{background:var(--gold);color:#1a1512;border-color:var(--gold)}
+  button.danger{color:var(--danger);border-color:var(--danger);background:transparent}
+  input[type=range]{width:90px;accent-color:var(--gold)}
+  .sheet{margin-top:26px}
+  .line{display:flex;flex-direction:column;padding:9px 0;transition:background .3s;position:relative}
+  .line.current{background:var(--chip);border-radius:8px;padding-left:8px;padding-right:8px;margin:0 -8px}
+  .chord{font-family:"SF Mono",Menlo,monospace;font-size:13px;color:var(--chord);
+    font-weight:700;letter-spacing:.02em;min-height:1.2em}
+  .lyric{font-size:16px;line-height:1.65;color:rgba(244,241,234,.94)}
+  .line.editing{display:flex;flex-direction:row;gap:8px;align-items:center;padding:6px 0}
+  .line.editing .chord-in{width:64px;font-family:"SF Mono",Menlo,monospace;color:var(--chord);font-weight:700}
+  .line.editing .text-in{flex:1}
+  .line.editing .t-in{width:56px;font-size:11px;color:var(--mut)}
+  .line.editing .del-btn{padding:4px 8px;font-size:11px}
+  .audio-bar{position:fixed;left:0;right:0;bottom:0;background:rgba(14,13,11,.96);
+    border-top:1px solid var(--line);padding:10px 16px;backdrop-filter:blur(10px)}
+  audio{width:100%;max-width:620px;display:block;margin:0 auto;height:34px}
+  .capo-hint{font-size:11px;color:var(--mut);text-align:center;margin-top:4px}
+  a.back{color:var(--mut);font-size:12px;text-decoration:none;display:inline-block;margin-bottom:14px}
+  a.back:hover{color:var(--gold)}
+  .disclaimer{font-size:10px;color:var(--mut);opacity:.7;text-align:center;margin-top:24px;line-height:1.7}
+  .edit-bar{margin-top:14px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+  .save-msg{font-size:11px;text-align:center;margin-top:8px;min-height:1.4em}
+  .save-msg.ok{color:#7ecbb0}
+  .save-msg.err{color:var(--danger)}
+  #loading{text-align:center;color:var(--mut);font-size:13px;padding:60px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="/chords/">← コード一覧</a>
+  <header id="header" hidden>
+    <h1 id="title"></h1>
+    <div class="meta" id="meta"></div>
+  </header>
+
+  <div class="controls" id="controls" hidden>
+    <div class="ctl-group">
+      <label for="capo">CAPO</label>
+      <select id="capo"></select>
+    </div>
+    <div class="ctl-group">
+      <button id="scroll-btn" onclick="toggleAutoScroll()">▶ 自動スクロール</button>
+    </div>
+    <div class="ctl-group">
+      <label for="speed">速さ</label>
+      <input type="range" id="speed" min="0.5" max="1.6" step="0.05" value="1">
+    </div>
+    <div class="ctl-group" id="edit-toggle-group" hidden>
+      <button id="edit-btn" onclick="toggleEdit()">✎ 編集</button>
+    </div>
+  </div>
+  <div class="capo-hint" id="capo-hint"></div>
+
+  <div id="loading">読み込み中…</div>
+  <div class="sheet" id="sheet"></div>
+
+  <div class="edit-bar" id="edit-bar" hidden>
+    <button onclick="addLine()">+ 行を追加</button>
+    <button class="active" onclick="saveData()">💾 保存</button>
+  </div>
+  <div class="save-msg" id="save-msg"></div>
+
+  <p class="disclaimer">コードはAI解析による推定です。実際に弾きながら確認してください。</p>
+</div>
+
+<div class="audio-bar" id="audio-bar" hidden>
+  <audio id="player" controls preload="none"></audio>
+</div>
+
+<script>
+const params = new URLSearchParams(location.search);
+const SLUG = params.get('slug');
+let DATA = null;
+let isAdmin = false;
+let editing = false;
+
+if(!SLUG){
+  document.getElementById('loading').textContent = '曲が指定されていません。← コード一覧から選んでください。';
+} else {
+  init();
+}
+
+async function init(){
+  try {
+    const res = await fetch(`/api/chords/${encodeURIComponent(SLUG)}`);
+    if(!res.ok){
+      document.getElementById('loading').textContent = '見つかりませんでした。';
+      return;
+    }
+    DATA = await res.json();
+  } catch(e){
+    document.getElementById('loading').textContent = '読み込みに失敗しました。';
+    return;
+  }
+  document.getElementById('loading').hidden = true;
+  document.title = `${DATA.title || SLUG} — ギターコード | yukihamada.jp/chords`;
+  document.getElementById('title').textContent = DATA.title || SLUG;
+  document.getElementById('meta').textContent =
+    [DATA.artist, DATA.key ? `Key: ${DATA.key}` : null, DATA.bpm ? `♩=${Math.round(DATA.bpm)}` : null]
+      .filter(Boolean).join(' / ');
+  document.getElementById('header').hidden = false;
+  document.getElementById('controls').hidden = false;
+  if(DATA.audio){
+    const audio = document.getElementById('player');
+    audio.src = DATA.audio;
+    document.getElementById('audio-bar').hidden = false;
+  }
+
+  // capo selector
+  const capoSel = document.getElementById('capo');
+  const defaultCapo = (DATA.key === 'Eb' || DATA.key === 'Ab') ? 3 : (DATA.key === 'E' || DATA.key === 'A') ? 4 : 0;
+  for(let i=0;i<=7;i++){
+    const opt = document.createElement('option');
+    opt.value = i; opt.textContent = i===0 ? 'なし' : `${i}フレット`;
+    if(i===defaultCapo) opt.selected = true;
+    capoSel.appendChild(opt);
+  }
+  capoSel.addEventListener('change', render);
+  render();
+
+  // admin check: cookie presence (server re-validates on save regardless)
+  isAdmin = document.cookie.split(';').some(c => c.trim().startsWith('admin_auth='));
+  if(isAdmin){
+    document.getElementById('edit-toggle-group').hidden = false;
+  }
+}
+
+const NOTES = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const ENHARM = {'Db':'C#','D#':'Eb','Gb':'F#','G#':'Ab','A#':'Bb'};
+function pcOf(root){ return NOTES.indexOf(root) >= 0 ? NOTES.indexOf(root) : NOTES.indexOf(ENHARM[root]); }
+function splitChord(chord){
+  let root = chord.slice(0,2);
+  if(!(root in {...Object.fromEntries(NOTES.map(n=>[n,1])), ...ENHARM})) root = chord.slice(0,1);
+  return { root, qual: chord.slice(root.length) };
+}
+function transpose(chord, semitoneShift){
+  if(!chord) return chord;
+  const {root, qual} = splitChord(chord);
+  const pc = pcOf(root);
+  if(pc === undefined || pc < 0) return chord;
+  const newPc = ((pc + semitoneShift) % 12 + 12) % 12;
+  return NOTES[newPc] + qual;
+}
+
+const sheet = document.getElementById('sheet');
+function render(){
+  if(!DATA) return;
+  const capo = parseInt(document.getElementById('capo').value, 10) || 0;
+  sheet.innerHTML = '';
+  DATA.lines.forEach((line, i) => {
+    const div = document.createElement('div');
+    div.id = 'line-' + i;
+    if(editing){
+      div.className = 'line editing';
+      div.innerHTML = `
+        <input class="t-in" type="text" value="${line.t}" onchange="updateLine(${i},'t',this.value)">
+        <input class="chord-in" type="text" value="${line.chord||''}" onchange="updateLine(${i},'chord',this.value)">
+        <input class="text-in" type="text" value="${(line.text||'').replace(/"/g,'&quot;')}" onchange="updateLine(${i},'text',this.value)">
+        <button class="del-btn danger" onclick="removeLine(${i})">✕</button>`;
+    } else {
+      div.className = 'line';
+      const shapeChord = transpose(line.chord, -capo);
+      div.innerHTML = `<div class="chord">${shapeChord||''}</div><div class="lyric">${line.text||''}</div>`;
+    }
+    sheet.appendChild(div);
+  });
+  document.getElementById('capo-hint').textContent = editing ? ''
+    : (capo===0 ? '実音（カポなし）で表示中'
+       : `カポ${capo}フレット装着 → 表示コードのシェイプで押さえると実音は原曲どおりになります`);
+}
+
+function updateLine(i, key, val){
+  if(key === 't') val = parseFloat(val) || 0;
+  DATA.lines[i][key] = val;
+}
+function removeLine(i){
+  DATA.lines.splice(i,1);
+  render();
+}
+function addLine(){
+  const last = DATA.lines[DATA.lines.length-1];
+  DATA.lines.push({t: last ? last.t+3 : 0, chord: last ? last.chord : '', text: ''});
+  render();
+}
+
+function toggleEdit(){
+  editing = !editing;
+  document.getElementById('edit-btn').classList.toggle('active', editing);
+  document.getElementById('edit-btn').textContent = editing ? '👁 プレビュー' : '✎ 編集';
+  document.getElementById('edit-bar').hidden = !editing;
+  document.getElementById('capo').disabled = editing;
+  render();
+}
+
+async function saveData(){
+  const msg = document.getElementById('save-msg');
+  msg.textContent = '保存中…'; msg.className = 'save-msg';
+  try {
+    const res = await fetch(`/api/admin/chords/${encodeURIComponent(SLUG)}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(DATA)
+    });
+    if(res.ok){
+      msg.textContent = '保存しました'; msg.className = 'save-msg ok';
+    } else if(res.status === 401){
+      msg.textContent = 'ログインが必要です → /analytics でログインしてから戻ってください'; msg.className = 'save-msg err';
+    } else {
+      msg.textContent = '保存に失敗しました (' + res.status + ')'; msg.className = 'save-msg err';
+    }
+  } catch(e){
+    msg.textContent = '保存に失敗しました'; msg.className = 'save-msg err';
+  }
+}
+
+// ── auto-scroll synced to audio.currentTime ──
+const audio = document.getElementById('player');
+const scrollBtn = document.getElementById('scroll-btn');
+const speedSlider = document.getElementById('speed');
+let autoScrollOn = false;
+let manualRaf = null;
+
+function toggleAutoScroll(){
+  autoScrollOn = !autoScrollOn;
+  scrollBtn.classList.toggle('active', autoScrollOn);
+  scrollBtn.textContent = autoScrollOn ? '⏸ 自動スクロール中' : '▶ 自動スクロール';
+  if(autoScrollOn){
+    if(audio.src && audio.paused && audio.currentTime === 0) audio.play().catch(()=>{});
+    manualScrollLoop();
+  } else if(manualRaf){
+    cancelAnimationFrame(manualRaf);
+    manualRaf = null;
+  }
+}
+
+function currentLineIndex(t){
+  let idx = 0;
+  for(let i=0;i<DATA.lines.length;i++){
+    if(DATA.lines[i].t <= t) idx = i; else break;
+  }
+  return idx;
+}
+
+let lastHighlighted = -1;
+function manualScrollLoop(){
+  if(!autoScrollOn) return;
+  const speed = parseFloat(speedSlider.value);
+  let t;
+  if(audio.duration && !audio.paused){
+    t = audio.currentTime;
+  } else {
+    t = (manualScrollLoop._t || 0) + 0.25 * speed;
+    manualScrollLoop._t = t;
+  }
+  const idx = currentLineIndex(t);
+  if(idx !== lastHighlighted){
+    document.querySelectorAll('.line.current').forEach(el=>el.classList.remove('current'));
+    const el = document.getElementById('line-'+idx);
+    if(el){
+      el.classList.add('current');
+      el.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    lastHighlighted = idx;
+  }
+  manualRaf = requestAnimationFrame(manualScrollLoop);
+}
+</script>
+</body>
+</html>
