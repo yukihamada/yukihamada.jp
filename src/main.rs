@@ -1,3 +1,6 @@
+// 大きな serde_json::json! シードリテラル(コード譜)がデフォルトの再帰限界128を超えるため
+#![recursion_limit = "256"]
+
 mod blog;
 mod community;
 
