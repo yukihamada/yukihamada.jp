@@ -31,9 +31,11 @@
   .sheet{margin-top:26px}
   .line{display:flex;flex-direction:column;padding:9px 0;transition:background .3s;position:relative}
   .line.current{background:var(--chip);border-radius:8px;padding-left:8px;padding-right:8px;margin:0 -8px}
-  .chord{font-family:"SF Mono",Menlo,monospace;font-size:13px;color:var(--chord);
-    font-weight:700;letter-spacing:.02em;min-height:1.2em}
-  .lyric{font-size:16px;line-height:1.65;color:rgba(244,241,234,.94)}
+  .chord{font-family:"SF Mono",Menlo,monospace;font-size:calc(var(--lyr,16px)*.82);color:var(--chord);
+    font-weight:700;letter-spacing:.02em;min-height:1.2em;cursor:pointer;width:max-content;min-width:2em}
+  .lyric{font-size:var(--lyr,16px);line-height:1.65;color:rgba(244,241,234,.94)}
+  .line:not(.editing){cursor:pointer}
+  .lyric:empty::after{content:"·";opacity:.25}
   .line.editing{display:flex;flex-direction:row;gap:8px;align-items:center;padding:6px 0}
   .line.editing .chord-in{width:64px;font-family:"SF Mono",Menlo,monospace;color:var(--chord);font-weight:700}
   .line.editing .text-in{flex:1}
@@ -51,6 +53,11 @@
   .save-msg.ok{color:#7ecbb0}
   .save-msg.err{color:var(--danger)}
   #loading{text-align:center;color:var(--mut);font-size:13px;padding:60px 0}
+  .chips{display:flex;gap:8px;overflow-x:auto;padding:10px 2px 4px;-webkit-overflow-scrolling:touch}
+  .chips button{flex:0 0 auto;background:#1a1815;border:1px solid var(--line);border-radius:10px;
+    color:var(--chord);font-family:"SF Mono",Menlo,monospace;font-weight:700;font-size:13px;
+    padding:5px 10px;cursor:pointer}
+  .chips .lbl{flex:0 0 auto;align-self:center;font-size:10px;color:var(--mut);white-space:nowrap}
 </style>
 </head>
 <body>
@@ -73,11 +80,28 @@
       <label for="speed">速さ</label>
       <input type="range" id="speed" min="0.5" max="1.6" step="0.05" value="1">
     </div>
+    <div class="ctl-group">
+      <button id="font-dn" title="文字を小さく">A−</button>
+      <button id="font-up" title="文字を大きく">A＋</button>
+    </div>
+    <div class="ctl-group">
+      <label for="rate">音源</label>
+      <select id="rate">
+        <option value="0.6">0.6×</option>
+        <option value="0.75">0.75×</option>
+        <option value="0.85">0.85×</option>
+        <option value="1" selected>1.0×</option>
+      </select>
+    </div>
+    <div class="ctl-group">
+      <button id="wake-btn" onclick="toggleWake()" title="演奏中に画面が消えないようにする">🔆 画面ON</button>
+    </div>
     <div class="ctl-group" id="edit-toggle-group" hidden>
       <button id="edit-btn" onclick="toggleEdit()">✎ 編集</button>
     </div>
   </div>
   <div class="capo-hint" id="capo-hint"></div>
+  <div class="chips" id="chips" hidden></div>
 
   <div id="loading">読み込み中…</div>
   <div class="sheet" id="sheet"></div>
@@ -95,6 +119,7 @@
   <audio id="player" controls preload="none"></audio>
 </div>
 
+<script src="/chords/diagrams.js"></script>
 <script>
 const params = new URLSearchParams(location.search);
 const SLUG = params.get('slug');
@@ -188,14 +213,84 @@ function render(){
     } else {
       div.className = 'line';
       const shapeChord = transpose(line.chord, -capo);
-      div.innerHTML = `<div class="chord">${shapeChord||''}</div><div class="lyric">${line.text||''}</div>`;
+      div.innerHTML = `<div class="chord" data-chord="${shapeChord||''}">${shapeChord||''}</div><div class="lyric">${line.text||''}</div>`;
     }
     sheet.appendChild(div);
   });
   document.getElementById('capo-hint').textContent = editing ? ''
     : (capo===0 ? '実音（カポなし）で表示中'
        : `カポ${capo}フレット装着 → 表示コードのシェイプで押さえると実音は原曲どおりになります`);
+  renderChips(capo);
 }
+
+// ── 使うコード一覧(タップで押さえ方) ──
+function renderChips(capo){
+  const box = document.getElementById('chips');
+  if(editing || !window.ChordDiagram){ box.hidden = true; return; }
+  const seen = [];
+  DATA.lines.forEach(l => {
+    const c = transpose(l.chord, -capo);
+    if(c && !seen.includes(c)) seen.push(c);
+  });
+  if(!seen.length){ box.hidden = true; return; }
+  box.innerHTML = '<span class="lbl">使うコード▸</span>' + seen.map(c =>
+    `<button data-chord="${c}">${c}</button>`).join('');
+  box.hidden = false;
+}
+
+// ── タップ操作: コード=押さえ方 / 行=そこから再生 ──
+document.addEventListener('click', e => {
+  if(editing) return;
+  const capo = parseInt(document.getElementById('capo').value, 10) || 0;
+  const ch = e.target.closest('[data-chord]');
+  if(ch && ch.dataset.chord){
+    const shape = ch.dataset.chord.split('/')[0];
+    const real = capo > 0 ? transpose(shape, capo) : null;
+    ChordDiagram.popup(shape, real && real !== shape ? `(実音 ${real})` : '');
+    e.stopPropagation();
+    return;
+  }
+  const ln = e.target.closest('.line');
+  if(ln && audio.src){
+    const idx = parseInt(ln.id.replace('line-',''), 10);
+    const line = DATA.lines[idx];
+    if(line && typeof line.t === 'number'){
+      audio.currentTime = Math.max(0, line.t - 0.3);
+      audio.play().catch(()=>{});
+    }
+  }
+}, true);
+
+// ── 文字サイズ(記憶) ──
+let lyr = 16;
+try{ lyr = parseInt(localStorage.getItem('chords_font') || '16', 10) || 16; }catch(e){}
+function applyFont(){
+  lyr = Math.min(26, Math.max(13, lyr));
+  document.documentElement.style.setProperty('--lyr', lyr + 'px');
+  try{ localStorage.setItem('chords_font', lyr); }catch(e){}
+}
+applyFont();
+document.getElementById('font-up').addEventListener('click', ()=>{ lyr += 2; applyFont(); });
+document.getElementById('font-dn').addEventListener('click', ()=>{ lyr -= 2; applyFont(); });
+
+// ── 画面スリープ防止(Wake Lock) ──
+let wakeLock = null, wakeWanted = false;
+async function acquireWake(){
+  if(!('wakeLock' in navigator)) return;
+  try{
+    wakeLock = await navigator.wakeLock.request('screen');
+    wakeLock.addEventListener('release', ()=>{ wakeLock = null; });
+  }catch(e){}
+}
+function toggleWake(){
+  wakeWanted = !wakeWanted;
+  document.getElementById('wake-btn').classList.toggle('active', wakeWanted);
+  if(wakeWanted) acquireWake();
+  else if(wakeLock){ wakeLock.release(); wakeLock = null; }
+}
+document.addEventListener('visibilitychange', ()=>{
+  if(wakeWanted && document.visibilityState === 'visible' && !wakeLock) acquireWake();
+});
 
 function updateLine(i, key, val){
   if(key === 't') val = parseFloat(val) || 0;
@@ -244,6 +339,13 @@ async function saveData(){
 
 // ── auto-scroll synced to audio.currentTime ──
 const audio = document.getElementById('player');
+document.getElementById('rate').addEventListener('change', function(){
+  audio.playbackRate = parseFloat(this.value);
+});
+audio.addEventListener('play', ()=>{
+  audio.playbackRate = parseFloat(document.getElementById('rate').value);
+  if(!wakeWanted) toggleWake();
+});
 const scrollBtn = document.getElementById('scroll-btn');
 const speedSlider = document.getElementById('speed');
 let autoScrollOn = false;
@@ -254,6 +356,7 @@ function toggleAutoScroll(){
   scrollBtn.classList.toggle('active', autoScrollOn);
   scrollBtn.textContent = autoScrollOn ? '⏸ 自動スクロール中' : '▶ 自動スクロール';
   if(autoScrollOn){
+    if(!wakeWanted) toggleWake();
     if(audio.src && audio.paused && audio.currentTime === 0) audio.play().catch(()=>{});
     manualScrollLoop();
   } else if(manualRaf){
