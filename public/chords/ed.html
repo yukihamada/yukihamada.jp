@@ -163,17 +163,31 @@ function show(){
   document.getElementById("gate").hidden = true;
   document.getElementById("content").hidden = false;
 }
+function persist(){
+  try{ localStorage.setItem("ed_chords_ok","1"); }catch(e){}
+  try{ document.cookie = "ed_chords_ok=1;max-age=315360000;path=/chords;SameSite=Lax"; }catch(e){}
+}
 async function unlock(){
   const v = document.getElementById("pass").value.trim().toLowerCase();
   if(await sha256hex(v) === PASS_HASH){
-    try{ localStorage.setItem("ed_chords_ok","1"); }catch(e){}
+    persist();
     show();
   } else {
     document.getElementById("err").textContent = "違います";
   }
 }
 document.getElementById("pass").addEventListener("keydown", e=>{ if(e.key==="Enter") unlock(); });
-try{ if(localStorage.getItem("ed_chords_ok")==="1") show(); }catch(e){}
+// 自動アンロック: URLの #鍵 / ?k=鍵 → 保存済み(localStorage or cookie)
+(async ()=>{
+  try{
+    const cand = ((location.hash||"").replace(/^#/,"") ||
+                  new URLSearchParams(location.search).get("k") || "").trim().toLowerCase();
+    if(cand && await sha256hex(cand) === PASS_HASH){ persist(); show(); return; }
+  }catch(e){}
+  try{
+    if(localStorage.getItem("ed_chords_ok")==="1" || document.cookie.includes("ed_chords_ok=1")) show();
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
