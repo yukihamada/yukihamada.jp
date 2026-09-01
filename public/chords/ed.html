@@ -38,6 +38,7 @@
   .links a{color:var(--gold);text-decoration:none}
   .links a:hover{text-decoration:underline}
   .artist-h{font-size:13px;color:var(--gold);letter-spacing:.12em;margin:34px 0 12px;border-bottom:1px solid var(--line);padding-bottom:6px}
+  .prog [data-chord]{cursor:pointer;border-bottom:1px dotted rgba(126,203,176,.45)}
   .disclaimer{font-size:10px;color:var(--mut);opacity:.75;margin-top:30px;line-height:1.8}
 </style>
 </head>
@@ -272,6 +273,24 @@ document.getElementById("pass").addEventListener("keydown", e=>{ if(e.key==="Ent
   try{
     if(localStorage.getItem("ed_chords_ok")==="1" || document.cookie.includes("ed_chords_ok=1")) show();
   }catch(e){}
+})();
+</script>
+<script src="/chords/diagrams.js"></script>
+<script>
+// コード進行の各コードをタップ→押さえ方ダイアグラム
+(function(){
+  const RE = /^[A-G][#b]?(?:maj7|m7|m|7|sus4|dim|add9)?(?:\([^\)]*\))?(?:\/[A-G][#b]?)?$/;
+  document.querySelectorAll('.prog').forEach(el => {
+    const parts = el.textContent.split(/( – |–|\s+)/);
+    el.innerHTML = parts.map(p => {
+      const t = p.trim();
+      return (t && RE.test(t)) ? `<span data-chord="${t}">${p}</span>` : p.replace(/</g,'&lt;');
+    }).join('');
+  });
+  document.addEventListener('click', e => {
+    const ch = e.target.closest('[data-chord]');
+    if(ch && window.ChordDiagram) ChordDiagram.popup(ch.dataset.chord.split('/')[0]);
+  });
 })();
 </script>
 </body>
