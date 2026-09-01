@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ed Sheeran コード進行帳 (private)</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+  :root{
+    --bg:#0e0d0b; --fg:#f4f1ea; --mut:#9b968a; --line:rgba(244,241,234,.12);
+    --gold:#d9b26a; --chord:#7ecbb0; --chip:rgba(217,178,106,.1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+    font-family:"Hiragino Sans","Noto Sans JP",sans-serif;}
+  .wrap{max-width:620px;margin:0 auto;padding:36px 20px 90px}
+  a.back{color:var(--mut);font-size:12px;text-decoration:none}
+  a.back:hover{color:var(--gold)}
+  h1{font-size:20px;font-weight:600;margin:22px 0 4px}
+  .sub{font-size:12px;color:var(--mut);margin-bottom:26px;line-height:1.7}
+  /* gate */
+  #gate{max-width:320px;margin:80px auto;text-align:center}
+  #gate input{width:100%;background:#1a1815;color:var(--fg);border:1px solid var(--line);
+    border-radius:10px;padding:12px 14px;font-size:16px;text-align:center;letter-spacing:.3em}
+  #gate button{margin-top:12px;width:100%;background:var(--gold);color:#1a1512;border:none;
+    border-radius:10px;padding:12px;font-size:14px;font-weight:600;cursor:pointer}
+  #gate .err{color:#e07a6b;font-size:12px;margin-top:10px;min-height:1.2em}
+  /* songs */
+  .song{border:1px solid var(--line);border-radius:12px;background:var(--chip);
+    margin-bottom:14px;padding:16px 18px}
+  .song h2{font-size:15px;font-weight:600;margin:0}
+  .song .meta{font-size:11px;color:var(--mut);margin:4px 0 10px;letter-spacing:.04em}
+  .sec{display:flex;gap:10px;font-size:13px;line-height:1.9;align-items:baseline}
+  .sec .name{color:var(--mut);font-size:11px;min-width:74px;letter-spacing:.05em}
+  .sec .prog{font-family:"SF Mono",Menlo,monospace;color:var(--chord);font-weight:700}
+  .note{font-size:11px;color:var(--mut);margin-top:8px;line-height:1.6}
+  .disclaimer{font-size:10px;color:var(--mut);opacity:.75;margin-top:30px;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="gate">
+    <h1>🔒 Private</h1>
+    <p class="sub">パスコードを入力</p>
+    <input id="pass" type="password" inputmode="text" autocomplete="off" placeholder="••••">
+    <button onclick="unlock()">開く</button>
+    <div class="err" id="err"></div>
+  </div>
+
+  <div id="content" hidden>
+    <a class="back" href="/chords/">← コード一覧</a>
+    <h1>Ed Sheeran コード進行帳</h1>
+    <div class="sub">有名曲トップ10のキー・カポ・メイン進行。歌詞は著作権のため非掲載
+      (公式の歌詞サイト等を横に置いて使う)。進行は採譜サイト複数の照合ベース=細部は弾きながら調整。</div>
+
+    <div class="song">
+      <h2>1. Shape of You (2017)</h2>
+      <div class="meta">Key: C#m / Capo 4 → Amシェイプ ・ ♩=96</div>
+      <div class="sec"><span class="name">全編ループ</span><span class="prog">C#m – F#m – A – B</span></div>
+      <div class="sec"><span class="name">Capo 4</span><span class="prog">Am – Dm – F – G</span></div>
+      <div class="note">最初から最後まで同じ4コード。ミュート気味に16分で刻む。</div>
+    </div>
+
+    <div class="song">
+      <h2>2. Perfect (2017)</h2>
+      <div class="meta">Key: Ab / Capo 1 → Gシェイプ ・ 6/8拍子</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">G – Em – C – D</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">Em – C – G – D</span></div>
+      <div class="sec"><span class="name">締め</span><span class="prog">G – D/F# – Em – C – D – G</span></div>
+      <div class="note">6/8のゆったりアルペジオ。D/F#の経過音がエド感。</div>
+    </div>
+
+    <div class="song">
+      <h2>3. Thinking Out Loud (2014)</h2>
+      <div class="meta">Key: D / カポなし ・ ♩=79</div>
+      <div class="sec"><span class="name">全編ほぼ</span><span class="prog">D – D/F# – G – A</span></div>
+      <div class="sec"><span class="name">Pre</span><span class="prog">Em – A / Bm – A – G</span></div>
+      <div class="note">2拍ずつチェンジ。右手はシャッフル気味のストローク+ベースライン。</div>
+    </div>
+
+    <div class="song">
+      <h2>4. Photograph (2015)</h2>
+      <div class="meta">Key: E / Capo 2 → Dシェイプ ・ ♩=108</div>
+      <div class="sec"><span class="name">全編ほぼ</span><span class="prog">E – B – C#m – A</span></div>
+      <div class="sec"><span class="name">Capo 2</span><span class="prog">D – A – Bm – G</span></div>
+      <div class="note">王道 I–V–vi–IV ループ。Verseはアルペジオ、Chorusで開放ストローク。</div>
+    </div>
+
+    <div class="song">
+      <h2>5. I Don't Care (2019, with Justin Bieber)</h2>
+      <div class="meta">Key: F# / Capo 2 → Eシェイプ ・ ♩=102</div>
+      <div class="sec"><span class="name">全編ループ</span><span class="prog">F# – D#m – B – C#</span></div>
+      <div class="sec"><span class="name">Capo 2</span><span class="prog">E – C#m – A – B</span></div>
+      <div class="note">終始同じ4コード(I–vi–IV–V)。跳ねるポップストローク。</div>
+    </div>
+
+    <div class="song">
+      <h2>6. Bad Habits (2021)</h2>
+      <div class="meta">Key: Bm / Capo 2 → Amシェイプ ・ ♩=126</div>
+      <div class="sec"><span class="name">全編ほぼ</span><span class="prog">Bm – D – A – Em</span></div>
+      <div class="sec"><span class="name">Capo 2</span><span class="prog">Am – C – G – Dm</span></div>
+      <div class="note">サビ終わりはGに解決するパターンもあり。要耳確認。ダンスビートで8分刻み。</div>
+    </div>
+
+    <div class="song">
+      <h2>7. Shivers (2021)</h2>
+      <div class="meta">Key: Bm / カポなし ・ ♩=141</div>
+      <div class="sec"><span class="name">全編ループ</span><span class="prog">Bm – G – D – A</span></div>
+      <div class="sec"><span class="name">Bridge</span><span class="prog">Em – Bm – A</span></div>
+      <div class="note">Bmはバレー省略で bm7(x20202風)でも可。速いのでダウン中心。</div>
+    </div>
+
+    <div class="song">
+      <h2>8. Happier (2018)</h2>
+      <div class="meta">Key: C / Capo 5 → Emシェイプ ・ ♩=90</div>
+      <div class="sec"><span class="name">全編ループ</span><span class="prog">Am7 – F – C (– G)</span></div>
+      <div class="sec"><span class="name">Capo 5</span><span class="prog">Em7 – C – G (– D)</span></div>
+      <div class="note">3コードの循環。静かなアルペジオ→サビで厚く。</div>
+    </div>
+
+    <div class="song">
+      <h2>9. Castle on the Hill (2017)</h2>
+      <div class="meta">Key: D / カポなし ・ ♩=135</div>
+      <div class="sec"><span class="name">全編ループ</span><span class="prog">D – Bm – G – A</span></div>
+      <div class="sec"><span class="name">味付け</span><span class="prog">D/F# 経過・Aはsus4→A</span></div>
+      <div class="note">疾走感は右手の8分ダウン+アクセント。コードは4つだけ。</div>
+    </div>
+
+    <div class="song">
+      <h2>10. The A Team (2011)</h2>
+      <div class="meta">Key: A / Capo 2 → Gシェイプ ・ ♩=85</div>
+      <div class="sec"><span class="name">Intro/Verse</span><span class="prog">G – C – G – D (Em7経過)</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">Em – C – G – D</span></div>
+      <div class="note">デビュー曲にして定番。Gはハンマリング入りのフォークピッキング。</div>
+    </div>
+
+    <p class="disclaimer">個人練習用の私的メモ。歌詞・音源は含みません。コード進行の細部は
+      公式音源を聴きながら自分の耳で最終確認してください。</p>
+  </div>
+</div>
+
+<script>
+// 簡易パスコードゲート(個人用・SHA-256照合)
+const PASS_HASH = "59e56f6464e7e067a6a459c1de55a79505dfc912a926384dbb3ee1525c6f76d7";
+async function sha256hex(s){
+  const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");
+}
+function show(){
+  document.getElementById("gate").hidden = true;
+  document.getElementById("content").hidden = false;
+}
+async function unlock(){
+  const v = document.getElementById("pass").value.trim().toLowerCase();
+  if(await sha256hex(v) === PASS_HASH){
+    try{ localStorage.setItem("ed_chords_ok","1"); }catch(e){}
+    show();
+  } else {
+    document.getElementById("err").textContent = "違います";
+  }
+}
+document.getElementById("pass").addEventListener("keydown", e=>{ if(e.key==="Enter") unlock(); });
+try{ if(localStorage.getItem("ed_chords_ok")==="1") show(); }catch(e){}
+</script>
+</body>
+</html>
