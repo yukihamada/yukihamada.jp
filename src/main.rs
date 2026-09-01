@@ -7860,6 +7860,7 @@ async fn main() {
         .nest_service("/mv", ServeDir::new("public/mv"))
         .route("/theater", get(theater_page))
         .nest_service("/chords", ServeDir::new("public/chords"))
+        .nest_service("/atama", ServeDir::new("public/atama"))
         .route("/api/chords/{slug}", get(api_chords_get))
         .route("/api/admin/chords/{slug}", post(api_chords_save))
         // 🎬 紙芝居シアター: MUのインタラクティブ紙芝居5本(launcher=index.html)
