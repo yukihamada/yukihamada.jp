@@ -2520,7 +2520,7 @@ async fn rss_feed(State(state): State<Arc<AppState>>) -> Response {
 }
 
 async fn robots() -> Response {
-    let body = "User-agent: *\nAllow: /\nSitemap: https://yukihamada.jp/sitemap.xml\n";
+    let body = "User-agent: *\nAllow: /\nDisallow: /chords\nDisallow: /c\nDisallow: /api/chords\nSitemap: https://yukihamada.jp/sitemap.xml\n";
     ([("content-type", "text/plain; charset=utf-8")], body).into_response()
 }
 
@@ -2548,8 +2548,12 @@ async fn security_headers(
     next: axum::middleware::Next,
 ) -> Response {
     let path = req.uri().path().to_string();
+    let noindex_chords = path.starts_with("/chords") || path.starts_with("/api/chords") || path == "/c";
     let mut res = next.run(req).await;
     let h = res.headers_mut();
+    if noindex_chords {
+        h.insert("x-robots-tag", "noindex, nofollow".parse().unwrap());
+    }
     h.insert("strict-transport-security", "max-age=63072000; includeSubDomains; preload".parse().unwrap());
     h.insert("x-frame-options", "SAMEORIGIN".parse().unwrap());
     h.insert("x-content-type-options", "nosniff".parse().unwrap());
