@@ -1,0 +1,90 @@
+{
+  "title": "Happier",
+  "artist": "Ed Sheeran",
+  "key": "C",
+  "bpm": 90,
+  "capo": 5,
+  "note": "Capo 5 → Emシェイプ。3コードの循環。静かなアルペジオ→サビで厚く。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "Am7",
+      "text": "Walking down 29th and Park"
+    },
+    {
+      "t": 6,
+      "chord": "F",
+      "text": "I saw you in another's arms"
+    },
+    {
+      "t": 12,
+      "chord": "C",
+      "text": "Only a month we've been apart"
+    },
+    {
+      "t": 18,
+      "chord": "G",
+      "text": "You look happier"
+    },
+    {
+      "t": 24,
+      "chord": "Am7",
+      "text": "Saw you walk inside a bar"
+    },
+    {
+      "t": 30,
+      "chord": "F",
+      "text": "He said something to make you laugh"
+    },
+    {
+      "t": 36,
+      "chord": "C",
+      "text": "I saw that both your smiles were twice as wide as ours"
+    },
+    {
+      "t": 42,
+      "chord": "G",
+      "text": "Yeah, you look happier, you do"
+    },
+    {
+      "t": 48,
+      "chord": "Am7",
+      "text": "Ain't nobody hurt you like I hurt you"
+    },
+    {
+      "t": 54,
+      "chord": "F",
+      "text": "But ain't nobody love you like I do"
+    },
+    {
+      "t": 60,
+      "chord": "C",
+      "text": "Promise that I will not take it personal, baby"
+    },
+    {
+      "t": 66,
+      "chord": "G",
+      "text": "If you're moving on with someone new"
+    },
+    {
+      "t": 72,
+      "chord": "Am7",
+      "text": "'Cause baby you look happier, you do"
+    },
+    {
+      "t": 78,
+      "chord": "F",
+      "text": "My friends told me one day I'll feel it too"
+    },
+    {
+      "t": 84,
+      "chord": "C",
+      "text": "And until then I'll smile to hide the truth"
+    },
+    {
+      "t": 90,
+      "chord": "G",
+      "text": "But I know I was happier with you"
+    }
+  ]
+}

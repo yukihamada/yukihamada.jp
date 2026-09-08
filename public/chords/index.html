@@ -44,6 +44,21 @@ const SONGS = [
   {slug:"attention-kudasai", title:"アテンションください", artist:"Shiopixel"},
   {slug:"sore-koi-jujutsu", title:"それ恋じゃなくて、柔術", artist:"Shiopixel"},
 ];
+// 歌詞入り(privateゲート) — /chords/ed.html と同じパスコードで開く
+const ED_SONGS = [
+  {slug:"shape-of-you", title:"Shape of You", artist:"Ed Sheeran"},
+  {slug:"perfect", title:"Perfect", artist:"Ed Sheeran"},
+  {slug:"thinking-out-loud", title:"Thinking Out Loud", artist:"Ed Sheeran"},
+  {slug:"photograph", title:"Photograph", artist:"Ed Sheeran"},
+  {slug:"i-dont-care", title:"I Don't Care", artist:"Ed Sheeran & Justin Bieber"},
+  {slug:"bad-habits", title:"Bad Habits", artist:"Ed Sheeran"},
+  {slug:"shivers", title:"Shivers", artist:"Ed Sheeran"},
+  {slug:"happier", title:"Happier", artist:"Ed Sheeran"},
+  {slug:"castle-on-the-hill", title:"Castle on the Hill", artist:"Ed Sheeran"},
+  {slug:"the-a-team", title:"The A Team", artist:"Ed Sheeran"},
+];
+const isEd = document.cookie.split(';').some(c => c.trim() === 'ed_chords_ok=1');
+if(isEd) SONGS.push(...ED_SONGS);
 const list = document.getElementById('list');
 SONGS.forEach(s => {
   const a = document.createElement('a');

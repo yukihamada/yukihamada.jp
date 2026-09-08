@@ -1,0 +1,130 @@
+{
+  "title": "Shape of You",
+  "artist": "Ed Sheeran",
+  "key": "C#m",
+  "bpm": 96,
+  "capo": 4,
+  "note": "Capo 4 → Amシェイプ。全編同じ4コードループ。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "C#m",
+      "text": "The club isn't the best place to find a lover"
+    },
+    {
+      "t": 4,
+      "chord": "F#m",
+      "text": "So the bar is where I go"
+    },
+    {
+      "t": 8,
+      "chord": "A",
+      "text": "Me and my friends at the table doing shots"
+    },
+    {
+      "t": 12,
+      "chord": "B",
+      "text": "Drinking fast and then we talk slow"
+    },
+    {
+      "t": 16,
+      "chord": "C#m",
+      "text": "Come over and start up a conversation with just me"
+    },
+    {
+      "t": 20,
+      "chord": "F#m",
+      "text": "And trust me I'll give it a chance now"
+    },
+    {
+      "t": 24,
+      "chord": "A",
+      "text": "Take my hand, stop, put Van the Man on the jukebox"
+    },
+    {
+      "t": 28,
+      "chord": "B",
+      "text": "And then we start to dance, and now I'm singing like"
+    },
+    {
+      "t": 32,
+      "chord": "C#m",
+      "text": "Girl, you know I want your love"
+    },
+    {
+      "t": 36,
+      "chord": "F#m",
+      "text": "Your love was handmade for somebody like me"
+    },
+    {
+      "t": 40,
+      "chord": "A",
+      "text": "Come on now, follow my lead"
+    },
+    {
+      "t": 44,
+      "chord": "B",
+      "text": "I may be crazy, don't mind me"
+    },
+    {
+      "t": 48,
+      "chord": "C#m",
+      "text": "Say, boy, let's not talk too much"
+    },
+    {
+      "t": 52,
+      "chord": "F#m",
+      "text": "Grab on my waist and put that body on me"
+    },
+    {
+      "t": 56,
+      "chord": "A",
+      "text": "Come on now, follow my lead"
+    },
+    {
+      "t": 60,
+      "chord": "B",
+      "text": "Come, come on now, follow my lead"
+    },
+    {
+      "t": 64,
+      "chord": "C#m",
+      "text": "I'm in love with the shape of you"
+    },
+    {
+      "t": 68,
+      "chord": "F#m",
+      "text": "We push and pull like a magnet do"
+    },
+    {
+      "t": 72,
+      "chord": "A",
+      "text": "Although my heart is falling too"
+    },
+    {
+      "t": 76,
+      "chord": "B",
+      "text": "I'm in love with your body"
+    },
+    {
+      "t": 80,
+      "chord": "C#m",
+      "text": "Last night you were in my room"
+    },
+    {
+      "t": 84,
+      "chord": "F#m",
+      "text": "And now my bedsheets smell like you"
+    },
+    {
+      "t": 88,
+      "chord": "A",
+      "text": "Every day discovering something brand new"
+    },
+    {
+      "t": 92,
+      "chord": "B",
+      "text": "I'm in love with your body"
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "title": "Perfect",
+  "artist": "Ed Sheeran",
+  "key": "Ab",
+  "bpm": 63,
+  "capo": 1,
+  "note": "Capo 1 → Gシェイプ。6/8拍子のゆったりアルペジオ。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "G",
+      "text": "I found a love for me"
+    },
+    {
+      "t": 6,
+      "chord": "Em",
+      "text": "Darling, just dive right in and follow my lead"
+    },
+    {
+      "t": 12,
+      "chord": "C",
+      "text": "Well, I found a girl, beautiful and sweet"
+    },
+    {
+      "t": 18,
+      "chord": "D",
+      "text": "Oh, I never knew you were the someone waiting for me"
+    },
+    {
+      "t": 24,
+      "chord": "G",
+      "text": "'Cause we were just kids when we fell in love"
+    },
+    {
+      "t": 30,
+      "chord": "Em",
+      "text": "Not knowing what it was"
+    },
+    {
+      "t": 34,
+      "chord": "C",
+      "text": "I will not give you up this time"
+    },
+    {
+      "t": 40,
+      "chord": "G",
+      "text": "But darling, just kiss me slow"
+    },
+    {
+      "t": 44,
+      "chord": "D",
+      "text": "Your heart is all I own"
+    },
+    {
+      "t": 48,
+      "chord": "Em",
+      "text": "And in your eyes you're holding mine"
+    },
+    {
+      "t": 52,
+      "chord": "C",
+      "text": "Baby, I'm dancing in the dark"
+    },
+    {
+      "t": 56,
+      "chord": "G",
+      "text": "With you between my arms"
+    },
+    {
+      "t": 60,
+      "chord": "D",
+      "text": "Barefoot on the grass"
+    },
+    {
+      "t": 64,
+      "chord": "Em",
+      "text": "Listening to our favourite song"
+    },
+    {
+      "t": 68,
+      "chord": "C",
+      "text": "When you said you looked a mess"
+    },
+    {
+      "t": 72,
+      "chord": "G",
+      "text": "I whispered underneath my breath"
+    },
+    {
+      "t": 76,
+      "chord": "D",
+      "text": "But you heard it,"
+    },
+    {
+      "t": 80,
+      "chord": "G",
+      "text": "Darling, you look perfect tonight"
+    }
+  ]
+}

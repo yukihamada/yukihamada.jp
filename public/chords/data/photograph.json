@@ -1,0 +1,70 @@
+{
+  "title": "Photograph",
+  "artist": "Ed Sheeran",
+  "key": "E",
+  "bpm": 108,
+  "capo": 4,
+  "note": "Capo 4 → Cシェイプ。王道 I–V–vi–IV ループ。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "E",
+      "text": "Loving can hurt, loving can hurt sometimes"
+    },
+    {
+      "t": 6,
+      "chord": "B",
+      "text": "But it's the only thing that I know"
+    },
+    {
+      "t": 12,
+      "chord": "C#m",
+      "text": "When it gets hard, you know it can get hard sometimes"
+    },
+    {
+      "t": 18,
+      "chord": "A",
+      "text": "It is the only thing that makes us feel alive"
+    },
+    {
+      "t": 24,
+      "chord": "E",
+      "text": "We keep this love in a photograph"
+    },
+    {
+      "t": 30,
+      "chord": "B",
+      "text": "We made these memories for ourselves"
+    },
+    {
+      "t": 36,
+      "chord": "C#m",
+      "text": "Where our eyes are never closing"
+    },
+    {
+      "t": 40,
+      "chord": "A",
+      "text": "Hearts are never broken and time's forever frozen still"
+    },
+    {
+      "t": 46,
+      "chord": "E",
+      "text": "So you can keep me inside the pocket of your ripped jeans"
+    },
+    {
+      "t": 52,
+      "chord": "B",
+      "text": "Holding me closer 'til our eyes meet"
+    },
+    {
+      "t": 58,
+      "chord": "C#m",
+      "text": "You won't ever be alone, wait for me to come home"
+    },
+    {
+      "t": 64,
+      "chord": "A",
+      "text": "Wait for me to come home"
+    }
+  ]
+}
