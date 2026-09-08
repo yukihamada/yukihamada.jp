@@ -780,6 +780,7 @@ async fn redirect_root() -> Redirect {
 }
 
 async fn redirect_terminal() -> Redirect { Redirect::permanent("/#terminal") }
+async fn redirect_chords()   -> Redirect { Redirect::temporary("/chords/ed.html?open=1") }
 async fn redirect_projects() -> Redirect { Redirect::permanent("/#projects") }
 async fn redirect_career()   -> Redirect { Redirect::permanent("/#career") }
 async fn redirect_music()    -> Redirect { Redirect::permanent("/#music") }
@@ -7877,6 +7878,7 @@ async fn main() {
         .route("/en/", get(home_en))
         .route("/about", get(about))
         .route("/terminal", get(redirect_terminal))
+        .route("/c", get(redirect_chords))
         .route("/projects", get(redirect_projects))
         .route("/career",   get(redirect_career))
         .route("/music",    get(redirect_music))
