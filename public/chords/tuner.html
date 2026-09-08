@@ -34,6 +34,10 @@
     padding:8px 12px;font-size:13px;font-family:"SF Mono",Menlo,monospace;cursor:pointer}
   .tuner-strings button:hover{border-color:var(--gold)}
   .tuner-strings button.target{border-color:var(--chord);color:var(--chord)}
+  .tuner-a4{text-align:center;font-size:11px;color:var(--mut);margin-top:10px}
+  .a4-btn{background:#1a1815;color:var(--fg);border:1px solid var(--line);border-radius:6px;
+    padding:3px 8px;font-size:11px;font-family:"SF Mono",Menlo,monospace;cursor:pointer;margin:0 2px}
+  .a4-btn.active{background:var(--gold);color:#1a1512;border-color:var(--gold)}
   .tool .btn{display:inline-block;background:var(--gold);color:#1a1512;border:none;border-radius:10px;
     padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;margin-top:14px}
   .tool .btn.ghost{background:transparent;color:var(--mut);border:1px solid var(--line)}
@@ -57,6 +61,9 @@
     <div class="tuner-bar"><div class="tuner-needle" id="tunerNeedle"></div></div>
     <div class="tuner-marks"><span>-50¢</span><span>0</span><span>+50¢</span></div>
     <div class="tuner-strings" id="tunerStrings"></div>
+    <div class="tuner-a4">
+      A4 = <button class="a4-btn active" data-a4="440" onclick="setA4(440)">440</button><button class="a4-btn" data-a4="442" onclick="setA4(442)">442</button><button class="a4-btn" data-a4="432" onclick="setA4(432)">432</button> Hz
+    </div>
     <div style="text-align:center">
       <button class="btn" id="tunerBtn" onclick="toggleTuner()">🎤 チューナー開始</button>
       <button class="btn ghost" id="refBtn" onclick="playRef()">♪ A=440Hz 基準音</button>

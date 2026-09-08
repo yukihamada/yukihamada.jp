@@ -56,6 +56,10 @@
     padding:6px 10px;font-size:12px;font-family:"SF Mono",Menlo,monospace;cursor:pointer}
   .tuner-strings button:hover{border-color:var(--gold)}
   .tuner-strings button.target{border-color:var(--chord);color:var(--chord)}
+  .tuner-a4{text-align:center;font-size:11px;color:var(--mut);margin-top:10px}
+  .a4-btn{background:#1a1815;color:var(--fg);border:1px solid var(--line);border-radius:6px;
+    padding:3px 8px;font-size:11px;font-family:"SF Mono",Menlo,monospace;cursor:pointer;margin:0 2px}
+  .a4-btn.active{background:var(--gold);color:#1a1512;border-color:var(--gold)}
   .tool .btn{display:inline-block;background:var(--gold);color:#1a1512;border:none;border-radius:10px;
     padding:10px 18px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
   .tool .btn.ghost{background:transparent;color:var(--mut);border:1px solid var(--line)}
@@ -91,6 +95,9 @@
       <div class="tuner-bar"><div class="tuner-needle" id="tunerNeedle"></div></div>
       <div class="tuner-marks"><span>-50¢</span><span>0</span><span>+50¢</span></div>
       <div class="tuner-strings" id="tunerStrings"></div>
+      <div class="tuner-a4">
+        A4 = <button class="a4-btn active" data-a4="440" onclick="setA4(440)">440</button><button class="a4-btn" data-a4="442" onclick="setA4(442)">442</button><button class="a4-btn" data-a4="432" onclick="setA4(432)">432</button> Hz
+      </div>
       <div style="text-align:center">
         <button class="btn" id="tunerBtn" onclick="toggleTuner()">🎤 チューナー開始</button>
         <button class="btn ghost" id="refBtn" onclick="playRef()">♪ A=440Hz 基準音</button>
@@ -213,21 +220,26 @@
     <div class="song">
       <h2>I LOVE YOU (1983)</h2>
       <div class="meta">Key: A ・ 静かなバラード</div>
-      <div class="sec"><span class="name">特徴</span><span class="prog">A – C#m を軸にした王道バラード進行</span></div>
-      <div class="note">原曲キーA。細部の押さえ方はリンク先のコード譜で。</div>
+      <div class="sec"><span class="name">Intro/Verse</span><span class="prog">A – C#m – D – E</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">D – E – C#m – F#m / D – E – A</span></div>
+      <div class="note">原曲キーA。アルペジオ主体、サビでストロークに。細部はリンク先のコード譜で。</div>
       <div class="links"><a href="https://www.ufret.jp/song.php?data=914" target="_blank" rel="noopener">コード譜(U-フレット)</a> ・ <a href="https://www.google.com/search?q=%E5%B0%BE%E5%B4%8E%E8%B1%8A%20I%20LOVE%20YOU%20%281983%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=%E5%B0%BE%E5%B4%8E%E8%B1%8A%20I%20LOVE%20YOU%20%281983%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>卒業 (1985)</h2>
       <div class="meta">Key: A</div>
-      <div class="sec"><span class="name">特徴</span><span class="prog">A – E/G# – D/F# のベース下降(クリシェ)が肝</span></div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">A – E/G# – D/F# – E (ベース下降クリシェ)</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">D – E – A / D – E – C#m – F#m</span></div>
       <div class="links"><a href="https://www.ufret.jp/song.php?data=1298" target="_blank" rel="noopener">コード譜(U-フレット)</a> ・ <a href="https://www.google.com/search?q=%E5%B0%BE%E5%B4%8E%E8%B1%8A%20%E5%8D%92%E6%A5%AD%20%281985%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=%E5%B0%BE%E5%B4%8E%E8%B1%8A%20%E5%8D%92%E6%A5%AD%20%281985%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>15の夜 (1983)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: G ・ ♩=約130 ・ 8ビートのロック</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">G – C – D – G / Em – C – D</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">Em – C – G – D / Em – C – D – G</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.ufret.jp/song.php?data=928" target="_blank" rel="noopener">コード譜(U-フレット)</a> ・ <a href="https://www.google.com/search?q=%E5%B0%BE%E5%B4%8E%E8%B1%8A%2015%E3%81%AE%E5%A4%9C%20%281983%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=%E5%B0%BE%E5%B4%8E%E8%B1%8A%2015%E3%81%AE%E5%A4%9C%20%281983%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
@@ -238,25 +250,36 @@
     <div class="song">
       <h2>innocent world (1994)</h2>
       <div class="meta">Key: E</div>
-      <div class="sec"><span class="name">主要コード</span><span class="prog">E ・ C#m ・ G#m ・ F#m ・ B7</span></div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">E – C#m – G#m – F#m – B7</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">A – B – E – C#m / A – B – E</span></div>
+      <div class="note">王道 I–vi–iii–ii–V7。細部はリンク先で。</div>
       <div class="links"><a href="https://www.ufret.jp/song.php?data=51699" target="_blank" rel="noopener">コード譜(U-フレット)</a> ・ <a href="https://www.google.com/search?q=Mr.Children%20innocent%20world%20%281994%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=Mr.Children%20innocent%20world%20%281994%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>Tomorrow never knows (1994)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: B ・ ♩=約120</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">B – G#m – E – F#</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">E – F# – B / E – F# – G#m</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.ufret.jp/song.php?data=213" target="_blank" rel="noopener">コード譜(U-フレット)</a> ・ <a href="https://www.google.com/search?q=Mr.Children%20Tomorrow%20never%20knows%20%281994%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=Mr.Children%20Tomorrow%20never%20knows%20%281994%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>HANABI (2008)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: F ・ ゆったりバラード</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">F – C/E – Dm – Bb – C</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">Bb – C – F / Bb – C – Dm – Bb – C</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.ufret.jp/song.php?data=192" target="_blank" rel="noopener">コード譜(U-フレット)</a> ・ <a href="https://www.google.com/search?q=Mr.Children%20HANABI%20%282008%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=Mr.Children%20HANABI%20%282008%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>名もなき詩 (1996)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: D ・ ♩=約95</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">D – A – Bm – G</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">G – A – D – Bm / G – A – D</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.google.com/search?q=Mr.Children%20%E5%90%8D%E3%82%82%E3%81%AA%E3%81%8D%E8%A9%A9%20%281996%29%20%E3%82%B3%E3%83%BC%E3%83%89" target="_blank" rel="noopener">コード譜を検索</a> ・ <a href="https://www.google.com/search?q=Mr.Children%20%E5%90%8D%E3%82%82%E3%81%AA%E3%81%8D%E8%A9%A9%20%281996%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=Mr.Children%20%E5%90%8D%E3%82%82%E3%81%AA%E3%81%8D%E8%A9%A9%20%281996%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
@@ -266,25 +289,37 @@
 
     <div class="song">
       <h2>高嶺の花子さん (2013)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: C#m ・ ♩=約140 ・ 8ビート</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">C#m – A – B – G#</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">A – B – C#m / A – B – G# – C#m</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.google.com/search?q=back%20number%20%E9%AB%98%E5%B6%BA%E3%81%AE%E8%8A%B1%E5%AD%90%E3%81%95%E3%82%93%20%282013%29%20%E3%82%B3%E3%83%BC%E3%83%89" target="_blank" rel="noopener">コード譜を検索</a> ・ <a href="https://www.google.com/search?q=back%20number%20%E9%AB%98%E5%B6%BA%E3%81%AE%E8%8A%B1%E5%AD%90%E3%81%95%E3%82%93%20%282013%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=back%20number%20%E9%AB%98%E5%B6%BA%E3%81%AE%E8%8A%B1%E5%AD%90%E3%81%95%E3%82%93%20%282013%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>クリスマスソング (2015)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: E ・ ミディアムバラード</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">E – B/D# – C#m – B – A – B</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">A – B – E – C#m / A – B – E</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.google.com/search?q=back%20number%20%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%82%BD%E3%83%B3%E3%82%B0%20%282015%29%20%E3%82%B3%E3%83%BC%E3%83%89" target="_blank" rel="noopener">コード譜を検索</a> ・ <a href="https://www.google.com/search?q=back%20number%20%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%82%BD%E3%83%B3%E3%82%B0%20%282015%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=back%20number%20%E3%82%AF%E3%83%AA%E3%82%B9%E3%83%9E%E3%82%B9%E3%82%BD%E3%83%B3%E3%82%B0%20%282015%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>花束 (2011)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: G ・ バラード</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">G – D/F# – Em – C – D</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">C – D – G – Em / C – D – G</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.google.com/search?q=back%20number%20%E8%8A%B1%E6%9D%9F%20%282011%29%20%E3%82%B3%E3%83%BC%E3%83%89" target="_blank" rel="noopener">コード譜を検索</a> ・ <a href="https://www.google.com/search?q=back%20number%20%E8%8A%B1%E6%9D%9F%20%282011%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=back%20number%20%E8%8A%B1%E6%9D%9F%20%282011%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 
     <div class="song">
       <h2>HAPPY BIRTHDAY (2019)</h2>
-      <div class="meta">キー/進行はコード譜リンク先で確認</div>
+      <div class="meta">Key: Bb ・ ミディアムバラード</div>
+      <div class="sec"><span class="name">Verse</span><span class="prog">Bb – F/A – Gm – Eb – F</span></div>
+      <div class="sec"><span class="name">Chorus</span><span class="prog">Eb – F – Bb – Gm / Eb – F – Bb</span></div>
+      <div class="note">細部はリンク先のコード譜で最終確認。</div>
       <div class="links"><a href="https://www.google.com/search?q=back%20number%20HAPPY%20BIRTHDAY%20%282019%29%20%E3%82%B3%E3%83%BC%E3%83%89" target="_blank" rel="noopener">コード譜を検索</a> ・ <a href="https://www.google.com/search?q=back%20number%20HAPPY%20BIRTHDAY%20%282019%29%20%E6%AD%8C%E8%A9%9E" target="_blank" rel="noopener">歌詞</a> ・ <a href="https://www.youtube.com/results?search_query=back%20number%20HAPPY%20BIRTHDAY%20%282019%29" target="_blank" rel="noopener">YouTube</a></div>
     </div>
 

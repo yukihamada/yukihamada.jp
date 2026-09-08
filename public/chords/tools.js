@@ -1,12 +1,25 @@
 // 練習ツール共有エンジン — クロマチックチューナー + メトロノーム + 基準音
 // /chords/ed.html 等から利用。Web Audio API のみ・外部依存なし。
+// A4 = 440/442/432Hz 切替対応(432Hz派の人向け)
 (function(){
   const NOTE_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
-  // 標準チューニング 6弦→1弦
-  const STRINGS = [
+  // 標準チューニング 6弦→1弦 (A4=440基準の周波数)
+  const BASE_STRINGS = [
     {name:'E2', f:82.41}, {name:'A2', f:110.00}, {name:'D3', f:146.83},
     {name:'G3', f:196.00}, {name:'B3', f:246.94}, {name:'E4', f:329.63},
   ];
+  let A4 = 440;
+  const ratio = () => A4 / 440;
+  const STRINGS = () => BASE_STRINGS.map(s => ({ name: s.name, f: s.f * ratio() }));
+  let targetBaseFreq = null; // 440基準のターゲット弦周波数
+
+  window.setA4 = function(v){
+    A4 = +v;
+    document.querySelectorAll('.a4-btn').forEach(b =>
+      b.classList.toggle('active', +b.dataset.a4 === A4));
+    const rb = document.getElementById('refBtn');
+    if(rb) rb.textContent = `♪ A=${A4}Hz 基準音`;
+  };
 
   // ── Audio context (lazy, user gesture) ──
   let actx = null;
@@ -16,23 +29,24 @@
     return actx;
   }
 
-  // ── 基準音 A=440 ──
+  // ── 基準音 A4 ──
   let refOsc = null, refGain = null;
   window.playRef = function(){
     const a = ac();
-    if(refOsc){ refOsc.stop(); refOsc = null; document.getElementById('refBtn').textContent = '♪ A=440Hz 基準音'; return; }
+    const btn = document.getElementById('refBtn');
+    if(refOsc){ refOsc.stop(); refOsc = null; btn.textContent = `♪ A=${A4}Hz 基準音`; return; }
     refOsc = a.createOscillator(); refGain = a.createGain();
-    refOsc.frequency.value = 440; refOsc.type = 'sine';
+    refOsc.frequency.value = A4; refOsc.type = 'sine';
     refGain.gain.setValueAtTime(0.0001, a.currentTime);
     refGain.gain.exponentialRampToValueAtTime(0.25, a.currentTime + 0.03);
     refOsc.connect(refGain).connect(a.destination);
     refOsc.start();
-    document.getElementById('refBtn').textContent = '■ 停止';
-    setTimeout(()=>{ if(refOsc){ refGain.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + 0.4); setTimeout(()=>{ if(refOsc){refOsc.stop(); refOsc=null; document.getElementById('refBtn').textContent='♪ A=440Hz 基準音';} }, 450); } }, 2000);
+    btn.textContent = '■ 停止';
+    setTimeout(()=>{ if(refOsc){ refGain.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + 0.4); setTimeout(()=>{ if(refOsc){refOsc.stop(); refOsc=null; btn.textContent=`♪ A=${A4}Hz 基準音`;} }, 450); } }, 2000);
   };
 
   // ── チューナー ──
-  let stream = null, analyser = null, raf = null, buf = null, targetFreq = null;
+  let stream = null, analyser = null, raf = null, buf = null;
   const noteEl = () => document.getElementById('tunerNote');
   const centsEl = () => document.getElementById('tunerCents');
   const needleEl = () => document.getElementById('tunerNeedle');
@@ -66,7 +80,7 @@
   }
 
   function freqToNote(f){
-    const n = 12 * (Math.log(f / 440) / Math.LN2) + 69;
+    const n = 12 * (Math.log(f / A4) / Math.LN2) + 69;
     const ni = Math.round(n);
     const cents = Math.floor((n - ni) * 100);
     return { name: NOTE_NAMES[((ni % 12) + 12) % 12] + (Math.floor(ni/12)-1), cents };
@@ -76,15 +90,17 @@
     if(!analyser) return;
     analyser.getFloatTimeDomainData(buf);
     let f = autoCorrelate(buf, actx.sampleRate);
-    if(targetFreq && f > 0){
+    if(targetBaseFreq && f > 0){
       // ターゲット弦のオクターブ違いも拾う
-      if(f < targetFreq * 0.6) f *= 2;
-      if(f > targetFreq * 1.6) f /= 2;
+      const tf = targetBaseFreq * ratio();
+      if(f < tf * 0.6) f *= 2;
+      if(f > tf * 1.6) f /= 2;
     }
     if(f > 0 && f < 2000){
-      if(targetFreq){
-        const cents = Math.max(-50, Math.min(50, Math.round(1200 * Math.log2(f / targetFreq))));
-        noteEl().textContent = STRINGS.find(s=>s.f===targetFreq).name;
+      if(targetBaseFreq){
+        const tf = targetBaseFreq * ratio();
+        const cents = Math.max(-50, Math.min(50, Math.round(1200 * Math.log2(f / tf))));
+        noteEl().textContent = BASE_STRINGS.find(s=>s.f===targetBaseFreq).name;
         centsEl().textContent = (cents > 0 ? '+' : '') + cents + '¢' + (Math.abs(cents) <= 5 ? ' ✓' : '');
         centsEl().style.color = Math.abs(cents) <= 5 ? 'var(--chord)' : 'var(--mut)';
         needleEl().style.left = (50 + cents) + '%';
@@ -130,19 +146,19 @@
   // 弦ボタン
   const strBox = document.getElementById('tunerStrings');
   if(strBox){
-    STRINGS.forEach(s => {
+    BASE_STRINGS.forEach(s => {
       const b = document.createElement('button');
       b.textContent = s.name;
       b.onclick = () => {
-        if(targetFreq === s.f){ targetFreq = null; b.classList.remove('target'); }
+        if(targetBaseFreq === s.f){ targetBaseFreq = null; b.classList.remove('target'); }
         else{
-          targetFreq = s.f;
+          targetBaseFreq = s.f;
           strBox.querySelectorAll('button').forEach(x=>x.classList.remove('target'));
           b.classList.add('target');
           // 基準音を短く鳴らす
           const a = ac();
           const o = a.createOscillator(), g = a.createGain();
-          o.frequency.value = s.f; o.type = 'triangle';
+          o.frequency.value = s.f * ratio(); o.type = 'triangle';
           g.gain.setValueAtTime(0.0001, a.currentTime);
           g.gain.exponentialRampToValueAtTime(0.3, a.currentTime + 0.02);
           g.gain.exponentialRampToValueAtTime(0.0001, a.currentTime + 1.4);
