@@ -4648,12 +4648,31 @@ fn seed_for_slug(slug: &str) -> Option<serde_json::Value> {
     }
 }
 
-async fn api_chords_get(Path(slug): Path<String>) -> Response {
+// Chord data may contain full lyrics (private practice use). Require the same
+// ed_chords_ok cookie that /chords/ed.html sets after the passcode gate.
+fn chords_reader_authed(headers: &HeaderMap) -> bool {
+    headers.get("cookie")
+        .and_then(|v| v.to_str().ok())
+        .map(|cookies| cookies.split(';').any(|c| c.trim() == "ed_chords_ok=1"))
+        .unwrap_or(false)
+}
+
+async fn api_chords_get(Path(slug): Path<String>, headers: HeaderMap) -> Response {
+    if !chords_reader_authed(&headers) {
+        return StatusCode::UNAUTHORIZED.into_response();
+    }
     let Some(slug) = safe_chord_slug(&slug) else {
         return StatusCode::BAD_REQUEST.into_response();
     };
     let path = chords_data_dir().join(format!("{}.json", slug));
     if let Ok(bytes) = std::fs::read(&path) {
+        if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&bytes) {
+            return (cors_headers(), Json(v)).into_response();
+        }
+    }
+    // Bundled fallback (ships in the image; used until an admin edit persists to /data).
+    let bundled = std::path::PathBuf::from(format!("public/chords/data/{}.json", slug));
+    if let Ok(bytes) = std::fs::read(&bundled) {
         if let Ok(v) = serde_json::from_slice::<serde_json::Value>(&bytes) {
             return (cors_headers(), Json(v)).into_response();
         }
@@ -4672,7 +4691,7 @@ async fn api_chords_save(
     headers: HeaderMap,
     body: axum::body::Bytes,
 ) -> Response {
-    if !chords_admin_authed(&state, &headers) {
+    if !chords_admin_authed(&state, &headers) && !chords_reader_authed(&headers) {
         return StatusCode::UNAUTHORIZED.into_response();
     }
     let Some(slug) = safe_chord_slug(&slug) else {

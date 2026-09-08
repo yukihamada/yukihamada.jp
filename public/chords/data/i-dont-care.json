@@ -1,0 +1,100 @@
+{
+  "title": "I Don't Care",
+  "artist": "Ed Sheeran & Justin Bieber",
+  "key": "F#",
+  "bpm": 102,
+  "capo": 2,
+  "note": "Capo 2 → Eシェイプ。終始同じ4コード(I–vi–IV–V)。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "F#",
+      "text": "I'm at a party I don't wanna be at"
+    },
+    {
+      "t": 4,
+      "chord": "D#m",
+      "text": "And I don't ever wear a suit and tie, yeah"
+    },
+    {
+      "t": 8,
+      "chord": "B",
+      "text": "Wonderin' if I could sneak out the back"
+    },
+    {
+      "t": 12,
+      "chord": "C#",
+      "text": "Nobody's even lookin' me in my eyes"
+    },
+    {
+      "t": 16,
+      "chord": "F#",
+      "text": "Then you take my hand"
+    },
+    {
+      "t": 20,
+      "chord": "D#m",
+      "text": "Finish my drink, say, \"Shall we dance?\" (Hell, yeah)"
+    },
+    {
+      "t": 24,
+      "chord": "B",
+      "text": "You know I love ya, did I ever tell ya?"
+    },
+    {
+      "t": 28,
+      "chord": "C#",
+      "text": "You make it better like that"
+    },
+    {
+      "t": 32,
+      "chord": "F#",
+      "text": "Don't think I fit in at this party"
+    },
+    {
+      "t": 36,
+      "chord": "D#m",
+      "text": "Everyone's got so much to say (yeah)"
+    },
+    {
+      "t": 40,
+      "chord": "B",
+      "text": "I always feel like I'm nobody, mmm"
+    },
+    {
+      "t": 44,
+      "chord": "C#",
+      "text": "Who wants to fit in anyway?"
+    },
+    {
+      "t": 48,
+      "chord": "F#",
+      "text": "'Cause I don't care when I'm with my baby, yeah"
+    },
+    {
+      "t": 52,
+      "chord": "D#m",
+      "text": "All the bad things disappear"
+    },
+    {
+      "t": 56,
+      "chord": "B",
+      "text": "And you're making me feel like maybe I am somebody"
+    },
+    {
+      "t": 60,
+      "chord": "C#",
+      "text": "I can deal with the bad nights"
+    },
+    {
+      "t": 64,
+      "chord": "F#",
+      "text": "When I'm with my baby, yeah"
+    },
+    {
+      "t": 68,
+      "chord": "D#m",
+      "text": "Ooh, ooh, ooh, ooh, ooh, ooh"
+    }
+  ]
+}

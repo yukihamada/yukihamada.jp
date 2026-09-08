@@ -1,0 +1,110 @@
+{
+  "title": "The A Team",
+  "artist": "Ed Sheeran",
+  "key": "A",
+  "bpm": 85,
+  "capo": 2,
+  "note": "Capo 2 → Gシェイプ。Gはハンマリング入りのフォークピッキング。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "G",
+      "text": "White lips, pale face"
+    },
+    {
+      "t": 4,
+      "chord": "C",
+      "text": "Breathing in snowflakes"
+    },
+    {
+      "t": 8,
+      "chord": "G",
+      "text": "Burnt lungs, sour taste"
+    },
+    {
+      "t": 12,
+      "chord": "D",
+      "text": "Light's gone, day's end"
+    },
+    {
+      "t": 16,
+      "chord": "G",
+      "text": "Struggling to pay rent"
+    },
+    {
+      "t": 20,
+      "chord": "C",
+      "text": "Long nights, strange men"
+    },
+    {
+      "t": 24,
+      "chord": "G",
+      "text": "And they say she's in the Class A Team"
+    },
+    {
+      "t": 28,
+      "chord": "D",
+      "text": "Stuck in her daydream"
+    },
+    {
+      "t": 32,
+      "chord": "Em",
+      "text": "Been this way since eighteen"
+    },
+    {
+      "t": 36,
+      "chord": "C",
+      "text": "But lately her face seems"
+    },
+    {
+      "t": 40,
+      "chord": "G",
+      "text": "Slowly sinking, wasting"
+    },
+    {
+      "t": 44,
+      "chord": "D",
+      "text": "Crumbling like pastries"
+    },
+    {
+      "t": 48,
+      "chord": "Em",
+      "text": "And they scream the worst things in life come free to us"
+    },
+    {
+      "t": 52,
+      "chord": "C",
+      "text": "'Cause we're just under the upper hand"
+    },
+    {
+      "t": 56,
+      "chord": "G",
+      "text": "And go mad for a couple grams"
+    },
+    {
+      "t": 60,
+      "chord": "D",
+      "text": "And she don't want to go outside tonight"
+    },
+    {
+      "t": 64,
+      "chord": "Em",
+      "text": "And in a pipe she flies to the Motherland"
+    },
+    {
+      "t": 68,
+      "chord": "C",
+      "text": "Or sells love to another man"
+    },
+    {
+      "t": 72,
+      "chord": "G",
+      "text": "It's too cold outside"
+    },
+    {
+      "t": 76,
+      "chord": "D",
+      "text": "For angels to fly"
+    }
+  ]
+}

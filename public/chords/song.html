@@ -135,7 +135,12 @@ if(!SLUG){
 
 async function init(){
   try {
-    const res = await fetch(`/api/chords/${encodeURIComponent(SLUG)}`);
+    const res = await fetch(`/api/chords/${encodeURIComponent(SLUG)}`, {credentials:'include'});
+    if(res.status === 401){
+      document.getElementById('loading').innerHTML =
+        'この曲データはプライベートです。<br><a href="/chords/ed.html" style="color:var(--gold)">→ /chords/ed.html でパスコードを入れてから戻ってください</a>';
+      return;
+    }
     if(!res.ok){
       document.getElementById('loading').textContent = '見つかりませんでした。';
       return;
@@ -172,8 +177,10 @@ async function init(){
   render();
 
   // admin check: cookie presence (server re-validates on save regardless)
-  isAdmin = document.cookie.split(';').some(c => c.trim().startsWith('admin_auth='));
-  if(isAdmin){
+  const cookies = document.cookie.split(';').map(c=>c.trim());
+  isAdmin = cookies.some(c => c.startsWith('admin_auth='));
+  const isEd = cookies.some(c => c === 'ed_chords_ok=1');
+  if(isAdmin || isEd){
     document.getElementById('edit-toggle-group').hidden = false;
   }
 }
@@ -328,7 +335,7 @@ async function saveData(){
     if(res.ok){
       msg.textContent = '保存しました'; msg.className = 'save-msg ok';
     } else if(res.status === 401){
-      msg.textContent = 'ログインが必要です → /analytics でログインしてから戻ってください'; msg.className = 'save-msg err';
+      msg.textContent = '保存権限がありません → /chords/ed.html でパスコードを入れてから戻ってください'; msg.className = 'save-msg err';
     } else {
       msg.textContent = '保存に失敗しました (' + res.status + ')'; msg.className = 'save-msg err';
     }

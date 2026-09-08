@@ -1,0 +1,95 @@
+{
+  "title": "Shivers",
+  "artist": "Ed Sheeran",
+  "key": "Bm",
+  "bpm": 141,
+  "capo": 0,
+  "note": "カポなし。Bmはバレー省略でも可。速いのでダウン中心。",
+  "lines": [
+    {
+      "t": 0,
+      "chord": "Bm",
+      "text": "I took an arrow to the heart"
+    },
+    {
+      "t": 4,
+      "chord": "G",
+      "text": "I never kissed a mouth that tastes like yours"
+    },
+    {
+      "t": 8,
+      "chord": "D",
+      "text": "Strawberries and then something more"
+    },
+    {
+      "t": 12,
+      "chord": "A",
+      "text": "Ooh yeah, I want it all"
+    },
+    {
+      "t": 16,
+      "chord": "Bm",
+      "text": "Lipstick on my guitar"
+    },
+    {
+      "t": 20,
+      "chord": "G",
+      "text": "Fill up the engine, we can drive real far"
+    },
+    {
+      "t": 24,
+      "chord": "D",
+      "text": "Go dancing underneath the stars"
+    },
+    {
+      "t": 28,
+      "chord": "A",
+      "text": "Ooh yeah, I want it all"
+    },
+    {
+      "t": 32,
+      "chord": "Bm",
+      "text": "You got me feeling like"
+    },
+    {
+      "t": 36,
+      "chord": "G",
+      "text": "I wanna be that guy, I wanna kiss your eyes"
+    },
+    {
+      "t": 40,
+      "chord": "D",
+      "text": "I wanna drink that smile, I wanna feel like I'm"
+    },
+    {
+      "t": 44,
+      "chord": "A",
+      "text": "Like my soul's on fire, I wanna stay up all day and all night"
+    },
+    {
+      "t": 48,
+      "chord": "Bm",
+      "text": "Yeah, you got me singing like"
+    },
+    {
+      "t": 52,
+      "chord": "G",
+      "text": "Ooh, I love it when you do it like that"
+    },
+    {
+      "t": 56,
+      "chord": "D",
+      "text": "And when you're close up, give me the shivers"
+    },
+    {
+      "t": 60,
+      "chord": "A",
+      "text": "Oh baby, you wanna dance 'til the sunlight cracks"
+    },
+    {
+      "t": 64,
+      "chord": "Bm",
+      "text": "And when they say the party's over, then we'll bring it right back"
+    }
+  ]
+}
