@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BLANK_ アンケート ｜ 熱海・水上 振り返り</title>
+<meta name="description" content="BLANK_ Atami / Minakami に参加されたお客様へ。3分で終わる振り返りアンケートです。">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b0d10">
+<style>
+  :root{
+    --ink:#0b0d10; --fog:#f4f6f8; --line:#1c2026; --muted:#7d8794;
+    --accent:#c8a96a; --accent2:#e9e4d8;
+    --maxw:680px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:"Hiragino Mincho ProN","Hiragino Kaku Gothic ProN",-apple-system,serif;
+    color:var(--fog); background:var(--ink); line-height:1.9; letter-spacing:.03em;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+    background:rgba(11,13,16,.72);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:58px}
+  .brand{font-weight:700;letter-spacing:.34em;font-size:15px}
+  .brand small{color:var(--accent);letter-spacing:.2em;font-size:11px;margin-left:8px}
+
+  header{padding:90px 0 40px;text-align:center}
+  .kicker{color:var(--accent);letter-spacing:.4em;font-size:12px;margin-bottom:18px}
+  h1{font-size:clamp(26px,5vw,40px);font-weight:700;letter-spacing:.06em;line-height:1.35}
+  .lead{margin-top:16px;color:#cfd6dd;font-size:15px}
+
+  form{padding:30px 0 90px}
+  .q{margin-top:42px}
+  .q label.t{display:block;font-size:15.5px;color:var(--accent2);font-weight:700;letter-spacing:.05em}
+  .q .hint{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .opts{margin-top:14px;display:flex;flex-wrap:wrap;gap:10px}
+  .opts label{border:1px solid #39404a;border-radius:999px;padding:9px 18px;font-size:14px;cursor:pointer;transition:.15s;user-select:none}
+  .opts input{display:none}
+  .opts input:checked+span{color:var(--ink)}
+  .opts label:has(input:checked){background:var(--accent);border-color:var(--accent);color:var(--ink);font-weight:700}
+  textarea,input[type=text]{
+    margin-top:14px;width:100%;background:#0f1318;border:1px solid var(--line);border-radius:14px;
+    color:var(--fog);padding:14px 16px;font-size:15px;font-family:inherit;line-height:1.7;resize:vertical}
+  textarea{min-height:96px}
+  textarea:focus,input[type=text]:focus{outline:none;border-color:var(--accent)}
+  .stars{margin-top:14px;display:flex;gap:8px}
+  .stars label{font-size:26px;color:#39404a;cursor:pointer;transition:.15s}
+  .stars input{display:none}
+  .stars label.on{color:var(--accent)}
+  .submit{margin-top:56px;text-align:center}
+  .btn{display:inline-block;padding:16px 42px;border-radius:999px;font-weight:700;font-size:15px;
+    background:var(--accent);color:var(--ink);border:none;cursor:pointer;transition:.2s;font-family:inherit}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(200,169,106,.3)}
+  .note{margin-top:16px;font-size:12px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="/blank/recap/">BLANK_<small>SURVEY</small></a>
+    <a href="/blank/recap/" style="font-size:13px;color:var(--muted)">← 振り返りへ戻る</a>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">BLANK_ SURVEY — ATAMI &amp; MINAKAMI</div>
+    <h1>3分だけ、<br>白をください。</h1>
+    <p class="lead">いただいた言葉は（匿名で）振り返りページに載せ、次の合宿の設計に直接つかいます。</p>
+  </div>
+</header>
+
+<div class="wrap">
+<form id="f">
+  <div class="q">
+    <label class="t">1. どの回に参加されましたか？</label>
+    <div class="opts">
+      <label><input type="radio" name="camp" value="Atami（5/19–20）" required><span>熱海（5/19–20）</span></label>
+      <label><input type="radio" name="camp" value="Minakami（5/27–29）"><span>水上（5/27–29）</span></label>
+      <label><input type="radio" name="camp" value="両方"><span>両方</span></label>
+    </div>
+  </div>
+
+  <div class="q">
+    <label class="t">2. 総合満足度</label>
+    <div class="hint">1（うーん）〜 5（また行く）</div>
+    <div class="stars" id="stars">
+      <label data-v="1">★<input type="radio" name="score" value="1" required></label>
+      <label data-v="2">★<input type="radio" name="score" value="2"></label>
+      <label data-v="3">★<input type="radio" name="score" value="3"></label>
+      <label data-v="4">★<input type="radio" name="score" value="4"></label>
+      <label data-v="5">★<input type="radio" name="score" value="5"></label>
+    </div>
+  </div>
+
+  <div class="q">
+    <label class="t">3. いちばん効いた時間はどこでしたか？</label>
+    <div class="hint">セッション・ハンズオン・温泉・食事・移動・雑談——どこでも</div>
+    <textarea name="best" placeholder="例）2日目の朝、自社のデータで動いた瞬間"></textarea>
+  </div>
+
+  <div class="q">
+    <label class="t">4. 持ち帰ったもの。その後、動き始めたことがあれば。</label>
+    <div class="hint">この回答は（匿名で）振り返りページに掲載させていただくことがあります</div>
+    <textarea name="takeaway" placeholder="決めたこと・帰ってから実際にやったこと"></textarea>
+  </div>
+
+  <div class="q">
+    <label class="t">5. ここは直してほしい、という点</label>
+    <textarea name="fix" placeholder="遠慮なく。次の設計に直接反映します"></textarea>
+  </div>
+
+  <div class="q">
+    <label class="t">6. 次はどこなら行きたいですか？</label>
+    <div class="opts">
+      <label><input type="checkbox" name="next" value="弟子屈（6/14–17 柔術×AI）"><span>弟子屈 6/14–17（柔術×AI）</span></label>
+      <label><input type="checkbox" name="next" value="Dev Camp #2（8月）"><span>Dev Camp #2（8月）</span></label>
+      <label><input type="checkbox" name="next" value="次の経営者リトリート"><span>次の経営者リトリート</span></label>
+      <label><input type="checkbox" name="next" value="場所より日程次第"><span>場所より日程次第</span></label>
+    </div>
+  </div>
+
+  <div class="q">
+    <label class="t">7. 最後に、ひとこと（任意）</label>
+    <textarea name="free" placeholder="なんでも"></textarea>
+  </div>
+
+  <div class="q">
+    <label class="t">お名前（任意・掲載時は匿名にします）</label>
+    <input type="text" name="name" placeholder="空欄のままでも送れます">
+  </div>
+
+  <div class="submit">
+    <button type="submit" class="btn">メールで送る</button>
+    <p class="note">送信ボタンでメールアプリが開きます。内容を確認してそのまま送信してください。<br>宛先: mail@yukihamada.jp</p>
+  </div>
+</form>
+</div>
+
+<script>
+  // star rating highlight
+  const stars = document.querySelectorAll('#stars label');
+  stars.forEach(l => l.addEventListener('click', () => {
+    const v = +l.dataset.v;
+    stars.forEach(s => s.classList.toggle('on', +s.dataset.v <= v));
+  }));
+
+  document.getElementById('f').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const nexts = fd.getAll('next').join('、') || '（未回答）';
+    const line = (k, fallback='（未回答）') => (fd.get(k) || '').trim() || fallback;
+    const body = [
+      'BLANK_ 振り返りアンケート（Atami / Minakami）',
+      '',
+      '1. 参加回: ' + line('camp'),
+      '2. 満足度: ' + line('score') + ' / 5',
+      '3. いちばん効いた時間:',
+      line('best'),
+      '',
+      '4. 持ち帰ったもの・動き始めたこと:',
+      line('takeaway'),
+      '',
+      '5. 直してほしい点:',
+      line('fix'),
+      '',
+      '6. 次に行きたい: ' + nexts,
+      '',
+      '7. ひとこと:',
+      line('free'),
+      '',
+      'お名前: ' + line('name', '（匿名）'),
+    ].join('\n');
+    const subject = 'BLANK_ アンケート（' + line('camp', '未選択') + '）';
+    location.href = 'mailto:mail@yukihamada.jp?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+  });
+</script>
+
+</body>
+</html>
