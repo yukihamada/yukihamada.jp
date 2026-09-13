@@ -52,7 +52,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="dns-prefetch" href="https://enabler-analytics.fly.dev">
-  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2" crossorigin="anonymous" type="font/woff2">
+  <!-- 旧: 特定woff2サブセットを preload していたが Google Fonts の出し分けと URL がズレ、
+       ブラウザに "preloaded but not used" と警告される無駄DLだったため削除（font-display:swap で十分） -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..800;1,14..32,300..700&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script type="application/ld+json">
   [
