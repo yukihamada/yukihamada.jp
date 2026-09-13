@@ -7955,6 +7955,8 @@ async fn main() {
         .route("/api/takibi/feed", get(takibi_feed))
         .route("/api/takibi/speak", post(takibi_speak))
         .route("/api/takibi/react", post(takibi_react))
+        // 弟子屈ビジョン『白から、組む。』(静的・自己完結HTML)
+        .nest_service("/teshikaga", ServeDir::new("public/teshikaga"))
         .nest_service("/anime", ServeDir::new("public/anime"))
         .nest_service("/kamisibai", ServeDir::new("public/kamisibai"))
         .nest_service("/mv", ServeDir::new("public/mv"))
