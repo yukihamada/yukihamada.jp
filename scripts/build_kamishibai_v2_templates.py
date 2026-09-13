@@ -10,10 +10,11 @@ import json, re, os
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V2 = lambda ep: json.load(open(f"{BASE}/scripts/kamishibai_v2/{ep}.json"))
 
-PREFIX = {"EP1":"ep1v2","EP2":"ep2v2","EP3":"asoview","EP4":"atsume","EP5":"kagi","EP6":"minna","EP7":"transformer","EP8":"give","TBOT":"tbot"}
+PREFIX = {"EP1":"ep1v2","EP2":"ep2v2","EP3":"asoview","EP4":"atsume","EP5":"kagi","EP6":"minna","EP7":"transformer","EP8":"give","TBOT":"tbot","BLANK":"blank"}
 FILE = {"EP1":"kamishibai.html","EP2":"kamishibai-ep2.html","EP3":"kamishibai-ep3.html","EP4":"kamishibai-ep4.html",
         "EP5":"kamishibai-ep5.html","EP6":"kamishibai-ep6.html","EP7":"kamishibai-ep7.html","EP8":"kamishibai-ep8.html",
-        "TBOT":"kamishibai-takibi-bot.html"}
+        "TBOT":"kamishibai-takibi-bot.html",
+        "BLANK":"kamishibai-blank.html"}
 
 META = {
  "EP1": dict(no=1, sub="トップオブマインド編", robots="noindex,nofollow", og=11,
@@ -32,6 +33,8 @@ META = {
    desc="焚き火に話しかけたら、返事が来た。スラッシュ一本で売上も死活も家も声も薪で返る——操作盤を共有の火に置いた話。全8場面。"),
  "EP8": dict(no=8, sub="ギバー編", robots="index,follow", og=9,
    desc="いちばん損するのも、いちばん遠くへ行くのも、先に渡す人。違いはひとつ——自分も守れるか。改稿版・全9場面。"),
+ "BLANK": dict(no=0, label="番外編", sub="BLANK 001 弟子屈編", robots="index,follow", og=4,
+   desc="白帯と、空のプロンプトは同じ色。四人で弟子屈へ——3日で一本取って、一本作る。全9場面。"),
 }
 
 TITLES = {
@@ -44,6 +47,7 @@ TITLES = {
  "EP7": {1:("二〇一七年","注意こそ、すべて。"),2:("むかし","順番待ちで、遅い。"),3:("ひらめき","机の上に、ぜんぶ広げる。"),4:("アテンション","どこを見るか、自分で決める。"),5:("しくみ","似ているものに、惹かれる。"),6:("複数の目","一人で、見ない。"),7:("順番の情報","波の印を、そっと足す。"),8:("結果","順番待ちが、消えた。"),9:("それから","あの題名は、ほんとうだった。"),10:("きみへ","さいごに、一曲。")},
  "TBOT": {1:("ある夜","返事が、来た。"),2:("タブの山","確認だけで、夜が終わる。"),3:("合図","スラッシュ、一本。"),4:("くべる","薪が、答える。"),5:("驚き","ほんとうに、建つ。"),6:("声","火を囲んだまま、聴ける。"),7:("芯","操作盤を、火のそばに。"),8:("あなたへ","火に向かって、ヘルプ。")},
  "EP8": {1:("常識","親切な人は、損をする?"),2:("三人","ギバー、テイカー、マッチャー。"),3:("意外","いちばん上も、与える人。"),4:("裏返る","自分も、守るかどうか。"),5:("橋","向ける先を、選ぶ。"),6:("作法","賢く、配る。"),7:("砂漠の街","先に渡す、それだけ。"),8:("むすび","すり減らさずに。"),9:("あなたへ","かしこく、先に、渡す。")},
+ "BLANK": {1:("白","同じ色を、してる。"),2:("誘い","「弟子屈、行かない？」"),3:("四人","手が、挙がった。"),4:("北へ","街が、湖に変わる。"),5:("朝","体の、一本。"),6:("夜","頭の、一本。"),7:("白だから","まだ、誰も知らない。"),8:("芯","動詞は、「組む」。"),9:("あなたへ","残りの席は、あなたの分。")},
 }
 
 CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
@@ -55,6 +59,10 @@ CTA = {  # ep -> {scene_n: (href, label)}  控えめに最終盤1箇所のみ
  "EP8": {9:("https://takibi.wtf","🔥 最初の一本を")},
 }
 
+CTA2 = {  # ep -> {scene_n: (href, label)}  2本目のリンク(最終場面のみ・控えめ)
+ "BLANK": {9:("https://wearmu.com/make","👕 参加費がまだ無い人は、Tシャツを売って作る — MU")},
+}
+
 SKELETON = open(f"{BASE}/templates/kamishibai-ep4.html").read()
 
 def scenes_json(ep):
@@ -62,21 +70,24 @@ def scenes_json(ep):
     for sc in d["scenes"]:
         n = sc["n"]; sub, title = TITLES[ep][n]
         href, label = (CTA.get(ep) or {}).get(n, ("", ""))
+        href2, label2 = (CTA2.get(ep) or {}).get(n, ("", ""))
         out.append({"sub": sub, "title": title, "text": sc["narration"],
                     "img": f"/assets/kamishibai-v2/{ep}/scene{n}.png",
-                    "audio": f"/audio/v2/{pre}-kam-{n}.mp3", "buy": href, "cta": label})
+                    "audio": f"/audio/v2/{pre}-kam-{n}.mp3", "buy": href, "cta": label,
+                    "buy2": href2, "cta2": label2})
     return out
 
 def build_standard(ep):
     d = V2(ep); m = META[ep]; sc = scenes_json(ep)
     html = SKELETON
     # head 差し替え
+    epno = m.get("label", f"第{m['no']}話")
     html = re.sub(r"<title>.*?</title>",
-        f"<title>紙芝居 第{m['no']}話『{d['title']}』｜{m['sub']} — 濱田優貴</title>", html, flags=re.S)
+        f"<title>紙芝居 {epno}『{d['title']}』｜{m['sub']} — 濱田優貴</title>", html, flags=re.S)
     html = re.sub(r'<meta name="description" content=".*?">',
         f'<meta name="description" content="{m["desc"]}">', html)
     html = re.sub(r'<meta property="og:title" content=".*?">',
-        f'<meta property="og:title" content="紙芝居 第{m["no"]}話『{d["title"]}』">', html)
+        f'<meta property="og:title" content="紙芝居 {epno}『{d["title"]}』">', html)
     html = re.sub(r'<meta property="og:description" content=".*?">',
         f'<meta property="og:description" content="{m["desc"]}">', html)
     html = re.sub(r'<meta property="og:image" content=".*?">',
@@ -84,13 +95,24 @@ def build_standard(ep):
     html = html.replace("</title>", f'</title>\n<meta name="robots" content="{m["robots"]}" />', 1)
     # タイトル画面
     html = re.sub(r"<h1>.*?</h1>", f"<h1>{d['title']}</h1>", html)
+    note = "2026.06 改稿版" if "label" not in m else "2026.06"
     html = re.sub(r"<p>紙芝居.*?</p>",
-        f"<p>紙芝居 第{m['no']}話 ・ {m['sub']} ・ 2026.06 改稿版<br>声：濱田優貴（AIクローン）</p>", html, flags=re.S)
+        f"<p>紙芝居 {epno} ・ {m['sub']} ・ {note}<br>声：濱田優貴（AIクローン）</p>", html, flags=re.S)
     # SCENES
     html = re.sub(r"const SCENES=\[.*?\];",
         "const SCENES=" + json.dumps(sc, ensure_ascii=False) + ";", html, flags=re.S)
+    # 2本目のCTA (CTA2登録episodeのみ): 要素+CSS+JSを注入
+    if CTA2.get(ep):
+        html = html.replace('<a id="scene-link" target="_blank" rel="noopener"></a>',
+            '<a id="scene-link" target="_blank" rel="noopener"></a>\n    <a id="scene-link2" target="_blank" rel="noopener"></a>')
+        html = html.replace('#scene-link.show{display:inline-block}',
+            '#scene-link.show{display:inline-block}\n  #scene-link2{display:none;margin-top:10px;margin-left:12px;padding:12px 32px;border:1px solid var(--ink,#888);color:inherit;opacity:.85;letter-spacing:.16em;font-size:15px;border-radius:3px;text-decoration:none;font-family:"Hiragino Kaku Gothic ProN",sans-serif}\n  #scene-link2.show{display:inline-block}')
+        html = html.replace("else link.classList.remove('show');",
+            "else link.classList.remove('show');\n  const link2=document.getElementById('scene-link2');\n  if(s.buy2){ link2.href=s.buy2; link2.textContent=s.cta2; link2.classList.add('show'); }\n  else link2.classList.remove('show');")
+        html = html.replace("document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());",
+            "document.getElementById('scene-link').addEventListener('click',e=>e.stopPropagation());\ndocument.getElementById('scene-link2').addEventListener('click',e=>e.stopPropagation());")
     open(f"{BASE}/templates/{FILE[ep]}", "w").write(html)
-    print(f"{FILE[ep]}: {len(sc)} scenes")
+    print(f"{FILE[ep]}: {len(sc)} scenes" + (" +CTA2" if CTA2.get(ep) else ""))
 
 def build_ep7():
     d = V2("EP7"); sc = scenes_json("EP7")
