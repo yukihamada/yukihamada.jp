@@ -3,6 +3,8 @@ name: Deploy to Fly.io
 on:
   push:
     branches: [main, master]
+  pull_request:
+    branches: [main, master]
 
 jobs:
   # ── test: cargo build --release → 起動スモークテスト ──
@@ -15,6 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: Swatinem/rust-cache@v2
+      - name: Test
+        run: cargo test
       - name: Build (release)
         run: cargo build --release
       - name: Startup smoke test
@@ -51,6 +55,7 @@ jobs:
 
   # ── deploy: 本番デプロイ(既存ステップをそのまま) ──
   deploy:
+    if: github.event_name == 'push'
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -84,7 +89,7 @@ jobs:
       # A: 仕事の鼓動を薪に — デプロイ成功でともしびに deploy薪を自動投下。
       # 火を無人でも生かす。失敗してもデプロイは壊さない（continue-on-error）。
       - name: Light the campfire (ともしび)
-        if: success()
+        if: success() && !contains(github.event.head_commit.message, '[skip-notify]')
         continue-on-error: true
         env:
           TOMOSHIBI_SECRET: ${{ secrets.COMMUNITY_WEBHOOK_SECRET }}

@@ -12,6 +12,9 @@
   <meta name="keywords" content="濱田優貴,Yuki Hamada,Enabler,メルカリ,CPO,SOLUNA,JiuFlow,Koe,Rust,Swift,スタートアップ,起業家,プロダクトマネジメント,柔術">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://yukihamada.jp/">
+  <link rel="alternate" hreflang="ja" href="https://yukihamada.jp/">
+  <link rel="alternate" hreflang="en" href="https://yukihamada.jp/en">
+  <link rel="alternate" hreflang="x-default" href="https://yukihamada.jp/">
 
   <!-- Open Graph -->
   <meta property="og:title" content="濱田優貴 — Enabler CEO · 元メルカリCPO · Builder">
@@ -2023,6 +2026,7 @@
     </div>
     <div class="mb-dropdown" id="dd-apple">
       <div class="mb-item" onclick="openApp('about');mbClose()">About 濱田優貴</div>
+      <a class="mb-item" href="/en" lang="en" hreflang="en">English profile ↗</a>
       <div class="mb-sep"></div>
       <div class="mb-section">アプリ</div>
       <div class="mb-item" onclick="openApp('blog');mbClose()">📝 Blog</div>
@@ -2355,7 +2359,7 @@
 
 <!-- Launchpad (all apps) -->
 <div id="launchpad" onclick="if(event.target===this)lpClose()">
-  <input id="lp-search" placeholder="アプリを検索" autocomplete="off" oninput="lpFilter(this.value)" onkeydown="lpKey(event)">
+  <input id="lp-search" aria-label="アプリを検索" placeholder="アプリを検索" autocomplete="off" oninput="lpFilter(this.value)" onkeydown="lpKey(event)">
   <div id="lp-grid">
     <div class="lp-app" data-name="blog blog ブログ 記事" onclick="lpLaunch('blog')">
       <div class="ai ai-blog"><svg width="28" height="28" viewBox="0 0 24 24" fill="none"><rect x="4" y="2" width="16" height="20" rx="2.5" fill="rgba(255,255,255,0.92)"/><rect x="7" y="7" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.55)"/><rect x="7" y="11" width="10" height="1.8" rx="0.9" fill="rgba(120,60,0,0.4)"/><rect x="7" y="15" width="6" height="1.8" rx="0.9" fill="rgba(120,60,0,0.3)"/></svg></div>
@@ -2469,7 +2473,7 @@
   <div class="sp-box">
     <div class="sp-row">
       <span class="sp-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
-      <input id="sp-input" placeholder="Search..." autocomplete="off" oninput="spSearch(this.value)" onkeydown="spKey(event)">
+      <input id="sp-input" aria-label="サイト内を検索" placeholder="Search..." autocomplete="off" oninput="spSearch(this.value)" onkeydown="spKey(event)">
     </div>
     <div class="sp-results" id="sp-results"></div>
   </div>
@@ -2564,7 +2568,7 @@
         <a href="/kamisibai/" class="about-link">🎴 紙芝居</a>
         <a href="/community" class="about-link">🔥 ともしび</a>
       </div>
-      <a href="/community/buildings" id="dataStatus" class="data-status" aria-live="polite" title="保存データの状況"></a>
+      <a href="/community/buildings" id="dataStatus" class="data-status show" title="保存データの状況">保存データの状況（コミュニティへのログインが必要です）</a>
       <style>
         .data-status{display:none;margin-top:14px;font-size:12px;line-height:1.7;color:#8c8c98;
           text-decoration:none;border:1px solid rgba(140,140,152,.25);border-radius:10px;padding:8px 12px;}
@@ -2573,14 +2577,6 @@
         .data-status .ds-k{display:inline-block;background:rgba(192,57,43,.14);color:#c0392b;
           font-weight:700;border-radius:6px;padding:1px 7px;margin-right:8px;font-size:11px;}
       </style>
-      <script>
-        fetch('/api/community/stats',{credentials:'same-origin'}).then(r=> r.ok ? r.json() : Promise.reject()).then(d=>{
-          var el=document.getElementById('dataStatus'); if(!el)return;
-          el.innerHTML='<span class="ds-k">データ</span>ともしび 投稿<b>'+d.posts+'</b> / 人<b>'+d.members+'</b> / 建物<b>'+d.buildings+'</b>'
-            +' ・ 保存 '+d.storage+' ・ 最終更新 '+d.updated;
-          el.classList.add('show');
-        }).catch(function(){});
-      </script>
     </div>
     <div class="about-now">
       <div class="about-now-label">▸ 今やっていること</div>
@@ -2700,41 +2696,41 @@
             <button class="dj-btn dj-sync-btn" onclick="djSync('a')" title="Sync BPM to B">SYNC</button>
             <div class="dj-tempo-wrap">
               <span class="dj-tempo-label">TEMPO</span>
-              <input type="range" class="dj-slider" id="tempo-a" min="0.7" max="1.3" step="0.005" value="1" oninput="djTempo('a',this.value)" style="flex:1">
+              <input aria-label="Deck A tempo" type="range" class="dj-slider" id="tempo-a" min="0.7" max="1.3" step="0.005" value="1" oninput="djTempo('a',this.value)" style="flex:1">
               <span class="dj-tempo-label" id="tempo-a-val">±0%</span>
             </div>
           </div>
           <div class="dj-controls">
             <div class="dj-eq">
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="eq-a-hi" min="0" max="2" step="0.01" value="1" oninput="djEQ('a','hi',this.value)" style="width:100%">
+                <input aria-label="Deck A high EQ" type="range" class="dj-slider" id="eq-a-hi" min="0" max="2" step="0.01" value="1" oninput="djEQ('a','hi',this.value)" style="width:100%">
                 <button class="dj-kill-btn" id="kill-a-hi" onclick="djKill('a','hi')">HI</button>
               </div>
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="eq-a-mid" min="0" max="2" step="0.01" value="1" oninput="djEQ('a','mid',this.value)" style="width:100%">
+                <input aria-label="Deck A mid EQ" type="range" class="dj-slider" id="eq-a-mid" min="0" max="2" step="0.01" value="1" oninput="djEQ('a','mid',this.value)" style="width:100%">
                 <button class="dj-kill-btn" id="kill-a-mid" onclick="djKill('a','mid')">MID</button>
               </div>
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="eq-a-lo" min="0" max="2" step="0.01" value="1" oninput="djEQ('a','lo',this.value)" style="width:100%">
+                <input aria-label="Deck A low EQ" type="range" class="dj-slider" id="eq-a-lo" min="0" max="2" step="0.01" value="1" oninput="djEQ('a','lo',this.value)" style="width:100%">
                 <button class="dj-kill-btn" id="kill-a-lo" onclick="djKill('a','lo')">LO</button>
               </div>
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="vol-a" min="0" max="1.5" step="0.01" value="1" oninput="djVol('a',this.value)" style="width:100%">
+                <input aria-label="Deck A volume" type="range" class="dj-slider" id="vol-a" min="0" max="1.5" step="0.01" value="1" oninput="djVol('a',this.value)" style="width:100%">
                 <span class="dj-knob-label">VOL</span>
               </div>
             </div>
             <div class="dj-filter-row">
               <span class="dj-filter-label">FILTER</span>
-              <input type="range" class="dj-slider" id="filter-a" min="-1" max="1" step="0.01" value="0" oninput="djFilter('a',this.value)" style="flex:1">
+              <input aria-label="Deck A filter" type="range" class="dj-slider" id="filter-a" min="-1" max="1" step="0.01" value="0" oninput="djFilter('a',this.value)" style="flex:1">
               <span class="dj-filter-label" id="filter-a-val">FLAT</span>
             </div>
             <div class="dj-fx-row">
               <div class="dj-fx-wrap">
-                <input type="range" class="dj-slider" id="fx-reverb-a" min="0" max="1" step="0.01" value="0" oninput="djFXReverb('a',this.value)" style="width:100%">
+                <input aria-label="Deck A reverb" type="range" class="dj-slider" id="fx-reverb-a" min="0" max="1" step="0.01" value="0" oninput="djFXReverb('a',this.value)" style="width:100%">
                 <span class="dj-fx-label">REVERB</span>
               </div>
               <div class="dj-fx-wrap">
-                <input type="range" class="dj-slider" id="fx-delay-a" min="0" max="0.9" step="0.01" value="0" oninput="djFXDelay('a',this.value)" style="width:100%">
+                <input aria-label="Deck A delay" type="range" class="dj-slider" id="fx-delay-a" min="0" max="0.9" step="0.01" value="0" oninput="djFXDelay('a',this.value)" style="width:100%">
                 <span class="dj-fx-label">ECHO</span>
               </div>
             </div>
@@ -2764,15 +2760,15 @@
           <div class="dj-vu"><div class="dj-vu-fill" id="vu-fill"></div></div>
           <div class="dj-cf-wrap">
             <div class="dj-cf-labels"><span>A</span><span>B</span></div>
-            <input type="range" class="dj-cf" id="crossfader" min="0" max="1" step="0.01" value="0.5" oninput="djCF(this.value)">
+            <input aria-label="Crossfader" type="range" class="dj-cf" id="crossfader" min="0" max="1" step="0.01" value="0.5" oninput="djCF(this.value)">
           </div>
           <div class="dj-master-vol">
             <span class="dj-mixer-label">MASTER</span>
-            <input type="range" class="dj-slider" id="master-vol" min="0" max="1" step="0.01" value="0.85" oninput="djMaster(this.value)" style="width:100%">
+            <input aria-label="Master volume" type="range" class="dj-slider" id="master-vol" min="0" max="1" step="0.01" value="0.85" oninput="djMaster(this.value)" style="width:100%">
           </div>
           <div class="dj-master-vol">
             <span class="dj-mixer-label">COMP</span>
-            <input type="range" class="dj-slider" id="comp-thresh" min="-40" max="0" step="1" value="-18" oninput="djComp(this.value)" style="width:100%">
+            <input aria-label="Compressor threshold" type="range" class="dj-slider" id="comp-thresh" min="-40" max="0" step="1" value="-18" oninput="djComp(this.value)" style="width:100%">
           </div>
         </div>
 
@@ -2804,41 +2800,41 @@
             <button class="dj-btn dj-stutter-btn" id="stutter-b" onmousedown="djStutterStart('b')" onmouseup="djStutterEnd('b')" ontouchstart="djStutterStart('b')" ontouchend="djStutterEnd('b')" title="Stutter">STU</button>
             <div class="dj-tempo-wrap">
               <span class="dj-tempo-label">TEMPO</span>
-              <input type="range" class="dj-slider" id="tempo-b" min="0.7" max="1.3" step="0.005" value="1" oninput="djTempo('b',this.value)" style="flex:1">
+              <input aria-label="Deck B tempo" type="range" class="dj-slider" id="tempo-b" min="0.7" max="1.3" step="0.005" value="1" oninput="djTempo('b',this.value)" style="flex:1">
               <span class="dj-tempo-label" id="tempo-b-val">±0%</span>
             </div>
           </div>
           <div class="dj-controls">
             <div class="dj-eq">
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="eq-b-hi" min="0" max="2" step="0.01" value="1" oninput="djEQ('b','hi',this.value)" style="width:100%">
+                <input aria-label="Deck B high EQ" type="range" class="dj-slider" id="eq-b-hi" min="0" max="2" step="0.01" value="1" oninput="djEQ('b','hi',this.value)" style="width:100%">
                 <button class="dj-kill-btn" id="kill-b-hi" onclick="djKill('b','hi')">HI</button>
               </div>
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="eq-b-mid" min="0" max="2" step="0.01" value="1" oninput="djEQ('b','mid',this.value)" style="width:100%">
+                <input aria-label="Deck B mid EQ" type="range" class="dj-slider" id="eq-b-mid" min="0" max="2" step="0.01" value="1" oninput="djEQ('b','mid',this.value)" style="width:100%">
                 <button class="dj-kill-btn" id="kill-b-mid" onclick="djKill('b','mid')">MID</button>
               </div>
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="eq-b-lo" min="0" max="2" step="0.01" value="1" oninput="djEQ('b','lo',this.value)" style="width:100%">
+                <input aria-label="Deck B low EQ" type="range" class="dj-slider" id="eq-b-lo" min="0" max="2" step="0.01" value="1" oninput="djEQ('b','lo',this.value)" style="width:100%">
                 <button class="dj-kill-btn" id="kill-b-lo" onclick="djKill('b','lo')">LO</button>
               </div>
               <div class="dj-knob-wrap">
-                <input type="range" class="dj-slider" id="vol-b" min="0" max="1.5" step="0.01" value="1" oninput="djVol('b',this.value)" style="width:100%">
+                <input aria-label="Deck B volume" type="range" class="dj-slider" id="vol-b" min="0" max="1.5" step="0.01" value="1" oninput="djVol('b',this.value)" style="width:100%">
                 <span class="dj-knob-label">VOL</span>
               </div>
             </div>
             <div class="dj-filter-row">
               <span class="dj-filter-label">FILTER</span>
-              <input type="range" class="dj-slider" id="filter-b" min="-1" max="1" step="0.01" value="0" oninput="djFilter('b',this.value)" style="flex:1">
+              <input aria-label="Deck B filter" type="range" class="dj-slider" id="filter-b" min="-1" max="1" step="0.01" value="0" oninput="djFilter('b',this.value)" style="flex:1">
               <span class="dj-filter-label" id="filter-b-val">FLAT</span>
             </div>
             <div class="dj-fx-row">
               <div class="dj-fx-wrap">
-                <input type="range" class="dj-slider" id="fx-reverb-b" min="0" max="1" step="0.01" value="0" oninput="djFXReverb('b',this.value)" style="width:100%">
+                <input aria-label="Deck B reverb" type="range" class="dj-slider" id="fx-reverb-b" min="0" max="1" step="0.01" value="0" oninput="djFXReverb('b',this.value)" style="width:100%">
                 <span class="dj-fx-label">REVERB</span>
               </div>
               <div class="dj-fx-wrap">
-                <input type="range" class="dj-slider" id="fx-delay-b" min="0" max="0.9" step="0.01" value="0" oninput="djFXDelay('b',this.value)" style="width:100%">
+                <input aria-label="Deck B delay" type="range" class="dj-slider" id="fx-delay-b" min="0" max="0.9" step="0.01" value="0" oninput="djFXDelay('b',this.value)" style="width:100%">
                 <span class="dj-fx-label">ECHO</span>
               </div>
             </div>
@@ -2867,7 +2863,7 @@
              ondragover="event.preventDefault();this.classList.add('drag')"
              ondragleave="this.classList.remove('drag')"
              ondrop="djHandleDrop(event)">
-          <input type="file" id="dj-file-input" accept="audio/*" multiple onchange="djHandleFiles(this.files)">
+          <input aria-label="DJ用の音声ファイルを選択" type="file" id="dj-file-input" accept="audio/*" multiple onchange="djHandleFiles(this.files)">
           <span>＋ 音楽ファイルをドロップ または クリックして追加 (MP3/WAV/OGG/FLAC)</span>
         </div>
         {% for t in tracks %}
@@ -3026,7 +3022,7 @@
       </div>
       <!-- text input -->
       <div class="kva-input-row">
-        <input class="kva-input" id="kvaInput" placeholder="テキストでも送信できます..." autocomplete="off"/>
+        <input aria-label="音声アシスタントへのメッセージ" class="kva-input" id="kvaInput" placeholder="テキストでも送信できます..." autocomplete="off"/>
         <button class="kva-send" onclick="kvaSendText()">↑</button>
       </div>
       <!-- call controls -->
@@ -3123,7 +3119,7 @@
   <!-- UTA -->
   <div id="tpl-uta">
     <div class="koe-win" style="background:#0a0010;">
-      <iframe class="koe-iframe" src="https://uta.live"
+      <iframe class="koe-iframe" title="uta.live" loading="lazy" data-src="https://uta.live"
         allow="microphone; clipboard-write"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-pointer-lock"></iframe>
     </div>
@@ -3145,7 +3141,7 @@
   <!-- ANALYTICS (admin only) -->
   <div id="tpl-analytics">
     <div class="koe-win" style="background:#050810;">
-      <iframe class="koe-iframe" src="https://enabler-analytics.fly.dev/"
+      <iframe class="koe-iframe" title="Analytics" loading="lazy" data-src="https://enabler-analytics.fly.dev/"
         sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
     </div>
   </div>
@@ -3550,8 +3546,7 @@
   <!-- M5 DASHBOARD (admin only) -->
   <div id="tpl-m5dash">
     <div class="koe-win" style="background:#050810;">
-      <iframe class="koe-iframe" src="https://m5-dashboard.chatweb.ai/"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-downloads"></iframe>
+      <p style="padding:24px;color:#eee">M5 Dashboardは管理者用の外部サービスです。接続できない場合はM5側の稼働状況を確認してください。<br><a href="https://m5-dashboard.chatweb.ai/" target="_blank" rel="noopener noreferrer">別タブで接続する ↗</a></p>
     </div>
   </div>
 
@@ -3651,7 +3646,7 @@
       <div id="term-hist"></div>
       <div class="term-prompt-row">
         <span class="term-ps1">yuki@enabler ~$</span>
-        <input id="term-in" type="text" class="term-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="help">
+        <input aria-label="ターミナルコマンド" id="term-in" type="text" class="term-input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="help">
       </div>
     </div>
   </div>
@@ -3664,13 +3659,13 @@
         <div class="login-title" id="login-title">ログイン</div>
         <div class="login-sub">メールアドレスで認証</div>
         <div class="login-step" id="login-step1">
-          <input class="login-input" id="login-email" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')loginSendOtp()">
+          <input aria-label="ログイン用メールアドレス" class="login-input" id="login-email" type="email" placeholder="your@email.com" autocomplete="email" onkeydown="if(event.key==='Enter')loginSendOtp()">
           <button class="login-btn" id="login-send-btn" onclick="loginSendOtp()">コードを送信</button>
           <div class="login-err" id="login-err1"></div>
         </div>
         <div class="login-step" id="login-step2" style="display:none">
           <div class="login-hint-text">認証コードをメールに送信しました</div>
-          <input class="login-input" id="login-otp" type="text" placeholder="000000" inputmode="numeric" maxlength="6" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')loginVerifyOtp()">
+          <input aria-label="メールに届いた認証コード" class="login-input" id="login-otp" type="text" placeholder="000000" inputmode="numeric" maxlength="6" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')loginVerifyOtp()">
           <button class="login-btn" id="login-verify-btn" onclick="loginVerifyOtp()">ログイン</button>
           <div class="login-err" id="login-err2"></div>
           <button class="login-btn-ghost" onclick="loginBack()">戻る</button>
@@ -3704,7 +3699,7 @@
       </div>
       <div class="chat-input-row">
         <button class="chat-mic-btn" id="chat-mic-btn" title="音声入力">🎤</button>
-        <input class="chat-input" type="text" placeholder="メッセージ..." autocomplete="off" maxlength="500">
+        <input aria-label="チャットメッセージ" class="chat-input" type="text" placeholder="メッセージ..." autocomplete="off" maxlength="500">
         <button class="chat-send-btn">
           <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
         </button>
@@ -3721,7 +3716,7 @@
         <button class="browser-nav-btn" id="br-reload" title="更新">&#8635;</button>
         <div class="browser-url-wrap">
           <span class="browser-url-icon">🔒</span>
-          <input class="browser-url-input" id="br-url" type="text" placeholder="検索またはURLを入力" autocomplete="off" autocorrect="off" spellcheck="false">
+          <input aria-label="ブラウザの検索またはURL" class="browser-url-input" id="br-url" type="text" placeholder="検索またはURLを入力" autocomplete="off" autocorrect="off" spellcheck="false">
         </div>
         <button class="browser-nav-btn" id="br-open" title="外部で開く" style="flex-shrink:0;font-size:11px;padding:0 8px;opacity:0.6;">↗</button>
       </div>
@@ -3732,7 +3727,7 @@
           </div>
           <div class="browser-search-box">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input class="browser-search-input" id="br-search" type="text" placeholder="Google で検索または URL を入力">
+            <input aria-label="Google検索またはURL" class="browser-search-input" id="br-search" type="text" placeholder="Google で検索または URL を入力">
             <button class="browser-search-go" id="br-search-go">&#8594;</button>
           </div>
           <div class="browser-shortcuts" id="br-shortcuts">
@@ -4848,6 +4843,7 @@ function openApp(id) {
   const tpl = document.getElementById('tpl-' + id);
   if (tpl) {
     el.querySelector('.win-body').innerHTML = tpl.innerHTML;
+    el.querySelectorAll('iframe[data-src]').forEach(frame => { frame.src = frame.dataset.src; });
     if (id === 'terminal') initTerm(el);
     if (id === 'chat') initChat(el);
     if (id === 'browser') initBrowser(el);
@@ -8629,7 +8625,7 @@ function showToast(msg, ms) {
   <div id="admin-inbox-msgs" style="flex:1;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:8px;max-height:280px;"></div>
   <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,0.07);">
     <div style="display:flex;gap:8px;">
-      <input id="admin-reply-input" type="text" placeholder="返信を入力…" maxlength="500"
+      <input aria-label="訪問者への返信" id="admin-reply-input" type="text" placeholder="返信を入力…" maxlength="500"
         style="flex:1;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
           border-radius:8px;padding:8px 10px;color:#eaeaf2;font-size:13px;outline:none;">
       <button id="admin-reply-send"
