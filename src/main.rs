@@ -3,6 +3,7 @@
 
 mod blog;
 mod community;
+mod home_assets;
 
 use axum::{
     extract::{Path, Query, State},
@@ -600,7 +601,7 @@ async fn home(
         posts: &state.posts[..state.posts.len().min(5)],
         tracks: TRACKS,
     };
-    Html(tmpl.render().unwrap_or_default()).into_response()
+    Html(home_assets::split(tmpl.render().unwrap_or_default())).into_response()
 }
 
 fn render_cli_home(posts: &[blog::BlogPost]) -> String {
@@ -704,7 +705,7 @@ async fn blog_list_tag(
             posts: &state.posts[..state.posts.len().min(5)],
             tracks: TRACKS,
         };
-        let mut html = tmpl.render().unwrap_or_default();
+        let mut html = home_assets::split(tmpl.render().unwrap_or_default());
         let script = r#"<script>window.__autoOpenApp="blog";</script>"#;
         html = html.replace("</body>", &format!("{script}\n</body>"));
         return Html(html).into_response();
@@ -736,7 +737,7 @@ async fn blog_post(
         let safe_slug = slug.chars()
             .filter(|c| c.is_alphanumeric() || *c == '-' || *c == '_')
             .collect::<String>();
-        let mut html = tmpl.render().unwrap_or_default();
+        let mut html = home_assets::split(tmpl.render().unwrap_or_default());
         let script = format!(r#"<script>window.__autoOpenSlug="{safe_slug}";</script>"#);
         html = html.replace("</body>", &format!("{script}\n</body>"));
         return Html(html).into_response();
@@ -2572,6 +2573,8 @@ async fn security_headers(
     // Cache-Control for static assets
     if path.starts_with("/assets/") || path.starts_with("/blog/images/") {
         h.insert("cache-control", "public, max-age=31536000, immutable".parse().unwrap()); // 1 year + immutable
+    } else if path.starts_with("/api/") || path.starts_with("/dashboard") {
+        h.insert("cache-control", "private, no-store".parse().unwrap());
     } else if path.starts_with("/audio/") {
         h.insert("cache-control", "public, max-age=3600".parse().unwrap()); // 1 hour — audio can be regenerated
     }
@@ -7992,6 +7995,7 @@ async fn main() {
         .route("/api/stripe/webhook", post(stripe_webhook))
         .nest_service("/blog/images", ServeDir::new("public/blog/images"))
         .nest_service("/assets", ServeDir::new("public/assets"))
+        .route("/home-assets/{name}", get(home_assets::serve))
         .nest_service("/audio", ServeDir::new("public/audio"))
         .route("/favicon.svg", get(|| async {
             let body = std::fs::read_to_string("public/favicon.svg").unwrap_or_default();
