@@ -48,6 +48,8 @@ jobs:
           curl -fsS -o /dev/null -w "health: %{http_code}\n" "http://localhost:8099/health"
           echo "=== / (browser UA — 素のcurlはANSIターミナル版が返るため UA 必須) ==="
           curl -fsS -A "Mozilla/5.0" -o /dev/null -w "home: %{http_code}\n" "http://localhost:8099/"
+          echo "=== /now (include_str! 焼込みルートの回帰検出) ==="
+          curl -fsS -A "Mozilla/5.0" -o /dev/null -w "now: %{http_code}\n" "http://localhost:8099/now"
           echo "=== /kamishibai/5 (include_str! 焼込みルートの回帰検出) ==="
           curl -fsS -A "Mozilla/5.0" -o /dev/null -w "kamishibai/5: %{http_code}\n" "http://localhost:8099/kamishibai/5"
           echo "smoke test passed"

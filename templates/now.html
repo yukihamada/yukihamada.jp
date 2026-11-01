@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>いま取り組んでいること — 濱田優貴</title>
+<meta name="description" content="AIの土台から、声・ものづくり・住まい・体験まで。濱田優貴が2026年11月時点で取り組んでいる事業とプロダクトの整理。">
+<link rel="canonical" href="https://yukihamada.jp/now">
+<meta property="og:type" content="article">
+<meta property="og:title" content="いま取り組んでいること — 濱田優貴">
+<meta property="og:description" content="AIで手間を減らし、生まれた時間でつくる・遊ぶ・会う。61のプロダクトと、いま動いている仕事の整理。">
+<meta property="og:url" content="https://yukihamada.jp/now">
+<meta property="og:image" content="https://yukihamada.jp/assets/now-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:site_name" content="濱田優貴">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@yukihamada">
+<meta name="twitter:image" content="https://yukihamada.jp/assets/now-og.png">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Person","name":"濱田優貴","alternateName":"HAMADA YUKI","jobTitle":"代表取締役CEO","worksFor":{"@type":"Organization","name":"株式会社イネブラ"},"sameAs":["https://x.com/yukihamada","https://github.com/yukihamada"],"email":"mail@yukihamada.jp","description":"AIの土台から、声・ものづくり・住まい・体験まで。複数のプロダクトを運営。"}
+</script>
+<script src="https://enabler-analytics.fly.dev/t.js" defer></script>
+<style>
+
+:root{
+  --ink:#1b1a17;
+  --ink-2:#4a4740;
+  --ink-3:#6b665c;
+  --paper:#f6f3ec;
+  --paper-2:#eee9de;
+  --line:#d9d2c3;
+  --accent:#1f4d3f;
+  --accent-2:#9c3a20;
+  --radius:2px;
+  --max:1120px;
+  --font: "Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif: "Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--font);font-size:16px;line-height:1.85;
+  font-feature-settings:"palt" 1;
+  letter-spacing:.01em;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
+a:hover{color:var(--accent-2)}
+:focus-visible{outline:2px solid var(--accent-2);outline-offset:3px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:12px;background:var(--ink);color:var(--paper);padding:8px 14px;z-index:99}
+
+/* header */
+header.site{
+  position:sticky;top:0;z-index:20;background:rgba(246,243,236,.92);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+}
+.site-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.brand{font-family:var(--serif);font-size:15px;letter-spacing:.14em;text-decoration:none;white-space:nowrap}
+.brand b{font-weight:600}
+nav.top{display:flex;gap:22px;font-size:12.5px;letter-spacing:.08em;color:var(--ink-2)}
+nav.top a{text-decoration:none}
+nav.top a:hover{color:var(--accent-2)}
+@media (max-width:720px){nav.top{display:none}}
+
+/* hero */
+.hero{padding:64px 0 56px;border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:56px;align-items:start}
+.hero-main{min-width:0}
+.hero-now{border:1px solid var(--ink);padding:18px 18px 16px;background:var(--paper-2)}
+.hn-label{margin:0 0 12px;font-size:10.5px;letter-spacing:.2em;color:var(--accent-2)}
+.hero-now ol{list-style:none;margin:0;padding:0}
+.hero-now li{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.hero-now li:first-child{border-top:0;padding-top:0}
+.hn-date{font-family:var(--serif);font-size:11.5px;color:var(--ink-3);letter-spacing:.04em;padding-top:2px}
+.hero-now b{display:block;font-size:13px;font-weight:600;letter-spacing:.02em}
+.hero-now li span span{display:block;font-size:11.5px;color:var(--ink-2);line-height:1.65;margin-top:2px}
+.hn-foot{margin:12px 0 0;padding-top:10px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-3);line-height:1.65}
+@media (max-width:980px){.hero-grid{grid-template-columns:1fr;gap:32px}.hero-now{max-width:420px}}
+.kicker{font-size:11.5px;letter-spacing:.22em;color:var(--ink-3);margin:0 0 22px;text-transform:uppercase}
+.hero h1{
+  font-family:var(--serif);font-weight:600;font-size:clamp(30px,5.4vw,58px);
+  line-height:1.32;margin:0 0 26px;letter-spacing:.01em;
+}
+.hero h1 em{font-style:normal;color:var(--accent);border-bottom:2px solid var(--accent);padding-bottom:2px}
+.hero .lead{font-size:clamp(15px,1.7vw,18px);color:var(--ink-2);max-width:46em;margin:0 0 34px}
+.brief{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);margin:0 0 26px}
+.brief>div{padding:18px 20px 20px;border-right:1px solid var(--line)}
+.brief>div:last-child{border-right:0}
+.brief .bk{display:block;font-size:11px;letter-spacing:.14em;color:var(--accent-2);margin-bottom:6px}
+.brief p{margin:0;font-size:13px;line-height:1.75;color:var(--ink-2)}
+@media (max-width:820px){.brief{grid-template-columns:1fr}.brief>div{border-right:0;border-bottom:1px solid var(--line)}.brief>div:last-child{border-bottom:0}}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:12.5px;color:var(--ink-3);letter-spacing:.04em}
+.hero-meta span::before{content:"—";margin-right:8px;color:var(--line)}
+
+/* section shell */
+section{padding:64px 0;border-bottom:1px solid var(--line)}
+section:last-of-type{border-bottom:0}
+.sec-head{display:grid;grid-template-columns:96px 1fr;gap:24px;align-items:baseline;margin-bottom:38px}
+.sec-num{font-family:var(--serif);font-size:13px;letter-spacing:.16em;color:var(--ink-3)}
+.sec-head h2{font-family:var(--serif);font-weight:600;font-size:clamp(22px,3vw,32px);line-height:1.45;margin:0}
+.sec-head p{margin:10px 0 0;color:var(--ink-2);font-size:14.5px;max-width:44em}
+@media (max-width:640px){.sec-head{grid-template-columns:1fr;gap:8px}}
+
+/* stack diagram */
+.stack{margin:0 0 34px}
+.stack svg{display:block;max-width:720px;margin:0 auto;background:var(--paper-2);border:1px solid var(--line);padding:10px 6px}
+@media (max-width:760px){.stack{display:none}}
+.stack figcaption{font-size:12px;color:var(--ink-3);margin-top:10px;letter-spacing:.03em}
+
+/* 3 layers */
+.layers{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.layer{padding:26px 22px 30px;border-right:1px solid var(--line)}
+.layer:last-child{border-right:0}
+.layer .n{font-family:var(--serif);font-size:12px;color:var(--accent-2);letter-spacing:.14em}
+.layer h3{font-size:17px;margin:12px 0 8px;font-weight:600;letter-spacing:.02em}
+.layer p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.75}
+.layer .tags{margin-top:16px;font-size:12px;color:var(--ink-3);letter-spacing:.04em;line-height:2}
+@media (max-width:820px){.layers{grid-template-columns:1fr}.layer{border-right:0;border-bottom:1px solid var(--line)}.layer:last-child{border-bottom:0}}
+
+/* products */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 26px}
+.filters button{
+  font:inherit;font-size:12.5px;letter-spacing:.04em;cursor:pointer;
+  background:transparent;color:var(--ink-2);border:1px solid var(--line);
+  padding:7px 14px;border-radius:999px;transition:.18s;
+}
+.filters button:hover{border-color:var(--ink-3);color:var(--ink)}
+.filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.filters .fc{font-size:10.5px;margin-left:7px;opacity:.62;letter-spacing:.02em}
+.count{font-size:12px;color:var(--ink-3);margin:0 0 18px;letter-spacing:.04em}
+.plist{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--line)}
+.pitem{padding:20px 20px 22px;border-bottom:1px solid var(--line);border-right:1px solid var(--line);display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:baseline}
+.pitem:nth-child(2n){border-right:0}
+.pitem h3{margin:0;font-size:15.5px;font-weight:600;letter-spacing:.02em}
+.pitem h3 a{text-decoration:none}
+.pitem h3 a:hover{text-decoration:underline}
+.pitem .desc{grid-column:1/-1;margin:2px 0 0;font-size:13px;color:var(--ink-2);line-height:1.7}
+.pitem .st{display:inline-block;margin-left:8px;padding:0 6px;font-size:10px;line-height:1.7;border:1px solid currentColor;letter-spacing:.04em;vertical-align:1px}
+.st-ng{color:var(--accent-2)}
+.st-auth{color:var(--ink-3)}
+.pitem .grp{font-size:11px;color:var(--ink-3);letter-spacing:.08em;white-space:nowrap}
+.pitem .note{grid-column:1/-1;font-size:11.5px;color:var(--ink-3);margin:6px 0 0;line-height:1.6}
+.pitem .note::before{content:"※ ";color:var(--accent-2)}
+@media (max-width:720px){.plist{grid-template-columns:1fr}.pitem{border-right:0}}
+
+.more-wrap{display:flex;justify-content:center;margin-top:22px}
+.more{font:inherit;font-size:12.5px;letter-spacing:.06em;cursor:pointer;background:transparent;border:1px solid var(--ink);color:var(--ink);padding:10px 26px;border-radius:999px;transition:.18s}
+.more:hover{background:var(--ink);color:var(--paper)}
+
+/* now (進行中) */
+.now{display:grid;grid-template-columns:repeat(2,1fr);gap:0;border-top:1px solid var(--ink)}
+.now-item{padding:24px 22px 26px;border-bottom:1px solid var(--line);border-right:1px solid var(--line)}
+.now-item:nth-child(2n){border-right:0}
+.now-item .when{font-size:11.5px;letter-spacing:.12em;color:var(--accent-2);margin:0 0 8px}
+.now-item h3{margin:0 0 8px;font-size:16px;font-weight:600}
+.now-item p{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.75}
+.now-item .state{display:inline-block;margin-top:12px;font-size:11.5px;letter-spacing:.06em;padding:3px 9px;border:1px solid var(--line);color:var(--ink-3)}
+@media (max-width:720px){.now{grid-template-columns:1fr}.now-item{border-right:0}}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.num{padding:22px 18px;border-right:1px solid var(--line)}
+.num:last-child{border-right:0}
+.num .v{font-family:var(--serif);font-size:clamp(22px,2.6vw,30px);line-height:1.2;letter-spacing:.01em}
+.num .k{font-size:12px;color:var(--ink-2);margin-top:8px;line-height:1.6}
+.num .src{font-size:10.5px;color:var(--ink-3);margin-top:6px;letter-spacing:.03em}
+@media (max-width:820px){.nums{grid-template-columns:repeat(2,1fr)}.num:nth-child(2n){border-right:0}.num:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+
+/* method */
+.method{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.method h3{font-size:15px;margin:0 0 10px;letter-spacing:.04em}
+.method ol,.method ul{margin:0;padding-left:1.2em;font-size:13.5px;color:var(--ink-2);line-height:1.9}
+.method li{margin-bottom:4px}
+.method .box{padding:22px;background:var(--paper-2);border:1px solid var(--line)}
+@media (max-width:720px){.method{grid-template-columns:1fr;gap:20px}}
+
+.talk{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}
+.talk article{padding:24px 22px 26px;border-right:1px solid var(--line);display:flex;flex-direction:column}
+.talk article:last-child{border-right:0}
+.talk h3{font-size:15.5px;margin:0 0 10px;font-weight:600}
+.talk p{margin:0 0 18px;font-size:13px;color:var(--ink-2);line-height:1.75}
+.talk code{font-size:12px;background:var(--paper-2);padding:1px 5px;border:1px solid var(--line)}
+.talk-cta{margin-top:auto;font-size:12.5px;text-decoration:none;border-bottom:1px solid var(--ink);padding-bottom:3px;align-self:flex-start;letter-spacing:.03em}
+.talk-cta:hover{color:var(--accent-2);border-color:var(--accent-2)}
+@media (max-width:820px){.talk{grid-template-columns:1fr}.talk article{border-right:0;border-bottom:1px solid var(--line)}.talk article:last-child{border-bottom:0}}
+
+.sources{margin-top:30px;border-top:1px solid var(--line);padding-top:16px;font-size:13px;color:var(--ink-2)}
+.sources summary{cursor:pointer;font-size:13px;letter-spacing:.04em;color:var(--ink)}
+.sources ul{margin:12px 0 0;padding-left:1.2em;line-height:1.85}
+.sources p{margin:10px 0 0;font-size:12px;color:var(--ink-3)}
+
+.notdoing{margin-top:32px;border-top:1px solid var(--ink);padding-top:22px}
+.notdoing h3{font-size:14px;margin:0 0 10px;letter-spacing:.04em;color:var(--accent-2)}
+.notdoing ul{margin:0;padding-left:1.2em;font-size:13.5px;color:var(--ink-2);line-height:1.9;columns:2;column-gap:40px}
+@media (max-width:720px){.notdoing ul{columns:1}}
+
+/* links */
+.links{display:flex;flex-wrap:wrap;gap:10px 26px;font-size:13.5px}
+.links .lk{display:inline-flex;flex-direction:column;gap:2px}
+.links .down{font-size:10.5px;color:var(--accent-2);letter-spacing:.02em;line-height:1.3}
+.links a{text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:2px}
+.links a:hover{border-color:var(--accent-2)}
+
+footer{padding:40px 0 64px;font-size:12px;color:var(--ink-3);letter-spacing:.03em}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+.disclaimer{font-size:11.5px;color:var(--ink-3);line-height:1.8;margin-top:18px;max-width:60em}
+
+@media print{
+  header.site{position:static}
+  .filters,.skip{display:none}
+  body{background:#fff}
+  section{padding:24px 0;break-inside:avoid}
+  .pitem{break-inside:avoid}
+  .more-wrap{display:none}
+  .hero-now{border-color:#999}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<a class="skip" href="#main">本文へ</a>
+
+<header class="site">
+  <div class="wrap site-inner">
+    <a class="brand" href="/"><b>濱田優貴</b> / HAMADA YUKI</a>
+    <nav class="top" aria-label="目次">
+      <a href="#map">全体像</a>
+      <a href="#products">プロダクト</a>
+      <a href="#now">進行中</a>
+      <a href="#numbers">数字</a>
+      <a href="#contact">相談</a>
+      <a href="/blog">ブログ</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div id="top"></div>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+   <div class="hero-main">
+    <p class="kicker">What I'm building — 2026.11.02</p>
+    <h1>AIで手間を減らし、<br>生まれた時間で<em>つくる・遊ぶ・会う</em>。</h1>
+    <p class="lead">
+      AIの土台（teai / 先手）、自分の声（KOE）、服（MU）、家（bim.house）、
+      学びと歌（JiuFlow / uta.live）、そして人が集まる場所（SOLUNA / ZAMNA HAWAII）。
+      ひとつのアプリでは完結しない暮らしのために、目的ごとの道具をつくっています。
+    </p>
+    <div class="brief" aria-label="3行でまとめ">
+      <div><span class="bk">やっていること</span><p>AIの土台（teai）と仕事の道具（先手）をつくり、その上に声・服・家・学び・場所のサービスを重ねている。</p></div>
+      <div><span class="bk">いま動いているもの</span><p>11/13 の ZAMNA HAWAII、teai の法人営業、先手の開発、JiuFlow の課金改善。</p></div>
+      <div><span class="bk">次の焦点</span><p>「最初の一回が最後まで終わる」こと。入口の不具合と途中で止まる理由を潰す。</p></div>
+    </div>
+    <div class="hero-meta">
+      <span>株式会社イネブラ 代表取締役CEO</span>
+      <span>元メルカリ取締役CPO / NOT A HOTEL 共同創業者</span>
+      <span>本拠: 東京 / 熱海 / 弟子屈 / ハワイ</span>
+    </div>
+   </div>
+   <aside class="hero-now" aria-label="いまの焦点">
+     <p class="hn-label">NOW / 11月</p>
+     <ol>
+       <li><span class="hn-date">11.13</span><div><b>ZAMNA HAWAII</b><span>本番。判断待ちを順に閉じる</span></div></li>
+       <li><span class="hn-date">週次</span><div><b>teai 法人営業</b><span>資料は完成、送信は承認後</span></div></li>
+       <li><span class="hn-date">毎日</span><div><b>先手 / Sente</b><span>「最後まで終わる」を潰す</span></div></li>
+       <li><span class="hn-date">9月実測</span><div><b>JiuFlow 課金</b><span>CVR 0.29% からの改善</span></div></li>
+     </ol>
+     <p class="hn-foot">この4つが、いま時間を使っている対象です。</p>
+   </aside>
+  </div>
+</section>
+
+<section id="map">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">01 / MAP</span>
+      <div>
+        <h2>技術から、暮らしまで。<br>3つの役割でつながっている。</h2>
+        <p>下の層が上の層を支える構造です。共通する判断基準は「人の時間とつながりが増えるか」。</p>
+      </div>
+    </div>
+    <figure class="stack" role="img" aria-label="3層の関係図。土台の手間を減らす層の上に、想いを形にする層、その上に体験を分かち合う層が乗る。">
+      <svg viewBox="0 0 640 250" width="100%" aria-hidden="true">
+        <g fill="none" stroke="#1b1a17" stroke-width="1">
+          <rect x="24" y="176" width="592" height="52"/>
+          <rect x="72" y="104" width="496" height="52"/>
+          <rect x="120" y="32" width="400" height="52"/>
+        </g>
+        <g font-family="Hiragino Mincho ProN, serif" font-size="13" fill="#1b1a17">
+          <text x="44" y="207">手間を減らす — teai / 先手 Sente</text>
+          <text x="92" y="135">想いを形にする — KOE / MU / kamishibai</text>
+          <text x="140" y="63">体験を分かち合う — JiuFlow / uta / SOLUNA</text>
+        </g>
+        <g stroke="#9c3a20" stroke-width="1" fill="none">
+          <path d="M320 176 V158" stroke-dasharray="3 3"/>
+          <path d="M320 104 V86" stroke-dasharray="3 3"/>
+        </g>
+        <g font-family="system-ui, sans-serif" font-size="10" fill="#6b665c" letter-spacing="1">
+          <text x="24" y="246">LAYER 1</text>
+          <text x="72" y="174">LAYER 2</text>
+          <text x="120" y="102">LAYER 3</text>
+        </g>
+      </svg>
+      <figcaption>下の層が止まると、上の体験も止まる。だから土台から直す。</figcaption>
+    </figure>
+    <div class="layers">
+      <article class="layer">
+        <div class="n">LAYER 1</div>
+        <h3>手間を減らす</h3>
+        <p>AIを使う土台と、仕事を前に進める道具。ここが弱いと上の体験が全部止まるので、最初に投資している領域。</p>
+        <div class="tags">teai / 先手 Sente / Sente Cloud / chatweb.ai</div>
+      </article>
+      <article class="layer">
+        <div class="n">LAYER 2</div>
+        <h3>想いを形にする</h3>
+        <p>自分の声、物語、短編映画、一着の服。入力から納品までを短くする。</p>
+        <div class="tags">KOE / MU / kamishibai.tv / movie.live / news.xyz</div>
+      </article>
+      <article class="layer">
+        <div class="n">LAYER 3</div>
+        <h3>体験を分かち合う</h3>
+        <p>柔術で学び、歌い、好きな場所で集まる。ここが最終的な成果。</p>
+        <div class="tags">JiuFlow / uta.live / SOLUNA / StayFlow / ZAMNA HAWAII</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="products">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">02 / PRODUCTS</span>
+      <div>
+        <h2>プロダクト一覧</h2>
+        <p>会社の公開一覧・公式ランチャー・Appleアカウント棚卸しの和集合（61件、2026-09-15時点）。稼働中の製品数ではありません。派生・研究・関連サイトも含みます。外部リンクの到達は 2026-11-02 に主要15件で HTTP 200 を確認、全件ではありません。一覧の「応答なし」は 2026-11-02 に確認できなかったもの、「要ログイン」は認証が必要な画面です。</p>
+      </div>
+    </div>
+    <div class="filters" id="filters" role="group" aria-label="分野で絞り込む"></div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div class="plist" id="plist"></div>
+    <noscript>
+      <p class="count">JavaScriptが無効のため一覧を表示できません。主要な入口は<a href="#links">ページ下部のリンク</a>にあります。</p>
+    </noscript>
+    <div class="more-wrap"><button type="button" id="more" class="more">もっと見る</button></div>
+  </div>
+</section>
+
+<section id="now">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">03 / NOW</span>
+      <div>
+        <h2>いま、動かしている仕事</h2>
+        <p>2026年10月末〜11月時点で、実際に手が動いているもの。状態は「進行中 / 相手待ち / 承認待ち」で分けています。</p>
+      </div>
+    </div>
+    <div class="now">
+      <article class="now-item">
+        <p class="when">11.13 本番</p>
+        <h3>ZAMNA HAWAII（Kapolei / Echoa Ridge）</h3>
+        <p>SOLUNA Production としての大型イベント。チケット323枚、拠出累計 $149,450。ドローンショー・装飾・アーティスト送金・返金対応が同時進行。</p>
+        <span class="state">進行中・判断待ち複数</span>
+      </article>
+      <article class="now-item">
+        <p class="when">継続</p>
+        <h3>teai の B2B 置き換え営業</h3>
+        <p>OpenAI互換 + 円建て + 請求書払いを武器に、月のLLM費が3万円を超える会社へ。同じモデルでは安くならない前提を明記した資料で進行。</p>
+        <span class="state">資料完成・送信は承認待ち</span>
+      </article>
+      <article class="now-item">
+        <p class="when">継続</p>
+        <h3>先手 / Sente の開発</h3>
+        <p>CLI・TUI・Cloud・iOS・Desktop。承認境界、検証、ループ自衛まで含めて「仕事が最後まで終わる」方向へ調整中。</p>
+        <span class="state">進行中</span>
+      </article>
+      <article class="now-item">
+        <p class="when">継続</p>
+        <h3>KOE / SOLUNA ラジオ制作</h3>
+        <p>本人声・同意済みの声による非公開制作を固定パイプライン化。台本→合成→整音→ASR照合→試聴ページまで。</p>
+        <span class="state">進行中</span>
+      </article>
+      <article class="now-item">
+        <p class="when">収益改善</p>
+        <h3>JiuFlow の課金導線</h3>
+        <p>無料登録1,026人/30日に対して課金3件（CVR 0.29%）が課題。価格統一とオンボーディング直後のオファー画面を実装、日次でファネル監視。</p>
+        <span class="state">実装済み・効果測定中</span>
+      </article>
+      <article class="now-item">
+        <p class="when">長期</p>
+        <h3>bim.house — 確認申請まで完結する Web BIM</h3>
+        <p>41ツール・IFC/DXF/STL出力・法令エンジン内製を計画中。国内工務店100社が最初の目標。</p>
+        <span class="state">計画・部分実装</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="numbers">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">04 / NUMBERS</span>
+      <div>
+        <h2>数字で見る現在地</h2>
+        <p>すべて実測値ですが、測定日が異なります。<strong>この整理時点（2026-11-02）で最も古い数字は約7週間前</strong>のもので、現在の値ではありません。運営購入・内部利用を含む可能性があるため、外部売上そのものとしては扱っていません。</p>
+      </div>
+    </div>
+    <div class="nums">
+      <div class="num">
+        <div class="v">$1,247<span style="font-size:.5em"> /月</span></div>
+        <div class="k">横断MRR（jiuflow中心）</div>
+        <div class="src">2026-09-16 実測</div>
+      </div>
+      <div class="num">
+        <div class="v">$2,722</div>
+        <div class="k">30日売上（全プロダクト合計）</div>
+        <div class="src">2026-09-16 実測</div>
+      </div>
+      <div class="num">
+        <div class="v">61<span style="font-size:.5em"> 件</span></div>
+        <div class="k">プロダクト・関連サイト</div>
+        <div class="src">2026-09-15 棚卸し</div>
+      </div>
+      <div class="num">
+        <div class="v">$149,450</div>
+        <div class="k">ZAMNA HAWAII 拠出累計</div>
+        <div class="src">2026-10-21 時点</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">05 / METHOD</span>
+      <div>
+        <h2>どう進めているか</h2>
+        <p>ひとりで60以上のプロダクトを動かすため、判断と実行を分離しています。</p>
+      </div>
+    </div>
+    <div class="method">
+      <div class="box">
+        <h3>自分で決めること</h3>
+        <ul>
+          <li>何をつくるか、どの順番で出すか</li>
+          <li>価格・契約・提携の条件</li>
+          <li>送信・購入・公開・削除の最終承認</li>
+          <li>人に会う時間の使い方</li>
+        </ul>
+      </div>
+      <div class="box">
+        <h3>AIエージェントに任せること</h3>
+        <ol>
+          <li>調査・読み取り・下書き（承認不要）</li>
+          <li>実装・検証・テスト（リポジトリの手順に従う）</li>
+          <li>承認済み範囲の実行と、結果の照合</li>
+          <li>未完了・失敗・待ちの記録</li>
+        </ol>
+      </div>
+    </div>
+    <div class="notdoing">
+      <h3>いま、やらないと決めていること</h3>
+      <ul>
+        <li>新しいプロダクトの追加（既存の「最後まで終わる」を優先）</li>
+        <li>実績のない数値での訴求（未測定は未測定と書く）</li>
+        <li>承認前の送信・購入・公開・削除</li>
+        <li>外部AIへの無断の相談・委任</li>
+      </ul>
+    </div>
+    <details class="sources">
+      <summary>この整理の根拠</summary>
+      <ul>
+        <li>プロダクト61件: 会社公開一覧・公式ランチャー・Appleアカウント棚卸しの和集合（2026-09-15）</li>
+        <li>MRR・30日売上: 横断KPI実測（2026-09-16、運営購入を含みうる）</li>
+        <li>ZAMNA HAWAII: タスク台帳（2026-10-21 時点の拠出累計・チケット数）</li>
+        <li>進行中の仕事: 作業記録（2026-10-21〜2026-11-01）</li>
+        <li>会社情報: enablerhq.com の会社情報欄（2026-11-02 取得）</li>
+        <li>リンク到達: 2026-11-02 に主要15件を HTTP 200 で確認</li>
+      </ul>
+      <p>未確認・測定日が古いものは、本文中にその旨を書いています。数値を実績として断定していない箇所は、意図的に断定していません。</p>
+    </details>
+    <p class="disclaimer">
+      この整理は公開情報と手元の作業記録（2026-09-15〜2026-11-01）に基づきます。記載の数字は測定日時点のもので、
+      現在の値ではありません。稼働・売上・契約の保証ではなく、各サービスの利用条件は個別にご確認ください。
+    </p>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">06 / TALK</span>
+      <div>
+        <h2>いま、話せること</h2>
+        <p>営業の一斉送信はしていません。次の3つは、具体的な条件が決まっていれば前に進められます。</p>
+      </div>
+    </div>
+    <div class="talk">
+      <article>
+        <h3>法人のAI費用を下げたい</h3>
+        <p>月のLLM費が3万円を超えている会社向け。同じモデルのままでは安くならない前提で、モデル置き換え分の削減額を試算します。OpenAI互換なので <code>base_url</code> の変更だけで試せます。</p>
+        <a class="talk-cta" href="mailto:mail@yukihamada.jp?subject=%E4%BC%81%E6%A5%AD%E3%81%AEAI%E8%B2%BB%E7%94%A8%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6">メールで相談する →</a>
+      </article>
+      <article>
+        <h3>合宿・イベント・滞在を相談したい</h3>
+        <p>BLANKでの合宿、古今の焼き師を囲む出張BBQ、熱海・弟子屈・ハワイの滞在。日程と人数が決まっていれば、条件を個別に見積もります。</p>
+        <a class="talk-cta" href="https://enablerhq.com/" target="_blank" rel="noopener">相談プランを見る →</a>
+      </article>
+      <article>
+        <h3>取材・登壇・協業の相談</h3>
+        <p>プロダクトの現在地、数字の出どころ、失敗している部分も含めて話します。未確認の数値を実績として出さない前提でお願いします。</p>
+        <a class="talk-cta" href="mailto:mail@yukihamada.jp?subject=%E5%8F%96%E6%9D%90%E3%83%BB%E5%8D%94%E6%A5%AD%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87">メールで相談する →</a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="links">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="sec-num">07 / LINKS</span>
+      <div>
+        <h2>入口</h2>
+        <p>主要なサービスへの直接リンク。2026-11-02 に HTTP 200 を確認したものだけを並べています（bim.house のみ応答なし）。</p>
+      </div>
+    </div>
+    <div class="links">
+      <a href="https://teai.io" target="_blank" rel="noopener">teai.io</a>
+      <a href="https://sente.teai.io" target="_blank" rel="noopener">先手 / Sente</a>
+      <a href="https://koe.live" target="_blank" rel="noopener">KOE</a>
+      <a href="https://wearmu.com/make" target="_blank" rel="noopener">MU</a>
+      <span class="lk"><a href="https://bim.house" target="_blank" rel="noopener">bim.house</a><span class="down">応答なし（11/02 確認）</span></span>
+      <a href="https://jiuflow.com" target="_blank" rel="noopener">JiuFlow</a>
+      <a href="https://uta.live" target="_blank" rel="noopener">uta.live</a>
+      <a href="https://solun.art" target="_blank" rel="noopener">SOLUNA</a>
+      <a href="https://stayflowapp.com/stays" target="_blank" rel="noopener">StayFlow</a>
+      <a href="https://enablerdao.com" target="_blank" rel="noopener">Enabler</a>
+      <a href="https://enablerhq.com" target="_blank" rel="noopener">Enabler HQ</a>
+      <a href="https://news.xyz" target="_blank" rel="noopener">news.xyz</a>
+      <a href="https://kamishibai.tv" target="_blank" rel="noopener">kamishibai.tv</a>
+      <a href="https://kagi.life" target="_blank" rel="noopener">KAGI</a>
+      <a href="https://adflow.tools" target="_blank" rel="noopener">AdFlow</a>
+      <a href="https://x.com/yukihamada" target="_blank" rel="noopener">X / @yukihamada</a>
+      <a href="https://github.com/yukihamada" target="_blank" rel="noopener">GitHub</a>
+      <a href="mailto:mail@yukihamada.jp">mail@yukihamada.jp</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>濱田優貴 / 株式会社イネブラ</span>
+    <span>整理日: 2026-11-02 / 数字の測定日は各所に記載</span>
+  </div>
+</footer>
+
+<script>
+const PRODUCTS = [
+  {g:"AI・仕事", n:"teai", d:"複数のAIモデルを共通APIで利用する基盤。", u:"https://teai.io"},
+  {g:"AI・仕事", n:"先手 / Sente", d:"ファイル作成・編集やコマンド実行を進めるAIエージェント。", u:"https://sente.teai.io"},
+  {g:"AI・仕事", n:"chatweb.ai", d:"ブラウザ上でAIによるアプリ開発を進めるサービス。", u:"https://chatweb.ai"},
+  {g:"AI・仕事", n:"Elio / Elio Chat", d:"端末上のAI利用を扱うアプリ。", u:"https://elio.love"},
+  {g:"AI・仕事", n:"NOU", d:"分散推論に関するプロジェクト。", u:"https://nou.fund"},
+  {g:"AI・仕事", n:"NOU Connect", d:"NOU関連アプリの登録。", u:null, note:"未提出・公開入口は未確認"},
+  {g:"AI・仕事", n:"Trio", d:"AI・コミュニケーション領域のサービス。", u:"https://trio.fly.dev"},
+  {g:"AI・仕事", n:"Kata（AI）", d:"認証付きAIサービス。", u:"https://kata-ai.fly.dev"},
+  {g:"AI・仕事", n:"GroqGo", d:"Apple開発アカウント内のアプリ登録。", u:null, note:"公開状態は未確認"},
+  {g:"AI・仕事", n:"Wisbee", d:"Apple開発アカウント内のアプリ登録。", u:null, note:"公開状態は未確認"},
+  {g:"AI・仕事", n:"TalentCanvas", d:"Apple開発アカウント内の登録名。", u:null, note:"公開状態は未確認"},
+  {g:"AI・仕事", n:"OpenClaw関連開発", d:"関連するコードリポジトリ。", u:"https://github.com/yukihamada/openclaw"},
+
+  {g:"声・メディア", n:"KOE", d:"本人の登録済み声による音声生成と声の表現。", u:"https://koe.live"},
+  {g:"声・メディア", n:"KOE 音声入力", d:"声を文字にする音声入力アプリ。", u:"https://app.koe.live"},
+  {g:"声・メディア", n:"say.koe", d:"声の関連サービス。", u:"https://say.koe.live"},
+  {g:"声・メディア", n:"声メッセンジャー MCP", d:"AIツールから声を扱う入口。", u:"https://mcp.koe.live"},
+  {g:"声・メディア", n:"uta.live", d:"AIカラオケ。", u:"https://uta.live"},
+  {g:"声・メディア", n:"news.xyz", d:"AIによる紙芝居形式のニュース番組。", u:"https://news.xyz"},
+  {g:"声・メディア", n:"movie.live", d:"短編映像の生成。", u:"https://movie.live"},
+  {g:"声・メディア", n:"kamishibai.tv", d:"言葉から紙芝居をつくるサービス。", u:"https://kamishibai.tv"},
+  {g:"声・メディア", n:"紙芝居KOE", d:"本人声の紙芝居。", u:"https://kamishibai-koe.pages.dev"},
+  {g:"声・メディア", n:"KOE 声メッセージ", d:"声メッセージ関連のiOSアプリ登録。", u:null, note:"公開状態は未確認"},
+  {g:"声・メディア", n:"Soluna Live Radio", d:"SOLUNA関連のラジオアプリ。", u:"https://apps.apple.com/jp/app/id6759962263"},
+  {g:"声・メディア", n:"Soluna Rx for Mac", d:"SOLUNA関連のアプリ登録。", u:null, note:"公開状態は未確認"},
+
+  {g:"住まい・滞在", n:"SOLUNA", d:"別荘所有・滞在プラン。", u:"https://solun.art"},
+  {g:"住まい・滞在", n:"bim.house", d:"建築情報モデルと申請準備の下書きデータ。", u:"https://bim.house"},
+  {g:"住まい・滞在", n:"StayFlow", d:"宿泊管理と、体験付き滞在の相談。", u:"https://stayflowapp.com/stays"},
+  {g:"住まい・滞在", n:"KAGI", d:"スマートロックや住まいの機器管理。", u:"https://kagi.life"},
+  {g:"住まい・滞在", n:"Soluna Stays", d:"滞在関連のアプリ登録。", u:null, note:"公開状態は未確認"},
+  {g:"住まい・滞在", n:"enabler.fun", d:"熱海・弟子屈・ホノルルの滞在施設案内。", u:"https://enabler.fun"},
+  {g:"住まい・滞在", n:"MU HOUSE", d:"建築関連ブランド。", u:"https://house.wearmu.com"},
+  {g:"住まい・滞在", n:"KATA.HOUSE", d:"建築の型・設計を扱うブランド。", u:"https://kata.house"},
+  {g:"住まい・滞在", n:"1HOUR.HOUSE", d:"住宅設計の関連ブランド。", u:"https://1hour.house"},
+  {g:"住まい・滞在", n:"ZUMEN.HOUSE", d:"図面提供を扱う建築関連ブランド。", u:"https://zumen.house"},
+
+  {g:"創作・買い物", n:"MU", d:"言葉から服やグッズのデザインを考える。", u:"https://wearmu.com/make"},
+  {g:"創作・買い物", n:"MU MART", d:"MU関連の買い物サービス。", u:"https://mart.wearmu.com"},
+  {g:"創作・買い物", n:"chatbuy", d:"会話による買い物支援。", u:"https://chatbuy.pages.dev"},
+  {g:"創作・買い物", n:"Takara Market", d:"日本のコレクタブルを扱う販売サービス。", u:"https://takaramarket.com"},
+
+  {g:"事業・お金", n:"AdFlow", d:"広告運用の管理・支援。", u:"https://adflow.tools"},
+  {g:"事業・お金", n:"商標まる", d:"商標出願の支援。", u:"https://shohyo-maru.jp"},
+  {g:"事業・お金", n:"ポン", d:"電子契約・Web署名の支援。", u:"https://pon-sign.fly.dev"},
+  {g:"事業・お金", n:"パシャ", d:"レシートの読み取り・経費管理。", u:"https://pasha.run"},
+  {g:"事業・お金", n:"チャリン", d:"請求書作成支援。", u:"https://charin.fly.dev"},
+  {g:"事業・お金", n:"サクッ", d:"確定申告・申告書づくりの支援。", u:"https://apps.apple.com/jp/app/id6761040925"},
+  {g:"事業・お金", n:"BANTO", d:"建設業などの書類・事業管理支援。", u:"https://banto.work"},
+  {g:"事業・お金", n:"ミセバンAI", d:"店舗運営・カメラ分析の支援。", u:"https://misebanai.com"},
+
+  {g:"健康・学び", n:"JiuFlow", d:"柔術の学習・技術マップ・講座。", u:"https://jiuflow.com"},
+  {g:"健康・学び", n:"ながいき", d:"健康記録を扱うサービス。", u:"https://nagaiki.app"},
+  {g:"健康・学び", n:"WeGoFast", d:"アスリート向けの英語学習。", u:"https://wegofast.app"},
+  {g:"健康・学び", n:"焚き火 / ATSM", d:"コミュニティの参加・交流の入口。", u:"https://takibi.wtf"},
+  {g:"健康・学び", n:"焚き火の紙芝居", d:"声で物語を伝える関連プロジェクト。", u:"https://takibi-story.pages.dev"},
+  {g:"健康・学び", n:"JitsuFlow", d:"Apple開発アカウント内のアプリ登録。", u:null, note:"公開状態は未確認"},
+  {g:"健康・学び", n:"BJJ Tracker", d:"柔術に関するアプリ登録。", u:null, note:"公開状態は未確認"},
+  {g:"健康・学び", n:"IKI / 息", d:"開発中のアプリ登録。", u:null, note:"開発中"},
+  {g:"健康・学び", n:"Yuka", d:"公開版が記録されたアプリ。", u:null, note:"公開状態は要確認"},
+  {g:"健康・学び", n:"ポイッ", d:"カメラを使ったごみ分別支援。", u:null, note:"公開状態は未確認"},
+  {g:"健康・学び", n:"TORO", d:"食事の提案に関する開発プロジェクト。", u:null, note:"開発中"},
+
+  {g:"研究・関連", n:"Enabler / 会社案内", d:"製品群・事業領域の会社案内。", u:"https://enablerdao.com"},
+  {g:"研究・関連", n:"Enabler HQ", d:"会社・事業の案内サイト。", u:"https://enablerhq.com"},
+  {g:"研究・関連", n:"ENAI トークン構想", d:"会社ページに記載されたトークン研究構想。", u:"https://enablerdao.com/token"},
+  {g:"研究・関連", n:"yukihamada.jp", d:"代表の発信・プロフィール。", u:"https://yukihamada.jp"}
+];
+
+const groups = ["すべて", ...Array.from(new Set(PRODUCTS.map(p=>p.g)))];
+const filtersEl = document.getElementById('filters');
+const listEl = document.getElementById('plist');
+const countEl = document.getElementById('count');
+const LINK_STATUS = {
+  "https://nou.fund":"no-response","https://trio.fly.dev":"no-response",
+  "https://kata-ai.fly.dev":"auth","https://app.koe.live":"no-response",
+  "https://bim.house":"no-response","https://house.wearmu.com":"no-response",
+  "https://kata.house":"no-response","https://1hour.house":"no-response",
+  "https://zumen.house":"no-response","https://takaramarket.com":"no-response",
+  "https://charin.fly.dev":"no-response"
+};
+let active = "すべて";
+let limit = 12;
+const STEP = 12;
+const moreEl = document.getElementById('more');
+moreEl.addEventListener('click', ()=>{ limit += STEP; render(); });
+window.addEventListener('beforeprint', ()=>{ limit = PRODUCTS.length; render(); });
+
+groups.forEach(g=>{
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.dataset.g = g;
+  const n = g==="すべて" ? PRODUCTS.length : PRODUCTS.filter(p=>p.g===g).length;
+  b.innerHTML = `${esc(g)}<span class="fc">${n}</span>`;
+  b.setAttribute('aria-pressed', String(g===active));
+  b.addEventListener('click', ()=>{
+    active = g;
+    limit = STEP;
+    [...filtersEl.children].forEach(c=>c.setAttribute('aria-pressed', String(c.dataset.g===g)));
+    render();
+  });
+  filtersEl.appendChild(b);
+});
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function render(){
+  const items = active==="すべて" ? PRODUCTS : PRODUCTS.filter(p=>p.g===active);
+  const shown = items.slice(0, limit);
+  countEl.textContent = `${items.length} 件${active==="すべて"?"":"（"+active+"）"} ／ 全61件`
+    + (items.length>limit ? ` ・ ${shown.length} 件を表示中` : "");
+  moreEl.hidden = items.length <= limit;
+  moreEl.textContent = `もっと見る（残り ${items.length - shown.length} 件）`;
+  listEl.innerHTML = shown.map(p=>{ const st=LINK_STATUS[p.u]; const badge = st==="no-response" ? '<span class="st st-ng" title="2026-11-02 時点で応答を確認できず">応答なし</span>' : st==="auth" ? '<span class="st st-auth" title="ログインが必要な画面">要ログイン</span>' : ''; return `
+    <article class="pitem">
+      <h3>${p.u?`<a href="${p.u}" target="_blank" rel="noopener">${esc(p.n)}</a>`:esc(p.n)}</h3>
+      <span class="grp">${esc(p.g)}${badge}</span>
+      <p class="desc">${esc(p.d)}</p>
+      ${p.note?`<p class="note">${esc(p.note)}</p>`:""}
+    </article>`;}).join('');
+}
+render();
+</script>
+
+</body>
+</html>

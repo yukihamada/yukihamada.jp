@@ -796,7 +796,12 @@ async fn redirect_camera()   -> Redirect { Redirect::permanent("/#camera") }
 async fn redirect_game()     -> Redirect { Redirect::permanent("/#game") }
 async fn redirect_finder()   -> Redirect { Redirect::permanent("/#finder") }
 async fn redirect_contact()  -> Redirect { Redirect::permanent("/#contact") }
-async fn redirect_now()      -> Redirect { Redirect::permanent("/#now") }
+// 「いま取り組んでいること」(/now)。Derek Sivers の /now ページ形式。
+// 静的な自己完結HTMLなので include_str! で焼き込む(security-gate と同じ方式)。
+// 数値・進行中案件の更新はこのファイルを差し替えるだけで反映される。
+async fn now_page() -> impl IntoResponse {
+    Html(include_str!("../templates/now.html"))
+}
 async fn redirect_podcast()  -> Redirect { Redirect::permanent("/#podcast") }
 // AI合宿の席(MU参加T)への安定リンク。SKUを作り直してもここ1行だけ直せばよい(リンクが死なない)。temporary=302。
 async fn redirect_seki()     -> Redirect { Redirect::temporary("https://wearmu.com/shop/AICAMPIKU-AGENT-TEE-a970ed48") }
@@ -7943,7 +7948,7 @@ async fn main() {
         .route("/finder",   get(redirect_finder))
         .route("/seki",     get(redirect_seki))
         .route("/contact",  get(redirect_contact))
-        .route("/now",      get(redirect_now))
+        .route("/now",      get(now_page))
         .route("/podcast",  get(redirect_podcast))
         .route("/soluna", get(soluna_page))
         .route("/notary-options", get(notary_options))
