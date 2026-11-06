@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800" role="img" aria-label="七つの引力が中心へ収束する図">
+  <rect width="800" height="800" fill="#faf8f3"/>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 Z" fill="#1a2242"/>
+    </marker>
+  </defs>
+  <circle cx="400" cy="400" r="250" fill="none" stroke="#c9c3b4" stroke-width="1.5"/>
+  <circle cx="400" cy="400" r="70" fill="#1a2242"/>
+  <text x="400" y="395" text-anchor="middle" fill="#faf8f3" font-family="serif" font-size="22">求心</text>
+  <text x="400" y="422" text-anchor="middle" fill="#faf8f3" font-family="serif" font-size="14">centripetal</text>
+  <line x1="400.0" y1="150.0" x2="400.0" y2="305.0" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="400.0" y="95.0" text-anchor="middle" font-family="serif" font-size="20" fill="#1a2242">身体化</text>
+  <text x="400.0" y="115.0" text-anchor="middle" font-family="sans-serif" font-size="11" fill="#6b6558">Embodiment</text>
+  <line x1="595.5" y1="244.1" x2="474.3" y2="340.8" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="638.5" y="209.8" text-anchor="start" font-family="serif" font-size="20" fill="#1a2242">滞留</text>
+  <text x="638.5" y="229.8" text-anchor="start" font-family="sans-serif" font-size="11" fill="#6b6558">Dwell</text>
+  <line x1="643.7" y1="455.6" x2="492.6" y2="421.1" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="697.4" y="467.9" text-anchor="start" font-family="serif" font-size="20" fill="#1a2242">余白</text>
+  <text x="697.4" y="487.9" text-anchor="start" font-family="sans-serif" font-size="11" fill="#6b6558">Margin</text>
+  <line x1="508.5" y1="625.2" x2="441.2" y2="485.6" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="532.3" y="674.8" text-anchor="start" font-family="serif" font-size="20" fill="#1a2242">帰属</text>
+  <text x="532.3" y="694.8" text-anchor="start" font-family="sans-serif" font-size="11" fill="#6b6558">Belonging</text>
+  <line x1="291.5" y1="625.2" x2="358.8" y2="485.6" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="267.7" y="674.8" text-anchor="end" font-family="serif" font-size="20" fill="#1a2242">信頼</text>
+  <text x="267.7" y="694.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b6558">Trust</text>
+  <line x1="156.3" y1="455.6" x2="307.4" y2="421.1" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="102.6" y="467.9" text-anchor="end" font-family="serif" font-size="20" fill="#1a2242">不可視</text>
+  <text x="102.6" y="487.9" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b6558">Opacity</text>
+  <line x1="204.5" y1="244.1" x2="325.7" y2="340.8" stroke="#1a2242" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <text x="161.5" y="209.8" text-anchor="end" font-family="serif" font-size="20" fill="#1a2242">有限性</text>
+  <text x="161.5" y="229.8" text-anchor="end" font-family="sans-serif" font-size="11" fill="#6b6558">Finitude</text>
+</svg>
