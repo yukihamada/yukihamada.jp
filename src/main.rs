@@ -2680,6 +2680,128 @@ async fn devil_lead(
     (StatusCode::OK, devil_cors_headers(&headers), Json(serde_json::json!({"ok": true}))).into_response()
 }
 
+// ── 求心の時代 公開測定台 ──
+// 書籍『求心の時代』の予測を、読者が実データで測る公開の場。
+// 投稿は /data/shushin_measure.jsonl に追記し、Telegram で本人に通知。
+// GET /api/shushin/data は「承認済み(verdict付き)」の測定だけを返す。
+// 投稿直後は verdict 未確定（open）のため公開一覧には出さず、本人が内容を確認して
+// verdict を確定させたものだけが表に出る（未確認情報の拡散を防ぐ）。
+
+fn shushin_data_path() -> String {
+    let dir = std::env::var("MEET_DATA_DIR").unwrap_or_else(|_| "/data".to_string());
+    format!("{dir}/shushin_measure.jsonl")
+}
+
+fn shushin_cors() -> HeaderMap {
+    let mut h = HeaderMap::new();
+    h.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, "https://yukihamada.jp".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_METHODS, "GET,POST,OPTIONS".parse().unwrap());
+    h.insert(header::ACCESS_CONTROL_ALLOW_HEADERS, "content-type".parse().unwrap());
+    h.insert(header::VARY, "origin".parse().unwrap());
+    h
+}
+
+async fn shushin_measure_page() -> impl IntoResponse {
+    Html(include_str!("../templates/shushin-measure.html"))
+}
+
+async fn shushin_data() -> Response {
+    // 承認済み（verdict = win/lose）の測定のみ公開する。
+    let raw = std::fs::read_to_string(shushin_data_path()).unwrap_or_default();
+    let mut entries: Vec<serde_json::Value> = Vec::new();
+    for line in raw.lines() {
+        if line.trim().is_empty() { continue; }
+        if let Ok(v) = serde_json::from_str::<serde_json::Value>(line) {
+            let verdict = v["verdict"].as_str().unwrap_or("open");
+            if verdict == "win" || verdict == "lose" {
+                entries.push(serde_json::json!({
+                    "pred": v["pred"],
+                    "value": v["value"],
+                    "year": v["year"],
+                    "source": v["source"],
+                    "note": v["note"],
+                    "verdict": verdict,
+                }));
+            }
+        }
+    }
+    (shushin_cors(), Json(serde_json::json!({"ok": true, "entries": entries}))).into_response()
+}
+
+#[derive(serde::Deserialize)]
+struct ShushinSubmitReq {
+    pred: String,
+    value: String,
+    year: String,
+    source: String,
+    #[serde(default)]
+    note: String,
+}
+
+async fn shushin_submit(
+    State(state): State<Arc<AppState>>,
+    headers: HeaderMap,
+    axum::Json(body): axum::Json<ShushinSubmitReq>,
+) -> Response {
+    let ip = extract_client_ip(&headers);
+    if rate_limited(&state.otp_rate_limit, &format!("shushin:{ip}"), 6, 3600) {
+        return (
+            StatusCode::TOO_MANY_REQUESTS,
+            shushin_cors(),
+            Json(serde_json::json!({"ok": false, "error": "送信が多すぎます。しばらくしてからお試しください。"})),
+        ).into_response();
+    }
+
+    let pred: String = body.pred.trim().chars().take(8).collect();
+    let allowed = ["1", "8a", "8b", "8c"];
+    if !allowed.contains(&pred.as_str()) {
+        return (StatusCode::BAD_REQUEST, shushin_cors(),
+            Json(serde_json::json!({"ok": false, "error": "予測の指定が正しくありません。"}))).into_response();
+    }
+    let value: String = body.value.trim().chars().take(60).collect();
+    let year: String = body.year.trim().chars().take(12).collect();
+    let source: String = body.source.trim().chars().take(300).collect();
+    let note: String = body.note.trim().chars().take(400).collect();
+    if value.is_empty() || year.is_empty() || source.is_empty() {
+        return (StatusCode::BAD_REQUEST, shushin_cors(),
+            Json(serde_json::json!({"ok": false, "error": "数値・対象年・出典は必須です。"}))).into_response();
+    }
+
+    let record = serde_json::json!({
+        "ts": chrono::Utc::now().to_rfc3339(),
+        "pred": pred,
+        "value": value,
+        "year": year,
+        "source": source,
+        "note": note,
+        "verdict": "open",
+    });
+    let path = shushin_data_path();
+    if let Some(dir) = std::path::Path::new(&path).parent() {
+        let _ = std::fs::create_dir_all(dir);
+    }
+    let _ = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(&path)
+        .and_then(|mut f| std::io::Write::write_all(&mut f, format!("{record}\n").as_bytes()));
+
+    if let Some(tok) = state.telegram_token.clone() {
+        let text = format!("📖 求心の時代・測定投稿\n予測 {pred}\n値 {value}（{year}）\n出典 {source}");
+        tokio::spawn(async move {
+            let url = format!("https://api.telegram.org/bot{tok}/sendMessage");
+            let _ = reqwest::Client::new()
+                .post(&url)
+                .json(&serde_json::json!({"chat_id": 1136442501_i64, "text": text}))
+                .timeout(std::time::Duration::from_secs(5))
+                .send()
+                .await;
+        });
+    }
+
+    (StatusCode::OK, shushin_cors(), Json(serde_json::json!({"ok": true}))).into_response()
+}
+
 // ── Fan Club API ──
 
 fn cors_headers() -> HeaderMap {
@@ -8053,6 +8175,10 @@ async fn main() {
         .route("/api/video/{id}", axum::routing::delete(video_delete))
         .route("/api/mail/list", get(mail_list))
         .route("/api/mail/message/{id}", get(mail_message))
+        .route("/shushin/measure", get(shushin_measure_page))
+        .route("/api/shushin/data", get(shushin_data))
+        .route("/api/shushin/submit", post(shushin_submit))
+        .route("/api/shushin/submit", axum::routing::options(options_cors))
         .route("/manifest.webmanifest", get(|| async {
             let body = r##"{"name":"濱田優貴 / Yuki Hamada","short_name":"YukiHamada","start_url":"/","display":"standalone","background_color":"#080810","theme_color":"#080810","description":"Enabler CEO - ex-Mercari CPO - Builder","icons":[{"src":"/favicon-192.png","sizes":"192x192","type":"image/png"},{"src":"/favicon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}],"categories":["business","personal"],"lang":"ja"}"##;
             ([("content-type", "application/manifest+json"), ("cache-control", "public, max-age=3600")], body)

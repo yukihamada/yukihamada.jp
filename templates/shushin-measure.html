@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>予測を測る — 『求心の時代』公開測定台</title>
+<meta name="description" content="『求心の時代』の予測を、読者が実データで測る公開の場。反証ラインを割れば理論は負ける。負けられる主張だけが、勝ちうる。">
+<meta property="og:title" content="予測を測る — 『求心の時代』公開測定台">
+<meta property="og:description" content="この本は負ける用意がある。予測に実データを足し、理論を勝たせるか殺すか、公開で決める。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://yukihamada.jp/shushin/measure">
+<style>
+  :root{
+    --ink:#1a2242; --paper:#f6f2e9; --dim:#6b6660; --line:#d8d0c0;
+    --accent:#b03a2e; --win:#2e6b4f; --lose:#b03a2e; --card:#fffdf8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Mincho ProN","Yu Mincho",serif;line-height:1.85;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:0 22px}
+  header{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+  .kicker{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:12px;
+    letter-spacing:.34em;color:var(--accent);margin-bottom:18px}
+  h1{font-size:clamp(28px,5vw,46px);font-weight:600;letter-spacing:.04em;line-height:1.4}
+  .lede{margin-top:22px;font-size:clamp(15px,2vw,18px);color:#333;max-width:680px}
+  .lede strong{color:var(--accent);font-weight:600}
+  section{padding:52px 0;border-bottom:1px solid var(--line)}
+  h2{font-size:clamp(20px,3vw,26px);font-weight:600;letter-spacing:.03em;margin-bottom:8px}
+  .sub{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;color:var(--dim);margin-bottom:30px}
+  .scoreboard{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px}
+  @media(max-width:560px){.scoreboard{grid-template-columns:1fr}}
+  .tally{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+  .tally .n{font-size:40px;font-weight:600;line-height:1}
+  .tally .lbl{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:12px;color:var(--dim);letter-spacing:.14em;margin-top:8px}
+  .tally.win .n{color:var(--win)} .tally.lose .n{color:var(--lose)}
+  .pred{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:26px 26px 22px;margin-bottom:20px}
+  .pred .tag{display:inline-block;font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+    font-size:11px;letter-spacing:.16em;color:#fff;background:var(--ink);
+    padding:3px 10px;border-radius:20px;margin-bottom:14px}
+  .pred h3{font-size:19px;font-weight:600;margin-bottom:6px}
+  .pred .metric{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;color:var(--dim);margin-bottom:16px}
+  .pred table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:16px}
+  .pred th,.pred td{text-align:left;padding:9px 10px;border-top:1px solid var(--line);vertical-align:top}
+  .pred th{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-weight:500;color:var(--dim);font-size:12px;width:34%}
+  .status{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:12px;
+    padding:3px 10px;border-radius:20px;display:inline-block}
+  .status.open{background:#efe9dc;color:#8a7a52}
+  .status.win{background:#e3f0e8;color:var(--win)}
+  .status.lose{background:#f6e4e1;color:var(--lose)}
+  .entries{margin-top:6px}
+  .entry{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;
+    padding:10px 0;border-top:1px dashed var(--line);color:#333}
+  .entry .src{color:var(--dim);font-size:12px;display:block;margin-top:2px;word-break:break-all}
+  .entry .val{font-weight:600;color:var(--accent)}
+  .empty{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;color:var(--dim);padding:10px 0}
+  .form{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:28px}
+  .form label{display:block;font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+    font-size:13px;color:var(--dim);margin:16px 0 6px}
+  .form label:first-of-type{margin-top:0}
+  .form input,.form select,.form textarea{width:100%;padding:11px 13px;border:1px solid var(--line);
+    border-radius:8px;background:#fff;font-family:inherit;font-size:15px;color:var(--ink)}
+  .form textarea{resize:vertical;min-height:72px}
+  .form button{margin-top:22px;width:100%;padding:14px;border:none;border-radius:8px;
+    background:var(--accent);color:#fff;font-family:"Hiragino Kaku Gothic ProN",sans-serif;
+    font-size:15px;letter-spacing:.1em;cursor:pointer;transition:opacity .2s}
+  .form button:hover{opacity:.88}
+  .form button:disabled{opacity:.5;cursor:default}
+  .msg{margin-top:14px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;min-height:20px}
+  .msg.ok{color:var(--win)} .msg.err{color:var(--lose)}
+  .note{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:12.5px;color:var(--dim);margin-top:18px}
+  footer{padding:44px 0 72px;font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;color:var(--dim)}
+  footer a{color:var(--accent);text-decoration:none}
+  .back{font-family:"Hiragino Kaku Gothic ProN",sans-serif;font-size:13px;margin-top:8px}
+  .back a{color:var(--accent);text-decoration:none}
+</style>
+<script defer src="https://enabler-analytics.fly.dev/t.js"></script>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">求心の時代 / 公開測定台</div>
+    <h1>予測を、ここで測る。</h1>
+    <p class="lede">この本は、反証できる形で書いた。予測には基準値と<strong>反証ライン</strong>を置き、割れば理論は負ける。だが基準値の多くは、まだ空欄だ。だからここを開いた。<strong>読者が実データを足し、理論を勝たせるか殺すか、公開で決める。</strong>負けられる主張だけが、勝ちうる。</p>
+  </header>
+
+  <section>
+    <h2>いまの戦況</h2>
+    <p class="sub">投稿された実データが、反証ラインに対して理論を支持しているか。</p>
+    <div class="scoreboard">
+      <div class="tally win"><div class="n" id="tally-win">0</div><div class="lbl">理論を支持</div></div>
+      <div class="tally lose"><div class="n" id="tally-lose">0</div><div class="lbl">理論に反する</div></div>
+    </div>
+    <p class="note" id="tally-note">まだ投稿はありません。最初の一測りを、あなたが。</p>
+  </section>
+
+  <section>
+    <h2>予測と反証ライン</h2>
+    <p class="sub">各予測の下に、集まった実データが並ぶ。出典URLつきで。</p>
+    <div id="preds"></div>
+  </section>
+
+  <section>
+    <h2>データを足す</h2>
+    <p class="sub">一次情報（公的統計・企業IR・査読論文など）の数値を、出典とともに。</p>
+    <form class="form" id="form">
+      <label for="pred">どの予測に足すか</label>
+      <select id="pred" required>
+        <option value="8a">8a 声の回帰（対話）— 音声メッセージ送信数／人・月</option>
+        <option value="8b">8b 声の回帰（音楽）— ライブ・音楽への支出／可処分所得</option>
+        <option value="8c">検定 声への回帰 vs 高級化</option>
+        <option value="1">予測1 ヴィニール・フィジカル比率</option>
+      </select>
+      <label for="value">数値（例: 12.3% / 4.1回/人・月 / +8.0pt）</label>
+      <input id="value" type="text" maxlength="60" required placeholder="例: +8.0%">
+      <label for="year">対象年</label>
+      <input id="year" type="text" maxlength="12" required placeholder="例: 2025">
+      <label for="source">出典（URL または 文献名）</label>
+      <input id="source" type="text" maxlength="300" required placeholder="例: https://www.ifpi.org/...">
+      <label for="note">補足（任意・何を測ったか）</label>
+      <textarea id="note" maxlength="400" placeholder="例: 世界売上に占めるフィジカル比率。IFPI Global Music Report 2026。"></textarea>
+      <button type="submit" id="submit">この測定を投稿する</button>
+      <div class="msg" id="msg"></div>
+      <p class="note">投稿は公開されます。個人情報・未公開情報は書かないでください。運営が内容を確認し、妥当なものから反映します。</p>
+    </form>
+  </section>
+
+  <footer>
+    <div>『求心の時代 — インターネットの「次」は、拡大ではなく回帰である』濱田優貴</div>
+    <div class="back"><a href="/blog/2026-11-06-shushin-no-jidai">→ 刊行にあたっての記事を読む</a></div>
+  </footer>
+</div>
+
+<script>
+const PREDS = [
+  {id:"1", tag:"予測 1", title:"ヴィニール・フィジカルの回帰", metric:"フィジカル売上比率・前年比",
+   baseline:"2025: フィジカル +8.0% / ヴィニール +13.7%（IFPI Global Music Report 2026）",
+   falsify:"3年連続でフィジカルが減少"},
+  {id:"8a", tag:"予測 8a", title:"声の回帰（対話）", metric:"音声メッセージ送信数／人・月",
+   baseline:"要補完 — 一次情報を募集中", falsify:"3年連続で減少"},
+  {id:"8b", tag:"予測 8b", title:"声の回帰（音楽）", metric:"ライブ・音楽への支出／可処分所得",
+   baseline:"要補完 — 一次情報を募集中", falsify:"3年連続で減少"},
+  {id:"8c", tag:"検定", title:"声への回帰 vs 高級化", metric:"スケールしない体験の支出伸び − スケール可能な高級品の支出伸び（pt差）",
+   baseline:"要補完 — 一次情報を募集中", falsify:"差が0以下（高級化説が優勢）"}
+];
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+function render(data){
+  const byPred = {};
+  (data.entries||[]).forEach(e=>{(byPred[e.pred]=byPred[e.pred]||[]).push(e);});
+  let win=0, lose=0;
+  PREDS.forEach(p=>{
+    (byPred[p.id]||[]).forEach(e=>{ if(e.verdict==="win")win++; else if(e.verdict==="lose")lose++; });
+  });
+  document.getElementById("tally-win").textContent = win;
+  document.getElementById("tally-lose").textContent = lose;
+  document.getElementById("tally-note").textContent =
+    (win+lose)===0 ? "まだ投稿はありません。最初の一測りを、あなたが。"
+    : `現在 ${win+lose} 件の測定。理論が支持された ${win} 件、反する ${lose} 件。`;
+
+  const host = document.getElementById("preds");
+  host.innerHTML = PREDS.map(p=>{
+    const es = byPred[p.id]||[];
+    const entries = es.length ? es.map(e=>`
+      <div class="entry">
+        <span class="val">${esc(e.value)}</span>（${esc(e.year)}）
+        <span class="status ${e.verdict==='win'?'win':e.verdict==='lose'?'lose':'open'}">${e.verdict==='win'?'支持':e.verdict==='lose'?'反する':'保留'}</span>
+        ${e.note?`<div>${esc(e.note)}</div>`:''}
+        <span class="src">${esc(e.source)}</span>
+      </div>`).join("") : `<div class="empty">まだ測定なし。</div>`;
+    return `<div class="pred">
+      <span class="tag">${esc(p.tag)}</span>
+      <h3>${esc(p.title)}</h3>
+      <div class="metric">${esc(p.metric)}</div>
+      <table>
+        <tr><th>基準値</th><td>${esc(p.baseline)}</td></tr>
+        <tr><th>反証ライン</th><td>${esc(p.falsify)}</td></tr>
+      </table>
+      <div class="entries">${entries}</div>
+    </div>`;
+  }).join("");
+}
+
+async function load(){
+  try{
+    const r = await fetch("/api/shushin/data",{cache:"no-store"});
+    const d = await r.json();
+    render(d);
+  }catch(e){
+    render({entries:[]});
+  }
+}
+
+document.getElementById("form").addEventListener("submit", async (ev)=>{
+  ev.preventDefault();
+  const btn=document.getElementById("submit"), msg=document.getElementById("msg");
+  const body={
+    pred: document.getElementById("pred").value,
+    value: document.getElementById("value").value.trim(),
+    year: document.getElementById("year").value.trim(),
+    source: document.getElementById("source").value.trim(),
+    note: document.getElementById("note").value.trim()
+  };
+  if(!body.value||!body.year||!body.source){ msg.className="msg err"; msg.textContent="数値・対象年・出典は必須です。"; return; }
+  btn.disabled=true; msg.className="msg"; msg.textContent="送信中…";
+  try{
+    const r=await fetch("/api/shushin/submit",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify(body)});
+    const d=await r.json();
+    if(r.ok&&d.ok){ msg.className="msg ok"; msg.textContent="受け取りました。内容を確認のうえ反映します。ありがとう。"; document.getElementById("form").reset(); load(); }
+    else{ msg.className="msg err"; msg.textContent=d.error||"送信に失敗しました。時間をおいて再度お試しください。"; }
+  }catch(e){ msg.className="msg err"; msg.textContent="通信に失敗しました。"; }
+  btn.disabled=false;
+});
+
+load();
+</script>
+</body>
+</html>
