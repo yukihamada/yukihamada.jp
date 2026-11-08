@@ -3,8 +3,19 @@ name: Deploy to Fly.io
 on:
   push:
     branches: [main, master]
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+      - "LICENSE"
+      - "LICENSE.*"
+      - ".gitignore"
+      - ".claude/**"
   pull_request:
     branches: [main, master]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   # ── test: cargo build --release → 起動スモークテスト ──
